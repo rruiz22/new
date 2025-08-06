@@ -1,0 +1,50 @@
+{
+  "processing": "Processando...",
+  "search": "Pesquisar:",
+  "lengthMenu": "Mostrar _MENU_ registros",
+  "info": "Mostrando registros de _START_ até _END_ de um total de _TOTAL_ registros",
+  "infoEmpty": "Mostrando 0 até 0 de 0 registros",
+  "infoFiltered": "",
+  "infoPostFix": "",
+  "loadingRecords": "Carregando...",
+  "zeroRecords": "Nenhum registro encontrado",
+  "emptyTable": "Nenhum registro disponível na tabela",
+  "paginate": {
+    "first": "Primeiro",
+    "previous": "Anterior",
+    "next": "Próximo",
+    "last": "Último"
+  },
+  "aria": {
+    "sortAscending": ": ativar para ordenar coluna em ordem crescente",
+    "sortDescending": ": ativar para ordenar coluna em ordem decrescente"
+  },
+  "infoThousands": ".",
+  "buttons": {
+    "copy": "Copiar",
+    "colvis": "Visibilidade",
+    "collection": "Coleção",
+    "colvisRestore": "Restaurar visibilidade",
+    "copyKeys": "Pressione ctrl ou u2318 + C para copiar os dados da tabela para a área de transferência do sistema. <br><br>Para cancelar, clique nesta mensagem ou pressione Esc..",
+    "copySuccess": {
+      "1": "1 linha copiada para a área de transferência",
+      "_": "%d linhas copiadas para a área de transferência"
+    },
+    "copyTitle": "Copiar para a área de transferência",
+    "csv": "CSV",
+    "excel": "Excel",
+    "pageLength": {
+      "-1": "Mostrar todas as linhas",
+      "_": "Mostrar %d linhas"
+    },
+    "pdf": "PDF",
+    "print": "Imprimir",
+    "createState": "Criar estado",
+    "removeAllStates": "Remover todos os estados",
+    "removeState": "Remover",
+    "renameState": "Renomear",
+    "savedStates": "Estados salvos",
+    "stateRestore": "Estado %d",
+    "updateState": "Atualizar"
+  }
+}

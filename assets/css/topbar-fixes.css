@@ -1,0 +1,174 @@
+/* Topbar Fixes CSS */
+/* Correcciones específicas para problemas del topbar */
+
+/* Fix para el espaciado entre iconos del topbar */
+.topbar-head-dropdown.header-item {
+    margin-left: 0.5rem !important; /* Reducir de ms-1 (0.25rem) a 0.5rem */
+}
+
+.topbar-head-dropdown.header-item:first-child {
+    margin-left: 0 !important; /* Primer elemento sin margen */
+}
+
+/* Fix para el search box - mejor posicionamiento del placeholder */
+.app-search .form-control {
+    padding-left: 45px !important; /* Aumentar padding para evitar superposición */
+    padding-right: 35px !important;
+    height: 38px !important;
+    line-height: 1.5 !important;
+}
+
+.app-search span.search-widget-icon {
+    left: 15px !important; /* Ajustar posición del icono */
+    font-size: 16px !important; /* Reducir tamaño del icono */
+    line-height: 38px !important;
+    z-index: 10 !important;
+}
+
+.app-search .search-widget-icon-close {
+    right: 10px !important;
+    font-size: 16px !important;
+}
+
+/* Mejorar el placeholder del search */
+.app-search .form-control::placeholder {
+    color: var(--vz-header-item-sub-color) !important;
+    opacity: 0.7 !important;
+    font-size: 14px !important;
+}
+
+/* Fix para botones del topbar - espaciado consistente */
+.btn-topbar {
+    width: 40px !important;
+    height: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 0.25rem !important; /* Espaciado consistente */
+}
+
+/* Fix para iconos del topbar */
+.btn-topbar i {
+    font-size: 20px !important; /* Tamaño consistente */
+    line-height: 1 !important;
+}
+
+/* Fix para el dropdown del search en móvil */
+@media (max-width: 767.98px) {
+    .dropdown.d-md-none .btn-topbar {
+        margin-right: 0.5rem !important;
+    }
+}
+
+/* Fix para el contenedor de iconos del topbar */
+.d-flex.align-items-center > .dropdown,
+.d-flex.align-items-center > .topbar-head-dropdown {
+    margin-left: 0.25rem !important;
+    margin-right: 0.25rem !important;
+}
+
+.d-flex.align-items-center > .dropdown:first-child,
+.d-flex.align-items-center > .topbar-head-dropdown:first-child {
+    margin-left: 0 !important;
+}
+
+.d-flex.align-items-center > .dropdown:last-child,
+.d-flex.align-items-center > .topbar-head-dropdown:last-child {
+    margin-right: 0 !important;
+}
+
+/* Fix específico para Sales Orders - asegurar que no haya CSS conflictivo */
+.sales-orders-page .app-search .form-control {
+    background-color: var(--vz-topbar-search-bg) !important;
+    border: 1px solid var(--vz-border-color) !important;
+    border-radius: 6px !important;
+}
+
+.sales-orders-page .app-search .form-control:focus {
+    border-color: var(--vz-primary) !important;
+    box-shadow: 0 0 0 0.2rem rgba(var(--vz-primary-rgb), 0.25) !important;
+}
+
+/* Fix para el responsive del topbar */
+@media (max-width: 991.98px) {
+    .app-search {
+        max-width: 200px !important;
+    }
+    
+    .app-search .form-control {
+        font-size: 13px !important;
+        padding-left: 40px !important;
+        padding-right: 30px !important;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .app-search {
+        max-width: 150px !important;
+    }
+}
+
+/* Fix para el z-index del search dropdown */
+.app-search .dropdown-menu {
+    z-index: 1050 !important;
+    border: 1px solid var(--vz-border-color) !important;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Fix para la alineación vertical de elementos del topbar */
+.navbar-header {
+    align-items: center !important;
+}
+
+.navbar-header .d-flex {
+    align-items: center !important;
+    gap: 0.25rem !important; /* Espaciado consistente usando gap */
+}
+
+/* Fix para el logo y hamburger menu */
+.navbar-brand-box {
+    display: flex !important;
+    align-items: center !important;
+}
+
+.topnav-hamburger {
+    margin-right: 1rem !important;
+}
+
+/* Fix para el user dropdown */
+.header-profile-user {
+    margin-left: 0.5rem !important;
+}
+
+/* Asegurar que los iconos estén centrados */
+.btn-icon {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Fix para notificaciones badge */
+.topbar-badge {
+    position: absolute !important;
+    top: -2px !important;
+    right: -6px !important;
+    font-size: 10px !important;
+    min-width: 16px !important;
+    height: 16px !important;
+    line-height: 14px !important;
+}
+
+/* Fix para el tema oscuro */
+[data-bs-theme="dark"] .app-search .form-control {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+[data-bs-theme="dark"] .app-search .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+[data-bs-theme="dark"] .app-search span.search-widget-icon {
+    color: rgba(255, 255, 255, 0.7) !important;
+} 

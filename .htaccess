@@ -1,0 +1,43 @@
+# CodeIgniter 4 - Enhanced .htaccess
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Allow debug.php and test.php to work
+    RewriteCond %{REQUEST_FILENAME} (debug|test)\.php$
+    RewriteRule ^ - [L]
+    
+    # Redirect assets and static files to public folder
+    RewriteCond %{REQUEST_URI} \.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ [OR]
+    RewriteCond %{REQUEST_URI} ^/(assets|css|js|images|fonts|libs)/
+    RewriteRule ^(.*)$ public/$1 [L]
+    
+    # Handle main application routing - everything else goes to index.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ index.php/$1 [L,QSA]
+</IfModule>
+
+# Allow access to test file
+<Files "test.php">
+    Require all granted
+</Files>
+
+# Deny access to sensitive files
+<Files ".env">
+    Require all denied
+</Files>
+
+<Files "composer.json">
+    Require all denied
+</Files>
+
+<Files "composer.lock">
+    Require all denied
+</Files>
+
+# Disable directory browsing
+Options -Indexes
+
+# Disable server signature
+ServerSignature Off

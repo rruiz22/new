@@ -1,0 +1,142 @@
+/**
+ * Velzon Theme Toast Notifications
+ * Simple toast styling using Velzon theme colors
+ */
+
+/* Base toast styling */
+.velzon-toast {
+    border-radius: 6px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    font-family: inherit !important;
+    font-size: 0.875rem !important;
+    padding: 1rem !important;
+    min-width: 300px !important;
+    max-width: 400px !important;
+    border: 1px solid #e3ebf0 !important;
+}
+
+.toastify.velzon-toast {
+    background: #ffffff !important;
+    color: #495057 !important;
+}
+
+.toastify.velzon-toast.toastify-right {
+    right: 24px !important;
+}
+
+.toastify.velzon-toast.toastify-bottom {
+    bottom: 24px !important;
+}
+
+/* Toast content layout */
+.velzon-toast .toast-content {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+}
+
+.toastify.velzon-toast.on {
+    opacity: 1 !important;
+    transform: translateX(0) !important;
+}
+
+/* Success toast */
+.velzon-toast.toast-success {
+    background: #d1e7dd !important;
+    color: #0f5132 !important;
+    border-color: #0ab39c !important;
+    border-left: 4px solid #0ab39c !important;
+}
+
+/* Error toast */
+.velzon-toast.toast-error {
+    background: #f8d7da !important;
+    color: #721c24 !important;
+    border-color: #f06548 !important;
+    border-left: 4px solid #f06548 !important;
+}
+
+/* Warning toast */
+.velzon-toast.toast-warning {
+    background: #fff3cd !important;
+    color: #664d03 !important;
+    border-color: #ffab00 !important;
+    border-left: 4px solid #ffab00 !important;
+}
+
+/* Info toast */
+.velzon-toast.toast-info {
+    background: #cff4fc !important;
+    color: #055160 !important;
+    border-color: #405189 !important;
+    border-left: 4px solid #405189 !important;
+}
+
+/* Toast icon */
+.velzon-toast .toast-icon {
+    font-size: 1.125rem !important;
+    font-weight: bold !important;
+    line-height: 1 !important;
+    flex-shrink: 0 !important;
+}
+
+.velzon-toast.toast-success .toast-icon {
+    color: #0ab39c !important;
+}
+
+.velzon-toast.toast-error .toast-icon {
+    color: #f06548 !important;
+}
+
+.velzon-toast.toast-warning .toast-icon {
+    color: #ffab00 !important;
+}
+
+.velzon-toast.toast-info .toast-icon {
+    color: #405189 !important;
+}
+
+/* Toast message */
+.velzon-toast .toast-message {
+    flex: 1 !important;
+    line-height: 1.4 !important;
+}
+
+/* Close button */
+.velzon-toast .toast-close {
+    background: none !important;
+    border: none !important;
+    font-size: 1.25rem !important;
+    line-height: 1 !important;
+    color: inherit !important;
+    opacity: 0.6 !important;
+    cursor: pointer !important;
+    padding: 0 !important;
+    margin-left: auto !important;
+    flex-shrink: 0 !important;
+    width: 20px !important;
+    height: 20px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 3px !important;
+    transition: all 0.15s ease !important;
+}
+
+.velzon-toast .toast-close:hover {
+    opacity: 1 !important;
+    background: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Animation */
+.toastify.velzon-toast {
+    transition: all 0.3s ease !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .velzon-toast {
+        min-width: 280px !important;
+        max-width: calc(100vw - 48px) !important;
+    }
+} 

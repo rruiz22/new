@@ -1,0 +1,49 @@
+{
+    "emptyTable": "Nenhum dado disponível na tabela",
+    "info": "Mostrando _START_ até _END_ de _TOTAL_ registros",
+    "infoEmpty": "Mostrando 0 até 0 de 0 registros",
+    "infoFiltered": "(filtrado de _MAX_ registros totais)",
+    "infoThousands": ".",
+    "lengthMenu": "Mostrar _MENU_ registros",
+    "loadingRecords": "Carregando...",
+    "processing": "Processando...",
+    "search": "Pesquisar:",
+    "zeroRecords": "Nenhum registro correspondente encontrado",
+    "paginate": {
+        "first": "Primeiro",
+        "last": "Último",
+        "next": "Próximo",
+        "previous": "Anterior"
+    },
+    "aria": {
+        "sortAscending": ": ativar para ordenar a coluna em ordem crescente",
+        "sortDescending": ": ativar para ordenar a coluna em ordem decrescente"
+    },
+    "select": {
+        "rows": {
+            "_": "%d linhas selecionadas",
+            "0": "Clique em uma linha para selecioná-la",
+            "1": "1 linha selecionada"
+        }
+    },
+    "buttons": {
+        "copy": "Copiar",
+        "colvis": "Visibilidade",
+        "collection": "Coleção",
+        "colvisRestore": "Restaurar visibilidade",
+        "copyKeys": "Pressione ctrl ou u2318 + C para copiar os dados da tabela para a área de transferência do sistema.<br><br>Para cancelar, clique nesta mensagem ou pressione Escape.",
+        "copySuccess": {
+            "1": "Copiada 1 linha para a área de transferência",
+            "_": "Copiadas %d linhas para a área de transferência"
+        },
+        "copyTitle": "Copiar para área de transferência",
+        "csv": "CSV",
+        "excel": "Excel",
+        "pageLength": {
+            "-1": "Mostrar todas as linhas",
+            "_": "Mostrar %d linhas"
+        },
+        "pdf": "PDF",
+        "print": "Imprimir"
+    }
+} 

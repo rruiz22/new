@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corrección de Layout</title>
+</head>
+<body>
+    <h1>Corrigiendo configuración del layout...</h1>
+    <p>Este script limpiará la configuración incorrecta y forzará LTR.</p>
+    
+<script>
+// Limpiar sessionStorage para forzar configuración por defecto
+sessionStorage.clear();
+
+// Forzar configuración LTR correcta
+document.documentElement.setAttribute("data-layout", "vertical");
+document.documentElement.setAttribute("data-layout-direction", "ltr");
+document.documentElement.setAttribute("data-sidebar-size", "lg");
+document.documentElement.setAttribute("data-topbar", "light");
+document.documentElement.setAttribute("data-sidebar", "dark");
+
+// Remover cualquier configuración RTL
+document.documentElement.removeAttribute("dir");
+document.body.removeAttribute("dir");
+
+// Asegurar que no se cargue CSS RTL
+var rtlLinks = document.querySelectorAll('link[href*="rtl"]');
+rtlLinks.forEach(function(link) {
+    link.remove();
+});
+
+console.log("✅ Layout configurado correctamente para LTR");
+alert("Layout corregido. La página se recargará.");
+window.location.reload();
+</script>
+
+</body>
+</html>

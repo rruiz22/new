@@ -1,0 +1,54 @@
+[2025-07-11 20:39:45] 🔍 Encontradas 23 migraciones válidas:
+[2025-07-11 20:39:45]    1. 2023-07-01-000001_create_todos_table.php
+[2025-07-11 20:39:45]    2. 2023-10-25-000001_CreateChatTables.php
+[2025-07-11 20:39:45]    3. 2024-01-16-000000_CreateIntegrationSettingsTable.php
+[2025-07-11 20:39:45]    4. 2024-07-10-000001_CreateClientsTable.php
+[2025-07-11 20:39:45]    5. 2024-07-10-000002_CreateContactsTable.php
+[2025-07-11 20:39:45]    6. 2024-12-19-000001_CreateContactGroupsTable.php
+[2025-07-11 20:39:45]    7. 2025-01-27-120000_CreateSalesOrderFollowersTables.php
+[2025-07-11 20:39:45]    8. 2025-05-22-130000_CreateSalesOrdersTables.php
+[2025-07-11 20:39:45]    9. 2025-05-22-202503_CreateCustomRolesTable.php
+[2025-07-11 20:39:45]    10. 2025-05-23-130000_UpdateSalesOrdersTables.php
+[2025-07-11 20:39:45]    11. 2025-05-23-183212_AddShowInOrdersToPortalSalesOrdersServices.php
+[2025-07-11 20:39:45]    12. 2025-05-28-051727_AddAdvancedFieldsToTodos.php
+[2025-07-11 20:39:45]    13. 2025-06-01-140000_AddCompletionTimestamps.php
+[2025-07-11 20:39:45]    14. 2025-06-02-071731_CreateInternalNotesTable.php
+[2025-07-11 20:39:45]    15. 2025-06-04-220500_AddShortUrlFieldsToSalesOrders.php
+[2025-07-11 20:39:45]    16. 2025-06-05-130000_CreateServiceOrdersTables.php
+[2025-07-11 20:39:45]    17. 2025-06-05-202944_AddTotalAmountToServiceOrders.php
+[2025-07-11 20:39:45]    18. 2025-06-06-000000_UpdateServiceOrdersCommentsTable.php
+[2025-07-11 20:39:45]    19. 2025-06-11-130000_AddLocationToAuditTrail.php
+[2025-07-11 20:39:45]    20. 2025-06-11-140000_AddShortUrlFieldsToServiceOrders.php
+[2025-07-11 20:39:45]    21. 2025-06-12-212730_CreateIntegrationSettings.php
+[2025-07-11 20:39:45]    22. 2025-06-24-193012_AddColorToCarWashServices.php
+[2025-07-11 20:39:45]    23. 2025-07-02-205417_AddQrColumnsToCarWashOrders.php
+[2025-07-11 20:39:45] 
+[2025-07-11 20:39:45] 🚀 Ejecutando migración 1/23: 2023-07-01-000001_create_todos_table.php
+[2025-07-11 20:39:45] ❌ Error en migración 2023-07-01-000001_create_todos_table.php:
+[2025-07-11 20:39:45]    
+[2025-07-11 20:39:45]    CodeIgniter v4.6.1 Command Line Tool - Server Time: 2025-07-11 14:39:45 UTC-04:00
+[2025-07-11 20:39:45]    
+[2025-07-11 20:39:45]    Command "migrate:version" not found.
+[2025-07-11 20:39:45]    
+[2025-07-11 20:40:28] 📊 Progreso: 4.3% (1/23)
+[2025-07-11 20:40:28] 
+[2025-07-11 20:40:28] 🚀 Ejecutando migración 2/23: 2023-10-25-000001_CreateChatTables.php
+[2025-07-11 20:40:29] ❌ Error en migración 2023-10-25-000001_CreateChatTables.php:
+[2025-07-11 20:40:29]    
+[2025-07-11 20:40:29]    CodeIgniter v4.6.1 Command Line Tool - Server Time: 2025-07-11 14:40:28 UTC-04:00
+[2025-07-11 20:40:29]    
+[2025-07-11 20:40:29]    Command "migrate:version" not found.
+[2025-07-11 20:40:29]    
+[2025-07-11 20:40:36] 🛑 Proceso detenido por el usuario
+[2025-07-11 20:40:36] 📋 RESUMEN FINAL:
+[2025-07-11 20:40:36] ================
+[2025-07-11 20:40:36] ✅ Exitosas: 0
+[2025-07-11 20:40:36] ❌ Fallidas: 2
+[2025-07-11 20:40:36] ⏭️  Saltadas: 0
+[2025-07-11 20:40:36] 📊 Total procesadas: 2
+[2025-07-11 20:40:36] 
+[2025-07-11 20:40:36] ⚠️  Hay migraciones que fallaron. Revisa el log para más detalles.
+[2025-07-11 20:40:36] 💡 Puedes ejecutar manualmente las migraciones fallidas:
+[2025-07-11 20:40:36]    php spark migrate:version <NombreDeLaMigracion>
+[2025-07-11 20:40:36] 
+📝 Log completo guardado en: C:\xampp\htdocs\mda/migration_log.txt

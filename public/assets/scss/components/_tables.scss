@@ -1,0 +1,107 @@
+/* ==============================================
+ * TABLE COMPONENTS
+ * ==============================================
+ * Enhanced table styling with order status indicators
+ */
+
+/* Order Status Row Backgrounds */
+.order-row-completed {
+    background-color: rgba(25, 135, 84, 0.1) !important;
+    border-left: 4px solid #198754 !important;
+}
+
+.order-row-completed:hover {
+    background-color: rgba(25, 135, 84, 0.15) !important;
+}
+
+.order-row-urgent {
+    background-color: rgba(255, 193, 7, 0.1) !important;
+    border-left: 4px solid #ffc107 !important;
+}
+
+.order-row-urgent:hover {
+    background-color: rgba(255, 193, 7, 0.15) !important;
+}
+
+.order-row-overdue {
+    background-color: rgba(220, 53, 69, 0.1) !important;
+    border-left: 4px solid #dc3545 !important;
+    animation: pulse-red 2s infinite;
+}
+
+.order-row-overdue:hover {
+    background-color: rgba(220, 53, 69, 0.15) !important;
+}
+
+/* Flashing animation for overdue orders */
+@keyframes pulse-red {
+    0% {
+        background-color: rgba(220, 53, 69, 0.1);
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.3);
+    }
+    50% {
+        background-color: rgba(220, 53, 69, 0.2);
+        box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.1);
+    }
+    100% {
+        background-color: rgba(220, 53, 69, 0.1);
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.3);
+    }
+}
+
+/* Ensure status badges remain visible over colored backgrounds */
+.order-row-completed .badge,
+.order-row-urgent .badge,
+.order-row-overdue .badge {
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* DataTables specific enhancements */
+.dataTables_wrapper .order-row-completed td,
+.dataTables_wrapper .order-row-urgent td,
+.dataTables_wrapper .order-row-overdue td {
+    border-top: none !important;
+}
+
+/* Table responsive enhancements */
+.table-responsive .order-row-completed,
+.table-responsive .order-row-urgent,
+.table-responsive .order-row-overdue {
+    border-radius: 6px;
+    margin-bottom: 2px;
+}
+
+/* Dark mode support */
+[data-bs-theme="dark"] .order-row-completed {
+    background-color: rgba(25, 135, 84, 0.15) !important;
+}
+
+[data-bs-theme="dark"] .order-row-urgent {
+    background-color: rgba(255, 193, 7, 0.15) !important;
+}
+
+[data-bs-theme="dark"] .order-row-overdue {
+    background-color: rgba(220, 53, 69, 0.15) !important;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .order-row-completed,
+    .order-row-urgent,
+    .order-row-overdue {
+        border-left-width: 3px !important;
+    }
+}
+
+/* Print styles - remove animations and colors for printing */
+@media print {
+    .order-row-completed,
+    .order-row-urgent,
+    .order-row-overdue {
+        background-color: transparent !important;
+        animation: none !important;
+        border-left: 2px solid #000 !important;
+    }
+} 

@@ -1,0 +1,153 @@
+# CodeIgniter 4 .gitignore
+
+#-------------------------
+# Operating System Files
+#-------------------------
+
+# OSX
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+#-------------------------
+# Environment Files
+#-------------------------
+.env
+.env.testing
+.env.local
+.env.production
+
+#-------------------------
+# CodeIgniter 4 Specific
+#-------------------------
+
+# Ignore build files
+public/build/
+public/hot
+
+# Ignore uploads directory content but keep the directory
+public/uploads/*
+!public/uploads/.gitkeep
+uploads/*
+!uploads/.gitkeep
+
+# Ignore writable directory content but keep the directory
+writable/cache/*
+!writable/cache/.gitkeep
+writable/logs/*
+!writable/logs/.gitkeep
+writable/session/*
+!writable/session/.gitkeep
+writable/uploads/*
+!writable/uploads/.gitkeep
+
+# Ignore vendor directory (Composer dependencies)
+vendor/
+
+# Ignore node_modules (if using npm)
+node_modules/
+
+# Ignore package-lock files
+package-lock.json
+yarn.lock
+
+#-------------------------
+# IDE Files
+#-------------------------
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# PhpStorm
+.idea/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# NetBeans
+nbproject/
+
+# Eclipse
+.project
+.settings/
+
+#-------------------------
+# Logs and Databases
+#-------------------------
+*.log
+*.sql
+*.sqlite
+*.sqlite3
+
+#-------------------------
+# Temporary Files
+#-------------------------
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+#-------------------------
+# Backup Files
+#-------------------------
+*.bak
+*.backup
+*.orig
+
+#-------------------------
+# Application Specific
+#-------------------------
+
+# Configuration files with sensitive data
+app/Config/Database.php
+app/Config/Email.php
+
+# Local development files
+.phpunit.result.cache
+*.local.php
+
+# Cache files
+.cache/
+cache/
+
+# Lock files
+composer.lock
+
+# Assets compilation
+public/assets/build/
+public/mix-manifest.json
+
+# Custom uploads and temporary files
+public/qr-codes/
+public/temp/
+public/NULL/
+
+# Database dumps
+*.dump
+*.sql
+
+# Test files
+phpunit.xml
+.phpunit.result.cache
+
+# Coverage reports
+coverage/
+build/
+
+# Local configuration overrides
+local.php

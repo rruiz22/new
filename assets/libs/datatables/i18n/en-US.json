@@ -1,0 +1,49 @@
+{
+    "processing": "Processing...",
+    "lengthMenu": "Show _MENU_ entries",
+    "zeroRecords": "No matching records found",
+    "emptyTable": "No data available in table",
+    "info": "Showing _START_ to _END_ of _TOTAL_ entries",
+    "infoEmpty": "Showing 0 to 0 of 0 entries",
+    "infoFiltered": "(filtered from _MAX_ total entries)",
+    "search": "Search:",
+    "infoThousands": ",",
+    "loadingRecords": "Loading...",
+    "paginate": {
+        "first": "First",
+        "last": "Last",
+        "next": "Next",
+        "previous": "Previous"
+    },
+    "aria": {
+        "sortAscending": ": activate to sort column ascending",
+        "sortDescending": ": activate to sort column descending"
+    },
+    "buttons": {
+        "copy": "Copy",
+        "colvis": "Column visibility",
+        "collection": "Collection",
+        "colvisRestore": "Restore visibility",
+        "copyKeys": "Press ctrl or u2318 + C to copy the table data to your system clipboard.<br><br>To cancel, click this message or press escape.",
+        "copySuccess": {
+            "1": "Copied 1 row to clipboard",
+            "_": "Copied %d rows to clipboard"
+        },
+        "copyTitle": "Copy to Clipboard",
+        "csv": "CSV",
+        "excel": "Excel",
+        "pageLength": {
+            "-1": "Show all rows",
+            "_": "Show %d rows"
+        },
+        "pdf": "PDF",
+        "print": "Print",
+        "createState": "Create State",
+        "removeAllStates": "Remove All States",
+        "removeState": "Remove",
+        "renameState": "Rename",
+        "savedStates": "Saved States",
+        "stateRestore": "State %d",
+        "updateState": "Update"
+    }
+}

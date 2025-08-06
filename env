@@ -1,0 +1,88 @@
+#--------------------------------------------------------------------
+# Twilio Configuration
+#--------------------------------------------------------------------
+TWILIO_ACCOUNT_SID=your_twilio_account_sid_here
+TWILIO_AUTH_TOKEN=your_twilio_auth_token_here
+TWILIO_PHONE_NUMBER=+1234567890
+
+#--------------------------------------------------------------------
+# MDA Links URL Shortener Configuration
+#--------------------------------------------------------------------
+LIMA_API_KEY=your_lima_links_api_key_here
+LIMA_CUSTOM_DOMAIN=
+LIMA_BRANDED_DOMAIN=
+LIMA_API_BASE_URL=https://mda.to
+
+#--------------------------------------------------------------------
+# SMTP Email Configuration
+#--------------------------------------------------------------------
+SMTP_HOST=smtp.gmail.com
+SMTP_USER=your_email@gmail.com
+SMTP_PASS=your_app_password_here
+SMTP_PORT=587
+SMTP_CRYPTO=tls
+EMAIL_FROM=your_email@gmail.com
+EMAIL_FROM_NAME=My Detail Area Portal
+
+#--------------------------------------------------------------------
+# Database Configuration
+#--------------------------------------------------------------------
+DATABASE_DEFAULT_HOSTNAME=localhost
+DATABASE_DEFAULT_DATABASE=master
+DATABASE_DEFAULT_USERNAME=root
+DATABASE_DEFAULT_PASSWORD=
+DATABASE_DEFAULT_DBDRIVER=MySQLi
+DATABASE_DEFAULT_DBPREFIX=
+
+#--------------------------------------------------------------------
+# Application Configuration
+#--------------------------------------------------------------------
+CI_ENVIRONMENT=development
+
+app.baseURL='http://localhost/mda/'
+app.indexPage=''
+app.defaultLocale='en'
+app.defaultTimezone='America/Chicago'
+
+#--------------------------------------------------------------------
+# SECURITY
+#--------------------------------------------------------------------
+security.csrfProtection='csrf'
+security.tokenRandomize=false
+security.tokenName='csrf_token_name'
+security.headerName='X-CSRF-TOKEN'
+security.cookieName='csrf_cookie_name'
+security.expires=7200
+security.regenerate=true
+security.redirect=true
+security.samesite='Lax'
+
+#--------------------------------------------------------------------
+# SESSION
+#--------------------------------------------------------------------
+session.driver='CodeIgniter\Session\Handlers\FileHandler'
+session.cookieName='ci_session'
+session.expiration=7200
+session.savePath=C:\xampp\htdocs\mda\writable\session
+session.matchIP=false
+session.timeToUpdate=300
+session.regenerateDestroy=false
+
+#--------------------------------------------------------------------
+# LOGGER
+#--------------------------------------------------------------------
+logger.threshold=4
+
+#--------------------------------------------------------------------
+# CORS
+#--------------------------------------------------------------------
+cors.allowedOrigins=*
+cors.allowedHeaders=*
+cors.allowedMethods=GET,POST,OPTIONS,PUT,DELETE 
+
+
+## AWS S3 Configuration
+AWS_ACCESS_KEY_ID=AKIAWZVGHOVDAB7Y7PPY
+AWS_SECRET_ACCESS_KEY=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
+S3_BUCKET=mda-vehicle-photos
+S3_REGION=us-east-1

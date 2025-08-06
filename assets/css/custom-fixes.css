@@ -1,0 +1,30 @@
+/* Custom fixes for layout issues */
+
+/* Prevent horizontal scroll */
+html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+}
+
+/* Ensure main content doesn't overflow */
+.main-content {
+    overflow-x: hidden;
+}
+
+/* Fix footer width */
+.footer {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Ensure page content doesn't create horizontal scroll */
+.page-content {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Fix container fluid from creating overflow */
+.container-fluid {
+    max-width: 100%;
+    box-sizing: border-box;
+} 

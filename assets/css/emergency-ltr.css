@@ -1,0 +1,34 @@
+
+/* CSS de emergencia para forzar layout LTR correcto */
+html {
+    direction: ltr !important;
+}
+
+body {
+    direction: ltr !important;
+}
+
+.main-content {
+    margin-left: 250px !important;
+    margin-right: 0 !important;
+}
+
+#page-topbar {
+    left: 250px !important;
+    right: 0 !important;
+}
+
+.app-menu {
+    left: 0 !important;
+    right: auto !important;
+}
+
+@media (max-width: 767.98px) {
+    .main-content {
+        margin-left: 0 !important;
+    }
+    
+    #page-topbar {
+        left: 0 !important;
+    }
+}

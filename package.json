@@ -1,0 +1,30 @@
+{
+  "name": "velzon-notion-theme",
+  "version": "1.0.0",
+  "description": "Velzon admin template with Notion theme",
+  "main": "index.js",
+  "scripts": {
+    "build-css": "sass assets/scss/app.scss assets/css/app.css --no-source-map",
+    "build-all": "npm run build-css",
+    "watch-css": "sass assets/scss/app.scss assets/css/app.css --watch --no-source-map",
+    "dev": "npm run watch-css",
+    "production": "sass assets/scss/app.scss assets/css/app.css --style=compressed --no-source-map",
+    "clean": "del /f assets\\css\\app.css 2>nul || echo File not found"
+  },
+  "devDependencies": {
+    "sass": "^1.69.0",
+    "bootstrap": "^5.3.0",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.31",
+    "postcss-cli": "^10.1.0"
+  },
+  "keywords": [
+    "scss",
+    "sass",
+    "notion",
+    "theme",
+    "velzon"
+  ],
+  "author": "Tu nombre",
+  "license": "MIT"
+}

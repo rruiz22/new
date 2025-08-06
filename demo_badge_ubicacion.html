@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📍 Ubicación del Badge - Demo Visual</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        .highlight-column {
+            background-color: #fff3cd !important;
+            border: 2px dashed #ffc107 !important;
+        }
+        
+        .badge-demo {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .cursor-pointer {
+            cursor: pointer !important;
+        }
+        
+        .bg-info-subtle {
+            background-color: rgba(13, 202, 240, 0.1) !important;
+        }
+        
+        .text-info {
+            color: #0dcaf0 !important;
+        }
+        
+        .tooltip-inner {
+            max-width: 300px !important;
+            text-align: left !important;
+        }
+        
+        .demo-note {
+            background: linear-gradient(90deg, #4f46e5, #06b6d4);
+            color: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body class="p-4">
+    <div class="container">
+        <div class="demo-note">
+            <h3 class="mb-2">📍 Demo: Ubicación del Badge de Instrucciones</h3>
+            <p class="mb-0">El badge azul "Info" aparece en la <strong>columna Cliente/Vehículo</strong> cuando una orden tiene instrucciones.</p>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h5>Tabla Sales Orders - Vista Simulada</h5>
+                <small class="text-muted">Columna amarilla = donde aparece el badge</small>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">Order ID</th>
+                                <th scope="col">Stock</th>
+                                <th scope="col" class="highlight-column">
+                                    <i class="ri-arrow-down-line text-warning"></i>
+                                    Cliente/Vehículo 
+                                    <small>(AQUÍ aparece el badge)</small>
+                                </th>
+                                <th scope="col">Fecha</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Ejemplo 1: CON instrucciones = CON badge -->
+                            <tr>
+                                <td>SAL-00123</td>
+                                <td>STOCK-001<br><small class="text-muted">Vendedor: Juan Pérez</small></td>
+                                <td class="highlight-column">
+                                    <div>
+                                        <span class="fw-medium">Toyota Corolla 2023</span>
+                                        <div class="text-muted small">VIN: JH4DB8540NS000123</div>
+                                        <div class="text-muted small">Cliente: Empresa ABC S.A.</div>
+                                        <div class="mt-1">
+                                            <span class="badge bg-info-subtle text-info cursor-pointer badge-demo" 
+                                                  data-bs-toggle="tooltip" 
+                                                  data-bs-placement="top" 
+                                                  data-bs-html="true"
+                                                  title="<strong>Cliente:</strong> Empresa ABC S.A.<br><strong>Instrucciones:</strong><br>• Revisar sistema de frenos<br>• Verificar niveles de aceite<br>• Contactar cliente antes de entregar"
+                                                  style="font-size: 0.7rem;">
+                                                <i class="ri-information-line"></i> Info
+                                            </span>
+                                            <div class="mt-1">
+                                                <small class="text-success">
+                                                    <i class="ri-arrow-up-line"></i> <strong>BADGE VISIBLE</strong> (tiene instrucciones)
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>2024-01-15</td>
+                                <td><span class="badge bg-warning">Pendiente</span></td>
+                                <td>
+                                    <i class="ri-eye-line text-primary"></i>
+                                    <i class="ri-edit-line text-success"></i>
+                                    <i class="ri-delete-bin-line text-danger"></i>
+                                </td>
+                            </tr>
+                            
+                            <!-- Ejemplo 2: SIN instrucciones = SIN badge -->
+                            <tr>
+                                <td>SAL-00124</td>
+                                <td>STOCK-002<br><small class="text-muted">Vendedor: María López</small></td>
+                                <td class="highlight-column">
+                                    <div>
+                                        <span class="fw-medium">Honda Civic 2022</span>
+                                        <div class="text-muted small">VIN: 2HGFC2F59NH123456</div>
+                                        <div class="text-muted small">Cliente: Cliente Sin Instrucciones</div>
+                                        <!-- NO HAY BADGE porque no hay instrucciones -->
+                                        <div class="mt-1">
+                                            <small class="text-muted">
+                                                <i class="ri-arrow-down-line"></i> <strong>SIN BADGE</strong> (no hay instrucciones)
+                                            </small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>2024-01-16</td>
+                                <td><span class="badge bg-success">Completado</span></td>
+                                <td>
+                                    <i class="ri-eye-line text-primary"></i>
+                                    <i class="ri-edit-line text-success"></i>
+                                    <i class="ri-delete-bin-line text-danger"></i>
+                                </td>
+                            </tr>
+                            
+                            <!-- Ejemplo 3: CON instrucciones largas = CON badge -->
+                            <tr>
+                                <td>SAL-00125</td>
+                                <td>STOCK-003<br><small class="text-muted">Vendedor: Carlos Ruiz</small></td>
+                                <td class="highlight-column">
+                                    <div>
+                                        <span class="fw-medium">Ford Focus 2023</span>
+                                        <div class="text-muted small">VIN: 1FADP3K20HL123789</div>
+                                        <div class="text-muted small">Cliente: Transportes XYZ</div>
+                                        <div class="mt-1">
+                                            <span class="badge bg-info-subtle text-info cursor-pointer badge-demo" 
+                                                  data-bs-toggle="tooltip" 
+                                                  data-bs-placement="top" 
+                                                  data-bs-html="true"
+                                                  title="<strong>Cliente:</strong> Transportes XYZ<br><strong>Instrucciones:</strong><br>Instrucciones muy largas que incluyen:<br>1. Instalación de GPS<br>2. Configuración de sistema de comunicación<br>3. Capacitación de conductor<br>4. Documentación especial"
+                                                  style="font-size: 0.7rem;">
+                                                <i class="ri-information-line"></i> Info
+                                            </span>
+                                            <div class="mt-1">
+                                                <small class="text-success">
+                                                    <i class="ri-arrow-up-line"></i> <strong>BADGE VISIBLE</strong> (instrucciones largas)
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>2024-01-17</td>
+                                <td><span class="badge bg-primary">Procesando</span></td>
+                                <td>
+                                    <i class="ri-eye-line text-primary"></i>
+                                    <i class="ri-edit-line text-success"></i>
+                                    <i class="ri-delete-bin-line text-danger"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card border-success">
+                    <div class="card-header bg-success text-white">
+                        <h6 class="mb-0">✅ CUÁNDO aparece el badge</h6>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled mb-0">
+                            <li><i class="ri-check-line text-success"></i> Cuando `row.instructions` NO está vacío</li>
+                            <li><i class="ri-check-line text-success"></i> En la columna "Cliente/Vehículo" (tercera columna)</li>
+                            <li><i class="ri-check-line text-success"></i> Debajo de la información del cliente</li>
+                            <li><i class="ri-check-line text-success"></i> Badge azul pequeño con icono de información</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card border-warning">
+                    <div class="card-header bg-warning text-dark">
+                        <h6 class="mb-0">🔍 QUÉ revisar si no se ve</h6>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled mb-0">
+                            <li><i class="ri-search-line text-warning"></i> ¿Hay órdenes con campo `instructions` lleno?</li>
+                            <li><i class="ri-search-line text-warning"></i> ¿Se está enviando `instructions` desde el backend?</li>
+                            <li><i class="ri-search-line text-warning"></i> ¿Los estilos CSS se están cargando?</li>
+                            <li><i class="ri-search-line text-warning"></i> ¿Bootstrap está funcionando correctamente?</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="alert alert-info mt-4">
+            <h6><i class="ri-lightbulb-line"></i> Instrucciones para probar:</h6>
+            <ol>
+                <li>Abre tu aplicación en: <code>http://localhost/master/sales_orders</code></li>
+                <li>Ve a la pestaña "All Orders" (Todas las órdenes)</li>
+                <li>Busca en la <strong>tercera columna</strong> (Cliente/Vehículo)</li>
+                <li>El badge debería aparecer debajo del nombre del cliente</li>
+                <li>Si no aparece, revisa la consola del navegador por errores</li>
+            </ol>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Initialize tooltips
+        document.addEventListener('DOMContentLoaded', function() {
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl, {
+                    html: true,
+                    trigger: 'hover focus',
+                    delay: { show: 500, hide: 100 }
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

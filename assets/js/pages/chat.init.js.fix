@@ -1,0 +1,203 @@
+(function () {
+    var dummyUserImage = "assets/images/users/user-dummy-img.jpg";
+    var dummyMultiUserImage = "assets/images/users/multi-user.jpg";
+    var isreplyMessage = false;
+    
+    // Variables WebSocket
+    var socket;
+    var reconnectInterval = 5000; // 5 segundos
+    var reconnectAttempts = 0;
+    var maxReconnectAttempts = 10;
+    var wsConnected = false;
+    
+    // Inicializar conexión WebSocket
+    function connectWebSocket() {
+        try {
+            var wsUrl = 'ws://' + WS_HOST + ':' + WS_PORT;
+            socket = new WebSocket(wsUrl);
+            
+            // Event handlers
+            socket.onopen = function(e) {
+                console.log('WebSocket connected');
+                wsConnected = true;
+                reconnectAttempts = 0; // Reiniciar contador de intentos
+                
+                // Autenticar al usuario
+                authenticateUser();
+                
+                // Mostrar mensaje de conexión exitosa
+                setTimeout(function() {
+                    showToast('Conectado al servidor de chat', 'success');
+                }, 1000);
+            };
+            
+            socket.onmessage = function(e) {
+                var data = JSON.parse(e.data);
+                handleSocketMessage(data);
+            };
+            
+            socket.onclose = function(e) {
+                wsConnected = false;
+                console.log('WebSocket disconnected');
+                
+                // Intentar reconectar si la conexión se cerró inesperadamente
+                if (reconnectAttempts < maxReconnectAttempts) {
+                    setTimeout(function() {
+                        reconnectAttempts++;
+                        console.log('Intento de reconexión #' + reconnectAttempts);
+                        connectWebSocket();
+                    }, reconnectInterval);
+                    
+                    // Mostrar mensaje de reconexión
+                    showToast('Conexión perdida. Intentando reconectar...', 'warning');
+                } else {
+                    // Mostrar mensaje de error después de muchos intentos
+                    showToast('No se pudo conectar al servidor de chat. Por favor, recarga la página.', 'error');
+                }
+            };
+            
+            socket.onerror = function(e) {
+                console.error('WebSocket error:', e);
+                showToast('Error de conexión al servidor de chat', 'error');
+            };
+        } catch (e) {
+            console.error('Error creating WebSocket:', e);
+            showToast('Error al crear conexión WebSocket', 'error');
+        }
+    }
+    
+    // Autenticar al usuario en el servidor WebSocket
+    function authenticateUser() {
+        if (wsConnected) {
+            socket.send(JSON.stringify({
+                type: 'auth',
+                userId: CURRENT_USER_ID,
+                token: WS_TOKEN
+            }));
+        }
+    }
+    
+    // Manejar mensajes recibidos del servidor WebSocket
+    function handleSocketMessage(data) {
+        console.log('Mensaje recibido:', data);
+        
+        switch (data.type) {
+            case 'auth_success':
+                console.log('Autenticación exitosa');
+                break;
+                
+            case 'auth_error':
+                console.error('Error de autenticación:', data.message);
+                showToast('Error de autenticación: ' + data.message, 'error');
+                break;
+                
+            case 'new_message':
+                handleNewMessage(data.message);
+                break;
+                
+            case 'new_channel_message':
+                handleNewChannelMessage(data.message);
+                break;
+                
+            case 'typing_status':
+                handleTypingStatus(data.from, data.typing);
+                break;
+                
+            case 'read_status':
+                handleReadStatus(data.conversation_id, data.by);
+                break;
+                
+            case 'user_status':
+                handleUserStatus(data.user_id, data.status);
+                break;
+                
+            default:
+                console.log('Tipo de mensaje desconocido:', data.type);
+        }
+    }
+    
+    // Función para mostrar notificaciones toast
+    function showToast(message, type) {
+        var toastClass = 'bg-soft-';
+        switch (type) {
+            case 'success':
+                toastClass += 'success';
+                break;
+            case 'error':
+                toastClass += 'danger';
+                break;
+            case 'warning':
+                toastClass += 'warning';
+                break;
+            default:
+                toastClass += 'info';
+        }
+        
+        var toastHtml = '<div class="toast ' + toastClass + ' fade show" role="alert" aria-live="assertive" aria-atomic="true">' +
+                         '<div class="toast-body py-2 px-3">' +
+                         '<p class="mb-0 text-' + (type === 'error' ? 'danger' : type) + '">' + message + '</p>' +
+                         '</div>' +
+                         '</div>';
+                         
+        var toastContainer = document.querySelector('.toast-container');
+        if (!toastContainer) {
+            toastContainer = document.createElement('div');
+            toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+            document.body.appendChild(toastContainer);
+        }
+        
+        toastContainer.innerHTML = toastHtml;
+        
+        // Auto-eliminar después de 3 segundos
+        setTimeout(function() {
+            var toast = toastContainer.querySelector('.toast');
+            if (toast) {
+                toast.className = toast.className.replace('show', 'hide');
+                setTimeout(function() {
+                    toastContainer.innerHTML = '';
+                }, 500);
+            }
+        }, 3000);
+    }
+    
+    // Variables para seguimiento de conversación actual
+    var currentConversationId = null;
+    var currentChannelId = null;
+    
+    // Resto del código del archivo original...
+
+    // Iniciar WebSocket cuando se carga la página
+    document.addEventListener("DOMContentLoaded", function() {
+        connectWebSocket();
+        loadInitialData();
+    });
+
+    // Función para enviar mensajes WebSocket
+    function sendWebSocketMessage(message) {
+        if (wsConnected && socket && socket.readyState === WebSocket.OPEN) {
+            socket.send(JSON.stringify(message));
+            return true;
+        } else {
+            console.error("No hay conexión WebSocket activa");
+            return false;
+        }
+    }
+})();
+
+// Función para buscar mensajes
+function searchMessages() {
+    var searchInput, searchFilter, searchUL, searchLI, a, i, txtValue;
+    searchInput = document.getElementById("searchMessage");
+    searchFilter = searchInput.value.toUpperCase();
+    searchUL = document.getElementById("users-conversation");
+    searchLI = searchUL.getElementsByTagName("li");
+    Array.from(searchLI).forEach(function (search) {
+        a = search.getElementsByTagName("p")[0] ? search.getElementsByTagName("p")[0] : '';
+        txtValue = a.textContent || a.innerText ? a.textContent || a.innerText : '';
+        if (txtValue.toUpperCase().indexOf(searchFilter) > -1) {
+            search.style.display = "";
+        } else {
+            search.style.display = "none";
+        }
+    });
+}
