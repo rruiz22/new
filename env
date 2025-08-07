@@ -22,13 +22,13 @@ SMTP_PASS=your_app_password_here
 SMTP_PORT=587
 SMTP_CRYPTO=tls
 EMAIL_FROM=your_email@gmail.com
-EMAIL_FROM_NAME=My Detail Area Portal
+EMAIL_FROM_NAME="My Detail Area Portal"
 
 #--------------------------------------------------------------------
 # Database Configuration
 #--------------------------------------------------------------------
 DATABASE_DEFAULT_HOSTNAME=localhost
-DATABASE_DEFAULT_DATABASE=master
+DATABASE_DEFAULT_DATABASE=mda
 DATABASE_DEFAULT_USERNAME=root
 DATABASE_DEFAULT_PASSWORD=
 DATABASE_DEFAULT_DBDRIVER=MySQLi
@@ -63,7 +63,7 @@ security.samesite='Lax'
 session.driver='CodeIgniter\Session\Handlers\FileHandler'
 session.cookieName='ci_session'
 session.expiration=7200
-session.savePath=C:\xampp\htdocs\mda\writable\session
+session.savePath="C:\xampp\htdocs\mda_nuevo\writable\session"
 session.matchIP=false
 session.timeToUpdate=300
 session.regenerateDestroy=false

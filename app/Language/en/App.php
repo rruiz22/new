@@ -2130,7 +2130,7 @@ return [
     'vehicles_per_page' => 'vehicles per page',
     'to' => 'to',
     'of' => 'of',
-    'vehicles' => 'vehicles',
+    'vehicles' => 'Vehicles',
     'no_vehicles_found' => 'No vehicles found',
     'filtered_from' => 'filtered from',
     'total_vehicles' => 'total vehicles',

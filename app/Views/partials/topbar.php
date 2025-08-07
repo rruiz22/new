@@ -18,7 +18,7 @@
                             <span style="font-size: 14px; font-weight: 600; color: #ffffff;">MDA</span>
                         </span>
                         <span class="logo-lg">
-                            <span style="font-size: 16px; font-weight: 600; color: #ffffff;">MY Detail Area</span>
+                            <span style="font-size: 16px; font-weight: 600; color: #ffffff;">My Detail Area</span>
                         </span>
                     </a>
                 </div>
