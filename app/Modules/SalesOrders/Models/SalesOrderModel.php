@@ -13,6 +13,7 @@ class SalesOrderModel extends Model
     protected $useSoftDeletes = false; // No usar softDeletes, usamos un campo 'deleted' en su lugar
     protected $protectFields = true;
     protected $allowedFields = [
+        'order_number',
         'client_id',
         'contact_id',
         'salesperson_id',
@@ -74,7 +75,7 @@ class SalesOrderModel extends Model
 
     // Callbacks
     protected $allowCallbacks = true;
-    protected $beforeInsert = ['setCreatedBy'];
+    protected $beforeInsert = ['generateOrderNumber', 'setCreatedBy'];
     protected $afterInsert = [];
     protected $beforeUpdate = ['setUpdatedBy'];
     protected $afterUpdate = [];
@@ -98,6 +99,44 @@ class SalesOrderModel extends Model
         // Si hay un usuario logueado, establecer updated_by
         if (session()->has('user_id')) {
             $data['data']['updated_by'] = session()->get('user_id');
+        }
+        
+        return $data;
+    }
+
+    protected function generateOrderNumber(array $data)
+    {
+        // Solo generar si no se proporciona order_number
+        if (empty($data['data']['order_number'])) {
+            $prefix = 'SAL-';
+            $attempts = 0;
+            $maxAttempts = 100;
+            
+            do {
+                // Generate order number based on current timestamp and random number
+                $timestamp = date('ymdHis');
+                $random = str_pad(rand(1, 999), 3, '0', STR_PAD_LEFT);
+                $orderNumber = $prefix . $timestamp . $random;
+                
+                // Check if this order number already exists
+                $existing = $this->where('order_number', $orderNumber)->first();
+                
+                if (!$existing) {
+                    $data['data']['order_number'] = $orderNumber;
+                    return $data;
+                }
+                
+                $attempts++;
+                
+                // Add small delay to ensure different timestamp
+                usleep(10000); // 10ms
+                
+            } while ($attempts < $maxAttempts);
+            
+            // Fallback: use timestamp with microseconds
+            $fallback = $prefix . date('ymdHis') . substr(microtime(), 2, 6);
+            log_message('warning', 'Order number generation reached max attempts, using fallback: ' . $fallback);
+            $data['data']['order_number'] = $fallback;
         }
         
         return $data;
