@@ -506,17 +506,51 @@ class ContactController extends BaseController
                                   ->where('type', 'email_password')
                                   ->first();
         
-        if ($identity && $identity->secret !== $newEmail) {
-            $identityModel->update($identity->id, ['secret' => $newEmail]);
+        log_message('debug', 'Current identity: ' . json_encode($identity));
+        log_message('debug', 'New email: ' . $newEmail);
+        
+        if ($identity) {
+            // Access identity properties correctly (it's an object)
+            $currentEmail = $identity->secret ?? null;
+            log_message('debug', 'Current email from identity: ' . $currentEmail);
+            
+            if ($currentEmail !== $newEmail) {
+                log_message('debug', 'Updating email from ' . $currentEmail . ' to ' . $newEmail);
+                $identityModel->update($identity->id, ['secret' => $newEmail]);
+                log_message('debug', 'Email updated successfully in auth_identities');
+            } else {
+                log_message('debug', 'Email unchanged, no update needed');
+            }
+        } else {
+            log_message('debug', 'No identity found, creating new one');
+            // Create new identity if it doesn't exist
+            $identityModel->insert([
+                'user_id' => $id,
+                'type' => 'email_password',
+                'name' => null,
+                'secret' => $newEmail,
+                'secret2' => null, // No password initially
+                'expires' => null,
+                'force_reset' => 0,
+            ]);
+            log_message('debug', 'New identity created with email: ' . $newEmail);
         }
         
         // Handle password change if requested
         if ($this->request->getPost('change_password')) {
-            if ($identity) {
-                $identityModel->update($identity->id, [
+            // Get the identity again to ensure we have the latest version
+            $currentIdentity = $identityModel->where('user_id', $id)
+                                            ->where('type', 'email_password')
+                                            ->first();
+            
+            if ($currentIdentity) {
+                log_message('debug', 'Updating password for existing identity');
+                $identityModel->update($currentIdentity->id, [
                     'secret2' => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT)
                 ]);
+                log_message('debug', 'Password updated successfully');
             } else {
+                log_message('debug', 'Creating new identity with password');
                 // Create new identity if it doesn't exist
                 $identityModel->insert([
                     'user_id' => $id,
@@ -527,6 +561,7 @@ class ContactController extends BaseController
                     'expires' => null,
                     'force_reset' => 0,
                 ]);
+                log_message('debug', 'New identity with password created');
             }
         }
         
@@ -651,10 +686,16 @@ class ContactController extends BaseController
                 return $this->response->setJSON([]);
             }
             
-            $contacts = $this->contactModel->where('client_id', $clientId)
-                                          ->where('status', 'active')
-                                          ->orderBy('name', 'ASC')
-                                          ->findAll();
+            // Get users from users table instead of contacts table
+            $contacts = $this->userModel->select('users.id, users.first_name, users.last_name, 
+                                                CONCAT(users.first_name, " ", users.last_name) as name,
+                                                users.phone, auth_identities.secret as email')
+                                        ->join('auth_identities', 'auth_identities.user_id = users.id AND auth_identities.type = "email_password"', 'left')
+                                        ->where('users.client_id', $clientId)
+                                        ->where('users.user_type', 'client')
+                                        ->where('users.active', 1)
+                                        ->orderBy('users.first_name', 'ASC')
+                                        ->findAll();
             
             log_message('info', 'Found ' . count($contacts) . ' active contacts for client ' . $clientId . ' by session user');
             

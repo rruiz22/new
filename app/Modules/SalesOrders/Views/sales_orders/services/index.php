@@ -399,7 +399,8 @@ $(document).ready(function() {
     });
 
     // Refresh table
-    $('#refreshTable').on('click', function() {
+    $('#refreshTable').on('click', function(e) {
+        e.preventDefault();
         refreshTable();
     });
 
@@ -625,16 +626,16 @@ $(document).ready(function() {
                 info: "#17a2b8",
                 warning: "#ffc107"
             };
-            
+
             Toastify({
                 text: message,
                 duration: 3000,
                 gravity: "top",
                 position: "right",
-                backgroundColor: colors[type] || colors.info,
+                style: { background: colors[type] || colors.info },
             }).showToast();
         } else {
-
+            // no-op
         }
     }
 });

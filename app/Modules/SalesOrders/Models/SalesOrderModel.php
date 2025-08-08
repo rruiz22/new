@@ -87,8 +87,9 @@ class SalesOrderModel extends Model
     protected function setCreatedBy(array $data)
     {
         // Si hay un usuario logueado, establecer created_by
-        if (session()->has('user_id')) {
-            $data['data']['created_by'] = session()->get('user_id');
+        $userId = auth()->id() ?? session()->get('user_id');
+        if ($userId) {
+            $data['data']['created_by'] = $userId;
         }
         
         return $data;
@@ -97,8 +98,9 @@ class SalesOrderModel extends Model
     protected function setUpdatedBy(array $data)
     {
         // Si hay un usuario logueado, establecer updated_by
-        if (session()->has('user_id')) {
-            $data['data']['updated_by'] = session()->get('user_id');
+        $userId = auth()->id() ?? session()->get('user_id');
+        if ($userId) {
+            $data['data']['updated_by'] = $userId;
         }
         
         return $data;
@@ -264,7 +266,7 @@ class SalesOrderModel extends Model
         // Update the deleted field to 1
         $data = [
             'deleted' => 1,
-            'updated_by' => session()->get('user_id') ?? null,
+            'updated_by' => auth()->id() ?? session()->get('user_id') ?? null,
             'updated_at' => date('Y-m-d H:i:s')
         ];
         
@@ -278,7 +280,7 @@ class SalesOrderModel extends Model
     {
         $data = [
             'deleted' => 0,
-            'updated_by' => session()->get('user_id') ?? null,
+            'updated_by' => auth()->id() ?? session()->get('user_id') ?? null,
             'updated_at' => date('Y-m-d H:i:s')
         ];
         
@@ -353,7 +355,7 @@ class SalesOrderModel extends Model
 
         $data = [
             'deleted' => 0,
-            'updated_by' => session()->get('user_id') ?? null,
+            'updated_by' => auth()->id() ?? session()->get('user_id') ?? null,
             'updated_at' => date('Y-m-d H:i:s')
         ];
 
@@ -373,7 +375,7 @@ class SalesOrderModel extends Model
 
         $data = [
             'deleted' => 1,
-            'updated_by' => session()->get('user_id') ?? null,
+            'updated_by' => auth()->id() ?? session()->get('user_id') ?? null,
             'updated_at' => date('Y-m-d H:i:s')
         ];
 

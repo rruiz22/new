@@ -106,6 +106,26 @@ class SalesOrderServiceModel extends Model
         
         // Registrar el cambio en el historial
         $db = \Config\Database::connect();
+        // Evitar error si la tabla aún no existe
+        if (method_exists($db, 'tableExists')) {
+            if (!$db->tableExists('sales_orders_services_history')) {
+                return $data;
+            }
+        } else {
+            // Fallback para conexiones sin tableExists: intentar y capturar excepción
+            try {
+                $db->table('sales_orders_services_history')->insert([
+                    'service_id' => $serviceId,
+                    'changes' => $changes,
+                    'changed_by' => $userId,
+                    'changed_at' => date('Y-m-d H:i:s')
+                ]);
+                return $data;
+            } catch (\Throwable $e) {
+                return $data;
+            }
+        }
+
         $db->table('sales_orders_services_history')->insert([
             'service_id' => $serviceId,
             'changes' => $changes,
@@ -119,17 +139,30 @@ class SalesOrderServiceModel extends Model
     protected function logToHistory($serviceId, $action, $data)
     {
         $db = \Config\Database::connect();
-        
+
+        // Evitar error si la tabla aún no existe
+        if (method_exists($db, 'tableExists') && !$db->tableExists('sales_orders_services_history')) {
+            return;
+        }
+
+        $changesPayload = [
+            'action' => $action,
+            'old' => isset($data['old']) ? $data['old'] : null,
+            'new' => isset($data['new']) ? $data['new'] : null,
+        ];
+
         $historyData = [
             'service_id' => $serviceId,
-            'action' => $action,
-            'old_data' => isset($data['old']) ? json_encode($data['old']) : null,
-            'new_data' => isset($data['new']) ? json_encode($data['new']) : null,
+            'changes' => json_encode($changesPayload),
             'changed_by' => session()->get('user_id'),
             'changed_at' => date('Y-m-d H:i:s')
         ];
-        
-        $db->table('sales_orders_services_history')->insert($historyData);
+
+        try {
+            $db->table('sales_orders_services_history')->insert($historyData);
+        } catch (\Throwable $e) {
+            // Silenciar si la tabla no existe u otro error de historial
+        }
     }
 
     // Get active services

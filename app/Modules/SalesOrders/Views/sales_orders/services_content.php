@@ -496,7 +496,7 @@ waitForDataTables(function() {
 
             servicesTable = $('#services-table').DataTable({
                 processing: true,
-                serverSide: true,
+                serverSide: false,
                 responsive: false,
                 scrollX: true,
                 scrollCollapse: false,
@@ -513,28 +513,17 @@ waitForDataTables(function() {
                 ajax: {
                     url: '<?= base_url('sales_orders_services/list_data') ?>',
                     type: 'POST',
+                    dataSrc: function(json) { return json.data || []; },
                     data: function(d) {
-                        // Add custom filters
+                        // Custom filters (optional server-side usage)
                         d.client_filter = $('#servicesClientFilter').val() || '';
                         d.status_filter = $('#servicesStatusFilter').val() || '';
                         d.show_in_orders_filter = $('#servicesOrdersFilter').val() || '';
-
-                        // Add CSRF token
                         d.<?= csrf_token() ?> = '<?= csrf_hash() ?>';
                     },
                     error: function(xhr, error, thrown) {
                         console.error('Error loading services data:', error, xhr.responseText);
-                        let errorMessage = '<?= lang('App.error_loading_data') ?>';
-
-                        if (xhr.status === 403) {
-                            errorMessage = '<?= lang('App.access_denied') ?>';
-                        } else if (xhr.status === 500) {
-                            errorMessage = '<?= lang('App.server_error') ?>';
-                        } else if (xhr.status === 404) {
-                            errorMessage = '<?= lang('App.service_not_found') ?>';
-                        }
-
-                        showToast('error', errorMessage);
+                        showToast('error', '<?= lang('App.error_loading_data') ?>');
                     }
                 },
                 columns: [
@@ -574,9 +563,9 @@ waitForDataTables(function() {
                         }
                     },
                     {
-                        data: 'show_in_sales_orders',
+                        data: 'show_in_orders',
                         render: function(data, type, row) {
-                            if (data == 1) {
+                            if (parseInt(data, 10) === 1) {
                                 return '<span class="badge bg-success"><?= lang('App.yes') ?></span>';
                             } else {
                                 return '<span class="badge bg-secondary"><?= lang('App.no') ?></span>';
@@ -819,8 +808,16 @@ waitForDataTables(function() {
     });
 
     window.editService = function(serviceId) {
-        // Redirect to services management page with edit parameter
-        window.location.href = `<?= base_url('sales_orders_services?edit=') ?>${serviceId}`;
+        // Load modal form via AJAX and stay on this tab
+        $.get('<?= base_url('sales_orders_services/modal_form') ?>', { id: serviceId })
+            .done(function(html) {
+                const $modal = $('#serviceModal');
+                $modal.find('.modal-content').html(html);
+                $modal.modal('show');
+            })
+            .fail(function() {
+                showToast('error', '<?= lang('App.error_loading_data') ?>');
+            });
     };
 
     window.deleteService = function(serviceId) {
@@ -887,25 +884,17 @@ waitForDataTables(function() {
     // Toast function
     // Toast function
 function showToast(type, message) {
-        if (typeof Toastify !== 'undefined') {
-            const colors = {
-                success: "#28a745",
-                error: "#dc3545", 
-                info: "#17a2b8",
-                warning: "#ffc107"
-            };
-            
-                    Toastify({
+    if (typeof Toastify !== 'undefined') {
+        const colors = { success: "#28a745", error: "#dc3545", info: "#17a2b8", warning: "#ffc107" };
+        Toastify({
             text: message,
             duration: 3000,
             gravity: "top",
             position: "right",
-            backgroundColor: colors[type] || colors.info,
+            style: { background: colors[type] || colors.info },
         }).showToast();
-    } else {
-
     }
-    }
+}
 
     // Handle window resize for horizontal scroll
     $(window).on('resize', function() {
@@ -938,7 +927,7 @@ function showToast(type, message) {
     setTimeout(() => {
         loadClientsForFilter();
         initializeServicesDataTable();
-    }, 500);
+    }, 200);
 
     // Additional Feather icons initialization
     setTimeout(() => {
@@ -946,5 +935,34 @@ function showToast(type, message) {
             feather.replace();
         }
     }, 1000);
+    // Intercept modal form submit to save via AJAX and reload the table
+    $(document).on('submit', '#serviceForm', function(e) {
+        e.preventDefault();
+        const form = this;
+        const formData = new FormData(form);
+        $.ajax({
+            url: $(form).attr('action') || '<?= base_url('sales_orders_services/store') ?>',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            success: function(resp) {
+                if (resp && resp.success) {
+                    $('#serviceModal').modal('hide');
+                    if (servicesTable) {
+                        servicesTable.ajax.reload(null, false);
+                    }
+                    showToast('success', resp.message || '<?= lang('App.saved_successfully') ?>');
+                } else {
+                    showToast('error', (resp && resp.message) || '<?= lang('App.error_saving') ?>');
+                }
+            },
+            error: function() {
+                showToast('error', '<?= lang('App.error_saving') ?>');
+            }
+        });
+    });
+
 }); // End of waitForDataTables
 </script>

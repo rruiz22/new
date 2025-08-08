@@ -1749,6 +1749,7 @@ return [
     
     // Service Management
     'add_service' => 'Add Service',
+    'show_in_orders' => 'Show in Orders',
     'service_name' => 'Service Name',
     'category' => 'Category',
     'exterior' => 'Exterior',
@@ -2206,4 +2207,26 @@ return [
     'open_google_drive_folder' => 'Open Google Drive Folder',
     'upload_first_photos' => 'Upload First Photos',
     'no_photos_found_for_vin' => 'No photos found for VIN',
+    
+    // SMS System Translations
+    'sms_conversation' => 'SMS Conversation',
+    'loading_contact_info' => 'Loading contact information',
+    'connected' => 'Connected',
+    'close' => 'Close',
+    'loading_conversation' => 'Loading conversation',
+    'loading_conversation_history' => 'Loading conversation history',
+    'contact_is_typing' => 'Contact is typing',
+    'quick_templates' => 'Quick Templates',
+    'choose_template' => 'Choose a template',
+    'message_info' => 'Message Info',
+    'characters' => 'characters',
+    'type_message_here' => 'Type your message here',
+    'attachments_coming_soon' => 'Attachments (Coming Soon)',
+    'from' => 'From',
+    'loading' => 'Loading',
+    'last_updated' => 'Last updated',
+    'just_now' => 'Just now',
+    'refresh' => 'Refresh',
+    'no_messages_yet' => 'No messages yet',
+    'start_conversation' => 'Start the conversation',
 ]; 

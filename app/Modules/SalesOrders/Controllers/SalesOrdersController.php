@@ -883,7 +883,7 @@ class SalesOrdersController extends BaseController
             'status' => $this->request->getPost('status'),
             'instructions' => $this->request->getPost('instructions'),
             'notes' => $this->request->getPost('notes'),
-            'updated_by' => session()->get('user_id') ?? 1,
+            'updated_by' => auth()->id() ?? session()->get('user_id') ?? 1,
         ];
 
         log_message('info', 'Prepared data array: ' . json_encode($data));
@@ -918,7 +918,7 @@ class SalesOrdersController extends BaseController
                 log_message('info', 'Order updated successfully: ' . $orderId);
                     // Log specific field changes
                     try {
-                        $userId = session()->get('user_id') ?? 1;
+                        $userId = auth()->id() ?? session()->get('user_id') ?? 1;
                         $this->logFieldChanges($orderId, $userId, $currentOrder, $data);
                     } catch (\Exception $e) {
                         log_message('error', "Error logging activity: " . $e->getMessage());
@@ -947,7 +947,7 @@ class SalesOrdersController extends BaseController
             }
         } else {
                 // Crear nueva orden
-                $data['created_by'] = session()->get('user_id') ?? 1;
+                $data['created_by'] = auth()->id() ?? session()->get('user_id') ?? 1;
                 $data['created_at'] = date('Y-m-d H:i:s');
                 
                 // Generate unique order number
@@ -960,7 +960,7 @@ class SalesOrdersController extends BaseController
                 if ($newOrderId) {
                     // Log the order creation activity
                     try {
-                        $this->activityModel->logOrderCreated($newOrderId, session()->get('user_id') ?? 1);
+                        $this->activityModel->logOrderCreated($newOrderId, auth()->id() ?? session()->get('user_id') ?? 1);
                     } catch (\Exception $e) {
                         log_message('error', "Error logging activity: " . $e->getMessage());
                     }
@@ -1138,8 +1138,8 @@ class SalesOrdersController extends BaseController
                     'phone' => $clientPhone,
                     'email' => $clientEmail,
                     'status' => 'active',
-                    'created_by' => session()->get('user_id') ?? 1,
-                    'updated_by' => session()->get('user_id') ?? 1,
+                    'created_by' => auth()->id() ?? session()->get('user_id') ?? 1,
+                    'updated_by' => auth()->id() ?? session()->get('user_id') ?? 1,
                 ];
                 $clientId = $clientModel->insert($clientData);
                 
@@ -1166,8 +1166,8 @@ class SalesOrdersController extends BaseController
                         'service_name' => $serviceName,
                         'service_price' => 0, // Default price
                         'service_description' => '',
-                        'created_by' => session()->get('user_id') ?? 1,
-                        'updated_by' => session()->get('user_id') ?? 1,
+                        'created_by' => auth()->id() ?? session()->get('user_id') ?? 1,
+                        'updated_by' => auth()->id() ?? session()->get('user_id') ?? 1,
                     ];
                     $serviceId = $serviceModel->insert($serviceData);
                 }
@@ -1200,8 +1200,8 @@ class SalesOrdersController extends BaseController
                 'status' => 'pending', // Default status
                 'instructions' => $this->request->getPost('instructions'),
                 'notes' => $this->request->getPost('notes'),
-                'created_by' => session()->get('user_id') ?? 1,
-                'updated_by' => session()->get('user_id') ?? 1,
+                'created_by' => auth()->id() ?? session()->get('user_id') ?? 1,
+                'updated_by' => auth()->id() ?? session()->get('user_id') ?? 1,
             ];
 
             $orderId = $this->salesOrderModel->insert($orderData);
@@ -1209,7 +1209,7 @@ class SalesOrdersController extends BaseController
             if ($orderId) {
                 // Log the order creation activity
                 try {
-                    $this->activityModel->logOrderCreated($orderId, session()->get('user_id') ?? 1);
+                    $this->activityModel->logOrderCreated($orderId, auth()->id() ?? session()->get('user_id') ?? 1);
                 } catch (\Exception $e) {
                     log_message('error', "Error logging activity: " . $e->getMessage());
                 }
@@ -1904,7 +1904,7 @@ class SalesOrdersController extends BaseController
         }
 
         $oldStatus = $currentOrder['status'];
-        $userId = session()->get('user_id') ?? 1;
+        $userId = auth()->id() ?? session()->get('user_id') ?? 1;
         $currentTimestamp = date('Y-m-d H:i:s');
 
         $data = [
@@ -1975,8 +1975,8 @@ class SalesOrdersController extends BaseController
         }
 
         // Get form data
-        $toEmail = $this->request->getPost('to');
-        $ccEmail = $this->request->getPost('cc');
+        $toEmail = $this->request->getPost('to_email');
+        $ccEmail = $this->request->getPost('cc_email');
         $subject = $this->request->getPost('subject');
         $message = $this->request->getPost('message');
         $includeDetails = $this->request->getPost('include_details') === '1';
@@ -2047,7 +2047,7 @@ class SalesOrdersController extends BaseController
             // Send email
             if ($email->send()) {
             // Log the email activity
-            $userId = session()->get('user_id') ?? 1;
+            $userId = auth()->id() ?? session()->get('user_id') ?? 1;
                 $this->activityModel->logEmailSent($id, $userId, $toEmail, $subject, $message, $ccEmail);
                 
                 return $this->response->setJSON([
@@ -2066,7 +2066,7 @@ class SalesOrdersController extends BaseController
             log_message('error', 'Email Error: ' . $e->getMessage());
             
             // Log the email activity (simulated for demo)
-            $userId = session()->get('user_id') ?? 1;
+            $userId = auth()->id() ?? session()->get('user_id') ?? 1;
             $this->activityModel->logEmailSent($id, $userId, $toEmail, $subject, $message, $ccEmail);
             
             return $this->response->setJSON([
@@ -2145,7 +2145,7 @@ class SalesOrdersController extends BaseController
             );
             
             // Log the SMS activity
-            $userId = session()->get('user_id') ?? 1;
+            $userId = auth()->id() ?? session()->get('user_id') ?? 1;
             $this->activityModel->logSMSSent($id, $userId, $phone, $message);
 
             return $this->response->setJSON([
@@ -2159,7 +2159,7 @@ class SalesOrdersController extends BaseController
             log_message('error', 'Twilio SMS Error: ' . $e->getMessage());
             
             // Log the SMS activity (simulated)
-            $userId = session()->get('user_id') ?? 1;
+            $userId = auth()->id() ?? session()->get('user_id') ?? 1;
             $this->activityModel->logSMSSent($id, $userId, $phone, $message);
 
             return $this->response->setJSON([
@@ -2184,18 +2184,50 @@ class SalesOrdersController extends BaseController
 
         $alertType = $this->request->getPost('alert_type');
         $message = $this->request->getPost('message');
-        $recipients = $this->request->getPost('recipients'); // array
+        
+        // Validate required fields
+        if (!$alertType || !$message) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Alert type and message are required'
+            ]);
+        }
+
+        // Get recipients - if not provided, use the salesperson assigned to the order
+        $recipients = $this->request->getPost('recipients');
+        
+        if (!$recipients) {
+            // Get salesperson information for this order
+            $orderWithSalesperson = $this->salesOrderModel->select('sales_orders.*, 
+                                                                   CONCAT(users.first_name, " ", users.last_name) as salesperson_name,
+                                                                   auth_identities.secret as salesperson_email')
+                                                          ->join('users', 'users.id = sales_orders.contact_id', 'left')
+                                                          ->join('auth_identities', 'auth_identities.user_id = users.id AND auth_identities.type = "email_password"', 'left')
+                                                          ->where('sales_orders.id', $id)
+                                                          ->first();
+            
+            if ($orderWithSalesperson && !empty($orderWithSalesperson['salesperson_name'])) {
+                $recipients = [$orderWithSalesperson['salesperson_name']];
+            } else {
+                $recipients = ['Assigned Contact'];
+            }
+        }
+        
+        // Ensure recipients is an array
+        if (!is_array($recipients)) {
+            $recipients = [$recipients];
+        }
 
         // Here you would integrate with your notification system
         // For now, we'll just simulate the alert sending
         
-        // Log the alert activity
-        $recipientsList = implode(', ', $recipients);
-        $this->logActivity($id, 'alert_sent', "Alert ({$alertType}) sent to {$recipientsList}: {$message}");
+        // Log the alert activity using the activity model
+        $userId = auth()->id() ?? session()->get('user_id') ?? 1; // Default to system user if no auth
+        $this->activityModel->logAlertSent($id, $userId, $alertType, $message, $recipients);
 
         return $this->response->setJSON([
             'success' => true,
-            'message' => 'Alert sent successfully'
+            'message' => 'Alert sent successfully to ' . implode(', ', $recipients)
         ]);
     }
 
@@ -2859,7 +2891,7 @@ class SalesOrdersController extends BaseController
      */
     private function createSampleActivities($orderId)
     {
-        $userId = session()->get('user_id') ?? 1;
+        $userId = auth()->id() ?? session()->get('user_id') ?? 1;
         
         // Create order activity (oldest)
         $this->activityModel->insert([
@@ -3144,11 +3176,12 @@ class SalesOrdersController extends BaseController
     /**
      * Log activity for an order
      */
-    private function logActivity($orderId, $type, $message, $userId = null)
+    private function logActivity($orderId, $type, $message, $metadata = null, $userId = null)
     {
         // Here you would insert into an order_activities table
         // For demonstration, we're just logging to system log
-        log_message('info', "Order {$orderId} - {$type}: {$message}");
+        $metadataLog = $metadata ? ' | Metadata: ' . json_encode($metadata) : '';
+        log_message('info', "Order {$orderId} - {$type}: {$message}{$metadataLog}");
         
         // In a real implementation, you would do something like:
         /*
@@ -3157,6 +3190,7 @@ class SalesOrdersController extends BaseController
             'order_id' => $orderId,
             'type' => $type,
             'message' => $message,
+            'metadata' => $metadata ? json_encode($metadata) : null,
             'user_id' => $userId ?? session()->get('user_id'),
             'created_at' => date('Y-m-d H:i:s')
         ]);
@@ -4298,7 +4332,7 @@ class SalesOrdersController extends BaseController
             }
             
             // Log the PDF download activity
-            $userId = session()->get('user_id') ?? 1;
+            $userId = auth()->id() ?? session()->get('user_id') ?? 1;
             $this->activityModel->insert([
                 'order_id' => $id,
                 'user_id' => $userId,
@@ -4330,7 +4364,7 @@ class SalesOrdersController extends BaseController
             log_message('error', 'PDF generation stack trace: ' . $e->getTraceAsString());
             
             // Log the error activity if PDF generation fails
-            $userId = session()->get('user_id') ?? 1;
+            $userId = auth()->id() ?? session()->get('user_id') ?? 1;
             try {
                 $this->activityModel->insert([
                     'order_id' => $id,
@@ -6694,7 +6728,7 @@ class SalesOrdersController extends BaseController
             $followerModel = new \Modules\SalesOrders\Models\SalesOrderFollowerModel();
             
             // Try different methods to get current user ID
-            $currentUserId = session()->get('user_id');
+            $currentUserId = auth()->id() ?? session()->get('user_id');
             if (!$currentUserId) {
                 $currentUserId = auth()->id();
             }
@@ -6774,7 +6808,7 @@ class SalesOrdersController extends BaseController
             $followerModel = new \Modules\SalesOrders\Models\SalesOrderFollowerModel();
             
             // Try different methods to get current user ID
-            $currentUserId = session()->get('user_id');
+            $currentUserId = auth()->id() ?? session()->get('user_id');
             if (!$currentUserId) {
                 $currentUserId = auth()->id();
             }

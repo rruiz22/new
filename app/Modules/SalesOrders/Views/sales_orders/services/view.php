@@ -250,9 +250,12 @@ function toggleStatus(serviceId, action) {
                     if (response.status === 'success') {
                         Swal.close(); // Cerrar el loading
                         showToast('success', response.message);
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1000);
+                        // Reload only Services table if present, else fallback
+                        if (window.$ && $.fn.DataTable && $('#services-table').length && $.fn.DataTable.isDataTable('#services-table')) {
+                            $('#services-table').DataTable().ajax.reload(null, false);
+                        } else {
+                            setTimeout(() => { location.reload(); }, 500);
+                        }
                     } else {
                         Swal.fire({
                             title: 'Error',
@@ -297,9 +300,11 @@ function toggleShowInOrders(serviceId, showInOrders) {
                     if (response.status === 'success') {
                         Swal.close(); // Cerrar el loading
                         showToast('success', response.message);
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1000);
+                        if (window.$ && $.fn.DataTable && $('#services-table').length && $.fn.DataTable.isDataTable('#services-table')) {
+                            $('#services-table').DataTable().ajax.reload(null, false);
+                        } else {
+                            setTimeout(() => { location.reload(); }, 500);
+                        }
                     } else {
                         Swal.fire({
                             title: 'Error',
@@ -381,20 +386,20 @@ function showToast(type, message) {
     if (typeof Toastify !== 'undefined') {
         const colors = {
             success: "#28a745",
-            error: "#dc3545", 
+            error: "#dc3545",
             info: "#17a2b8",
             warning: "#ffc107"
         };
-        
+
         Toastify({
             text: message,
             duration: 3000,
             gravity: "top",
             position: "right",
-            backgroundColor: colors[type] || colors.info,
+            style: { background: colors[type] || colors.info },
         }).showToast();
     } else {
-
+        // no-op
     }
 }
 
@@ -439,10 +444,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (response.success) {
                     $('#serviceModal').modal('hide');
                     showToast('success', response.message || 'Service updated successfully');
-                    // Reload the page to show updated data
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1000);
+                    // Reload table on parent tab if exists, otherwise fallback
+                    if (window.$ && $.fn.DataTable && $('#services-table').length && $.fn.DataTable.isDataTable('#services-table')) {
+                        $('#services-table').DataTable().ajax.reload(null, false);
+                    } else {
+                        setTimeout(() => { location.reload(); }, 500);
+                    }
                 } else {
                     showToast('error', response.message || 'Error saving service');
                 }

@@ -2479,10 +2479,15 @@
                     </a>
                     <?php endif; ?>
 
-                    <!-- SMS Action -->
+                    <!-- Enhanced SMS Action -->
                     <?php if ($order['salesperson_phone']): ?>
-                    <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#smsModal" onclick="closeQuickActionsModal()">
-                        <i data-feather="message-square" class="icon-sm me-2"></i>
+                    <button class="btn btn-outline-success" onclick="openEnhancedSMSModal({
+                        order_id: <?= $order['id'] ?>,
+                        module: 'sales_orders',
+                        phone: '<?= $order['salesperson_phone'] ?>',
+                        contact_name: '<?= addslashes($order['salesperson_name'] ?? 'Contact') ?>'
+                    }); closeQuickActionsModal()">
+                        <i data-feather="message-circle" class="icon-sm me-2"></i>
                         Send SMS
                     </button>
                     <?php endif; ?>
@@ -3167,6 +3172,25 @@ function createActivityHtml(activity) {
             tooltipContent = `↳ Complete Reply:\n${metadata.comment}`;
             tooltipAttributes = `data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="false" title="${escapeForTooltipText(tooltipContent)}" class="activity-with-tooltip"`;
         }
+        // For Alert activities - show complete alert information
+        else if (activity.type === 'alert_sent' && metadata.message) {
+            const alertTypeEmojis = {
+                'urgent': '🔴',
+                'priority': '🟡', 
+                'info': '🔵',
+                'reminder': '⏰'
+            };
+            const alertEmoji = alertTypeEmojis[metadata.alert_type] || '🔔';
+            const recipientsList = metadata.recipients ? metadata.recipients.join(', ') : 'Unknown';
+            
+            tooltipContent = `${alertEmoji} Alert Details:\nType: ${metadata.alert_type.toUpperCase()}\nTo: ${recipientsList}\n\nMessage:\n${metadata.message}`;
+            tooltipAttributes = `data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="false" title="${escapeForTooltipText(tooltipContent)}" class="activity-with-tooltip"`;
+        }
+        // For SMS Received activities - show complete message
+        else if (activity.type === 'sms_received' && metadata.message) {
+            tooltipContent = `📱 SMS Reply:\nFrom: ${metadata.phone}\n\nMessage:\n${metadata.message}`;
+            tooltipAttributes = `data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="false" title="${escapeForTooltipText(tooltipContent)}" class="activity-with-tooltip"`;
+        }
         // For Internal Note activities - show complete note content
         else if ((activity.type === 'internal_note_added' || activity.type === 'internal_note_updated' || activity.type === 'internal_note_deleted') && metadata.full_content) {
             const noteIcon = activity.type === 'internal_note_added' ? '📝' : activity.type === 'internal_note_updated' ? '✏️' : '🗑️';
@@ -3216,6 +3240,8 @@ function getActivityIcon(type) {
         'email_sent': 'mail',
         'sms_sent': 'message-square',
         'notification_sent': 'bell',
+        'alert_sent': 'bell',
+        'sms_received': 'smartphone',
         'comment_added': 'message-circle',
         'comment_reply_added': 'corner-down-right',
         'order_created': 'plus-circle',
@@ -3236,6 +3262,8 @@ function getActivityColor(type) {
         'email_sent': 'info',
         'sms_sent': 'success',
         'notification_sent': 'warning',
+        'alert_sent': 'warning',
+        'sms_received': 'info',
         'comment_added': 'secondary',
         'comment_reply_added': 'secondary',
         'order_created': 'success',
@@ -4863,63 +4891,14 @@ function updateStatus() {
     console.log('🔄 Updating status:', { orderId, newStatus, currentStatus: orderData.status });
 
     if (!newStatus) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'No Status Selected',
-            text: 'Please select a status to update'
-        });
+        showToast('warning', 'Please select a status to update');
         return;
     }
 
     if (newStatus === orderData.status) {
-        Swal.fire({
-            icon: 'info',
-            title: 'Status Unchanged',
-            text: `Status is already set to ${newStatus}`,
-            timer: 2000,
-            showConfirmButton: false
-        });
+        showToast('info', `Status is already set to ${newStatus}`);
         return;
     }
-
-    // Show confirmation dialog
-    const statusConfig = getStatusConfig(newStatus);
-    const currentStatusConfig = getStatusConfig(orderData.status);
-    
-    Swal.fire({
-        title: 'Update Order Status?',
-        html: `
-            <div class="text-start">
-                <p>Are you sure you want to change the status?</p>
-                <div class="row">
-                    <div class="col-6">
-                        <strong>From:</strong><br>
-                        <span class="badge ${currentStatusConfig.class}">${currentStatusConfig.text}</span>
-                    </div>
-                    <div class="col-6">
-                        <strong>To:</strong><br>
-                        <span class="badge ${statusConfig.class}">${statusConfig.text}</span>
-                    </div>
-                </div>
-            </div>
-        `,
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Yes, update status',
-        cancelButtonText: 'Cancel'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Show loading
-            Swal.fire({
-                title: 'Updating Status...',
-                text: 'Please wait while we update the order status.',
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
-            });
 
     console.log('📤 Sending status update request...');
 
@@ -4943,14 +4922,12 @@ function updateStatus() {
     .then(data => {
         console.log('✅ Status update response:', data);
         
+        const statusConfig = getStatusConfig(newStatus);
+        
         if (data.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Status Updated',
-                        text: data.message || `Status updated to ${statusConfig.text}`,
-                        timer: 2000,
-                        showConfirmButton: false
-                    }).then(() => {
+            // Show success toast
+            showToast('success', data.message || `Status updated to ${statusConfig.text}`);
+            
             // Update global order data
             orderData.status = newStatus;
             
@@ -4968,14 +4945,9 @@ function updateStatus() {
             loadRecentActivity(true);
             
             console.log('✅ Status update completed successfully');
-                    });
         } else {
             console.error('❌ Status update failed:', data);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Update Failed',
-                        text: data.message || 'Error updating status'
-                    });
+            showToast('error', data.message || 'Error updating status');
             
             // Reset select to previous value
             statusSelect.value = orderData.status;
@@ -4983,19 +4955,10 @@ function updateStatus() {
     })
     .catch(error => {
         console.error('❌ Status update error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'An error occurred while updating the status'
-                });
+        showToast('error', 'An error occurred while updating the status');
         
         // Reset select to previous value
         statusSelect.value = orderData.status;
-            });
-        } else {
-            // User cancelled, reset select to previous value
-            statusSelect.value = orderData.status;
-        }
     });
 }
 
@@ -9307,6 +9270,11 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
 </div>
 
+<?php 
+// Include the enhanced SMS modal
+echo view('sms/enhanced_modal'); 
+?>
+
 <!-- QR Code Modal (Simplified) -->
 <div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -9533,15 +9501,20 @@ document.addEventListener('DOMContentLoaded', function() {
                         </a>
                         <?php endif; ?>
 
-                        <!-- Send SMS -->
+                        <!-- Enhanced Send SMS -->
                         <?php if ($order['salesperson_phone']): ?>
-                        <button class="quick-action-btn quick-action-sms" data-bs-toggle="modal" data-bs-target="#smsModal" onclick="closeQuickActionsModal()">
+                        <button class="quick-action-btn quick-action-sms" onclick="openEnhancedSMSModal({
+                            order_id: <?= $order['id'] ?>,
+                            module: 'sales_orders',
+                            phone: '<?= $order['salesperson_phone'] ?>',
+                            contact_name: '<?= addslashes($order['salesperson_name'] ?? 'Contact') ?>'
+                        }); closeQuickActionsModal()">
                             <div class="quick-action-icon">
-                                <i data-feather="message-square" class="icon-md"></i>
+                                <i data-feather="message-circle" class="icon-md"></i>
                             </div>
                             <div class="quick-action-content">
-                                <span class="quick-action-title">SMS</span>
-                                <small class="quick-action-desc">Send message</small>
+                                <span class="quick-action-title">SMS Chat</span>
+                                <small class="quick-action-desc">Two-way messaging</small>
                             </div>
                         </button>
                         <?php endif; ?>

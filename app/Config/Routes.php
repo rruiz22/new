@@ -39,6 +39,20 @@ $routes->group('', function ($routes) {
     $routes->post('profile/update', 'ProfileController::update', ['filter' => 'sessionauth']);
     $routes->get('profile/avatar-demo', 'ProfileController::avatarDemo', ['filter' => 'sessionauth']);
     
+    // Global SMS Routes (Twilio Integration)
+    $routes->post('sms/send', 'SMSController::send');
+    $routes->get('sms/getConversation', 'SMSController::getConversation');
+    $routes->get('sms/getTemplates', 'SMSController::getTemplates');
+    $routes->post('sms/markAsRead', 'SMSController::markAsRead');
+});
+
+// Twilio Webhooks (no auth required - outside protected group)
+$routes->post('sms/webhook', 'SMSController::webhook');
+$routes->post('sms/webhook/status', 'SMSController::statusWebhook');
+
+// Continue with protected routes
+$routes->group('', function ($routes) {
+    
     // Rutas para la administración de staff
     $routes->get('staff', 'StaffController::index');
     $routes->get('staff/create', 'StaffController::create');

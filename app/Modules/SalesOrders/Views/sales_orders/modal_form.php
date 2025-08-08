@@ -375,7 +375,13 @@
         </div>
 
         <!-- Hidden status field - status can only be changed in view.php -->
-        <input type="hidden" id="order_status" name="status" value="<?= isset($order) && $order ? $order['status'] : 'pending' ?>">
+        <input type="hidden" id="order_status" name="status" value="<?= isset($order) && !empty($order) && isset($order['status']) ? $order['status'] : 'pending' ?>">
+        
+        <!-- Debug: Show what data we have -->
+        <script>
+        console.log('Modal Form Debug - Order data:', <?= json_encode($order ?? null) ?>);
+        console.log('Modal Form Debug - Status value will be:', '<?= isset($order) && !empty($order) && isset($order['status']) ? $order['status'] : 'pending' ?>');
+        </script>
 
         <!-- Additional Information Section -->
         <div class="form-section">
@@ -637,10 +643,24 @@ window.OrderModalHandler = (function() {
             
             console.log('OrderModal: Form submitted');
             
+            // Ensure status field has a value before submitting
+            const statusField = document.getElementById('order_status');
+            if (statusField && (!statusField.value || statusField.value.trim() === '')) {
+                console.log('OrderModal: Status field is empty, setting to pending');
+                statusField.value = 'pending';
+            }
+            
             // Force enable fields before collecting form data to ensure they are included
             forceEnableFieldsInEditMode();
             
             const formData = new FormData(orderForm);
+            
+            // Debug: Log all form data being sent
+            console.log('OrderModal: Form data being sent:');
+            for (let pair of formData.entries()) {
+                console.log('  ' + pair[0] + ': ' + pair[1]);
+            }
+            
             const submitButton = document.querySelector('button[type="submit"][form="orderForm"]');
             
             if (submitButton) {
@@ -1193,7 +1213,8 @@ window.OrderModalHandler = (function() {
         const status = statusField.value;
         const isCompletedOrCancelled = status === 'completed' || status === 'cancelled';
         
-        console.log('OrderModal: checkOrderStatusAndSetReadonly - Status:', status, 'Is completed/cancelled:', isCompletedOrCancelled);
+        console.log('OrderModal: checkOrderStatusAndSetReadonly - Status field found with value:', status, 'Is completed/cancelled:', isCompletedOrCancelled);
+        console.log('OrderModal: checkOrderStatusAndSetReadonly - Status field element:', statusField);
         
         if (isCompletedOrCancelled) {
             // Get all form fields except the hidden status field

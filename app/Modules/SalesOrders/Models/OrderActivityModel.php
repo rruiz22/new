@@ -358,4 +358,56 @@ class OrderActivityModel extends Model
             ])
         ]);
     }
+
+    /**
+     * Log alert sent activity
+     */
+    public function logAlertSent($orderId, $userId, $alertType, $message, $recipients = [])
+    {
+        $recipientsList = is_array($recipients) ? implode(', ', $recipients) : $recipients;
+        $description = "Alert ({$alertType}) sent to {$recipientsList}";
+        
+        if (strlen($message) > 50) {
+            $description .= ': ' . substr($message, 0, 50) . '...';
+        } else if (!empty($message)) {
+            $description .= ': ' . $message;
+        }
+        
+        return $this->insert([
+            'order_id' => $orderId,
+            'user_id' => $userId,
+            'activity_type' => 'alert_sent',
+            'title' => 'Alert Sent',
+            'description' => $description,
+            'new_value' => $recipientsList,
+            'field_name' => 'alert_recipients',
+            'metadata' => json_encode([
+                'alert_type' => $alertType,
+                'message' => $message,
+                'recipients' => $recipients,
+                'recipient_count' => is_array($recipients) ? count($recipients) : 1
+            ])
+        ]);
+    }
+
+    /**
+     * Log SMS received activity (from incoming webhook)
+     */
+    public function logSMSReceived($orderId, $userId, $phone, $message)
+    {
+        return $this->insert([
+            'order_id' => $orderId,
+            'user_id' => $userId,
+            'activity_type' => 'sms_received',
+            'title' => 'SMS Reply Received',
+            'description' => "Reply received from {$phone}: " . substr($message, 0, 100) . (strlen($message) > 100 ? '...' : ''),
+            'new_value' => $phone,
+            'field_name' => 'sms_sender',
+            'metadata' => json_encode([
+                'phone' => $phone,
+                'message' => $message,
+                'direction' => 'inbound'
+            ])
+        ]);
+    }
 } 

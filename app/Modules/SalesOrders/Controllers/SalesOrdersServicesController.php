@@ -23,6 +23,29 @@ class SalesOrdersServicesController extends BaseController
         
         // Load models
         $this->serviceModel = new SalesOrderServiceModel();
+        
+        // Add custom validation rules
+        $this->addCustomValidationRules();
+    }
+    
+    /**
+     * Add custom validation rules
+     */
+    private function addCustomValidationRules()
+    {
+        $validation = \Config\Services::validation();
+        
+        // Custom rule to validate client exists
+        $validation->setRule('is_valid_client', 'Client Validation', function($value, $error = null) {
+            if (empty($value)) {
+                return true; // Allow empty values (permit_empty handles this)
+            }
+            
+            $clientModel = new \App\Models\ClientModel();
+            $client = $clientModel->where('id', $value)->where('status', 'active')->first();
+            
+            return $client !== null;
+        });
     }
 
     public function index()
@@ -31,7 +54,7 @@ class SalesOrdersServicesController extends BaseController
             'title' => 'Services',
         ];
 
-        return view('sales_orders/services/index', $data);
+        return view('Modules\\SalesOrders\\Views\\sales_orders/services/index', $data);
     }
 
     public function list_data()
@@ -72,7 +95,7 @@ class SalesOrdersServicesController extends BaseController
         log_message('info', 'SalesOrdersServicesController::modal_form - Found ' . count($clients) . ' active clients');
         
         $data = [
-            'service_id' => $this->request->getGet('id') ?? null,
+            'service_id' => $this->request->getVar('id') ?? null,
             'clients' => $clients,
         ];
 
@@ -95,15 +118,39 @@ class SalesOrdersServicesController extends BaseController
     public function store()
     {
         $rules = [
-            'client_id' => 'permit_empty|numeric',
-            'service_name' => 'required',
-            'service_price' => 'required|decimal',
-            'service_description' => 'permit_empty',
-            'notes' => 'permit_empty',
+            'client_id' => 'permit_empty|numeric|is_valid_client',
+            'service_name' => 'required|min_length[3]|max_length[255]',
+            'service_price' => 'required|decimal|greater_than[0]',
+            'service_description' => 'permit_empty|max_length[1000]',
+            'notes' => 'permit_empty|max_length[1000]',
+        ];
+        
+        // Custom validation messages
+        $messages = [
+            'client_id' => [
+                'numeric' => 'The client must be a valid ID.',
+                'is_valid_client' => 'The selected client does not exist.'
+            ],
+            'service_name' => [
+                'required' => 'The service name is required.',
+                'min_length' => 'The service name must be at least 3 characters long.',
+                'max_length' => 'The service name cannot exceed 255 characters.'
+            ],
+            'service_price' => [
+                'required' => 'The service price is required.',
+                'decimal' => 'The service price must be a valid decimal number.',
+                'greater_than' => 'The service price must be greater than 0.'
+            ],
+            'service_description' => [
+                'max_length' => 'The service description cannot exceed 1000 characters.'
+            ],
+            'notes' => [
+                'max_length' => 'The notes cannot exceed 1000 characters.'
+            ]
         ];
 
-        if (!$this->validate($rules)) {
-            if ($this->request->isAJAX()) {
+        if (!$this->validate($rules, $messages)) {
+            if ($this->request->isAjax()) {
                 return $this->response->setJSON([
                     'success' => false,
                     'message' => 'Validation failed',
@@ -114,24 +161,24 @@ class SalesOrdersServicesController extends BaseController
         }
 
         $data = [
-            'client_id' => $this->request->getPost('client_id') ?: null,
-            'service_name' => $this->request->getPost('service_name'),
-            'service_description' => $this->request->getPost('service_description'),
-            'service_price' => $this->request->getPost('service_price'),
-            'notes' => $this->request->getPost('notes'),
-            'service_status' => $this->request->getPost('is_active') ? 'active' : 'deactivated',
-            'show_in_orders' => $this->request->getPost('show_in_orders') ? 1 : 0,
+            'client_id' => $this->request->getVar('client_id') ?: null,
+            'service_name' => $this->request->getVar('service_name'),
+            'service_description' => $this->request->getVar('service_description'),
+            'service_price' => $this->request->getVar('service_price'),
+            'notes' => $this->request->getVar('notes'),
+            'service_status' => $this->request->getVar('is_active') ? 'active' : 'deactivated',
+            'show_in_orders' => $this->request->getVar('show_in_orders') ? 1 : 0,
             'created_by' => session()->get('user_id') ?? 1,
             'updated_by' => session()->get('user_id') ?? 1,
         ];
 
-        $serviceId = $this->request->getPost('id');
+        $serviceId = $this->request->getVar('id');
         
         try {
             if ($serviceId) {
                 // Actualizar
                 if ($this->serviceModel->update($serviceId, $data)) {
-                    if ($this->request->isAJAX()) {
+                    if ($this->request->isAjax()) {
                         return $this->response->setJSON([
                             'success' => true,
                             'message' => 'Service updated successfully'
@@ -142,7 +189,7 @@ class SalesOrdersServicesController extends BaseController
             } else {
                 // Crear nuevo
                 if ($this->serviceModel->insert($data)) {
-                    if ($this->request->isAJAX()) {
+                    if ($this->request->isAjax()) {
                         return $this->response->setJSON([
                             'success' => true,
                             'message' => 'Service created successfully'
@@ -152,7 +199,7 @@ class SalesOrdersServicesController extends BaseController
                 }
             }
         } catch (\Exception $e) {
-            if ($this->request->isAJAX()) {
+            if ($this->request->isAjax()) {
                 return $this->response->setJSON([
                     'success' => false,
                     'message' => 'Error saving service: ' . $e->getMessage()
@@ -161,7 +208,7 @@ class SalesOrdersServicesController extends BaseController
             return redirect()->back()->withInput()->with('error', 'Error saving service: ' . $e->getMessage());
         }
 
-        if ($this->request->isAJAX()) {
+        if ($this->request->isAjax()) {
             return $this->response->setJSON([
                 'success' => false,
                 'message' => 'Error saving service'
@@ -187,15 +234,34 @@ class SalesOrdersServicesController extends BaseController
             'service' => $service
         ];
 
-        return view('sales_orders/services/view', $data);
+        return view('Modules\\SalesOrders\\Views\\sales_orders/services/view', $data);
     }
 
     public function delete($id)
     {
+        // Verify service exists and is not already deleted
+        $service = $this->serviceModel->where('id', $id)->where('deleted', 0)->first();
+        
+        if (!$service) {
+            if ($this->request->isAjax()) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Service not found or already deleted'
+                ]);
+            }
+            return redirect()->to('sales_orders_services')->with('error', 'Service not found or already deleted');
+        }
+        
         // Check if it's an AJAX request
-        if ($this->request->isAJAX()) {
+        if ($this->request->isAjax()) {
             try {
-                if ($this->serviceModel->delete($id)) {
+                // Use soft delete by setting deleted = 1
+                $data = [
+                    'deleted' => 1,
+                    'updated_by' => session()->get('user_id') ?? 1
+                ];
+                
+                if ($this->serviceModel->update($id, $data)) {
                     return $this->response->setJSON([
                         'success' => true,
                         'message' => 'Service deleted successfully'
@@ -215,11 +281,67 @@ class SalesOrdersServicesController extends BaseController
         }
         
         // For non-AJAX requests, use redirect (legacy support)
-        if ($this->serviceModel->delete($id)) {
-            return redirect()->to('sales_orders_services')->with('success', 'Service deleted successfully');
+        try {
+            $data = [
+                'deleted' => 1,
+                'updated_by' => session()->get('user_id') ?? 1
+            ];
+            
+            if ($this->serviceModel->update($id, $data)) {
+                return redirect()->to('sales_orders_services')->with('success', 'Service deleted successfully');
+            }
+        } catch (\Exception $e) {
+            return redirect()->to('sales_orders_services')->with('error', 'Error deleting service: ' . $e->getMessage());
         }
         
         return redirect()->to('sales_orders_services')->with('error', 'Error deleting service');
+    }
+
+    /**
+     * Get service data by ID in JSON format
+     *
+     * @param int $id
+     * @return \CodeIgniter\HTTP\ResponseInterface
+     */
+    public function get_data($id)
+    {
+        try {
+            // Verificar autenticación
+            if (!session()->has('isLoggedIn') && !session()->has('user')) {
+                return $this->response
+                    ->setStatusCode(401)
+                    ->setJSON(['success' => false, 'message' => 'Authentication required']);
+            }
+            
+            // Obtener servicio con información del cliente si está asignado
+            $service = $this->serviceModel->select('sales_orders_services.*, clients.name as client_name, clients.email as client_email')
+                                          ->join('clients', 'clients.id = sales_orders_services.client_id', 'left')
+                                          ->where('sales_orders_services.id', $id)
+                                          ->where('sales_orders_services.deleted', 0)
+                                          ->first();
+            
+            if (!$service) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Service not found'
+                ]);
+            }
+            
+            return $this->response->setJSON([
+                'success' => true,
+                'data' => $service
+            ]);
+            
+        } catch (\Exception $e) {
+            log_message('error', 'Error in get_data: ' . $e->getMessage());
+            
+            return $this->response
+                ->setStatusCode(500)
+                ->setJSON([
+                    'success' => false,
+                    'message' => 'Error retrieving service data: ' . $e->getMessage()
+                ]);
+        }
     }
 
     /**
@@ -229,13 +351,36 @@ class SalesOrdersServicesController extends BaseController
      */
     public function get_services_json()
     {
-        $services = $this->serviceModel->where('deleted', 0)
-                                      ->where('service_status', 'active')
-                                      ->where('show_in_orders', 1)
-                                      ->orderBy('service_name', 'ASC')
-                                      ->findAll();
-        
-        return $this->response->setJSON($services);
+        try {
+            // Verificar autenticación
+            if (!session()->has('isLoggedIn') && !session()->has('user')) {
+                log_message('warning', 'Unauthorized access attempt to get_services_json from IP: ' . $this->request->getIPAddress());
+                
+                return $this->response
+                    ->setStatusCode(401)
+                    ->setJSON(['success' => false, 'message' => 'Authentication required']);
+            }
+            
+            $services = $this->serviceModel->where('deleted', 0)
+                                          ->where('service_status', 'active')
+                                          ->where('show_in_orders', 1)
+                                          ->orderBy('service_name', 'ASC')
+                                          ->findAll();
+            
+            log_message('info', 'Found ' . count($services) . ' active services for general use by session user');
+            
+            return $this->response->setJSON([
+                'success' => true,
+                'data' => $services
+            ]);
+            
+        } catch (\Exception $e) {
+            log_message('error', 'Error in get_services_json: ' . $e->getMessage());
+            
+            return $this->response
+                ->setStatusCode(500)
+                ->setJSON(['success' => false, 'message' => $e->getMessage()]);
+        }
     }
 
     /**
@@ -247,17 +392,20 @@ class SalesOrdersServicesController extends BaseController
     public function get_services_by_client_json($clientId = null)
     {
         try {
-            // Verificar si hay una sesión activa de manera más simple
+            // Verificar autenticación
             if (!session()->has('isLoggedIn') && !session()->has('user')) {
                 log_message('warning', 'Unauthorized access attempt to get_services_by_client_json from IP: ' . $this->request->getIPAddress());
                 
                 return $this->response
                     ->setStatusCode(401)
-                    ->setJSON(['error' => 'Authentication required']);
+                    ->setJSON(['success' => false, 'message' => 'Authentication required']);
             }
             
             if (!$clientId) {
-                return $this->response->setJSON([]);
+                return $this->response->setJSON([
+                    'success' => true,
+                    'data' => []
+                ]);
             }
 
             $services = $this->serviceModel->where('deleted', 0)
@@ -269,13 +417,17 @@ class SalesOrdersServicesController extends BaseController
             
             log_message('info', 'Found ' . count($services) . ' active services for client ' . $clientId . ' by session user');
             
-            return $this->response->setJSON($services);
+            return $this->response->setJSON([
+                'success' => true,
+                'data' => $services
+            ]);
+            
         } catch (\Exception $e) {
             log_message('error', 'Error in get_services_by_client_json: ' . $e->getMessage());
             
             return $this->response
                 ->setStatusCode(500)
-                ->setJSON(['error' => $e->getMessage()]);
+                ->setJSON(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
@@ -287,32 +439,52 @@ class SalesOrdersServicesController extends BaseController
      */
     public function toggle_show_in_orders($id)
     {
-        $service = $this->serviceModel->find($id);
-        
-        if (!$service) {
+        try {
+            // Verificar autenticación
+            if (!session()->has('isLoggedIn') && !session()->has('user')) {
+                return $this->response
+                    ->setStatusCode(401)
+                    ->setJSON(['success' => false, 'message' => 'Authentication required']);
+            }
+            
+            $service = $this->serviceModel->where('id', $id)->where('deleted', 0)->first();
+            
+            if (!$service) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Service not found'
+                ]);
+            }
+            
+            $showInOrders = $this->request->getVar('show_in_orders') == 1;
+            
+            $data = [
+                'show_in_orders' => $showInOrders ? 1 : 0,
+                'updated_by' => session()->get('user_id') ?? 1
+            ];
+            
+            if ($this->serviceModel->update($id, $data)) {
+                return $this->response->setJSON([
+                    'success' => true,
+                    'message' => 'Service visibility updated successfully'
+                ]);
+            }
+            
             return $this->response->setJSON([
-                'status' => 'error',
-                'message' => 'Service not found'
+                'success' => false,
+                'message' => 'Failed to update service visibility'
             ]);
+            
+        } catch (\Exception $e) {
+            log_message('error', 'Error in toggle_show_in_orders: ' . $e->getMessage());
+            
+            return $this->response
+                ->setStatusCode(500)
+                ->setJSON([
+                    'success' => false,
+                    'message' => 'Error updating service visibility: ' . $e->getMessage()
+                ]);
         }
-        
-        $showInOrders = $this->request->getPost('show_in_orders') == 1;
-        
-        $data = [
-            'show_in_orders' => $showInOrders ? 1 : 0
-        ];
-        
-        if ($this->serviceModel->update($id, $data)) {
-            return $this->response->setJSON([
-                'status' => 'success',
-                'message' => 'Service visibility updated'
-            ]);
-        }
-        
-        return $this->response->setJSON([
-            'status' => 'error',
-            'message' => 'Failed to update service visibility'
-        ]);
     }
     
     /**
@@ -323,32 +495,52 @@ class SalesOrdersServicesController extends BaseController
      */
     public function toggle_status($id)
     {
-        $service = $this->serviceModel->find($id);
-        
-        if (!$service) {
+        try {
+            // Verificar autenticación
+            if (!session()->has('isLoggedIn') && !session()->has('user')) {
+                return $this->response
+                    ->setStatusCode(401)
+                    ->setJSON(['success' => false, 'message' => 'Authentication required']);
+            }
+            
+            $service = $this->serviceModel->where('id', $id)->where('deleted', 0)->first();
+            
+            if (!$service) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Service not found'
+                ]);
+            }
+            
+            $isActive = $this->request->getVar('is_active') == 1;
+            
+            $data = [
+                'service_status' => $isActive ? 'active' : 'deactivated',
+                'updated_by' => session()->get('user_id') ?? 1
+            ];
+            
+            if ($this->serviceModel->update($id, $data)) {
+                return $this->response->setJSON([
+                    'success' => true,
+                    'message' => 'Service status updated successfully'
+                ]);
+            }
+            
             return $this->response->setJSON([
-                'status' => 'error',
-                'message' => 'Service not found'
+                'success' => false,
+                'message' => 'Failed to update service status'
             ]);
+            
+        } catch (\Exception $e) {
+            log_message('error', 'Error in toggle_status: ' . $e->getMessage());
+            
+            return $this->response
+                ->setStatusCode(500)
+                ->setJSON([
+                    'success' => false,
+                    'message' => 'Error updating service status: ' . $e->getMessage()
+                ]);
         }
-        
-        $isActive = $this->request->getPost('is_active') == 1;
-        
-        $data = [
-            'service_status' => $isActive ? 'active' : 'deactivated'
-        ];
-        
-        if ($this->serviceModel->update($id, $data)) {
-            return $this->response->setJSON([
-                'status' => 'success',
-                'message' => 'Service status updated'
-            ]);
-        }
-        
-        return $this->response->setJSON([
-            'status' => 'error',
-            'message' => 'Failed to update service status'
-        ]);
     }
 
     private function _make_options($id, $is_active)
