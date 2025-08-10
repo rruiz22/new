@@ -258,12 +258,31 @@ $(document).ready(function() {
         "ajax": {
             "url": "<?= base_url('sales_orders_services/list_data') ?>",
             "type": "POST",
+            "data": function(d) {
+                // Add CSRF token if available
+                if (typeof $('meta[name="csrf-token"]').attr('content') !== 'undefined') {
+                    d.csrf_token = $('meta[name="csrf-token"]').attr('content');
+                }
+                return d;
+            },
             "dataSrc": function(json) {
+                console.log('DataTables response:', json);
                 return json.data || [];
             },
             "error": function(xhr, error, thrown) {
                 console.error('DataTables error:', error, thrown);
                 console.error('Response:', xhr.responseText);
+                console.error('Status:', xhr.status);
+                console.error('Status text:', xhr.statusText);
+                
+                // Show user-friendly error message
+                if (xhr.status === 404) {
+                    showToast('error', 'Route not found. Please check the URL configuration.');
+                } else if (xhr.status === 500) {
+                    showToast('error', 'Server error occurred while loading data.');
+                } else {
+                    showToast('error', 'Error loading services data: ' + error);
+                }
             }
         },
         "columns": [

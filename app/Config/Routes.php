@@ -291,6 +291,13 @@ $routes->group('', function ($routes) {
     $routes->get('settings/restore', 'SettingsController::restore');
     $routes->get('settings/maintenance', 'SettingsController::maintenance');
     
+    // Email and SMS Templates Routes
+    $routes->get('settings/getEmailTemplates', 'SettingsController::getEmailTemplates');
+    $routes->get('settings/getSmsTemplates', 'SettingsController::getSmsTemplates');
+    $routes->get('settings/email-templates', 'SettingsController::emailTemplates');
+    $routes->post('settings/saveEmailTemplates', 'SettingsController::saveEmailTemplates');
+    $routes->post('settings/saveSmsTemplates', 'SettingsController::saveSmsTemplates');
+    
     // Email Test Routes
     $routes->get('email-test', 'EmailTestController::index');
     $routes->post('email-test/send', 'EmailTestController::send');

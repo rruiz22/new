@@ -102,12 +102,13 @@ return function (RouteCollection $routes) {
     // Sales Orders Services Routes
     $routes->group('sales_orders_services', ['namespace' => 'Modules\SalesOrders\Controllers', 'filter' => 'session'], function($routes) {
         $routes->get('/', 'SalesOrdersServicesController::index');
-        $routes->post('list_data', 'SalesOrdersServicesController::list_data');
+        $routes->get('test_connection', 'SalesOrdersServicesController::test_connection');
+        $routes->match(['get', 'post'], 'list_data', 'SalesOrdersServicesController::list_data');
         $routes->get('modal_form', 'SalesOrdersServicesController::modal_form');
         $routes->post('store', 'SalesOrdersServicesController::store');
         $routes->get('view/(:num)', 'SalesOrdersServicesController::view/$1');
         $routes->get('get_data/(:num)', 'SalesOrdersServicesController::get_data/$1');
-        $routes->get('delete/(:num)', 'SalesOrdersServicesController::delete/$1');
+        $routes->match(['get', 'post'], 'delete/(:num)', 'SalesOrdersServicesController::delete/$1');
         $routes->get('get_services_json', 'SalesOrdersServicesController::get_services_json');
         $routes->post('toggle_show_in_orders/(:num)', 'SalesOrdersServicesController::toggle_show_in_orders/$1');
         $routes->post('toggle_status/(:num)', 'SalesOrdersServicesController::toggle_status/$1');

@@ -2036,81 +2036,30 @@ function updateChartsData(chartsData) {
     // Update orders chart only if it exists and has the method
     if (window.ordersChart && chartsData.orders && typeof window.ordersChart.updateOptions === 'function') {
         try {
-            window.ordersChart.updateOptions({
-                xaxis: {
-                    categories: chartsData.orders.categories || []
-                }
-            });
+                window.ordersChart.updateOptions({
+                    xaxis: {
+                        categories: chartsData.orders.categories || []
+                    }
+                });
             
             if (typeof window.ordersChart.updateSeries === 'function') {
-                window.ordersChart.updateSeries([{
-                    name: 'Orders',
-                    data: chartsData.orders.data || []
-                }]);
-            }
+                                window.ordersChart.updateSeries([{
+                                    name: 'Orders',
+                                    data: chartsData.orders.data || []
+                                }]);
+                            }
         } catch (error) {
             console.error('❌ Error updating orders chart:', error);
         }
     }
     
-    // Update status chart AND the progress bars below
+    // Update status chart only if it exists and has the method
     if (window.statusChart && chartsData.status && typeof window.statusChart.updateSeries === 'function') {
         try {
-            const statusData = chartsData.status.data || [0, 0, 0, 0];
-            
-            // Update the donut chart
-            window.statusChart.updateSeries(statusData);
-            
-            // Update the status numbers and progress bars below the chart
-            updateStatusBarsFromChartData(statusData);
-            
+            window.statusChart.updateSeries(chartsData.status.data || [0, 0, 0, 0]);
         } catch (error) {
             console.error('❌ Error updating status chart:', error);
         }
-    }
-}
-
-// Update status bars from chart data to keep them in sync
-function updateStatusBarsFromChartData(statusData) {
-    // statusData = [pending, processing, completed, cancelled]
-    const statusElements = {
-        'statusPending': statusData[0] || 0,
-        'statusProcessing': statusData[1] || 0, 
-        'statusCompleted': statusData[2] || 0,
-        'statusCancelled': statusData[3] || 0
-    };
-    
-    // Update the numbers
-    Object.keys(statusElements).forEach((elementId) => {
-        const element = document.getElementById(elementId);
-        if (element) {
-            element.textContent = statusElements[elementId];
-        }
-    });
-    
-    // Update the progress bars
-    const total = statusData.reduce((sum, value) => sum + value, 0);
-    
-    if (total > 0) {
-        const statusTypes = ['pending', 'processing', 'completed', 'cancelled'];
-        statusTypes.forEach((status, index) => {
-            const progressBar = document.getElementById(status + 'StatusProgress');
-            if (progressBar) {
-                const percentage = (statusData[index] / total) * 100;
-                setTimeout(() => {
-                    progressBar.style.width = percentage + '%';
-                }, 300);
-            }
-        });
-    } else {
-        // If no data, reset all progress bars to 0%
-        const statusTypes = ['pending', 'processing', 'completed', 'cancelled'];
-        statusTypes.forEach((status) => {
-            const progressBar = document.getElementById(status + 'StatusProgress');
-            if (progressBar) {
-                progressBar.style.width = '0%';
-            }
-        });
     }
 }
 

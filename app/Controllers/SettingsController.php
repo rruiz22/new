@@ -1085,4 +1085,146 @@ Sales Team'
         // Final fallback: use direct QR URL pattern
         return LimaLinksHelper::buildQrUrl($linkId, $size, $format);
     }
+
+    /**
+     * Email Templates Management Page
+     */
+    public function emailTemplates()
+    {
+        $model = new SettingsModel();
+        
+        $data = [
+            'title' => 'Email Templates',
+            'emailTemplates' => json_decode($model->getSetting('email_templates', '[]'), true),
+            'smsTemplates' => json_decode($model->getSetting('sms_templates', '[]'), true),
+            'availableVariables' => [
+                'sales_orders' => [
+                    '{contact_name}', '{client_name}', '{order_number}', '{service_name}', 
+                    '{vehicle}', '{stock}', '{vin}', '{scheduled_date}', '{scheduled_time}', 
+                    '{status}', '{instructions}', '{notes}', '{order_url}'
+                ],
+                'service_orders' => [
+                    '{contact_name}', '{client_name}', '{order_number}', '{service_name}', 
+                    '{vehicle}', '{scheduled_date}', '{scheduled_time}', '{status}', 
+                    '{instructions}', '{notes}', '{order_url}'
+                ],
+                'car_wash' => [
+                    '{contact_name}', '{client_name}', '{order_number}', '{service_name}', 
+                    '{vehicle}', '{scheduled_date}', '{scheduled_time}', '{status}', 
+                    '{instructions}', '{notes}', '{order_url}'
+                ],
+                'recon_orders' => [
+                    '{contact_name}', '{client_name}', '{order_number}', '{vehicle}', 
+                    '{scheduled_date}', '{scheduled_time}', '{status}', '{inspection_notes}', 
+                    '{estimate_amount}', '{order_url}'
+                ],
+                'general' => [
+                    '{contact_name}', '{client_name}', '{date}', '{time}', '{message}', 
+                    '{company_name}', '{phone}', '{email}', '{website}'
+                ]
+            ]
+        ];
+
+        return view('settings/email_templates', $data);
+    }
+
+    /**
+     * Save Email Templates
+     */
+    public function saveEmailTemplates()
+    {
+        if (!$this->request->isAJAX()) {
+            return redirect()->back()->with('error', 'Invalid request method');
+        }
+
+        try {
+            $model = new SettingsModel();
+            $emailTemplates = $this->request->getPost('email_templates');
+            $smsTemplates = $this->request->getPost('sms_templates');
+
+            // Validate and clean templates
+            if ($emailTemplates) {
+                $cleanEmailTemplates = [];
+                foreach ($emailTemplates as $template) {
+                    if (!empty($template['name']) && !empty($template['subject']) && !empty($template['content'])) {
+                        $cleanEmailTemplates[] = [
+                            'name' => strip_tags(trim($template['name'])),
+                            'subject' => strip_tags(trim($template['subject'])),
+                            'content' => trim($template['content']),
+                            'module' => strip_tags(trim($template['module'] ?? 'general'))
+                        ];
+                    }
+                }
+                $model->setSetting('email_templates', json_encode($cleanEmailTemplates));
+            }
+
+            // Save SMS templates
+            if ($smsTemplates) {
+                $cleanSmsTemplates = [];
+                foreach ($smsTemplates as $template) {
+                    if (!empty($template['name']) && !empty($template['content'])) {
+                        $cleanSmsTemplates[] = [
+                            'name' => strip_tags(trim($template['name'])),
+                            'content' => trim($template['content']),
+                            'module' => strip_tags(trim($template['module'] ?? 'general'))
+                        ];
+                    }
+                }
+                $model->setSetting('sms_templates', json_encode($cleanSmsTemplates));
+            }
+
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Templates saved successfully!'
+            ]);
+
+        } catch (\Exception $e) {
+            log_message('error', 'Error saving templates: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Error saving templates: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Save SMS Templates
+     */
+    public function saveSmsTemplates()
+    {
+        if (!$this->request->isAJAX()) {
+            return redirect()->back()->with('error', 'Invalid request method');
+        }
+
+        try {
+            $model = new SettingsModel();
+            $smsTemplates = $this->request->getPost('sms_templates');
+
+            if ($smsTemplates) {
+                $cleanTemplates = [];
+                foreach ($smsTemplates as $template) {
+                    if (!empty($template['name']) && !empty($template['content'])) {
+                        $cleanTemplates[] = [
+                            'name' => strip_tags(trim($template['name'])),
+                            'content' => trim($template['content']),
+                            'module' => strip_tags(trim($template['module'] ?? 'general'))
+                        ];
+                    }
+                }
+                $model->setSetting('sms_templates', json_encode($cleanTemplates));
+            }
+
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'SMS Templates saved successfully!'
+            ]);
+
+        } catch (\Exception $e) {
+            log_message('error', 'Error saving SMS templates: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Error saving SMS templates: ' . $e->getMessage()
+            ]);
+        }
+    }
 } 

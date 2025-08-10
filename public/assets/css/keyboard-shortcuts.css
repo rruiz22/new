@@ -1,0 +1,692 @@
+/**
+ * Keyboard Shortcuts Styles
+ * Global styles for the keyboard shortcuts system
+ */
+
+/* Notification Styles */
+.shortcut-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    background: #405189;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    transform: translateX(100%);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 14px;
+    min-width: 250px;
+}
+
+.shortcut-notification.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.shortcut-notification.hide {
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+.shortcut-notification-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.shortcut-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.shortcut-text {
+    font-weight: 500;
+}
+
+/* Loading Indicator */
+.shortcut-loader {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10000;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 20px;
+    border-radius: 50%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.shortcut-loader-spinner {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #e3e3e3;
+    border-top: 2px solid #405189;
+    border-radius: 50%;
+    animation: shortcut-spin 1s linear infinite;
+}
+
+@keyframes shortcut-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Keyboard Hints Styles */
+.keyboard-hints-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9998;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.keyboard-hints-container.visible {
+    opacity: 1;
+}
+
+.keyboard-hint {
+    position: absolute;
+    background: transparent;
+    color: #6c757d;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 600;
+    transform: translateX(-5px);
+    opacity: 0;
+    transition: all 0.15s ease;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 1000;
+    text-shadow: 0 0 3px rgba(255, 255, 255, 0.8);
+}
+
+.keyboard-hint.show {
+    transform: translateX(0);
+    opacity: 0.8;
+}
+
+/* Hint key and name styles removed - using simple text now */
+
+.floating-hint {
+    position: fixed !important;
+    background: rgba(0, 0, 0, 0.8) !important;
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.floating-hint.bottom-right {
+    bottom: 20px;
+    right: 20px;
+    transform: translateY(10px) scale(0.9);
+}
+
+.floating-hint.show {
+    transform: translateY(0) scale(1);
+}
+
+.hint-text {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* Help Modal Styles */
+.shortcuts-help-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10001;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.shortcuts-help-modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.shortcuts-help-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+.shortcuts-help-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 700px;
+    max-height: 80vh;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.shortcuts-help-modal:not(.show) .shortcuts-help-content {
+    transform: translate(-50%, -50%) scale(0.9);
+}
+
+.shortcuts-help-modal.show .shortcuts-help-content {
+    transform: translate(-50%, -50%) scale(1);
+    transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.shortcuts-help-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid #e9ecef;
+    background: #405189;
+    color: white;
+}
+
+.shortcuts-help-header h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.shortcuts-help-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background 0.2s ease;
+}
+
+.shortcuts-help-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.shortcuts-help-body {
+    padding: 24px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.shortcuts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.shortcut-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.shortcut-item:hover {
+    background: #e9ecef;
+    transform: translateY(-1px);
+}
+
+.shortcut-item.special {
+    background: #f8f9fa;
+    border: 1px solid #405189;
+}
+
+.shortcut-item.special:hover {
+    background: #405189;
+    color: white;
+}
+
+.shortcut-key {
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.shortcut-key kbd {
+    display: inline-block;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+    color: #495057;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    box-shadow: inset 0 -1px 0 #ced4da;
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.shortcut-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.shortcut-item-icon {
+    font-size: 16px;
+    color: #6c757d;
+    flex-shrink: 0;
+}
+
+.shortcuts-help-footer {
+    border-top: 1px solid #e9ecef;
+    padding-top: 16px;
+}
+
+.shortcuts-settings {
+    margin-bottom: 16px;
+}
+
+.shortcuts-checkbox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    gap: 8px;
+}
+
+.shortcuts-checkbox input[type="checkbox"] {
+    display: none;
+}
+
+.shortcuts-checkbox .checkmark {
+    width: 18px;
+    height: 18px;
+    background: #fff;
+    border: 2px solid #dee2e6;
+    border-radius: 3px;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.shortcuts-checkbox input:checked + .checkmark {
+    background: #405189;
+    border-color: #405189;
+}
+
+.shortcuts-checkbox input:checked + .checkmark::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 4px;
+    height: 8px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.shortcuts-note {
+    font-size: 13px;
+    color: #6c757d;
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+/* Keyboard Shortcuts Button Styles */
+#keyboard-shortcuts-btn {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+#keyboard-shortcuts-btn.shortcuts-enabled {
+    background: rgba(64, 81, 137, 0.1) !important;
+    color: #405189 !important;
+    border-color: rgba(64, 81, 137, 0.2) !important;
+}
+
+#keyboard-shortcuts-btn.shortcuts-enabled::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 8px;
+    height: 8px;
+    background: #28a745;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    animation: subtle-pulse 2s infinite;
+}
+
+#keyboard-shortcuts-btn.shortcuts-disabled {
+    opacity: 0.6;
+    background: rgba(220, 53, 69, 0.1) !important;
+    color: #dc3545 !important;
+}
+
+#keyboard-shortcuts-btn.shortcuts-disabled::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 8px;
+    height: 8px;
+    background: #dc3545;
+    border-radius: 50%;
+    border: 2px solid #fff;
+}
+
+@keyframes subtle-pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(1.1);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .shortcuts-help-content {
+        width: 95%;
+        margin: 20px;
+    }
+    
+    .shortcuts-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
+    .shortcut-notification {
+        right: 10px;
+        top: 10px;
+        min-width: 200px;
+        font-size: 13px;
+    }
+    
+    .shortcuts-help-header {
+        padding: 16px 20px;
+    }
+    
+    .shortcuts-help-body {
+        padding: 20px;
+    }
+    
+    .keyboard-hint {
+        font-size: 11px;
+        padding: 4px 8px;
+    }
+    
+    .hint-key {
+        font-size: 10px;
+        padding: 1px 4px;
+    }
+    
+    .hint-name {
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .shortcut-item {
+        padding: 10px 12px;
+    }
+    
+    .shortcut-key kbd {
+        padding: 3px 6px;
+        font-size: 11px;
+    }
+    
+    .shortcuts-help-header h3 {
+        font-size: 18px;
+    }
+    
+    .keyboard-hint {
+        max-width: 150px;
+        font-size: 10px;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .shortcuts-help-content {
+        background: #2d3748;
+        color: #e2e8f0;
+    }
+    
+    .shortcuts-help-header {
+        border-bottom-color: #4a5568;
+    }
+    
+    .shortcuts-help-footer {
+        border-top-color: #4a5568;
+    }
+    
+    .shortcut-item {
+        background: #4a5568;
+        color: #e2e8f0;
+    }
+    
+    .shortcut-item:hover {
+        background: #5a6578;
+    }
+    
+    .shortcut-key kbd {
+        background-color: #2d3748;
+        color: #e2e8f0;
+        border-color: #4a5568;
+        box-shadow: inset 0 -1px 0 #4a5568;
+    }
+    
+    .shortcut-item-icon {
+        color: #a0aec0;
+    }
+    
+    .shortcuts-checkbox .checkmark {
+        background: #4a5568;
+        border-color: #5a6578;
+    }
+    
+    .shortcuts-note {
+        color: #a0aec0;
+    }
+    
+    .shortcut-loader {
+        background: rgba(45, 55, 72, 0.95);
+    }
+    
+    .keyboard-hint {
+        background: rgba(45, 55, 72, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .hint-key {
+        background: rgba(255, 255, 255, 0.15);
+    }
+}
+
+/* Accessibility improvements */
+.shortcuts-help-close:focus,
+.shortcuts-checkbox:focus-within,
+#keyboard-shortcuts-btn:focus {
+    outline: 2px solid #405189;
+    outline-offset: 2px;
+}
+
+/* Animation for help modal */
+.shortcuts-help-modal {
+    animation-duration: 0.3s;
+    animation-fill-mode: both;
+}
+
+.shortcuts-help-modal.show {
+    animation-name: shortcut-fade-in;
+}
+
+@keyframes shortcut-fade-in {
+    from {
+        opacity: 0;
+        visibility: hidden;
+    }
+    to {
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+/* Smooth scrolling for help modal body */
+.shortcuts-help-body {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e0 transparent;
+}
+
+.shortcuts-help-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.shortcuts-help-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.shortcuts-help-body::-webkit-scrollbar-thumb {
+    background-color: #cbd5e0;
+    border-radius: 3px;
+}
+
+.shortcuts-help-body::-webkit-scrollbar-thumb:hover {
+    background-color: #a0aec0;
+}
+
+/* Hint positioning improvements */
+.keyboard-hint {
+    z-index: 9999;
+}
+
+/* Prevent hints from going off screen */
+@media (max-width: 1200px) {
+    .keyboard-hint {
+        position: fixed !important;
+        max-width: 120px;
+    }
+}
+
+/* Special styling for different hint types */
+.keyboard-hint.sidebar-hint {
+    color: #28a745;
+}
+
+.keyboard-hint.topbar-hint {
+    color: #17a2b8;
+}
+
+.keyboard-hint.tab-hint {
+    color: #6f42c1;
+    font-weight: 700;
+}
+
+/* Styles for hints in titles - minimal interference */
+.keyboard-shortcut-hint {
+    font-size: 0.75em !important;
+    font-weight: 600 !important;
+    margin-left: 4px !important;
+    opacity: 0.7 !important;
+    transition: opacity 0.2s ease !important;
+    font-family: monospace !important;
+    display: inline !important;
+    white-space: nowrap !important;
+    vertical-align: baseline !important;
+}
+
+.keyboard-shortcut-hint.sidebar-hint {
+    color: #28a745 !important;
+}
+
+.keyboard-shortcut-hint.topbar-hint {
+    color: #17a2b8 !important;
+}
+
+.keyboard-shortcut-hint.tab-hint {
+    color: #6f42c1 !important;
+    font-weight: 700 !important;
+}
+
+/* Ensure icons stay properly aligned with shortcuts */
+.nav-link i,
+.menu-link i,
+[data-key] i {
+    margin-right: 8px !important;
+    vertical-align: middle !important;
+}
+
+/* Removed forced flexbox styles to preserve sidebar layout */
+
+.keyboard-hint.hint-left {
+    transform: translateX(5px);
+}
+
+.keyboard-hint.hint-left.show {
+    transform: translateX(0);
+}
+
+/* Floating hints positioning - simplified */
+.keyboard-hint.floating-hint {
+    position: fixed;
+    z-index: 10000;
+    background: rgba(255, 255, 255, 0.9);
+    color: #495057;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.keyboard-hint.floating-hint.bottom-right {
+    bottom: 20px;
+    right: 20px;
+}
+
+.keyboard-hint.floating-hint.bottom-left {
+    bottom: 20px;
+    left: 20px;
+}
+
+.keyboard-hint.floating-hint.top-left {
+    top: 80px;
+    left: 20px;
+}
+
+.keyboard-hint.floating-hint.top-right {
+    top: 80px;
+    right: 20px;
+}
+
+/* Animation stagger for multiple hints */
+.keyboard-hint:nth-child(1) { animation-delay: 0ms; }
+.keyboard-hint:nth-child(2) { animation-delay: 50ms; }
+.keyboard-hint:nth-child(3) { animation-delay: 100ms; }
+.keyboard-hint:nth-child(4) { animation-delay: 150ms; }
+.keyboard-hint:nth-child(5) { animation-delay: 200ms; }
+.keyboard-hint:nth-child(6) { animation-delay: 250ms; }
+.keyboard-hint:nth-child(7) { animation-delay: 300ms; }
+.keyboard-hint:nth-child(8) { animation-delay: 350ms; }
+.keyboard-hint:nth-child(9) { animation-delay: 400ms; }
+.keyboard-hint:nth-child(10) { animation-delay: 450ms; }

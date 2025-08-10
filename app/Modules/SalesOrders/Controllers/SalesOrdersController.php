@@ -4113,11 +4113,11 @@ class SalesOrdersController extends BaseController
             
             // Count today's orders
             $todayQuery = clone $baseQuery;
-            $todayCount = $todayQuery->where('order_date', $today)->countAllResults();
+            $todayCount = $todayQuery->where('date', $today)->countAllResults();
             
             // Count tomorrow's orders
             $tomorrowQuery = clone $baseQuery;
-            $tomorrowCount = $tomorrowQuery->where('order_date', $tomorrow)->countAllResults();
+            $tomorrowCount = $tomorrowQuery->where('date', $tomorrow)->countAllResults();
             
             // Count pending orders (pending, processing, in_progress)
             $pendingQuery = clone $baseQuery;
@@ -4125,7 +4125,7 @@ class SalesOrdersController extends BaseController
             
             // Count week orders
             $weekQuery = clone $baseQuery;
-            $weekCount = $weekQuery->where('order_date >=', $monday)->where('order_date <=', $sunday)->countAllResults();
+            $weekCount = $weekQuery->where('date >=', $monday)->where('date <=', $sunday)->countAllResults();
             
             // Get status breakdown
             $statusQuery = $db->table('sales_orders')
@@ -4219,17 +4219,17 @@ class SalesOrdersController extends BaseController
             
             // Get orders data for the period with client filter
             $ordersQuery = $db->table('sales_orders')
-                             ->select('DATE(order_date) as order_date, COUNT(*) as count')
+                             ->select('DATE(date) as order_date, COUNT(*) as count')
                              ->where('deleted', 0)
-                             ->where('order_date >=', $startDate)
-                             ->where('order_date <=', $endDate);
+                             ->where('date >=', $startDate)
+                             ->where('date <=', $endDate);
             
             if ($clientId) {
                 $ordersQuery = $ordersQuery->where('client_id', $clientId);
             }
             
-            $ordersData = $ordersQuery->groupBy('DATE(order_date)')
-                                     ->orderBy('order_date', 'ASC')
+            $ordersData = $ordersQuery->groupBy('DATE(date)')
+                                     ->orderBy('date', 'ASC')
                                      ->get()
                                      ->getResultArray();
             

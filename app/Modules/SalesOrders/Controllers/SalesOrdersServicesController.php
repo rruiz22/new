@@ -23,29 +23,6 @@ class SalesOrdersServicesController extends BaseController
         
         // Load models
         $this->serviceModel = new SalesOrderServiceModel();
-        
-        // Add custom validation rules
-        $this->addCustomValidationRules();
-    }
-    
-    /**
-     * Add custom validation rules
-     */
-    private function addCustomValidationRules()
-    {
-        $validation = \Config\Services::validation();
-        
-        // Custom rule to validate client exists
-        $validation->setRule('is_valid_client', 'Client Validation', function($value, $error = null) {
-            if (empty($value)) {
-                return true; // Allow empty values (permit_empty handles this)
-            }
-            
-            $clientModel = new \App\Models\ClientModel();
-            $client = $clientModel->where('id', $value)->where('status', 'active')->first();
-            
-            return $client !== null;
-        });
     }
 
     public function index()
@@ -57,30 +34,90 @@ class SalesOrdersServicesController extends BaseController
         return view('Modules\\SalesOrders\\Views\\sales_orders/services/index', $data);
     }
 
+    /**
+     * Test endpoint to verify database connection and table structure
+     */
+    public function test_connection()
+    {
+        try {
+            $db = \Config\Database::connect();
+            
+            // Check if table exists
+            if (!$db->tableExists('sales_orders_services')) {
+                return $this->response->setJSON([
+                    'error' => 'Table sales_orders_services does not exist'
+                ]);
+            }
+            
+            // Get table structure
+            $fields = $db->getFieldData('sales_orders_services');
+            
+            // Try a simple query
+            $count = $db->table('sales_orders_services')->countAll();
+            
+            return $this->response->setJSON([
+                'success' => true,
+                'table_exists' => true,
+                'total_records' => $count,
+                'fields' => array_map(function($field) {
+                    return [
+                        'name' => $field->name,
+                        'type' => $field->type
+                    ];
+                }, $fields)
+            ]);
+            
+        } catch (\Exception $e) {
+            return $this->response->setJSON([
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+        }
+    }
+
     public function list_data()
     {
-        // Get all services with client names
-        $services = $this->serviceModel->select('sales_orders_services.*, clients.name as client_name')
-                                       ->join('clients', 'clients.id = sales_orders_services.client_id', 'left')
-                                       ->where('sales_orders_services.deleted', 0)
-                                       ->orderBy('service_name', 'ASC')
-                                       ->findAll();
-        
-        $data = [];
-        foreach ($services as $service) {
-            $data[] = [
-                'id' => $service['id'],
-                'service_name' => $service['service_name'],
-                'service_description' => $service['service_description'] ?? '',
-                'client_name' => $service['client_name'] ?? null,
-                'service_price' => $service['service_price'],
-                'notes' => $service['notes'] ?? '',
-                'service_status' => $service['service_status'],
-                'show_in_orders' => $service['show_in_orders'] ?? 0
-            ];
+        try {
+            // Log the request for debugging
+            log_message('info', 'SalesOrdersServicesController::list_data called - Method: ' . $this->request->getMethod());
+            log_message('info', 'Request headers: ' . json_encode($this->request->headers()));
+            
+            // Use direct database query to avoid model callbacks that might interfere
+            $db = \Config\Database::connect();
+            $services = $db->table('sales_orders_services')
+                          ->select('sales_orders_services.*, clients.name as client_name')
+                          ->join('clients', 'clients.id = sales_orders_services.client_id', 'left')
+                          ->where('sales_orders_services.deleted', 0)
+                          ->orderBy('sales_orders_services.service_name', 'ASC')
+                          ->get()
+                          ->getResultArray();
+            
+            log_message('info', 'Found ' . count($services) . ' services for DataTable');
+            
+            $data = [];
+            foreach ($services as $service) {
+                $data[] = [
+                    'id' => $service['id'],
+                    'service_name' => $service['service_name'],
+                    'service_description' => $service['service_description'] ?? '',
+                    'client_name' => $service['client_name'] ?? null,
+                    'service_price' => $service['service_price'],
+                    'notes' => $service['notes'] ?? '',
+                    'service_status' => $service['service_status'],
+                    'show_in_orders' => $service['show_in_orders'] ?? 0
+                ];
+            }
+            
+            return $this->response->setJSON(['data' => $data]);
+            
+        } catch (\Exception $e) {
+            log_message('error', 'Error in list_data method: ' . $e->getMessage());
+            log_message('error', 'Stack trace: ' . $e->getTraceAsString());
+            return $this->response->setStatusCode(500)->setJSON([
+                'error' => 'Internal server error',
+                'message' => $e->getMessage()
+            ]);
         }
-        
-        return $this->response->setJSON(['data' => $data]);
     }
 
     public function modal_form()
@@ -118,7 +155,7 @@ class SalesOrdersServicesController extends BaseController
     public function store()
     {
         $rules = [
-            'client_id' => 'permit_empty|numeric|is_valid_client',
+            'client_id' => 'permit_empty|numeric',
             'service_name' => 'required|min_length[3]|max_length[255]',
             'service_price' => 'required|decimal|greater_than[0]',
             'service_description' => 'permit_empty|max_length[1000]',
@@ -128,8 +165,7 @@ class SalesOrdersServicesController extends BaseController
         // Custom validation messages
         $messages = [
             'client_id' => [
-                'numeric' => 'The client must be a valid ID.',
-                'is_valid_client' => 'The selected client does not exist.'
+                'numeric' => 'The client must be a valid ID.'
             ],
             'service_name' => [
                 'required' => 'The service name is required.',

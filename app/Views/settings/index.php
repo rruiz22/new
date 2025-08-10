@@ -900,67 +900,57 @@
                                             <i class="ri-file-list-line"></i>
                                 Message Templates
                                         </h3>
-                                        <p class="settings-section-desc">Manage SMS and Email templates for quick communication with contacts</p>
-                        </div>
+                                        <p class="settings-section-desc">Manage SMS and Email templates for all modules</p>
+                                    </div>
                                     
-                                    <!-- SMS Templates -->
-                                    <div class="row g-4 mb-4">
-                                        <div class="col-12">
-                                            <div class="card border-0 bg-light">
-                                                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-                                                    <h5 class="card-title mb-0">
-                                                        <i class="ri-message-line me-2"></i>
-                                                        SMS Templates
-                                                    </h5>
-                                                    <button type="button" class="btn btn-light btn-sm" onclick="addSmsTemplate()">
-                                            <i class="ri-add-line me-1"></i>
-                                                        Add Template
-                                        </button>
-                                    </div>
-                                                <div class="card-body">
-                                                    <div id="smsTemplatesList">
-                                                        <!-- SMS templates will be loaded here -->
-                                            </div>
-                                                    <div class="alert alert-info mt-3">
-                                                        <h6 class="alert-heading">Available Variables:</h6>
-                                                        <p class="mb-0">
-                                                            <code>{contact_name}</code>, <code>{client_name}</code>, <code>{order_number}</code>, 
-                                                            <code>{vehicle}</code>, <code>{stock}</code>, <code>{service_name}</code>, 
-                                                            <code>{status}</code>, <code>{scheduled_date}</code>, <code>{scheduled_time}</code>
-                                                        </p>
-                                        </div>
-                                    </div>
-                                                        </div>
-                                                    </div>
-                                                        </div>
-
-                                    <!-- Email Templates -->
                                     <div class="row g-4">
                                         <div class="col-12">
-                                            <div class="card border-0 bg-light">
-                                                <div class="card-header bg-warning text-white d-flex justify-content-between align-items-center">
-                                                    <h5 class="card-title mb-0">
-                                                        <i class="ri-mail-line me-2"></i>
-                                                        Email Templates
-                                                    </h5>
-                                                    <button type="button" class="btn btn-light btn-sm" onclick="addEmailTemplate()">
-                                                        <i class="ri-add-line me-1"></i>
-                                                        Add Template
-                                                                </button>
-                                                            </div>
-                                                <div class="card-body">
-                                                    <div id="emailTemplatesList">
-                                                        <!-- Email templates will be loaded here -->
-                                                        </div>
-                                                    <div class="alert alert-info mt-3">
-                                                        <h6 class="alert-heading">Available Variables:</h6>
-                                                        <p class="mb-0">
-                                                            Same as SMS templates: <code>{contact_name}</code>, <code>{client_name}</code>, 
-                                                            <code>{order_number}</code>, <code>{vehicle}</code>, <code>{stock}</code>, 
-                                                            <code>{service_name}</code>, <code>{status}</code>, <code>{scheduled_date}</code>, 
-                                                            <code>{scheduled_time}</code>
-                                                        </p>
+                                            <div class="card border-0 shadow-sm">
+                                                <div class="card-body text-center py-5">
+                                                    <div class="mb-4">
+                                                        <i class="ri-file-list-3-line display-1 text-primary"></i>
                                                     </div>
+                                                    <h4 class="card-title mb-3">Advanced Template Management</h4>
+                                                    <p class="text-muted mb-4">
+                                                        Manage email and SMS templates for all modules including Sales Orders, Service Orders, Car Wash, and Recon Orders. 
+                                                        Create, edit, and organize templates with support for dynamic variables and module-specific content.
+                                                    </p>
+                                                    
+                                                    <div class="row g-3 mb-4">
+                                                        <div class="col-md-3">
+                                                            <div class="feature-item">
+                                                                <i class="ri-mail-line fs-2 text-primary mb-2"></i>
+                                                                <h6>Email Templates</h6>
+                                                                <small class="text-muted">Rich email templates with subjects</small>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <div class="feature-item">
+                                                                <i class="ri-message-2-line fs-2 text-success mb-2"></i>
+                                                                <h6>SMS Templates</h6>
+                                                                <small class="text-muted">Quick SMS templates with character count</small>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <div class="feature-item">
+                                                                <i class="ri-code-line fs-2 text-warning mb-2"></i>
+                                                                <h6>Dynamic Variables</h6>
+                                                                <small class="text-muted">Module-specific variable support</small>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <div class="feature-item">
+                                                                <i class="ri-folders-line fs-2 text-info mb-2"></i>
+                                                                <h6>Module Organization</h6>
+                                                                <small class="text-muted">Organize by Sales, Service, Car Wash, etc.</small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <a href="<?= base_url('settings/email-templates') ?>" class="btn btn-primary btn-lg">
+                                                        <i class="ri-settings-3-line me-2"></i>
+                                                        Manage Templates
+                                                    </a>
                                                 </div>
                                             </div>
                                         </div>

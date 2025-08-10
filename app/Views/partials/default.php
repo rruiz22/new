@@ -7,6 +7,7 @@
     <meta content="My Detail Area Portal" name="description" />
     <meta content="Lima Web Studios" name="author" />
     <meta name="<?= csrf_token() ?>" content="<?= csrf_hash() ?>">
+    <meta name="base-url" content="<?= base_url() ?>">
     <!-- App favicon -->
     <link rel="shortcut icon" href="<?= base_url('assets/images/favicon.ico') ?>">
 
@@ -50,6 +51,9 @@
 
     <!-- JAVASCRIPT VENDOR -->
     <?= $this->include('partials/vendor-scripts') ?>
+    
+    <!-- Keyboard Shortcuts -->
+    <script src="<?= base_url('assets/js/keyboard-shortcuts.js') ?>"></script>
     
     <!-- Alerts System -->
     <?= $this->include('partials/alerts') ?>

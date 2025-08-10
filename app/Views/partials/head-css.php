@@ -58,3 +58,6 @@
 
 <!-- Custom fixes CSS -->
 <link href="<?= base_url('assets/css/custom-fixes.css') ?>" rel="stylesheet" type="text/css" />
+
+<!-- Keyboard Shortcuts CSS -->
+<link href="<?= base_url('assets/css/keyboard-shortcuts.css') ?>" rel="stylesheet" type="text/css" />
