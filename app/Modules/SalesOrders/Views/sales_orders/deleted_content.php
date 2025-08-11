@@ -8,8 +8,8 @@
         <div class="mb-3">
             <i data-feather="trash-2" class="icon-lg text-muted"></i>
         </div>
-        <h5 class="text-muted">No Deleted Orders</h5>
-        <p class="text-muted">There are no deleted orders to display.</p>
+        <h5 class="text-muted"><?= lang('App.no_deleted_orders') ?></h5>
+        <p class="text-muted"><?= lang('App.no_deleted_orders_desc') ?></p>
     </div>
 <?php else: ?>
     <div class="row">
@@ -19,16 +19,16 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0">
                             <i data-feather="trash-2" class="icon-sm me-2"></i>
-                            Deleted Orders (<?= count($orders) ?>)
+                            <?= lang('App.deleted_orders') ?> (<?= count($orders) ?>)
                         </h5>
                         <div>
                             <button class="btn btn-sm btn-outline-success" onclick="bulkRestore()">
                                 <i data-feather="rotate-ccw" class="icon-sm me-1"></i>
-                                Restore Selected
+                                <?= lang('App.restore_selected') ?>
                             </button>
                             <button class="btn btn-sm btn-outline-danger" onclick="bulkForceDelete()">
                                 <i data-feather="x" class="icon-sm me-1"></i>
-                                Permanently Delete Selected
+                                <?= lang('App.permanently_delete_selected') ?>
                             </button>
                         </div>
                     </div>
@@ -194,20 +194,20 @@ document.addEventListener('DOMContentLoaded', function() {
 // Restore single order
 function restoreOrder(orderId) {
     Swal.fire({
-        title: '¿Estás seguro?',
-        text: '¿Quieres restaurar esta orden?',
+        title: '<?= lang('App.are_you_sure') ?>',
+        text: '<?= lang('App.want_to_restore_order') ?>',
         icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#28a745',
         cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Sí, restaurar',
-        cancelButtonText: 'Cancelar'
+        confirmButtonText: '<?= lang('App.yes_restore') ?>',
+        cancelButtonText: '<?= lang('App.cancel') ?>'
     }).then((result) => {
         if (result.isConfirmed) {
             // Mostrar loading
             Swal.fire({
-                title: 'Restaurando...',
-                text: 'Por favor espera',
+                title: '<?= lang('App.restoring') ?>...',
+                text: '<?= lang('App.please_wait') ?>',
                 allowOutsideClick: false,
                 allowEscapeKey: false,
                 showConfirmButton: false,
@@ -231,10 +231,8 @@ function restoreOrder(orderId) {
                 if (data.success) {
                     Swal.close(); // Cerrar el loading
                     showNotification(data.message, 'success');
-                    // Reload the page to refresh the list
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1000);
+                    // Refresh tables dynamically instead of reloading page
+                    refreshAllTablesAndContent();
                 } else {
                     Swal.fire({
                         title: 'Error',
@@ -258,20 +256,20 @@ function restoreOrder(orderId) {
 // Permanently delete single order
 function forceDeleteOrder(orderId) {
     Swal.fire({
-        title: '¿Estás seguro?',
-        text: '¡Esta acción no se puede deshacer! ¿Quieres eliminar permanentemente esta orden?',
+        title: '<?= lang('App.are_you_sure') ?>',
+        text: '<?= lang('App.want_to_permanently_delete_order') ?>',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#dc3545',
         cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Sí, eliminar permanentemente',
-        cancelButtonText: 'Cancelar'
+        confirmButtonText: '<?= lang('App.yes_permanently_delete') ?>',
+        cancelButtonText: '<?= lang('App.cancel') ?>'
     }).then((result) => {
         if (result.isConfirmed) {
             // Mostrar loading
             Swal.fire({
-                title: 'Eliminando...',
-                text: 'Por favor espera',
+                title: '<?= lang('App.deleting') ?>...',
+                text: '<?= lang('App.please_wait') ?>',
                 allowOutsideClick: false,
                 allowEscapeKey: false,
                 showConfirmButton: false,
@@ -295,10 +293,8 @@ function forceDeleteOrder(orderId) {
                 if (data.success) {
                     Swal.close(); // Cerrar el loading
                     showNotification(data.message, 'success');
-                    // Reload the page to refresh the list
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1000);
+                    // Refresh tables dynamically instead of reloading page
+                    refreshAllTablesAndContent();
                 } else {
                     Swal.fire({
                         title: 'Error',
@@ -324,26 +320,26 @@ function bulkRestore() {
     const selectedIds = getSelectedOrderIds();
     if (selectedIds.length === 0) {
         Swal.fire({
-            title: 'Atención',
-            text: 'Por favor selecciona al menos una orden para restaurar',
+            title: '<?= lang('App.attention') ?>',
+            text: '<?= lang('App.select_at_least_one_order_restore') ?>',
             icon: 'warning'
         });
         return;
     }
     
     Swal.fire({
-        title: '¿Estás seguro?',
-        text: `¿Quieres restaurar ${selectedIds.length} orden(es) seleccionada(s)?`,
+        title: '<?= lang('App.are_you_sure') ?>',
+        text: `<?= lang('App.want_to_restore_selected_orders') ?>`.replace('{count}', selectedIds.length),
         icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#28a745',
         cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Sí, restaurar',
-        cancelButtonText: 'Cancelar'
+        confirmButtonText: '<?= lang('App.yes_restore') ?>',
+        cancelButtonText: '<?= lang('App.cancel') ?>'
     }).then((result) => {
         if (result.isConfirmed) {
             // Implementation for bulk restore would go here
-            showNotification('Funcionalidad de restauración masiva próximamente', 'info');
+            showNotification('<?= lang('App.bulk_restore_coming_soon') ?>', 'info');
         }
     });
 }
@@ -353,26 +349,26 @@ function bulkForceDelete() {
     const selectedIds = getSelectedOrderIds();
     if (selectedIds.length === 0) {
         Swal.fire({
-            title: 'Atención',
-            text: 'Por favor selecciona al menos una orden para eliminar permanentemente',
+            title: '<?= lang('App.attention') ?>',
+            text: '<?= lang('App.select_at_least_one_order_delete') ?>',
             icon: 'warning'
         });
         return;
     }
     
     Swal.fire({
-        title: '¿Estás seguro?',
-        text: `¡Esta acción no se puede deshacer! ¿Quieres eliminar permanentemente ${selectedIds.length} orden(es) seleccionada(s)?`,
+        title: '<?= lang('App.are_you_sure') ?>',
+        text: `<?= lang('App.want_to_permanently_delete_selected_orders') ?>`.replace('{count}', selectedIds.length),
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#dc3545',
         cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Sí, eliminar permanentemente',
-        cancelButtonText: 'Cancelar'
+        confirmButtonText: '<?= lang('App.yes_permanently_delete') ?>',
+        cancelButtonText: '<?= lang('App.cancel') ?>'
     }).then((result) => {
         if (result.isConfirmed) {
             // Implementation for bulk force delete would go here
-            showNotification('Funcionalidad de eliminación masiva próximamente', 'info');
+            showNotification('<?= lang('App.bulk_delete_coming_soon') ?>', 'info');
         }
     });
 }
@@ -489,5 +485,21 @@ function applyFallbackIcons() {
         el.classList.add('icon-fallback');
     });
     
+}
+
+// Function to refresh all tables and content dynamically
+function refreshAllTablesAndContent() {
+    // Refresh the deleted orders content
+    loadDeletedOrdersContent();
+    
+    // Refresh all other tables if available
+    if (typeof refreshAllTables === 'function') {
+        refreshAllTables();
+    }
+    
+    // Refresh dashboard if available
+    if (typeof forceDashboardSync === 'function') {
+        forceDashboardSync();
+    }
 }
 </script>

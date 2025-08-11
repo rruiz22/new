@@ -1883,6 +1883,9 @@ function refreshAllTables() {
         applyStatusColors();
     }, 1000);
     
+    // Refresh deleted orders content
+    loadDeletedOrdersContent();
+    
     // Refresh dashboard with improved error handling
     forceDashboardSync();
     
@@ -2933,7 +2936,60 @@ function submitOrderForm() {
                     }
 
 function loadDeletedOrdersContent() {
-    // Implementation needed
+    const deletedTabContent = document.querySelector('#deleted-orders-tab');
+    if (!deletedTabContent) return;
+    
+    // Show loading spinner
+    deletedTabContent.innerHTML = `
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2 text-muted">Loading deleted orders...</p>
+        </div>
+    `;
+    
+    // Fetch deleted orders content
+    fetch('<?= base_url('sales_orders/deleted_content') ?>', {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.text())
+    .then(html => {
+        deletedTabContent.innerHTML = html;
+        
+        // Initialize icons for the new content
+        setTimeout(() => {
+            if (typeof window.initializeDeletedOrdersIcons === 'function') {
+                window.initializeDeletedOrdersIcons();
+            }
+        }, 100);
+    })
+    .catch(error => {
+        console.error('Error loading deleted orders:', error);
+        deletedTabContent.innerHTML = `
+            <div class="text-center py-5">
+                <div class="mb-3">
+                    <i data-feather="alert-circle" class="icon-lg text-danger"></i>
+                </div>
+                <h5 class="text-danger">Error Loading Content</h5>
+                <p class="text-muted">Failed to load deleted orders. Please try again.</p>
+                <button class="btn btn-outline-primary" onclick="loadDeletedOrdersContent()">
+                    <i data-feather="refresh-cw" class="icon-sm me-1"></i>
+                    Retry
+                </button>
+            </div>
+        `;
+        
+        // Initialize feather icons for error state
+        setTimeout(() => {
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+        }, 100);
+    });
 }
 
 // Global variables for modal management
@@ -3276,20 +3332,20 @@ function deleteOrderGlobal(orderId) {
 // Restore single order
 function restoreOrder(orderId) {
     Swal.fire({
-        title: '¿Estás seguro?',
-        text: '¿Quieres restaurar esta orden?',
+        title: '<?= lang('App.are_you_sure') ?>',
+        text: '<?= lang('App.want_to_restore_order') ?>',
         icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#28a745',
         cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Sí, restaurar',
-        cancelButtonText: 'Cancelar'
+        confirmButtonText: '<?= lang('App.yes_restore') ?>',
+        cancelButtonText: '<?= lang('App.cancel') ?>'
     }).then((result) => {
         if (result.isConfirmed) {
             // Mostrar loading
             Swal.fire({
-                title: 'Restaurando...',
-                text: 'Por favor espera',
+                title: '<?= lang('App.restoring') ?>...',
+                text: '<?= lang('App.please_wait') ?>',
                 allowOutsideClick: false,
                 allowEscapeKey: false,
                 showConfirmButton: false,
@@ -3313,14 +3369,12 @@ function restoreOrder(orderId) {
                 if (data.success) {
                     Swal.close();
                     showToast('success', data.message || 'Order restored successfully');
-                    // Reload the page to refresh the list
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1000);
+                    // Refresh tables dynamically instead of reloading page
+                    refreshAllTables();
                 } else {
                     Swal.fire({
                         title: 'Error',
-                        text: data.message || 'Error restoring order',
+                        text: data.message || '<?= lang('App.error_restoring_order') ?>',
                         icon: 'error'
                     });
                 }
@@ -3329,7 +3383,7 @@ function restoreOrder(orderId) {
                 console.error('Error restoring order:', error);
                 Swal.fire({
                     title: 'Error',
-                    text: 'Error restoring order',
+                    text: '<?= lang('App.error_restoring_order') ?>',
                     icon: 'error'
                 });
             });
@@ -3340,20 +3394,20 @@ function restoreOrder(orderId) {
 // Permanently delete single order
 function forceDeleteOrder(orderId) {
     Swal.fire({
-        title: '¿Estás seguro?',
-        text: '¡Esta acción no se puede deshacer! ¿Quieres eliminar permanentemente esta orden?',
+        title: '<?= lang('App.are_you_sure') ?>',
+        text: '<?= lang('App.want_to_permanently_delete_order') ?>',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#dc3545',
         cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Sí, eliminar permanentemente',
-        cancelButtonText: 'Cancelar'
+        confirmButtonText: '<?= lang('App.yes_permanently_delete') ?>',
+        cancelButtonText: '<?= lang('App.cancel') ?>'
     }).then((result) => {
         if (result.isConfirmed) {
             // Mostrar loading
             Swal.fire({
-                title: 'Eliminando...',
-                text: 'Por favor espera',
+                title: '<?= lang('App.deleting') ?>...',
+                text: '<?= lang('App.please_wait') ?>',
                 allowOutsideClick: false,
                 allowEscapeKey: false,
                 showConfirmButton: false,
@@ -3377,14 +3431,12 @@ function forceDeleteOrder(orderId) {
                 if (data.success) {
                     Swal.close();
                     showToast('success', data.message || 'Order permanently deleted');
-                    // Reload the page to refresh the list
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1000);
+                    // Refresh tables dynamically instead of reloading page
+                    refreshAllTables();
                 } else {
                     Swal.fire({
                         title: 'Error',
-                        text: data.message || 'Error permanently deleting order',
+                        text: data.message || '<?= lang('App.error_permanently_deleting_order') ?>',
                         icon: 'error'
                     });
                 }
@@ -3393,7 +3445,7 @@ function forceDeleteOrder(orderId) {
                 console.error('Error permanently deleting order:', error);
                 Swal.fire({
                     title: 'Error',
-                    text: 'Error permanently deleting order',
+                    text: '<?= lang('App.error_permanently_deleting_order') ?>',
                     icon: 'error'
                 });
             });

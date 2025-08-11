@@ -1453,6 +1453,26 @@ return [
     'order_permanently_deleted' => 'Orden eliminada permanentemente',
     'error_occurred' => 'Ocurrió un error',
     
+    // Deleted Orders translations
+    'restore_selected' => 'Restaurar Seleccionadas',
+    'permanently_delete_selected' => 'Eliminar Permanentemente Seleccionadas',
+    'restoring' => 'Restaurando',
+    'please_wait' => 'Por favor espera',
+    'deleting' => 'Eliminando',
+    'yes_restore' => 'Sí, restaurar',
+    'yes_permanently_delete' => 'Sí, eliminar permanentemente',
+    'want_to_restore_order' => '¿Quieres restaurar esta orden?',
+    'want_to_permanently_delete_order' => '¡Esta acción no se puede deshacer! ¿Quieres eliminar permanentemente esta orden?',
+    'attention' => 'Atención',
+    'select_at_least_one_order_restore' => 'Por favor selecciona al menos una orden para restaurar',
+    'select_at_least_one_order_delete' => 'Por favor selecciona al menos una orden para eliminar permanentemente',
+    'want_to_restore_selected_orders' => '¿Quieres restaurar {count} orden(es) seleccionada(s)?',
+    'want_to_permanently_delete_selected_orders' => '¡Esta acción no se puede deshacer! ¿Quieres eliminar permanentemente {count} orden(es) seleccionada(s)?',
+    'bulk_restore_coming_soon' => 'Funcionalidad de restauración masiva próximamente',
+    'bulk_delete_coming_soon' => 'Funcionalidad de eliminación masiva próximamente',
+    'error_restoring_order' => 'Error restoring order',
+    'error_permanently_deleting_order' => 'Error permanently deleting order',
+    
     // Traducciones específicas de vehículos
     'vehicle_info' => 'Información del Vehículo',
     'service_history' => 'Historial de Servicios',
