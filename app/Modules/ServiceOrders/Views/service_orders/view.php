@@ -879,6 +879,138 @@
     margin-bottom: 16px;
 }
 
+/* Attachments Grid View Styles */
+.attachments-grid-view {
+    padding: 0;
+}
+
+.attachment-card {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.attachment-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    border-color: #0d6efd;
+}
+
+.attachment-preview-container {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.attachment-preview-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.attachment-preview-image:hover {
+    transform: scale(1.05);
+}
+
+.attachment-preview-icon {
+    font-size: 3rem;
+    color: #6c757d;
+}
+
+.attachment-info-card {
+    padding: 1rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.attachment-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #495057;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.attachment-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    color: #6c757d;
+    margin-bottom: 0.75rem;
+}
+
+.attachment-comment-info {
+    font-size: 0.8rem;
+    color: #495057;
+    background: #f8f9fa;
+    padding: 0.5rem;
+    border-radius: 6px;
+    margin-top: auto;
+}
+
+.attachment-comment-author {
+    font-weight: 500;
+    color: #0d6efd;
+}
+
+.attachment-overlay-actions {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.attachment-card:hover .attachment-overlay-actions {
+    opacity: 1;
+}
+
+.attachment-action-btn {
+    background: rgba(255,255,255,0.9);
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 0.25rem;
+    transition: all 0.2s ease;
+}
+
+.attachment-action-btn:hover {
+    background: #fff;
+    transform: scale(1.1);
+}
+
+.attachments-empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #6c757d;
+}
+
+.attachments-empty-icon {
+    font-size: 3rem;
+    color: #dee2e6;
+    margin-bottom: 1rem;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .comment-content {
@@ -897,6 +1029,14 @@
     
     .attachment-video {
         max-width: 250px;
+    }
+    
+    .attachment-preview-container {
+        height: 150px;
+    }
+    
+    .attachment-card {
+        margin-bottom: 1rem;
     }
 }
 
@@ -2675,9 +2815,34 @@
                     Refresh
                 </button>
             </div>
+            
+            <!-- Comments Tabs -->
+            <div class="card-header border-bottom-0 pb-0">
+                <ul class="nav nav-tabs card-header-tabs" id="commentsTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="all-comments-tab" data-bs-toggle="tab" data-bs-target="#all-comments" type="button" role="tab" aria-controls="all-comments" aria-selected="true">
+                            <i data-feather="message-circle" class="icon-xs me-1"></i>
+                            All Comments
+                            <span id="allCommentsCount" class="badge bg-secondary ms-1">0</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="attachments-tab" data-bs-toggle="tab" data-bs-target="#attachments-only" type="button" role="tab" aria-controls="attachments-only" aria-selected="false">
+                            <i data-feather="paperclip" class="icon-xs me-1"></i>
+                            Attachments Only
+                            <span id="attachmentsCount" class="badge bg-secondary ms-1">0</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+            
             <div class="card-body">
-                <!-- Enhanced Add Comment Form -->
-                <form id="commentForm" class="mb-3" enctype="multipart/form-data">
+                <!-- Tab Content -->
+                <div class="tab-content" id="commentsTabContent">
+                    <!-- All Comments Tab -->
+                    <div class="tab-pane fade show active" id="all-comments" role="tabpanel" aria-labelledby="all-comments-tab">
+                        <!-- Enhanced Add Comment Form -->
+                        <form id="commentForm" class="mb-3" enctype="multipart/form-data">
                     <div class="mb-2">
                         <div class="position-relative">
                             <textarea class="form-control" id="commentText" rows="3" placeholder="Add a comment... Use @username to mention staff members" required></textarea>
@@ -2718,12 +2883,36 @@
                 </div>
             </div>
 
-                <!-- Load More Button -->
-                <div id="loadMoreComments" class="text-center mt-3" style="display: none;">
-                    <button class="btn btn-outline-primary btn-sm" onclick="loadMoreComments()">
-                        <i data-feather="chevron-down" class="icon-xs me-1"></i>
-                        Load More Comments
-                    </button>
+                        <!-- Load More Button -->
+                        <div id="loadMoreComments" class="text-center mt-3" style="display: none;">
+                            <button class="btn btn-outline-primary btn-sm" onclick="loadMoreComments()">
+                                <i data-feather="chevron-down" class="icon-xs me-1"></i>
+                                Load More Comments
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Attachments Only Tab -->
+                    <div class="tab-pane fade" id="attachments-only" role="tabpanel" aria-labelledby="attachments-tab">
+                        <div class="attachments-grid-view">
+                            <div id="attachmentsGrid" class="row g-3">
+                                <div class="col-12 text-center py-4">
+                                    <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p class="text-muted mt-2 mb-0">Loading attachments...</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Load More Attachments Button -->
+                            <div id="loadMoreAttachments" class="text-center mt-3" style="display: none;">
+                                <button class="btn btn-outline-primary btn-sm" onclick="loadMoreAttachments()">
+                                    <i data-feather="chevron-down" class="icon-xs me-1"></i>
+                                    Load More Attachments
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -6168,9 +6357,342 @@ function updateCommentsUI() {
 // Update comments count badge
 function updateCommentsCount(count) {
     const countBadge = document.getElementById('commentsCount');
+    const allCommentsCount = document.getElementById('allCommentsCount');
     if (countBadge) {
         countBadge.textContent = count;
     }
+    if (allCommentsCount) {
+        allCommentsCount.textContent = count;
+    }
+}
+
+// Update attachments count badge
+function updateAttachmentsCount(count) {
+    const attachmentsCountBadge = document.getElementById('attachmentsCount');
+    if (attachmentsCountBadge) {
+        attachmentsCountBadge.textContent = count;
+    }
+}
+
+// Load attachments for the attachments-only tab
+function loadAttachments() {
+    const serviceOrderId = <?= $order['id'] ?? 0 ?>;
+    const attachmentsGrid = document.getElementById('attachmentsGrid');
+    
+    // Show loading state
+    attachmentsGrid.innerHTML = `
+        <div class="col-12 text-center py-4">
+            <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="text-muted mt-2 mb-0">Loading attachments...</p>
+        </div>
+    `;
+    
+    fetch(`<?= base_url('service_orders/getComments/') ?>${serviceOrderId}?attachments_only=1`, {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            displayAttachmentsGrid(data.comments || []);
+            updateAttachmentsCount(data.attachments_count || 0);
+        } else {
+            showAttachmentsError('Failed to load attachments');
+        }
+    })
+    .catch(error => {
+        console.error('Error loading attachments:', error);
+        showAttachmentsError('Error loading attachments');
+    });
+}
+
+// Display attachments in grid format
+function displayAttachmentsGrid(comments) {
+    const attachmentsGrid = document.getElementById('attachmentsGrid');
+    let attachmentsHtml = '';
+    let attachmentsCount = 0;
+    
+    if (!comments || comments.length === 0) {
+        attachmentsGrid.innerHTML = `
+            <div class="col-12">
+                <div class="attachments-empty-state">
+                    <div class="attachments-empty-icon">
+                        <i data-feather="paperclip"></i>
+                    </div>
+                    <h6>No attachments found</h6>
+                    <p class="mb-0">Comments with attachments will appear here</p>
+                </div>
+            </div>
+        `;
+        updateAttachmentsCount(0);
+        return;
+    }
+    
+    comments.forEach(comment => {
+        if (comment.attachments && comment.attachments.length > 0) {
+            comment.attachments.forEach(attachment => {
+                attachmentsCount++;
+                attachmentsHtml += createAttachmentCard(attachment, comment);
+            });
+        }
+    });
+    
+    if (attachmentsHtml === '') {
+        attachmentsGrid.innerHTML = `
+            <div class="col-12">
+                <div class="attachments-empty-state">
+                    <div class="attachments-empty-icon">
+                        <i data-feather="paperclip"></i>
+                    </div>
+                    <h6>No attachments found</h6>
+                    <p class="mb-0">Comments with attachments will appear here</p>
+                </div>
+            </div>
+        `;
+        updateAttachmentsCount(0);
+    } else {
+        attachmentsGrid.innerHTML = attachmentsHtml;
+        updateAttachmentsCount(attachmentsCount);
+        
+        // Re-initialize feather icons
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        }
+    }
+}
+
+// Create attachment card HTML
+function createAttachmentCard(attachment, comment) {
+    const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(attachment.filename);
+    const isVideo = /\.(mp4|mov|avi|wmv|webm)$/i.test(attachment.filename);
+    
+    let previewHtml = '';
+    if (isImage) {
+        previewHtml = `
+            <img src="${attachment.file_url}" alt="${attachment.filename}" 
+                 class="attachment-preview-image" onclick="openAttachmentModal('${attachment.file_url}', '${attachment.filename}')">
+        `;
+    } else if (isVideo) {
+        previewHtml = `
+            <video class="attachment-preview-image" onclick="openAttachmentModal('${attachment.file_url}', '${attachment.filename}')">
+                <source src="${attachment.file_url}" type="video/mp4">
+            </video>
+        `;
+    } else {
+        const iconClass = getFeatherFileIcon(attachment.filename);
+        previewHtml = `
+            <div class="attachment-preview-icon">
+                <i data-feather="${iconClass}"></i>
+            </div>
+        `;
+    }
+    
+    return `
+        <div class="col-lg-3 col-md-4 col-sm-6">
+            <div class="attachment-card">
+                <div class="attachment-preview-container">
+                    ${previewHtml}
+                    <div class="attachment-overlay-actions">
+                        <button class="attachment-action-btn" onclick="downloadAttachment('${attachment.file_url}', '${attachment.filename}')" 
+                                title="Download">
+                            <i data-feather="download" style="width: 14px; height: 14px;"></i>
+                        </button>
+                        <button class="attachment-action-btn" onclick="openAttachmentModal('${attachment.file_url}', '${attachment.filename}')" 
+                                title="View">
+                            <i data-feather="eye" style="width: 14px; height: 14px;"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="attachment-info-card">
+                    <div class="attachment-title" title="${attachment.filename}">
+                        ${attachment.filename}
+                    </div>
+                    <div class="attachment-meta">
+                        <span>${formatFileSize(attachment.file_size || 0)}</span>
+                        <span>${attachment.created_at_relative || 'Unknown'}</span>
+                    </div>
+                    <div class="attachment-comment-info">
+                        <div>From comment by <span class="attachment-comment-author">${comment.first_name} ${comment.last_name}</span></div>
+                        <div class="text-truncate" style="font-size: 0.75rem; margin-top: 0.25rem;">
+                            "${(comment.description || comment.comment || '').substring(0, 60)}${(comment.description || comment.comment || '').length > 60 ? '...' : ''}"
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Show attachments error
+function showAttachmentsError(message) {
+    const attachmentsGrid = document.getElementById('attachmentsGrid');
+    attachmentsGrid.innerHTML = `
+        <div class="col-12 text-center py-4">
+            <div class="text-danger">
+                <i data-feather="alert-circle" class="mb-2" style="width: 48px; height: 48px;"></i>
+                <p class="mb-0">${message}</p>
+            </div>
+        </div>
+    `;
+}
+
+// Get feather icon name for file type
+function getFeatherFileIcon(filename) {
+    const extension = filename.split('.').pop().toLowerCase();
+    
+    const iconMap = {
+        // Images
+        'jpg': 'image',
+        'jpeg': 'image',
+        'png': 'image',
+        'gif': 'image',
+        'webp': 'image',
+        'svg': 'image',
+        'bmp': 'image',
+        
+        // Documents
+        'pdf': 'file-text',
+        'doc': 'file-text',
+        'docx': 'file-text',
+        'txt': 'file-text',
+        'rtf': 'file-text',
+        
+        // Spreadsheets
+        'xls': 'file-text',
+        'xlsx': 'file-text',
+        'csv': 'file-text',
+        
+        // Presentations
+        'ppt': 'file-text',
+        'pptx': 'file-text',
+        
+        // Videos
+        'mp4': 'video',
+        'avi': 'video',
+        'mov': 'video',
+        'wmv': 'video',
+        'webm': 'video',
+        'mkv': 'video',
+        
+        // Audio
+        'mp3': 'music',
+        'wav': 'music',
+        'flac': 'music',
+        'aac': 'music',
+        
+        // Archives
+        'zip': 'archive',
+        'rar': 'archive',
+        '7z': 'archive',
+        'tar': 'archive',
+        'gz': 'archive',
+        
+        // Code
+        'js': 'code',
+        'html': 'code',
+        'css': 'code',
+        'php': 'code',
+        'py': 'code',
+        'java': 'code',
+        'cpp': 'code',
+        'c': 'code'
+    };
+    
+    return iconMap[extension] || 'file';
+}
+
+// Open attachment in modal
+function openAttachmentModal(url, filename) {
+    const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(filename);
+    const isVideo = /\.(mp4|mov|avi|wmv|webm)$/i.test(filename);
+    
+    let modalContent = '';
+    
+    if (isImage) {
+        modalContent = `<img src="${url}" alt="${filename}" class="img-fluid" style="max-height: 80vh;">`;
+    } else if (isVideo) {
+        modalContent = `
+            <video controls class="w-100" style="max-height: 80vh;">
+                <source src="${url}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        `;
+    } else {
+        // For other files, show download option
+        modalContent = `
+            <div class="text-center py-4">
+                <i data-feather="file" style="width: 64px; height: 64px;" class="mb-3 text-muted"></i>
+                <h5>${filename}</h5>
+                <p class="text-muted">This file type cannot be previewed.</p>
+                <a href="${url}" download="${filename}" class="btn btn-primary">
+                    <i data-feather="download" class="me-2"></i>Download File
+                </a>
+            </div>
+        `;
+    }
+    
+    // Create or update modal
+    let modal = document.getElementById('attachmentModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'attachmentModal';
+        modal.className = 'modal fade';
+        modal.innerHTML = `
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">${filename}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        ${modalContent}
+                    </div>
+                    <div class="modal-footer">
+                        <a href="${url}" download="${filename}" class="btn btn-primary">
+                            <i data-feather="download" class="me-1"></i>Download
+                        </a>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    } else {
+        // Update existing modal
+        modal.querySelector('.modal-title').textContent = filename;
+        modal.querySelector('.modal-body').innerHTML = modalContent;
+        modal.querySelector('.modal-footer a').href = url;
+        modal.querySelector('.modal-footer a').download = filename;
+    }
+    
+    // Re-initialize feather icons
+    if (typeof feather !== 'undefined') {
+        feather.replace();
+    }
+    
+    // Show modal
+    const bootstrapModal = new bootstrap.Modal(modal);
+    bootstrapModal.show();
+}
+
+// Initialize tabs functionality
+function initializeCommentsTabs() {
+    // Load attachments when attachments tab is clicked
+    document.getElementById('attachments-tab').addEventListener('click', function() {
+        setTimeout(() => {
+            loadAttachments();
+        }, 100);
+    });
+    
+    // Update counts when switching tabs
+    document.getElementById('all-comments-tab').addEventListener('click', function() {
+        // Refresh comments count if needed
+        updateCommentsCount(commentsState.totalComments);
+    });
 }
 
 // Global functions for comments system
@@ -7220,7 +7742,9 @@ $(document).ready(function() {
     // Initialize scroll after a short delay to ensure DOM is ready
     setTimeout(() => {
         initializeCommentsScroll();
+        initializeCommentsTabs();
         console.log('Comments scroll initialized');
+        console.log('Comments tabs initialized');
     }, 500);
     
     // Submit comment form

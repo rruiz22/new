@@ -344,9 +344,7 @@ $routes->group('service_orders', ['namespace' => 'Modules\ServiceOrders\Controll
     $routes->get('getFollowers/(:num)', 'ServiceOrdersController::getFollowers/$1');
     $routes->get('getAvailableFollowers/(:num)', 'ServiceOrdersController::getAvailableFollowers/$1');
     
-    // Services
-    $routes->get('getServicesForClient/(:num)', 'ServiceOrdersController::getServicesForClient/$1');
-    $routes->get('getContactsForClient/(:num)', 'ServiceOrdersController::getContactsForClient/$1');
+    // Services endpoints are handled by the module routes
     
     // Comments
     $routes->get('getComments/(:num)', 'ServiceOrdersController::getComments/$1');
