@@ -557,3 +557,14 @@ $routes->group('api/location', function($routes) {
 // Load module routes via events
 // The module routes are loaded through their respective Events.php files
 // Each module has its own Events.php file that loads its routes dynamically
+
+// Public Pages module routes (load manually for now)
+$publicPagesRoutes = APPPATH . 'Modules/PublicPages/Config/Routes.php';
+if (file_exists($publicPagesRoutes)) {
+    $routesLoader = include $publicPagesRoutes;
+    if (is_callable($routesLoader)) {
+        $routesLoader($routes);
+    }
+}
+
+// Installation completed - route removed

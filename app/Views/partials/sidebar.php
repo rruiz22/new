@@ -71,6 +71,32 @@
                     </a>
                 </li>
 
+                        <!-- Public Pages -->
+        <li class="nav-item">
+            <a class="nav-link menu-link" href="#sidebarPublicPages" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarPublicPages">
+                <i data-feather="globe" class="icon-dual"></i> <span><?= lang('PublicPages.module_name') ?></span>
+            </a>
+            <div class="collapse menu-dropdown" id="sidebarPublicPages">
+                <ul class="nav nav-sm flex-column">
+                    <li class="nav-item">
+                        <a href="<?= base_url('public_pages') ?>" class="nav-link">
+                            <i data-feather="list" class="icon-dual-sm"></i> <?= lang('PublicPages.all_pages') ?>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?= base_url('public_pages/create') ?>" class="nav-link">
+                            <i data-feather="plus-circle" class="icon-dual-sm"></i> <?= lang('PublicPages.new_page') ?>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?= base_url('pages') ?>" class="nav-link" target="_blank">
+                            <i data-feather="eye" class="icon-dual-sm"></i> <?= lang('PublicPages.view_page') ?>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+
                 <!-- Sales Orders -->
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="<?= base_url('sales_orders') ?>">
