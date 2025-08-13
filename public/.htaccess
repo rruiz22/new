@@ -122,4 +122,21 @@ ServerSignature Off
     AddOutputFilterByType DEFLATE application/x-javascript
 </IfModule>
 
+ # Excluir /public/to/get_inventory.php de la caché
+<IfModule mod_headers.c>
+    <Files "get_inventory.php">
+        Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+        Header set Pragma "no-cache"
+        Header set Expires 0
+    </Files>
+</IfModule>
+
+# Evitar que SiteGround Dynamic Cache lo almacene
+<IfModule Litespeed>
+    RewriteEngine On
+    RewriteCond %{REQUEST_URI} /public/to/get_inventory\.php$
+    RewriteRule .* - [E=Cache-Control:no-cache]
+</IfModule>
+
+
  

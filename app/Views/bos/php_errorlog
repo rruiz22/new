@@ -1,0 +1,52 @@
+[13-Aug-2025 03:54:50 UTC] PHP Fatal error:  Uncaught Error: Class "Logger" not found in /home/customer/www/dds.mydetailarea.com/public_html/public/to/get_inventory.php:48
+Stack trace:
+#0 /home/customer/www/dds.mydetailarea.com/public_html/public/to/get_inventory.php(441): InventoryAPI->__construct(Array)
+#1 {main}
+  thrown in /home/customer/www/dds.mydetailarea.com/public_html/public/to/get_inventory.php on line 48
+[13-Aug-2025 03:54:50 UTC] PHP Fatal error:  Uncaught Error: Class "Logger" not found in /home/customer/www/dds.mydetailarea.com/public_html/public/to/get_inventory.php:48
+Stack trace:
+#0 /home/customer/www/dds.mydetailarea.com/public_html/public/to/get_inventory.php(441): InventoryAPI->__construct(Array)
+#1 {main}
+  thrown in /home/customer/www/dds.mydetailarea.com/public_html/public/to/get_inventory.php on line 48
+[13-Aug-2025 04:10:56 UTC] PHP Fatal error:  Uncaught Error: Class "Logger" not found in /home/customer/www/dds.mydetailarea.com/public_html/public/to/webhook.php:33
+Stack trace:
+#0 {main}
+  thrown in /home/customer/www/dds.mydetailarea.com/public_html/public/to/webhook.php on line 33
+[13-Aug-2025 04:10:57 UTC] PHP Fatal error:  Uncaught Error: Class "Logger" not found in /home/customer/www/dds.mydetailarea.com/public_html/public/to/webhook.php:33
+Stack trace:
+#0 {main}
+  thrown in /home/customer/www/dds.mydetailarea.com/public_html/public/to/webhook.php on line 33
+[13-Aug-2025 04:10:59 UTC] PHP Fatal error:  Uncaught Error: Class "Logger" not found in /home/customer/www/dds.mydetailarea.com/public_html/public/to/webhook.php:33
+Stack trace:
+#0 {main}
+  thrown in /home/customer/www/dds.mydetailarea.com/public_html/public/to/webhook.php on line 33
+[13-Aug-2025 04:11:04 UTC] PHP Fatal error:  Uncaught Error: Class "Logger" not found in /home/customer/www/dds.mydetailarea.com/public_html/public/to/webhook.php:33
+Stack trace:
+#0 {main}
+  thrown in /home/customer/www/dds.mydetailarea.com/public_html/public/to/webhook.php on line 33
+[13-Aug-2025 04:13:45 UTC] PHP Fatal error:  Uncaught Error: Class "Logger" not found in /home/customer/www/dds.mydetailarea.com/public_html/public/to/webhook.php:33
+Stack trace:
+#0 {main}
+  thrown in /home/customer/www/dds.mydetailarea.com/public_html/public/to/webhook.php on line 33
+[13-Aug-2025 04:13:47 UTC] PHP Fatal error:  Uncaught Error: Class "Logger" not found in /home/customer/www/dds.mydetailarea.com/public_html/public/to/webhook.php:33
+Stack trace:
+#0 {main}
+  thrown in /home/customer/www/dds.mydetailarea.com/public_html/public/to/webhook.php on line 33
+[13-Aug-2025 04:13:49 UTC] PHP Fatal error:  Uncaught Error: Class "Logger" not found in /home/customer/www/dds.mydetailarea.com/public_html/public/to/webhook.php:33
+Stack trace:
+#0 {main}
+  thrown in /home/customer/www/dds.mydetailarea.com/public_html/public/to/webhook.php on line 33
+[13-Aug-2025 04:13:53 UTC] PHP Fatal error:  Uncaught Error: Class "Logger" not found in /home/customer/www/dds.mydetailarea.com/public_html/public/to/webhook.php:33
+Stack trace:
+#0 {main}
+  thrown in /home/customer/www/dds.mydetailarea.com/public_html/public/to/webhook.php on line 33
+[13-Aug-2025 04:45:14 UTC] PHP Fatal error:  Uncaught Error: Class "Logger" not found in /home/customer/www/dds.mydetailarea.com/public_html/public/to/get_inventory.php:48
+Stack trace:
+#0 /home/customer/www/dds.mydetailarea.com/public_html/public/to/get_inventory.php(441): InventoryAPI->__construct(Array)
+#1 {main}
+  thrown in /home/customer/www/dds.mydetailarea.com/public_html/public/to/get_inventory.php on line 48
+[13-Aug-2025 04:45:14 UTC] PHP Fatal error:  Uncaught Error: Class "Logger" not found in /home/customer/www/dds.mydetailarea.com/public_html/public/to/get_inventory.php:48
+Stack trace:
+#0 /home/customer/www/dds.mydetailarea.com/public_html/public/to/get_inventory.php(441): InventoryAPI->__construct(Array)
+#1 {main}
+  thrown in /home/customer/www/dds.mydetailarea.com/public_html/public/to/get_inventory.php on line 48
