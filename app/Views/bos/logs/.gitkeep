@@ -1,6 +1,0 @@
-# Este archivo mantiene el directorio logs/ en el repositorio
-# El directorio logs/ almacena archivos de registro:
-# - inventory_YYYY-MM-DD.log (logs diarios)
-# - webhook_received.log (logs de webhooks)
-# - get_inventory.log (logs de API)
-# - webhook_stats.json (estadísticas)

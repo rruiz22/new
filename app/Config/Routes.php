@@ -21,6 +21,9 @@ $routes->get('language/available', 'LanguageController::getAvailableLanguages');
 $routes->get('language/current', 'LanguageController::getCurrentLanguage');
 $routes->get('language/translations/(:alpha)', 'LanguageController::getTranslationsJson/$1');
 
+// BOS Public Route (no auth required)
+$routes->get('bos', 'BosController::index');
+
 // Test routes for debugging redirect functionality
 $routes->get('test-redirect', 'TestController::testRedirect', ['filter' => 'sessionauth']);
 $routes->get('test-filter', 'TestController::testFilter', ['filter' => 'sessionauth']);
