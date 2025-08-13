@@ -1,3837 +1,1424 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
-
-    <meta charset="UTF-8">
-
+    <meta charset="utf-8" />
+    <title>BOS Inventory Management</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Pre-Owned Inventory - Real Time</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <meta content="BOS Inventory Management System" name="description" />
+    <meta content="BOS" name="author" />
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="../../assets/images/favicon.ico">
     
+    <!-- Bootstrap CSS -->
+    <link href="../../assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <!-- Icons CSS -->
+    <link href="../../assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+    <!-- App CSS -->
+    <link href="../../assets/css/app.min.css" rel="stylesheet" type="text/css" />
     <!-- DataTables CSS -->
-    <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
-    <link href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css" rel="stylesheet">
-    <link href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css" rel="stylesheet">
+    <link href="../../assets/libs/datatables/dataTables.bootstrap5.min.css" rel="stylesheet" type="text/css" />
+    <link href="../../assets/libs/datatables/responsive.bootstrap5.min.css" rel="stylesheet" type="text/css" />
 
     <style>
-
         :root {
-            /* Velzon Theme Variables */
-            --bs-primary: #405189;
-            --bs-secondary: #6c757d;
-            --bs-success: #0ab39c;
-            --bs-info: #299cdb;
-            --bs-warning: #f7b84b;
-            --bs-danger: #f06548;
-            --bs-light: #f8f9fa;
-            --bs-dark: #212529;
-            
-            /* Custom Variables */
             --primary-color: #405189;
-            --secondary-color: #6c757d;
-            --accent-color: #405189;
+            --primary-hover: #364574;
+            --secondary-color: #74788d;
+            --light-gray: #f8f9fa;
+            --border-color: #e3ebf0;
+            --text-primary: #495057;
+            --text-secondary: #74788d;
+            --text-muted: #adb5bd;
             --success-color: #0ab39c;
             --warning-color: #f7b84b;
-            --error-color: #f06548;
-            --background-color: #f8f9fa;
-            --surface-color: #ffffff;
-            --border-color: #e9ecef;
-            --text-primary: #212529;
-            --text-secondary: #6c757d;
-            --text-muted: #9ca3af;
-            --shadow-sm: 0 2px 4px rgba(15,34,58,0.12);
-            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.1);
-            --radius-sm: 6px;
-            --radius-md: 8px;
-            --radius-lg: 12px;
-            --radius-xl: 16px;
+            --danger-color: #f06548;
+            --white: #ffffff;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
         }
-
-
-
-        * {
-
-            box-sizing: border-box;
-
-        }
-
-
 
         body {
-            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: var(--background-color);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8fafc;
             color: var(--text-primary);
-            line-height: 1.5;
-            min-height: 100vh;
-            font-size: 0.875rem;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            line-height: 1.6;
+            font-size: 14px;
         }
-
-
 
         .container {
-
-            max-width: 1400px;
-
+            max-width: 1200px;
             margin: 0 auto;
-
-            padding: 2rem;
-
+            padding: 2rem 1rem;
         }
 
-
-
-        .main-card {
-
-            background: var(--surface-color);
-
-            border-radius: var(--radius-xl);
-
-            box-shadow: var(--shadow-lg);
-
-            overflow: hidden;
-
-            border: 1px solid var(--border-color);
-
-        }
-
-
-
-        .header {
-            background: var(--surface-color);
-            color: var(--text-primary);
-            padding: 2rem;
+        .page-header {
             text-align: center;
-            position: relative;
-            border-bottom: 1px solid var(--border-color);
-            box-shadow: var(--shadow-sm);
-        }
-
-
-
-        .header-content {
-
-            position: relative;
-
-            z-index: 1;
-
-        }
-
-
-
-        .header h1 {
-
-            margin: 0;
-
-            font-size: clamp(2rem, 4vw, 3rem);
-
-            font-weight: 700;
-
-            letter-spacing: -0.02em;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            gap: 1rem;
-
-            color: var(--text-primary);
-
-        }
-
-
-
-        .header-subtitle {
-
-            margin-top: 0.75rem;
-
-            font-size: 1.125rem;
-
-            color: var(--text-secondary);
-
-            font-weight: 400;
-
-        }
-
-
-
-        .status-bar {
-
-            position: absolute;
-
-            top: 1rem;
-
-            left: 1rem;
-
-            right: 1rem;
-
-            display: flex;
-
-            justify-content: space-between;
-
-            align-items: center;
-
-            z-index: 2;
-
-        }
-
-
-
-        .connection-status {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 0.5rem;
-
-            padding: 0.5rem 1rem;
-
-            border-radius: var(--radius-md);
-
-            font-size: 0.875rem;
-
-            font-weight: 500;
-
-            backdrop-filter: blur(20px);
-
-            -webkit-backdrop-filter: blur(20px);
-
-        }
-
-
-
-        .connection-status.connected {
-            background: rgba(10, 179, 156, 0.1);
-            color: var(--success-color);
-            border: 1px solid rgba(10, 179, 156, 0.2);
-        }
-
-        .connection-status.disconnected {
-            background: rgba(240, 101, 72, 0.1);
-            color: var(--error-color);
-            border: 1px solid rgba(240, 101, 72, 0.2);
-        }
-
-        .connection-status.connecting {
-            background: rgba(247, 184, 75, 0.1);
-            color: var(--warning-color);
-            border: 1px solid rgba(247, 184, 75, 0.2);
-        }
-
-
-
-        .language-selector {
-
-            z-index: 2;
-
-        }
-
-
-
-        .language-btn {
-            background: var(--surface-color);
+            margin-bottom: 2.5rem;
+            padding: 3rem 2rem;
+            background: var(--white);
             border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            padding: 0.75rem 1rem;
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            font-size: 0.875rem;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-
-        .language-btn:hover {
-            background: var(--bs-light);
-            border-color: var(--primary-color);
+            border-radius: var(--radius-lg);
             box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
         }
 
-
-
-        .controls {
-
-            padding: 2rem;
-
-            background: var(--surface-color);
-
-            border-bottom: 1px solid var(--border-color);
-
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-color);
         }
 
-
-
-        .controls-grid {
-
-            display: grid;
-
-            grid-template-columns: 1fr auto;
-
-            gap: 1.5rem;
-
-            align-items: center;
-
-            margin-bottom: 1rem;
-
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            letter-spacing: -0.025em;
         }
 
-
+        .page-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
 
         .search-container {
-
-            position: relative;
-
+            margin-bottom: 2rem;
         }
-
-
 
         .search-box {
-
-            width: 100%;
-
-            padding: 1rem 1.25rem 1rem 3.5rem;
-
-            border: 2px solid var(--border-color);
-
-            border-radius: var(--radius-md);
-
-            font-size: 1rem;
-
-            font-family: inherit;
-
-            background: var(--surface-color);
-
-            transition: all 0.3s ease;
-
-            color: var(--text-primary);
-
+            position: relative;
+            max-width: 400px;
+            margin: 0 auto;
         }
 
+        .search-input {
+            width: 100%;
+            padding: 0.875rem 3rem 0.875rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            background: var(--white);
+            box-shadow: var(--shadow-sm);
+        }
 
-
-        .search-box:focus {
+        .search-input:focus {
             outline: none;
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(64, 81, 137, 0.1);
+            transform: translateY(-1px);
         }
-
-
 
         .search-icon {
-
             position: absolute;
-
-            left: 1.25rem;
-
+            right: 1rem;
             top: 50%;
-
             transform: translateY(-50%);
-
             color: var(--text-muted);
-
-            font-size: 1.1rem;
-
+            transition: color 0.2s ease;
         }
 
-
-
-        .controls-row {
-
-            display: flex;
-
-            justify-content: space-between;
-
-            align-items: center;
-
-            gap: 1rem;
-
-            flex-wrap: wrap;
-
+        .search-input:focus + .search-icon {
+            color: var(--primary-color);
         }
 
-
-
-        .realtime-controls {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 1rem;
-
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
         }
 
-
-
-        .realtime-toggle {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 0.5rem;
-
-            font-size: 0.875rem;
-
-            font-weight: 500;
-
-        }
-
-
-
-        .toggle-switch {
-
-            position: relative;
-
-            width: 50px;
-
-            height: 26px;
-
-            background: var(--border-color);
-
-            border-radius: 13px;
-
-            cursor: pointer;
-
-            transition: background 0.3s ease;
-
-        }
-
-
-
-        .toggle-switch.active {
-            background: var(--primary-color);
-        }
-
-
-
-        .toggle-slider {
-
-            position: absolute;
-
-            top: 2px;
-
-            left: 2px;
-
-            width: 22px;
-
-            height: 22px;
-
-            background: white;
-
-            border-radius: 50%;
-
-            transition: transform 0.3s ease;
-
-            box-shadow: var(--shadow-sm);
-
-        }
-
-
-
-        .toggle-switch.active .toggle-slider {
-
-            transform: translateX(24px);
-
-        }
-
-
-
-        .export-buttons {
-
-            display: flex;
-
-            gap: 0.75rem;
-
-            flex-wrap: wrap;
-
-        }
-
-
-
-        .btn {
-            padding: 0.75rem 1.25rem;
-            border: 1px solid transparent;
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            font-size: 0.875rem;
-            font-weight: 500;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.2s ease;
-            font-family: inherit;
-            white-space: nowrap;
-            position: relative;
-        }
-
-        .btn-primary {
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
-
-        .btn-primary:hover {
-            background: #364574;
-            border-color: #364574;
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .btn-success {
-            background: var(--success-color);
-            color: white;
-            border-color: var(--success-color);
-        }
-
-        .btn-success:hover {
-            background: #089c81;
-            border-color: #089c81;
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .btn-info {
-            background: var(--bs-info);
-            color: white;
-            border-color: var(--bs-info);
-        }
-
-        .btn-info:hover {
-            background: #1f7db0;
-            border-color: #1f7db0;
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-sm);
-        }
-
-
-
-        .btn:disabled {
-
-            opacity: 0.5;
-
-            cursor: not-allowed;
-
-            transform: none !important;
-
-        }
-
-
-
-        /* Notificaciones */
-
-        .notification {
-
-            position: fixed;
-
-            top: 20px;
-
-            right: 20px;
-
-            padding: 15px 20px;
-
-            border-radius: var(--radius-md);
-
-            z-index: 9999;
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 10px;
-
-            animation: slideInRight 0.3s ease;
-
-            box-shadow: var(--shadow-lg);
-
-            min-width: 300px;
-
-            max-width: 500px;
-
-        }
-
-
-
-        .notification-success {
-
-            background: #d4edda;
-
-            color: #155724;
-
-            border: 1px solid #c3e6cb;
-
-        }
-
-
-
-        .notification-error {
-
-            background: #f8d7da;
-
-            color: #721c24;
-
-            border: 1px solid #f5c6cb;
-
-        }
-
-
-
-        .notification-warning {
-
-            background: #fff3cd;
-
-            color: #856404;
-
-            border: 1px solid #ffeaa7;
-
-        }
-
-
-
-        .notification-info {
-
-            background: #d1ecf1;
-
-            color: #0c5460;
-
-            border: 1px solid #bee5eb;
-
-        }
-
-
-
-        .notification-close {
-
-            background: none;
-
-            border: none;
-
-            font-size: 1.2rem;
-
-            cursor: pointer;
-
-            color: inherit;
-
-            opacity: 0.7;
-
-            margin-left: auto;
-
-        }
-
-
-
-        .notification-close:hover {
-
-            opacity: 1;
-
-        }
-
-
-
-        @keyframes slideInRight {
-
-            from { transform: translateX(100%); opacity: 0; }
-
-            to { transform: translateX(0); opacity: 1; }
-
-        }
-
-
-
-        /* Loading y estados */
-
-        .loading {
-
-            text-align: center;
-
-            padding: 4rem 2rem;
-
-            color: var(--text-secondary);
-
-        }
-
-
-
-        .spinner {
-
-            width: 40px;
-
-            height: 40px;
-
-            border: 3px solid var(--border-color);
-
-            border-top: 3px solid var(--accent-color);
-
-            border-radius: 50%;
-
-            animation: spin 1s linear infinite;
-
-            margin: 0 auto 1rem;
-
-        }
-
-
-
-        @keyframes spin {
-
-            0% { transform: rotate(0deg); }
-
-            100% { transform: rotate(360deg); }
-
-        }
-
-
-
-        .pulse {
-
-            animation: pulse 2s infinite;
-
-        }
-
-
-
-        @keyframes pulse {
-
-            0% { opacity: 1; }
-
-            50% { opacity: 0.5; }
-
-            100% { opacity: 1; }
-
-        }
-
-
-
-        /* Service Orders Table Styles */
-        .table-container {
-            overflow: hidden;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-sm);
+        .stat-card {
+            background: var(--white);
             border: 1px solid var(--border-color);
-            margin: 1rem 0;
+            border-radius: var(--radius-md);
+            padding: 2rem 1.5rem;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary-color);
+        }
+
+        .stat-number {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-size: 0.75rem;
+        }
+
+        .table-container {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+        }
+
+        .table-header {
+            padding: 1.5rem 1.5rem 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(135deg, var(--light-gray) 0%, #f1f3f4 100%);
+            margin: -1.5rem -1.5rem 1.5rem -1.5rem;
+        }
+
+        .table-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .table-icon {
+            width: 1.25rem;
+            height: 1.25rem;
+            color: var(--primary-color);
+        }
+
+        .table-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0;
+            font-weight: 500;
         }
 
         .table-wrapper {
-            overflow-x: auto;
-            scrollbar-width: thin;
-            scrollbar-color: var(--border-color) transparent;
-        }
-
-        .table-wrapper::-webkit-scrollbar {
-            height: 8px;
-        }
-
-        .table-wrapper::-webkit-scrollbar-track {
-            background: var(--background-color);
-        }
-
-        .table-wrapper::-webkit-scrollbar-thumb {
-            background: var(--border-color);
-            border-radius: 4px;
-        }
-
-        .table-wrapper::-webkit-scrollbar-thumb:hover {
-            background: var(--text-muted);
-        }
-
-        /* Responsive table improvements */
-        @media (max-width: 768px) {
-            .table-wrapper {
-                font-size: 0.8rem;
-            }
-            
-            th, td {
-                padding: 0.5rem 0.25rem !important;
-            }
-            
-            .table-container {
-                margin: 0 -0.5rem;
-                border-radius: 0;
-            }
-        }
-
-        @media (max-width: 576px) {
-            th:nth-child(n+6), 
-            td:nth-child(n+6) {
-                display: none;
-            }
-            
-            .table-wrapper {
-                font-size: 0.75rem;
-            }
-        }
-
-
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 0;
-            background: var(--surface-color);
-            font-size: 0.875rem;
-            min-width: 800px;
-        }
-
-
-
-        th {
-            background: var(--bs-light);
-            color: var(--text-primary);
-            font-weight: 600;
-            padding: 1rem 0.75rem;
-            text-align: center;
-            border-bottom: 1px solid var(--border-color);
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            white-space: nowrap;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            vertical-align: middle;
-        }
-
-
-
-        td {
-            padding: 0.75rem;
-            border-bottom: 1px solid var(--border-color);
-            vertical-align: middle;
-            transition: all 0.2s ease;
-            text-align: center;
-            font-size: 0.875rem;
-        }
-
-        tr:hover td {
-            background-color: rgba(64, 81, 137, 0.03);
-            transform: translateY(-1px);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-
-        tr:nth-child(even) td {
-            background-color: rgba(248, 249, 250, 0.5);
-        }
-
-        tr:nth-child(even):hover td {
-            background-color: rgba(64, 81, 137, 0.03);
-        }
-
-
-
-        .code {
-            font-family: 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', monospace;
-            background: rgba(64, 81, 137, 0.1);
-            color: var(--primary-color);
-            padding: 0.25rem 0.5rem;
-            border-radius: var(--radius-sm);
-            font-size: 0.8rem;
-            font-weight: 600;
-            border: 1px solid rgba(64, 81, 137, 0.2);
-        }
-
-
-
-        .row-updated {
-            animation: highlightUpdate 2s ease;
-        }
-
-        @keyframes highlightUpdate {
-            0% { background-color: rgba(10, 179, 156, 0.3); }
-            100% { background-color: transparent; }
-        }
-
-
-
-        .no-data {
-
-            text-align: center;
-
-            padding: 4rem 2rem;
-
-            color: var(--text-muted);
-
-            font-style: italic;
-
-            font-size: 1.1rem;
-
-        }
-
-
-
-        /* Paginación */
-
-        .pagination-container {
-
-            display: flex;
-
-            justify-content: space-between;
-
-            align-items: center;
-
-            padding: 1.5rem 2rem;
-
-            background: var(--background-color);
-
-            border-top: 1px solid var(--border-color);
-
-        }
-
-
-
-        .pagination-info {
-
-            color: var(--text-secondary);
-
-            font-size: 0.875rem;
-
-            font-weight: 500;
-
-        }
-
-
-
-        .pagination-controls {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 0.5rem;
-
-        }
-
-
-
-        .pagination-btn {
-            padding: 0.5rem 0.75rem;
+            margin: -0.5rem;
+            border-radius: var(--radius-md);
+            overflow: hidden;
             border: 1px solid var(--border-color);
-            background: var(--surface-color);
-            color: var(--text-primary);
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            padding: 1.5rem;
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: 1px solid transparent;
             border-radius: var(--radius-sm);
             cursor: pointer;
-            font-size: 0.875rem;
-            font-weight: 500;
             transition: all 0.2s ease;
-            min-width: 40px;
-            text-align: center;
+            position: relative;
+            overflow: hidden;
         }
 
-        .pagination-btn:hover:not(:disabled) {
-            background: var(--primary-color);
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.3s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
             border-color: var(--primary-color);
             color: white;
         }
 
-        .pagination-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        .pagination-btn.active {
-            background: var(--primary-color);
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
             color: white;
-            border-color: var(--primary-color);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
         }
 
-
-
-        .page-size-selector {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 0.5rem;
-
-            margin-left: 1rem;
-
-        }
-
-
-
-        .page-size-select {
-
-            padding: 0.5rem;
-
-            border: 1px solid var(--border-color);
-
-            border-radius: var(--radius-sm);
-
-            background: var(--surface-color);
-
-            color: var(--text-primary);
-
-            font-size: 0.875rem;
-
-        }
-
-
-
-        .stats {
-
-            background: var(--background-color);
-
-            padding: 1.5rem 2rem;
-
-            text-align: center;
-
+        .btn-outline-secondary {
+            border-color: var(--border-color);
             color: var(--text-secondary);
-
-            font-size: 0.875rem;
-
-            font-weight: 500;
-
-            border-top: 1px solid var(--border-color);
-
-            display: flex;
-
-            justify-content: space-between;
-
-            align-items: center;
-
+            background-color: transparent;
         }
 
+        .btn-outline-secondary:hover {
+            background-color: var(--light-gray);
+            border-color: var(--text-muted);
+            color: var(--text-primary);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
 
-
-        .cache-indicator {
-
-            font-size: 0.8rem;
-
-            padding: 4px 8px;
-
+        .last-update {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 0.75rem 1rem;
+            background: linear-gradient(135deg, var(--light-gray) 0%, #f1f3f4 100%);
             border-radius: var(--radius-sm);
-
-            font-weight: 500;
-
+            border: 1px solid var(--border-color);
+            text-align: center;
         }
 
-
-
-        .cache-indicator.cached {
-
-            background: #e3f2fd;
-
-            color: #1976d2;
-
+        .update-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-
-
-        .cache-indicator.fresh {
-
-            background: #e8f5e8;
-
-            color: #2e7d32;
-
+        .avg-days-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(64, 81, 137, 0.1);
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(64, 81, 137, 0.2);
+            margin-top: 0.25rem;
         }
 
+        .avg-label {
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
 
+        .avg-value {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 1rem;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #364574 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .avg-unit {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            font-style: italic;
+        }
 
         .error {
-            background: rgba(240, 101, 72, 0.1);
-            color: var(--error-color);
+            background-color: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
             padding: 1rem 1.5rem;
-            margin: 1rem;
             border-radius: var(--radius-md);
-            border: 1px solid rgba(240, 101, 72, 0.2);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            display: none;
             font-weight: 500;
+            box-shadow: var(--shadow-sm);
         }
 
-
-
-        .debug {
-            background: rgba(64, 81, 137, 0.1);
-            color: var(--primary-color);
-            padding: 1rem 1.5rem;
-            margin: 1rem;
-            border-radius: var(--radius-md);
-            border: 1px solid rgba(64, 81, 137, 0.2);
-            font-family: 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', monospace;
-            font-size: 0.8rem;
-            line-height: 1.5;
-            white-space: pre-wrap;
+        .error.show {
+            display: block;
+            animation: slideDown 0.3s ease;
         }
 
-
-
-        /* Responsive Design */
-
-        @media (max-width: 768px) {
-
-            .container {
-
-                padding: 1rem;
-
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
             }
-
-
-
-            .header {
-
-                padding: 2rem 1rem;
-
+            to {
+            opacity: 1;
+                transform: translateY(0);
             }
-
-
-
-            .status-bar {
-
-                position: static;
-
-                margin-bottom: 1rem;
-
-                justify-content: center;
-
-                flex-wrap: wrap;
-
-                gap: 1rem;
-
-            }
-
-
-
-            .controls {
-
-                padding: 1.5rem;
-
-            }
-
-
-
-            .controls-grid {
-
-                grid-template-columns: 1fr;
-
-                gap: 1rem;
-
-            }
-
-
-
-            .controls-row {
-
-                flex-direction: column;
-
-                align-items: stretch;
-
-            }
-
-
-
-            .export-buttons {
-
-                justify-content: center;
-
-            }
-
-
-
-            .btn {
-
-                padding: 0.875rem 1.25rem;
-
-                font-size: 0.8rem;
-
-            }
-
-
-
-            th, td {
-
-                padding: 0.75rem 0.5rem;
-
-                font-size: 0.8rem;
-
-            }
-
-
-
-            th {
-
-                font-size: 0.7rem;
-
-            }
-
-
-
-            .pagination-container {
-
-                flex-direction: column;
-
-                gap: 1rem;
-
-                padding: 1rem;
-
-            }
-
-
-
-            .pagination-controls {
-
-                flex-wrap: wrap;
-
-                justify-content: center;
-
-            }
-
-
-
-            .page-size-selector {
-
-                margin-left: 0;
-
-            }
-
-
-
-            .stats {
-
-                flex-direction: column;
-
-                gap: 0.5rem;
-
-            }
-
         }
 
-
-
-        @media (max-width: 480px) {
-
-            .header h1 {
-
-                font-size: 1.75rem;
-
-                flex-direction: column;
-
-                gap: 0.5rem;
-
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
             }
-
-
-
-            .export-buttons {
-
-                flex-direction: column;
-
-                width: 100%;
-
-            }
-
-
-
-            .btn {
-
-                justify-content: center;
-
-                width: 100%;
-
-            }
-
-
-
-            th, td {
-
-                padding: 0.5rem 0.25rem;
-
-                font-size: 0.75rem;
-
-            }
-
-
-
-            .pagination-btn {
-
-                padding: 0.375rem 0.5rem;
-
-                font-size: 0.8rem;
-
-                min-width: 35px;
-
-            }
-
-        }
-
-
-
-        /* Animaciones */
-
-        .fade-in {
-
-            animation: fadeIn 0.5s ease-in;
-
-        }
-
-
-
-        @keyframes fadeIn {
-
-            from { opacity: 0; transform: translateY(10px); }
-
-            to { opacity: 1; transform: translateY(0); }
-
-        }
-
-
-
-        /* Focus styles para accesibilidad */
-
-        .btn:focus,
-
-        .search-box:focus,
-
-        .language-btn:focus,
-
-        .pagination-btn:focus,
-
-        .page-size-select:focus {
-
-            outline: 2px solid var(--accent-color);
-
-            outline-offset: 2px;
-
-        }
-
-
-
-        /* Print styles */
-
-        @media print {
-
-            body {
-
-                background: white;
-
-            }
-
-            
-
-            .header {
-
-                background: white !important;
-
-                print-color-adjust: exact;
-                -webkit-print-color-adjust: exact;
-
-            }
-
-            
-
-            .controls,
-
-            .export-buttons,
-
-            .pagination-container,
-
-            .status-bar {
-
-                display: none;
-
-            }
-
-            
-
-            .main-card {
-
-                box-shadow: none;
-
-                border: 1px solid #ccc;
-
-            }
-
         }
 
         /* DataTables Custom Styling */
-        .dataTables_wrapper {
-            font-family: 'Poppins', sans-serif !important;
-            padding: 1.5rem;
-            margin: 0 auto;
-        }
-
         .dataTables_wrapper .dataTables_length,
-        .dataTables_wrapper .dataTables_filter,
-        .dataTables_wrapper .dataTables_info,
-        .dataTables_wrapper .dataTables_paginate {
+        .dataTables_wrapper .dataTables_filter {
             margin-bottom: 1rem;
         }
 
         .dataTables_wrapper .dataTables_length select,
         .dataTables_wrapper .dataTables_filter input {
-            border: 1px solid var(--border-color) !important;
-            border-radius: var(--radius-sm) !important;
-            padding: 0.5rem 0.75rem !important;
-            background: var(--surface-color) !important;
-            color: var(--text-primary) !important;
-            font-size: 0.875rem !important;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
         }
 
+        .dataTables_wrapper .dataTables_length select:focus,
         .dataTables_wrapper .dataTables_filter input:focus {
-            border-color: var(--primary-color) !important;
-            box-shadow: 0 0 0 2px rgba(64, 81, 137, 0.1) !important;
-            outline: none !important;
-        }
-
-        .dataTables_wrapper .dataTables_paginate .paginate_button {
-            padding: 0.5rem 0.75rem !important;
-            margin: 0 3px !important;
-            border: 1px solid var(--border-color) !important;
-            border-radius: var(--radius-md) !important;
-            background: var(--surface-color) !important;
-            color: var(--text-primary) !important;
-            font-size: 0.875rem !important;
-            font-weight: 500 !important;
-            text-decoration: none !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            min-width: 40px !important;
-            transition: all 0.2s ease !important;
-            box-shadow: var(--shadow-sm) !important;
-        }
-
-        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-            background: var(--primary-color) !important;
-            border-color: var(--primary-color) !important;
-            color: white !important;
-            transform: translateY(-1px) !important;
-            box-shadow: var(--shadow-md) !important;
-            text-decoration: none !important;
-        }
-
-        .dataTables_wrapper .dataTables_paginate .paginate_button.current,
-        .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
-            background: var(--primary-color) !important;
-            border-color: var(--primary-color) !important;
-            color: white !important;
-            font-weight: 600 !important;
-            box-shadow: var(--shadow-md) !important;
-            transform: none !important;
-        }
-
-        .dataTables_wrapper .dataTables_paginate .paginate_button.disabled,
-        .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:hover {
-            background: var(--background-color) !important;
-            border-color: var(--border-color) !important;
-            color: var(--text-muted) !important;
-            cursor: not-allowed !important;
-            transform: none !important;
-            box-shadow: none !important;
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(64, 81, 137, 0.1);
         }
 
         .dataTables_wrapper .dataTables_info {
-            color: var(--text-secondary) !important;
-            font-size: 0.875rem !important;
-            font-weight: 500 !important;
-            margin-bottom: 0 !important;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 500;
         }
 
-        .dataTables_wrapper .dataTables_paginate {
-            margin-top: 0 !important;
-            text-align: center !important;
-        }
-
-        .dataTables_wrapper .dataTables_paginate .pagination {
-            margin: 0 !important;
-            justify-content: center !important;
-            flex-wrap: wrap !important;
-            gap: 4px !important;
-        }
-
-        /* Responsive controls */
-        .dtr-control {
-            position: relative;
-            cursor: pointer;
-        }
-
-        .dtr-control:before {
-            content: '+';
-            display: inline-block;
-            color: var(--primary-color);
-            font-weight: bold;
-            font-size: 1.2em;
-            text-align: center;
-            border: 1px solid var(--primary-color);
-            border-radius: 3px;
-            width: 18px;
-            height: 18px;
-            line-height: 16px;
-            box-sizing: border-box;
-        }
-
-        .dtr-control.dtr-open:before {
-            content: '-';
-        }
-
-        /* Child row styling */
-        .dtr-details {
-            background: var(--background-color);
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            padding: 0.5rem 0.75rem;
+            margin: 0 2px;
             border: 1px solid var(--border-color);
             border-radius: var(--radius-sm);
-            margin: 0.5rem 0;
+            color: var(--text-secondary);
+            background: var(--white);
+            transition: all 0.2s ease;
         }
 
-        .dtr-details ul {
-            list-style: none;
-            margin: 0;
-            padding: 1rem;
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            border-color: var(--primary-color);
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-1px);
         }
 
-        .dtr-details li {
-            margin-bottom: 0.5rem;
-            padding: 0.25rem 0;
-            border-bottom: 1px solid var(--border-color);
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            border-color: var(--primary-color);
+            background-color: var(--primary-color);
+            color: white;
         }
 
-        .dtr-details li:last-child {
+        /* Table Styling */
+        .table {
+            margin-bottom: 0;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .table thead th {
+            background: linear-gradient(135deg, var(--light-gray) 0%, #f1f3f4 100%);
+            border: none;
+            border-bottom: 2px solid var(--primary-color);
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 1.25rem 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            white-space: nowrap;
+        }
+
+        .table thead th:first-child {
+            border-top-left-radius: var(--radius-md);
+        }
+
+        .table thead th:last-child {
+            border-top-right-radius: var(--radius-md);
+        }
+
+        .table tbody tr {
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .table tbody tr:hover {
+            background: linear-gradient(135deg, rgba(64, 81, 137, 0.03) 0%, rgba(64, 81, 137, 0.01) 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .table tbody tr:nth-child(even) {
+            background-color: rgba(248, 249, 250, 0.3);
+        }
+
+        .table tbody tr:nth-child(even):hover {
+            background: linear-gradient(135deg, rgba(64, 81, 137, 0.03) 0%, rgba(64, 81, 137, 0.01) 100%);
+        }
+
+        .table tbody td {
+            padding: 1.25rem 1rem;
+            border: none;
+            border-bottom: 1px solid rgba(227, 235, 240, 0.6);
+            font-size: 0.875rem;
+            vertical-align: middle;
+            font-weight: 500;
+        }
+
+        .table tbody tr:last-child td {
             border-bottom: none;
         }
 
-        .dtr-title {
+        .table tbody tr:last-child td:first-child {
+            border-bottom-left-radius: var(--radius-md);
+        }
+
+        .table tbody tr:last-child td:last-child {
+            border-bottom-right-radius: var(--radius-md);
+        }
+
+        /* Days badge styling - Bootstrap badges with custom enhancements */
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            min-width: 35px;
+            padding: 0.35rem 0.6rem;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .badge:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Override Bootstrap badge colors for better contrast and consistency */
+        .badge.bg-success {
+            background-color: var(--success-color) !important;
+            color: white;
+        }
+
+        .badge.bg-warning {
+            background-color: var(--warning-color) !important;
+            color: white;
+        }
+
+        .badge.bg-danger {
+            background-color: var(--danger-color) !important;
+            color: white;
+        }
+
+        /* Stock number styling */
+        .stock-number {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #364574 100%);
+            color: white;
+            padding: 0.375rem 0.75rem;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 0.025em;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Vehicle info styling */
+        .vehicle-info {
             font-weight: 600;
-            color: var(--primary-color);
-            display: inline-block;
-            min-width: 120px;
+            color: var(--text-primary);
+            line-height: 1.4;
         }
 
-        /* Hide custom pagination when DataTables is active */
-        .dataTables_wrapper + #paginationContainer {
-            display: none !important;
+        /* Notes preview styling */
+        .notes-preview {
+            color: var(--text-secondary);
+            font-style: italic;
+            line-height: 1.4;
         }
 
-        /* Mobile responsive improvements */
+        .notes-preview.has-content {
+            color: var(--text-primary);
+            font-style: normal;
+        }
+
+        /* Row number styling */
+        .row-number-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--text-muted) 0%, #8b9dc3 100%);
+            color: white;
+            border-radius: 50%;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .row-number {
+            width: 50px;
+        }
+
+        /* Responsive Design */
         @media (max-width: 768px) {
-            .dataTables_wrapper {
+            .container {
+                padding: 1rem 0.5rem;
+            }
+            
+            .page-header {
+                padding: 2rem 1.5rem;
+                margin-bottom: 2rem;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .stat-card {
+                padding: 1.5rem 1rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
                 padding: 1rem;
             }
-
-            .dataTables_wrapper .dataTables_length,
-            .dataTables_wrapper .dataTables_filter {
-                text-align: center;
-                margin-bottom: 1rem;
+            
+            .search-box {
+                max-width: 100%;
             }
 
-            .dataTables_wrapper .dataTables_info,
-            .dataTables_wrapper .dataTables_paginate {
+            .btn {
+                justify-content: center;
+            }
+
+            .last-update {
                 text-align: center;
                 margin-top: 1rem;
-            }
-
-            .dataTables_wrapper .dataTables_paginate .paginate_button {
-                padding: 0.375rem 0.5rem !important;
-                font-size: 0.8rem !important;
-                min-width: 35px !important;
-                margin: 0 1px !important;
-            }
-
-            .dataTables_wrapper .dataTables_info {
-                font-size: 0.8rem !important;
-                margin-bottom: 0.5rem !important;
             }
         }
 
         @media (max-width: 480px) {
-            .dataTables_wrapper {
-                padding: 0.5rem;
+            .page-title {
+                font-size: 1.75rem;
             }
-
-            .dataTables_wrapper .dataTables_paginate .paginate_button {
-                padding: 0.25rem 0.4rem !important;
-                font-size: 0.75rem !important;
-                min-width: 30px !important;
+            
+            .stat-number {
+                font-size: 2rem;
             }
-
-            .dataTables_wrapper .dataTables_length select,
-            .dataTables_wrapper .dataTables_filter input {
-                font-size: 0.8rem !important;
-                padding: 0.375rem 0.5rem !important;
+            
+            .btn {
+                padding: 0.625rem 1.25rem;
+                font-size: 0.8125rem;
             }
         }
-
     </style>
-
 </head>
 
 <body>
-
     <div class="container">
-
-        <div class="main-card">
-
-            <div class="header">
-
-                <div class="status-bar">
-
-                    <div id="connectionStatus" class="connection-status disconnected">
-
-                        <i class="fas fa-circle pulse"></i>
-
-                        <span data-translate="disconnected">Disconnected</span>
-
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">BOS Inventory Management</h1>
+            <p class="page-subtitle">Vehicle Inventory Tracking System</p>
                     </div>
 
-                    <div class="language-selector">
+        <!-- Error Display -->
+        <div id="errorContainer" class="error"></div>
 
-                        <select class="language-btn" id="languageSelector" onchange="changeLanguage()">
+        
 
-                            <option value="en">🇺🇸 English</option>
-
-                            <option value="es">🇪🇸 Español</option>
-
-                            <option value="pt">🇧🇷 Português</option>
-
-                        </select>
-
+        <!-- Stats -->
+        <div id="statsContainer" class="stats">
+            <div class="stat-card">
+                <div id="totalRecords" class="stat-number">0</div>
+                <div class="stat-label">Total Records</div>
                     </div>
-
+            <div class="stat-card">
+                <div id="lastUpdateStat" class="stat-number">--</div>
+                <div class="stat-label">Last Update</div>
                 </div>
-
-                <div class="header-content">
-
-                    <h1>
-
-                        <i class="fas fa-clipboard-list"></i>
-
-                        <span data-translate="title">Pre-Owned Inventory</span>
-
-                    </h1>
-
-                    <div class="header-subtitle" data-translate="subtitle">Real-time inventory</div>
-
+            <div class="stat-card">
+                <div id="dataSource" class="stat-number">Google Sheets</div>
+                <div class="stat-label">Data Source</div>
                 </div>
-
             </div>
 
-            
-
+        <!-- Controls -->
             <div class="controls">
-
-                <div class="controls-grid">
-
-                    <div class="search-container">
-
-                        <i class="fas fa-search search-icon"></i>
-
-                        <input type="text" id="searchBox" class="search-box" placeholder="🔍 Search by code, model or description..." data-translate-placeholder="searchPlaceholder">
-
-                    </div>
-
-                    
-
-                    <div class="export-buttons">
-
-                        <button class="btn btn-primary" onclick="inventoryManager.refreshData()">
-
-                            <i class="fas fa-sync-alt"></i>
-
-                            <span data-translate="refresh">Refresh</span>
-
+            <div class="d-flex gap-2">
+                <button id="refreshBtn" class="btn btn-primary">
+                    <i data-feather="refresh-cw"></i>
+                    Refresh
                         </button>
-
-                        <button class="btn btn-success" onclick="inventoryManager.exportToCSV()">
-
-                            <i class="fas fa-file-csv"></i>
-
-                            <span data-translate="exportCsv">CSV</span>
-
+                <button id="exportBtn" class="btn btn-outline-secondary">
+                    <i data-feather="download"></i>
+                    Export
                         </button>
-
-
-
                     </div>
-
+            <div id="lastUpdate" class="last-update">
+                <div class="update-info">
+                    <span id="lastUpdateTime"></span>
+                    <div id="avgDaysInfo" class="avg-days-info" style="display: none;">
+                        <span class="avg-label">Average Days in Detail:</span>
+                        <span id="avgDaysValue" class="avg-value">0.0</span>
+                        <span class="avg-unit">days</span>
                 </div>
-
-                
-
-                <div class="controls-row">
-
-                    <div class="realtime-controls">
-
-                        <div class="realtime-toggle">
-
-                            <span data-translate="realTimeUpdates">Real-time Updates</span>
-
-                            <div class="toggle-switch active" id="realtimeToggle" onclick="inventoryManager.toggleRealTime()">
-
-                                <div class="toggle-slider"></div>
-
                             </div>
-
                         </div>
-
                     </div>
 
-                    
-
-                    <div class="cache-indicator" id="cacheIndicator">
-
-                        📋 Ready
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            
-
-            <div id="debugInfo" class="debug" style="display: none;"></div>
-
-            
-
-            <div id="loadingIndicator" class="loading" style="display: none;">
-
-                <div class="spinner"></div>
-
-                <div data-translate="loading">Loading data...</div>
-
-            </div>
-
-            
-
-            <div id="errorMessage" class="error" style="display: none;">
-
-                <i class="fas fa-exclamation-triangle"></i>
-
-                <span></span>
-
-            </div>
-
-            
-
+                <!-- Table -->
             <div class="table-container">
-
+            <div class="table-header">
+                <h3 class="table-title">
+                    <i data-feather="list" class="table-icon"></i>
+                    Vehicle Inventory Detail Report
+                </h3>
+                <p class="table-subtitle">Real-time tracking of vehicles in Detail Department</p>
+            </div>
                 <div class="table-wrapper">
-
-                    <table id="inventoryTable" class="table table-striped table-bordered table-hover align-middle mb-0 dt-responsive nowrap" style="width: 100%">
-
-                        <thead class="table-light">
-
-                            <tr>
-
-                                <th class="text-center" data-priority="1">#</th>
-
-                                <th data-translate="dateInDetail" data-priority="2">Date in Detail</th>
-
-                                <th data-translate="keys" data-priority="4"># Keys</th>
-
-                                <th data-translate="stockNumber" data-priority="1">Stock #</th>
-
-                                <th data-translate="vehicle" data-priority="1">Vehicle</th>
-
-                                <th data-translate="writeUpDate" data-priority="3">Write Up Date</th>
-
-                                <th data-translate="notes" data-priority="5">Notes</th>
-
+                <table id="inventoryTable" class="table table-hover" style="width: 100%">
+                    <thead>
+                        <tr>
+                            <th width="50">#</th>
+                            <th>Date in Detail</th>
+                            <th>Days in Detail</th>
+                            <th># Keys</th>
+                            <th>Stock #</th>
+                            <th>Vehicle</th>
+                            <th>Write Up Date</th>
+                            <th>Notes</th>
                             </tr>
-
                         </thead>
-
-                        <tbody id="tableBody">
-
-                            <!-- Data will be loaded via DataTables -->
-
+                    <tbody>
+                        <!-- DataTables will populate this -->
                         </tbody>
-
                     </table>
-
                 </div>
-
-            </div>
-
-            
-
-            <!-- Old pagination container - hidden when DataTables is active -->
-
-            <div id="paginationContainer" class="pagination-container" style="display: none;">
-
-                <div class="pagination-info">
-
-                    <span id="paginationInfo" data-translate="paginationInfo">Showing 1-25 of 100 records</span>
-
-                </div>
-
-                <div class="pagination-controls">
-
-                    <button class="pagination-btn" id="firstPageBtn" onclick="inventoryManager.goToPage(1)">
-
-                        <i class="fas fa-angle-double-left"></i>
-
-                    </button>
-
-                    <button class="pagination-btn" id="prevPageBtn" onclick="inventoryManager.goToPage(inventoryManager.currentPage - 1)">
-
-                        <i class="fas fa-angle-left"></i>
-
-                    </button>
-
-                    <div id="pageNumbers"></div>
-
-                    <button class="pagination-btn" id="nextPageBtn" onclick="inventoryManager.goToPage(inventoryManager.currentPage + 1)">
-
-                        <i class="fas fa-angle-right"></i>
-
-                    </button>
-
-                    <button class="pagination-btn" id="lastPageBtn" onclick="inventoryManager.goToPage(inventoryManager.totalPages)">
-
-                        <i class="fas fa-angle-double-right"></i>
-
-                    </button>
-
-                    <div class="page-size-selector">
-
-                        <span data-translate="show">Show:</span>
-
-                        <select class="page-size-select" id="pageSizeSelect" onchange="inventoryManager.changePageSize()">
-
-                            <option value="10">10</option>
-
-                            <option value="25" selected>25</option>
-
-                            <option value="50">50</option>
-
-                            <option value="100">100</option>
-
-                        </select>
-
                     </div>
-
                 </div>
 
-            </div>
-
-            
-
-            <div id="statsContainer" class="stats">
-
-                <span id="totalRecords" data-translate="initializing">Initializing...</span>
-
-                <span id="lastUpdate">Last update: Never</span>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
+    <!-- JAVASCRIPT -->
+    <script src="../../assets/libs/jquery/jquery.min.js"></script>
+    <script src="../../assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../../assets/libs/feather-icons/feather.min.js"></script>
+    <script src="../../assets/libs/datatables/jquery.dataTables.min.js"></script>
+    <script src="../../assets/libs/datatables/dataTables.bootstrap5.min.js"></script>
+    <script src="../../assets/libs/datatables/dataTables.responsive.min.js"></script>
 
    <script>
-
-    /**
-
- * Sistema de Inventario en Tiempo Real - JavaScript Corregido
-
- * Sin SSE, solo polling
-
- */
+        // ========================================
+        // BOS INVENTORY MANAGEMENT SYSTEM
+        // ========================================
 
 class InventoryManager {
-
     constructor() {
-
-        this.inventoryData = [];
-
-        this.filteredData = [];
-
-        this.currentLanguage = 'en';
-
-        this.debugMode = false;
-
+                // Configuration
+                this.debugMode = new URLSearchParams(window.location.search).get('debug') === 'true';
+                this.pollingInterval = 30000; // 30 seconds
+                this.maxRetries = 3;
         this.retryCount = 0;
 
-        this.maxRetries = 3;
-
-        this.refreshInterval = null;
-
-        this.realtimeEnabled = true;
-
-        this.connectionStatus = 'disconnected';
-
-        this.lastUpdate = null;
-
-        this.reconnectDelay = 1000;
-
-        this.maxReconnectDelay = 30000;
-
+                // State
+                this.inventoryData = [];
         this.dataTable = null;
-
-        
-
-        // Traducciones
-
-        this.translations = {
-
-            es: {
-
-                title: "Inventario Pre-Owned",
-
-                subtitle: "Inventario en tiempo real",
-
-                searchPlaceholder: "🔍 Buscar por código, modelo o notas...",
-
-                refresh: "Actualizar",
-
-                exportCsv: "CSV",
-
-                exportExcel: "Excel",
-
-                loading: "Cargando datos...",
-
-                loadingData: "Cargando datos...",
-
-                initializing: "Iniciando...",
-
-                dateInDetail: "Date in Detail",
-
-                keys: "# Keys",
-
-                stockNumber: "Stock #",
-
-                vehicle: "Vehicle",
-
-                writeUpDate: "Write Up Date",
-
-                notes: "Notes",
-
-                noData: "No hay datos disponibles",
-
-                showingRecords: "Mostrando {current} de {total} registros",
-
-                totalRecords: "Total de registros: {total}",
-
-                noDataToExport: "No hay datos para exportar",
-
-                connectionError: "Error de conexión. Verifica que el servidor esté disponible.",
-
-                loadingError: "Error cargando datos: {error}",
-
-                paginationInfo: "Mostrando {start}-{end} de {total} registros",
-
-                show: "Mostrar:",
-
-                connected: "Conectado",
-
-                disconnected: "Desconectado",
-
-                connecting: "Conectando...",
-
-                realTimeUpdates: "Actualizaciones en Tiempo Real",
-
-                exportSuccess: "Exportación completada exitosamente",
-
-                exportError: "Error en la exportación",
-
-                dataUpdated: "Datos actualizados automáticamente",
-
-                reconnecting: "Reconectando...",
-
-                timeoutError: "Tiempo de espera agotado. Intenta nuevamente.",
-
-                // DataTables translations
-
-                dtSearch: "Buscar:",
-
-                dtLengthMenu: "Mostrar _MENU_ entradas",
-
-                dtInfo: "Mostrando _START_ a _END_ de _TOTAL_ entradas",
-
-                dtInfoEmpty: "Mostrando 0 a 0 de 0 entradas",
-
-                dtInfoFiltered: "(filtrado de _MAX_ entradas totales)",
-
-                dtZeroRecords: "No se encontraron registros coincidentes",
-
-                dtProcessing: "Procesando...",
-
-                dtPaginate: {
-
-                    first: "Primero",
-
-                    last: "Último",
-
-                    next: "Siguiente",
-
-                    previous: "Anterior"
-
-                }
-
-            },
-
-            en: {
-
-                title: "Pre-Owned Inventory",
-
-                subtitle: "Real-time inventory",
-
-                searchPlaceholder: "🔍 Search by code, model or notes...",
-
-                refresh: "Refresh",
-
-                exportCsv: "CSV",
-
-                exportExcel: "Excel",
-
-                loading: "Loading data...",
-
-                loadingData: "Loading data...",
-
-                initializing: "Initializing...",
-
-                dateInDetail: "Date in Detail",
-
-                keys: "# Keys",
-
-                stockNumber: "Stock #",
-
-                vehicle: "Vehicle",
-
-                writeUpDate: "Write Up Date",
-
-                notes: "Notes",
-
-                noData: "No data available",
-
-                showingRecords: "Showing {current} of {total} records",
-
-                totalRecords: "Total records: {total}",
-
-                noDataToExport: "No data to export",
-
-                connectionError: "Connection error. Please verify that the server is available.",
-
-                loadingError: "Error loading data: {error}",
-
-                paginationInfo: "Showing {start}-{end} of {total} records",
-
-                show: "Show:",
-
-                connected: "Connected",
-
-                disconnected: "Disconnected",
-
-                connecting: "Connecting...",
-
-                realTimeUpdates: "Real-time Updates",
-
-                exportSuccess: "Export completed successfully",
-
-                exportError: "Export failed",
-
-                dataUpdated: "Data updated automatically",
-
-                reconnecting: "Reconnecting...",
-
-                timeoutError: "Request timeout. Please try again.",
-
-                // DataTables translations
-
-                dtSearch: "Search:",
-
-                dtLengthMenu: "Show _MENU_ entries",
-
-                dtInfo: "Showing _START_ to _END_ of _TOTAL_ entries",
-
-                dtInfoEmpty: "Showing 0 to 0 of 0 entries",
-
-                dtInfoFiltered: "(filtered from _MAX_ total entries)",
-
-                dtZeroRecords: "No matching records found",
-
-                dtProcessing: "Processing...",
-
-                dtPaginate: {
-
-                    first: "First",
-
-                    last: "Last",
-
-                    next: "Next",
-
-                    previous: "Previous"
-
-                }
-
-            },
-
-            pt: {
-
-                title: "Inventário Pre-Owned",
-
-                subtitle: "Inventário em tempo real",
-
-                searchPlaceholder: "🔍 Buscar por código, modelo ou notas...",
-
-                refresh: "Atualizar",
-
-                exportCsv: "CSV",
-
-                exportExcel: "Excel",
-
-                loading: "Carregando dados...",
-
-                loadingData: "Carregando dados...",
-
-                initializing: "Inicializando...",
-
-                dateInDetail: "Date in Detail",
-
-                keys: "# Keys",
-
-                stockNumber: "Stock #",
-
-                vehicle: "Vehicle",
-
-                writeUpDate: "Write Up Date",
-
-                notes: "Notes",
-
-                noData: "Nenhum dado disponível",
-
-                showingRecords: "Mostrando {current} de {total} registros",
-
-                totalRecords: "Total de registros: {total}",
-
-                noDataToExport: "Nenhum dado para exportar",
-
-                connectionError: "Erro de conexão. Verifique se o servidor está disponível.",
-
-                loadingError: "Erro ao carregar dados: {error}",
-
-                paginationInfo: "Mostrando {start}-{end} de {total} registros",
-
-                show: "Mostrar:",
-
-                connected: "Conectado",
-
-                disconnected: "Desconectado",
-
-                connecting: "Conectando...",
-
-                realTimeUpdates: "Atualizações em Tempo Real",
-
-                exportSuccess: "Exportação concluída com sucesso",
-
-                exportError: "Falha na exportação",
-
-                dataUpdated: "Dados atualizados automaticamente",
-
-                reconnecting: "Reconectando...",
-
-                timeoutError: "Tempo limite de solicitação. Tente novamente.",
-
-                // DataTables translations
-
-                dtSearch: "Buscar:",
-
-                dtLengthMenu: "Mostrar _MENU_ entradas",
-
-                dtInfo: "Mostrando _START_ a _END_ de _TOTAL_ entradas",
-
-                dtInfoEmpty: "Mostrando 0 a 0 de 0 entradas",
-
-                dtInfoFiltered: "(filtrado de _MAX_ entradas totais)",
-
-                dtZeroRecords: "Nenhum registro correspondente encontrado",
-
-                dtProcessing: "Processando...",
-
-                dtPaginate: {
-
-                    first: "Primeiro",
-
-                    last: "Último",
-
-                    next: "Próximo",
-
-                    previous: "Anterior"
-
-                }
-
-            }
-
-        };
-
-        
-
+                this.pollingTimer = null;
+                this.isAuthenticated = false;
+                this.userInfo = null;
+                
+                // Initialization
         this.init();
-
-    }
-
-    
-
-    init() {
-
-        this.setupEventListeners();
-
-        this.initializeDataTable();
-
-        this.loadInventoryData();
-
-        this.updateLanguage();
-
-        this.setupRealTimeConnection();
-
-    }
-
-    
-
-    initializeDataTable() {
-
-        // Wait for jQuery and DataTables to be available
-
-        if (typeof $ === 'undefined' || typeof $.fn.DataTable === 'undefined') {
-
-            setTimeout(() => this.initializeDataTable(), 100);
-
-            return;
-
-        }
-
-        
-
-        const dtLanguage = this.getDataTablesLanguage();
-
-        
-
-        this.dataTable = $('#inventoryTable').DataTable({
-
-            responsive: true,
-
-            processing: true,
-
-            serverSide: false,
-
-            pageLength: 25,
-
-            lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
-
-            order: [[1, 'desc']], // Order by Date in Detail column
-
-            language: dtLanguage,
-
-            dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
-
-                 '<"row"<"col-sm-12"tr>>' +
-
-                 '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
-
-            columnDefs: [
-
-                {
-
-                    targets: 0,
-
-                    className: 'text-center',
-
-                    orderable: false,
-
-                    searchable: false
-
-                },
-
-                {
-
-                    targets: 3, // Stock # column
-
-                    className: 'text-center',
-
-                    render: function(data, type, row) {
-
-                        return '<span class="code">' + (data || '') + '</span>';
-
-                    }
-
-                }
-
-            ],
-
-            responsive: {
-
-                details: {
-
-                    type: 'column',
-
-                    target: 'tr'
-
-                }
-
-            },
-
-            drawCallback: function() {
-
-                // Re-apply any custom styling after table redraw
-
             }
 
-        });
+            async init() {
+                try {
+                    console.log('Initializing BOS inventory manager...');
+                    
+                    // Wait for DOM to be ready
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', () => this.initializeSystem());
+                    } else {
+                        this.initializeSystem();
+                    }
+                            } catch (error) {
+                    console.error('Failed to initialize inventory manager:', error);
+                    this.showError('Failed to initialize system: ' + error.message);
+                }
+            }
 
-        
-
-        // Hide the default search box since we have our custom one
-
-        $('.dataTables_filter').hide();
-
-        
-
-        // Show the custom search box
-
-        $('#searchBox').show();
-
-    }
-
-    
-
-    getDataTablesLanguage() {
-
-        const translations = this.translations[this.currentLanguage];
-
-        return {
-
-            search: translations.dtSearch,
-
-            lengthMenu: translations.dtLengthMenu,
-
-            info: translations.dtInfo,
-
-            infoEmpty: translations.dtInfoEmpty,
-
-            infoFiltered: translations.dtInfoFiltered,
-
-            zeroRecords: translations.dtZeroRecords,
-
-            processing: translations.dtProcessing,
-
-            paginate: translations.dtPaginate
-
-        };
-
-    }
-
-    
+                        async initializeSystem() {
+                await this.checkAuthentication();
+        this.setupEventListeners();
+                this.initializeDataTables();
+        this.loadInventoryData();
+                this.startPolling();
+            }
 
     setupEventListeners() {
-
-        // Search con debounce for DataTables
-
+                // Search for DataTables
         const searchBox = document.getElementById('searchBox');
-
         if (searchBox) {
-
             let searchTimeout;
-
             searchBox.addEventListener('input', () => {
-
                 clearTimeout(searchTimeout);
-
                 searchTimeout = setTimeout(() => {
-
                     if (this.dataTable) {
-
                         this.dataTable.search(searchBox.value).draw();
-
-                    } else {
-
-                        this.filterTable();
-
                     }
-
                 }, 300);
-
-            });
-
-        }
-
-        
-
-        // Keyboard shortcuts
-
-        document.addEventListener('keydown', (e) => {
-
-            if (e.ctrlKey || e.metaKey) {
-
-                switch(e.key) {
-
-                    case 'r':
-
-                        e.preventDefault();
-
-                        this.refreshData();
-
-                        break;
-
-                    case 'f':
-
-                        e.preventDefault();
-
-                        if (searchBox) searchBox.focus();
-
-                        break;
-
+                    });
                 }
-
+                
+                // Refresh button
+                const refreshBtn = document.getElementById('refreshBtn');
+                if (refreshBtn) {
+                    refreshBtn.addEventListener('click', () => {
+                        this.loadInventoryData();
+                    });
+                }
+                
+                // Export button
+                const exportBtn = document.getElementById('exportBtn');
+                if (exportBtn) {
+                    exportBtn.addEventListener('click', () => {
+                        this.exportData();
+                    });
+                }
             }
 
-        });
+            initializeDataTables() {
+                console.log('Initializing DataTables...');
+                
+                this.dataTable = $('#inventoryTable').DataTable({
+                    processing: true,
+            serverSide: false,
+            pageLength: 25,
+                    lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+                    order: [[0, 'desc']],
+                    responsive: true,
+                    language: {
+                        processing: "Loading...",
+                        search: "Search:",
+                        lengthMenu: "Show _MENU_ entries",
+                        info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                        infoEmpty: "Showing 0 to 0 of 0 entries",
+                        infoFiltered: "(filtered from _MAX_ total entries)",
+                        paginate: {
+                            first: "First",
+                            last: "Last",
+                            next: "Next",
+                            previous: "Previous"
+                        },
+                        emptyTable: "No data available",
+                        zeroRecords: "No matching records found"
+                    },
+            columnDefs: [
+                {
+                    targets: 0,
+                            className: 'text-center row-number',
+                    orderable: false,
+                    searchable: false,
+                            width: '50px'
+                        },
+                        { 
+                            targets: 1, 
+                    type: 'date',
+                            className: 'text-center'
+                        },
+                        { 
+                            targets: 2, 
+                    className: 'text-center',
+                            orderable: true,
+                            type: 'num'
+                        },
+                        { 
+                            targets: 3, 
+                            className: 'text-center' 
+                        },
+                        { 
+                            targets: 4, 
+                            className: 'text-center' 
+                        },
+                        { 
+                            targets: 5, 
+                            className: 'text-left' 
+                        },
+                        { 
+                            targets: 6, 
+                    type: 'date',
+                            className: 'text-center'
+                        },
+                        { 
+                            targets: 7, 
+                            className: 'text-left' 
+                        }
+                    ],
+            drawCallback: function() {
+                        // Add row numbers
+                        this.api().column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                            cell.innerHTML = '<span class="row-number-badge">' + (i + 1) + '</span>';
+                        });
 
-        
-
-        // Visibility change para pausar/reanudar conexiones
-
-        document.addEventListener('visibilitychange', () => {
-
-            if (document.hidden) {
-
-                this.pauseRealTime();
-
-            } else {
-
-                this.resumeRealTime();
-
+                if (typeof feather !== 'undefined') {
+                    feather.replace();
+                        }
+                    },
+            initComplete: function() {
+            console.log('DataTables initialized successfully');
+                    }
+                });
             }
-
-        });
-
-        
-
-        // Cleanup al cerrar ventana
-
-        window.addEventListener('beforeunload', () => {
-
-            this.destroy();
-
-        });
-
-        
-
-        // Resize handler
-
-        window.addEventListener('resize', this.debounce(() => {
-
-            this.adjustTableLayout();
-
-        }, 250));
-
-    }
-
-    
-
-    // === CONEXIÓN EN TIEMPO REAL (SOLO POLLING) ===
-
-    setupRealTimeConnection() {
-
-        if (!this.realtimeEnabled) return;
-
-        
-
-        console.log('Setting up polling-based real-time updates');
-
-        this.updateConnectionStatus('connecting');
-
-        this.startPolling();
-
-    }
-
-    
-
-    startPolling() {
-
-        console.log('Starting polling mode');
-
-        
-
-        // Polling cada 30 segundos
-
-        this.refreshInterval = setInterval(() => {
-
-            this.loadInventoryData(false, true);
-
-        }, 30000);
-
-        
-
-        this.updateConnectionStatus('connected');
-
-        this.showNotification('Real-time updates active', 'success');
-
-    }
-
-    
-
-    updateConnectionStatus(status) {
-
-        this.connectionStatus = status;
-
-        const statusEl = document.getElementById('connectionStatus');
-
-        if (!statusEl) return;
-
-        
-
-        const iconEl = statusEl.querySelector('i');
-
-        const textEl = statusEl.querySelector('span');
-
-        
-
-        if (!iconEl || !textEl) return;
-
-        
-
-        statusEl.className = `connection-status ${status}`;
-
-        
-
-        switch (status) {
-
-            case 'connected':
-
-                iconEl.className = 'fas fa-circle';
-
-                textEl.textContent = this.translate('connected');
-
-                break;
-
-            case 'connecting':
-
-                iconEl.className = 'fas fa-circle pulse';
-
-                textEl.textContent = this.translate('connecting');
-
-                break;
-
-            case 'disconnected':
-
-                iconEl.className = 'fas fa-circle pulse';
-
-                textEl.textContent = this.translate('disconnected');
-
-                break;
-
-        }
-
-    }
-
-    
-
-    toggleRealTime() {
-
-        this.realtimeEnabled = !this.realtimeEnabled;
-
-        const toggle = document.getElementById('realtimeToggle');
-
-        
-
-        if (this.realtimeEnabled) {
-
-            if (toggle) toggle.classList.add('active');
-
-            this.setupRealTimeConnection();
-
-        } else {
-
-            if (toggle) toggle.classList.remove('active');
-
-            if (this.refreshInterval) {
-
-                clearInterval(this.refreshInterval);
-
-                this.refreshInterval = null;
-
-            }
-
-            this.updateConnectionStatus('disconnected');
-
-        }
-
-    }
-
-    
-
-    pauseRealTime() {
-
-        if (this.refreshInterval) {
-
-            clearInterval(this.refreshInterval);
-
-            this.refreshInterval = null;
-
-        }
-
-    }
-
-    
-
-    resumeRealTime() {
-
-        if (this.realtimeEnabled) {
-
-            this.setupRealTimeConnection();
-
-        }
-
-    }
-
-    
 
     // === CARGA DE DATOS ===
 
-    async loadInventoryData(showLoadingIndicator = true, isPolling = false) {
-
+            async loadInventoryData(showLoadingIndicator = true) {
         if (showLoadingIndicator) {
-
             this.showLoading(true);
-
         }
-
         this.hideError();
 
-        
-
         try {
-
             const url = this.buildApiUrl();
-
             const response = await this.fetchWithRetry(url);
 
-            
-
             if (!response.ok) {
-
                 throw new Error(`HTTP ${response.status}: ${await response.text()}`);
-
             }
-
-            
 
             const result = await response.json();
 
-            
-
             if (!result.success) {
-
                 throw new Error(result.error || 'Unknown error occurred');
-
-            }
-
-            
-
-            // Detectar cambios para polling
-
-            const hasChanges = !isPolling || !this.arraysEqual(this.inventoryData, result.data);
-
-            
+                    }
 
             this.inventoryData = result.data || [];
 
-            this.filteredData = [...this.inventoryData];
-
-            
-
-            // Mostrar información de caché
-
-            if (result.meta) {
-
-                this.updateCacheInfo(result.meta);
-
-            }
-
-            
-
             if (this.dataTable) {
-
                 this.updateDataTable();
-
-            } else {
-
-                this.initializePagination();
-
-                this.renderCurrentPage();
-
-            }
-
-            
-
-            this.updateLastUpdate();
-
-            this.retryCount = 0;
-
-            
-
-            // Notificar cambios en polling
-
-            if (isPolling && hasChanges) {
-
-                this.showNotification(this.translate('dataUpdated'), 'info');
-
-                this.highlightUpdatedRows();
-
-            }
-
-            
-
-        } catch (error) {
-
-            this.handleLoadError(error);
-
-        } finally {
-
-            if (showLoadingIndicator) {
-
-                this.showLoading(false);
-
-            }
-
-        }
-
-    }
-
-    
-
-    buildApiUrl() {
-
-        const params = new URLSearchParams();
-
-        
-
-        if (this.debugMode) {
-
-            params.append('debug', 'true');
-
-        }
-
-        
-
-        const urlParams = new URLSearchParams(window.location.search);
-
-        if (urlParams.get('refresh') === 'true') {
-
-            params.append('refresh', 'true');
-
-        }
-
-        
-
-        const queryString = params.toString();
-
-        return `get_inventory.php${queryString ? '?' + queryString : ''}`;
-
-    }
-
-    
-
-    async fetchWithRetry(url) {
-
-        for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
-
-            try {
-
-                const controller = new AbortController();
-
-                const timeoutId = setTimeout(() => controller.abort(), 30000);
-
-                
-
-                const response = await fetch(url, {
-
-                    signal: controller.signal,
-
-                    headers: {
-
-                        'Cache-Control': 'no-cache',
-
-                        'Accept': 'application/json'
-
                     }
 
-                });
+            this.updateLastUpdate();
+            this.retryCount = 0;
 
-                
+        } catch (error) {
+            this.handleLoadError(error);
+        } finally {
+            if (showLoadingIndicator) {
+                this.showLoading(false);
+            }
+        }
+    }
 
-                clearTimeout(timeoutId);
+    buildApiUrl() {
+        const params = new URLSearchParams();
+        if (this.debugMode) {
+            params.append('debug', 'true');
+        }
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('refresh') === 'true') {
+            params.append('refresh', 'true');
+        }
+        const queryString = params.toString();
+                return `./get_inventory.php${queryString ? '?' + queryString : ''}`;
+            }
 
+            async fetchWithRetry(url, retries = 3) {
+                for (let i = 0; i < retries; i++) {
+                    try {
+                const response = await fetch(url, {
+                            method: 'GET',
+                    headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            },
+                            cache: 'no-cache'
+                        });
                 return response;
-
-                
-
             } catch (error) {
-
-                if (attempt === this.maxRetries) {
-
-                    throw error;
-
+                        if (i === retries - 1) throw error;
+                        await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+                    }
                 }
-
-                await this.delay(Math.pow(2, attempt) * 1000);
-
             }
-
-        }
-
-    }
-
-    
-
-    handleLoadError(error) {
-
-        this.retryCount++;
-
-        
-
-        let errorMessage;
-
-        if (error.name === 'AbortError') {
-
-            errorMessage = this.translate('timeoutError');
-
-        } else if (error.message.includes('Failed to fetch')) {
-
-            errorMessage = this.translate('connectionError');
-
-        } else {
-
-            errorMessage = this.translate('loadingError', { error: error.message });
-
-        }
-
-        
-
-        this.showError(errorMessage);
-
-        console.error('Load error:', error);
-
-        
-
-        // Auto retry con backoff
-
-        if (this.retryCount < this.maxRetries) {
-
-            setTimeout(() => {
-
-                this.loadInventoryData();
-
-            }, Math.pow(2, this.retryCount) * 2000);
-
-        }
-
-    }
-
-    
-
-    highlightUpdatedRows() {
-
-        const rows = document.querySelectorAll('#tableBody tr');
-
-        rows.forEach(row => {
-
-            row.classList.add('row-updated');
-
-            setTimeout(() => row.classList.remove('row-updated'), 2000);
-
-        });
-
-    }
-
-    
-
-    // === FILTRADO Y BÚSQUEDA ===
-
-    filterTable() {
-
-        const searchBox = document.getElementById('searchBox');
-
-        const searchTerm = searchBox ? searchBox.value.toLowerCase().trim() : '';
-
-        
-
-        if (searchTerm === '') {
-
-            this.filteredData = [...this.inventoryData];
-
-        } else {
-
-            this.filteredData = this.inventoryData.filter(row => {
-
-                return this.searchInRow(row, searchTerm);
-
-            });
-
-        }
-
-        
-
-        this.initializePagination();
-
-        this.renderCurrentPage();
-
-        this.updateStats(this.filteredData.length, this.inventoryData.length);
-
-    }
-
-    
-
-    searchInRow(row, searchTerm) {
-
-        const searchableFields = [
-
-            row[2] || '', // Stock #
-
-            row[3] || '', // Vehicle
-
-            row[0] || '', // Date in Detail
-
-            row[5] || ''  // Notes
-
-        ];
-
-        
-
-        return searchableFields.some(field => 
-
-            field.toString().toLowerCase().includes(searchTerm)
-
-        );
-
-    }
-
-    
-
-    // === PAGINACIÓN ===
-
-    initializePagination() {
-
-        this.totalPages = Math.ceil(this.filteredData.length / this.pageSize);
-
-        this.currentPage = Math.min(this.currentPage, this.totalPages || 1);
-
-        this.updatePaginationControls();
-
-        this.updatePaginationInfo();
-
-        
-
-        const container = document.getElementById('paginationContainer');
-
-        if (container) {
-
-            container.style.display = this.filteredData.length > 0 ? 'flex' : 'none';
-
-        }
-
-    }
-
-    
-
-    renderCurrentPage() {
-
-        const startIndex = (this.currentPage - 1) * this.pageSize;
-
-        const endIndex = startIndex + this.pageSize;
-
-        const pageData = this.filteredData.slice(startIndex, endIndex);
-
-        this.renderTable(pageData);
-
-    }
-
-    
-
-    updatePaginationControls() {
-
-        const firstBtn = document.getElementById('firstPageBtn');
-
-        const prevBtn = document.getElementById('prevPageBtn');
-
-        const nextBtn = document.getElementById('nextPageBtn');
-
-        const lastBtn = document.getElementById('lastPageBtn');
-
-        
-
-        if (firstBtn) firstBtn.disabled = this.currentPage === 1;
-
-        if (prevBtn) prevBtn.disabled = this.currentPage === 1;
-
-        if (nextBtn) nextBtn.disabled = this.currentPage === this.totalPages;
-
-        if (lastBtn) lastBtn.disabled = this.currentPage === this.totalPages;
-
-        
-
-        // Update page numbers
-
-        const pageNumbers = document.getElementById('pageNumbers');
-
-        if (pageNumbers) {
-
-            pageNumbers.innerHTML = '';
-
-            
-
-            const maxVisiblePages = 5;
-
-            let startPage = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
-
-            let endPage = Math.min(this.totalPages, startPage + maxVisiblePages - 1);
-
-            
-
-            if (endPage - startPage < maxVisiblePages - 1) {
-
-                startPage = Math.max(1, endPage - maxVisiblePages + 1);
-
-            }
-
-            
-
-            for (let i = startPage; i <= endPage; i++) {
-
-                const pageBtn = document.createElement('button');
-
-                pageBtn.className = `pagination-btn ${i === this.currentPage ? 'active' : ''}`;
-
-                pageBtn.textContent = i;
-
-                pageBtn.onclick = () => this.goToPage(i);
-
-                pageNumbers.appendChild(pageBtn);
-
-            }
-
-        }
-
-    }
-
-    
-
-    updatePaginationInfo() {
-
-        const start = (this.currentPage - 1) * this.pageSize + 1;
-
-        const end = Math.min(this.currentPage * this.pageSize, this.filteredData.length);
-
-        const total = this.filteredData.length;
-
-        
-
-        const infoText = this.translate('paginationInfo', { start, end, total });
-
-        const infoEl = document.getElementById('paginationInfo');
-
-        if (infoEl) {
-
-            infoEl.textContent = infoText;
-
-        }
-
-    }
-
-    
-
-    goToPage(page) {
-
-        if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
-
-            this.currentPage = page;
-
-            this.renderCurrentPage();
-
-            this.updatePaginationControls();
-
-            this.updatePaginationInfo();
-
-            
-
-            // Smooth scroll
-
-            const container = document.querySelector('.table-container');
-
-            if (container) {
-
-                container.scrollIntoView({ 
-
-                    behavior: 'smooth', 
-
-                    block: 'start' 
-
-                });
-
-            }
-
-        }
-
-    }
-
-    
-
-    changePageSize() {
-
-        const select = document.getElementById('pageSizeSelect');
-
-        if (select) {
-
-            this.pageSize = parseInt(select.value);
-
-            this.initializePagination();
-
-            this.renderCurrentPage();
-
-        }
-
-    }
-
-    
 
     // === DATATABLES METHODS ===
 
     updateDataTable() {
-
         if (!this.dataTable) return;
-
-        
-
-        // Clear existing data
-
-        this.dataTable.clear();
-
-        
-
-        // Add new data with row numbers
-
-        this.inventoryData.forEach((row, index) => {
-
-            const rowData = [
-
-                index + 1, // Row number
-
-                row[0] || '', // Date in Detail
-
-                row[1] || '', // Keys
-
-                row[2] || '', // Stock #
-
-                row[3] || '', // Vehicle
-
-                row[4] || '', // Write Up Date
-
-                row[5] || ''  // Notes
-
-            ];
-
-            this.dataTable.row.add(rowData);
-
-        });
-
-        
-
-        // Redraw the table
-
-        this.dataTable.draw();
-
-        
-
-        // Update stats
-
-        this.updateStats(this.inventoryData.length);
-
-    }
-
-    
-
-    // === RENDERIZADO ===
-
-    renderTable(data) {
-
-        // If DataTables is initialized, use updateDataTable instead
-
-        if (this.dataTable) {
-
-            this.updateDataTable();
-
-            return;
-
-        }
-
-        
-
-        const tbody = document.getElementById('tableBody');
-
-        if (!tbody) return;
-
-        
-
-        if (!Array.isArray(data) || data.length === 0) {
-
-            tbody.innerHTML = `<tr><td colspan="7" class="no-data">${this.translate('noData')}</td></tr>`;
-
-            return;
-
-        }
-
-        
-
-        const fragment = document.createDocumentFragment();
-
-        const startIndex = (this.currentPage - 1) * this.pageSize;
-
-        
-
-        data.forEach((row, index) => {
-
-            const tr = document.createElement('tr');
-
-            tr.className = 'fade-in';
-
-            const rowNumber = startIndex + index + 1;
-
-            tr.innerHTML = `
-
-                <td class="text-center fw-semibold text-muted">${rowNumber}</td>
-
-                <td>${this.escapeHtml(row[0] || '')}</td>
-
-                <td>${this.escapeHtml(row[1] || '')}</td>
-
-                <td><span class="code">${this.escapeHtml(row[2] || '')}</span></td>
-
-                <td>${this.escapeHtml(row[3] || '')}</td>
-
-                <td>${this.escapeHtml(row[4] || '')}</td>
-
-                <td>${this.escapeHtml(row[5] || '')}</td>
-
-            `;
-
-            fragment.appendChild(tr);
-
-        });
-
-        
-
-        tbody.innerHTML = '';
-
-        tbody.appendChild(fragment);
-
-    }
-
-    
+                
+                try {
+                // Clear existing data
+                this.dataTable.clear();
+
+                    // Add new data
+            this.inventoryData.forEach((row, index) => {
+                        const dateInDetail = row[0] || '';
+                        const daysInDetail = this.calculateDaysInDetail(dateInDetail);
+
+                const rowData = [
+                            '', // Row number (will be populated by drawCallback)
+                            this.formatDate(dateInDetail), // Date in Detail
+                            this.formatDaysInDetail(daysInDetail), // Days in Detail
+                    row[1] || '', // Keys
+                            this.formatStockNumber(row[2] || ''), // Stock #
+                            this.formatVehicle(row[3] || ''), // Vehicle
+                            this.formatDate(row[4] || ''), // Write Up Date
+                            this.formatNotes(row[5] || '') // Notes
+                        ];
+                this.dataTable.row.add(rowData);
+            });
+
+                // Redraw the table
+                this.dataTable.draw();
+
+                // Update stats
+                this.updateStats(this.inventoryData.length);
+
+            } catch (error) {
+                console.error('Error updating DataTable:', error);
+                }
+            }
+
+            // Helper methods for formatting data
+            parseDate(dateString) {
+                if (!dateString) return null;
+                
+                try {
+                    let date;
+                    
+                    // Handle different date formats
+                    if (dateString.includes('/')) {
+                        // Handle MM/DD or MM/DD/YY or MM/DD/YYYY format
+                        const parts = dateString.split('/');
+                        if (parts.length === 2) {
+                            // MM/DD format - assume current year
+                            const currentYear = new Date().getFullYear();
+                            date = new Date(currentYear, parseInt(parts[0]) - 1, parseInt(parts[1]));
+                        } else if (parts.length === 3) {
+                            // MM/DD/YY or MM/DD/YYYY format
+                            let year = parseInt(parts[2]);
+                            
+                            // Handle 2-digit years
+                            if (year < 100) {
+                                // If year is 00-30, assume 20xx, otherwise 19xx
+                                year = year <= 30 ? 2000 + year : 1900 + year;
+                            }
+                            
+                            // If year is clearly wrong (like 2001 for current data), use current year
+                            const currentYear = new Date().getFullYear();
+                            if (year < currentYear - 1) {
+                                year = currentYear;
+                            }
+                            
+                            date = new Date(year, parseInt(parts[0]) - 1, parseInt(parts[1]));
+                        }
+                    } else {
+                        // Try parsing as standard date format
+                        date = new Date(dateString);
+                        
+                        // If year is clearly wrong, adjust to current year
+                        const currentYear = new Date().getFullYear();
+                        if (date.getFullYear() < currentYear - 1) {
+                            date.setFullYear(currentYear);
+                        }
+                    }
+                    
+                    if (isNaN(date.getTime())) return null;
+                    return date;
+        } catch (error) {
+                    console.error('Error parsing date:', dateString, error);
+                    return null;
+                }
+            }
+
+            calculateDaysInDetail(dateString) {
+                if (!dateString) return 0;
+                
+                try {
+                    const detailDate = this.parseDate(dateString);
+                    if (!detailDate) return 0;
+                    
+                    const now = new Date();
+                    
+                    // Reset time to avoid timezone issues
+                    detailDate.setHours(0, 0, 0, 0);
+                    now.setHours(0, 0, 0, 0);
+                    
+                    const diffTime = now - detailDate;
+                    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                    
+                    // Debug logging
+                    if (this.debugMode) {
+                        console.log(`Date: ${dateString} -> Parsed: ${detailDate.toDateString()} -> Days: ${diffDays}`);
+                    }
+                    
+                    return Math.max(0, diffDays);
+        } catch (error) {
+                    console.error('Error calculating days in detail:', error);
+                    return 0;
+                }
+            }
+
+            formatDaysInDetail(days) {
+                let badgeClass = 'bg-success';
+                let label = `${days}d`;
+                
+                if (days >= 0 && days <= 1) {
+                    badgeClass = 'bg-success';
+                } else if (days >= 2 && days <= 4) {
+                    badgeClass = 'bg-warning';
+                } else if (days >= 5) {
+                    badgeClass = 'bg-danger';
+                }
+                
+                return `<span class="badge ${badgeClass}" data-days="${days}">${label}</span>`;
+            }
+
+            formatStockNumber(stockNumber) {
+                if (!stockNumber) return '';
+                return `<span class="stock-number">${stockNumber}</span>`;
+            }
+
+            formatVehicle(vehicle) {
+                if (!vehicle) return '';
+                return `<span class="vehicle-info">${vehicle}</span>`;
+            }
+
+            formatNotes(notes) {
+                if (!notes) return '';
+                const hasContent = notes.trim().length > 0;
+                const className = hasContent ? 'notes-preview has-content' : 'notes-preview';
+                const displayText = notes.length > 50 ? notes.substring(0, 50) + '...' : notes;
+                return `<span class="${className}">${displayText}</span>`;
+            }
+
+            formatDate(dateString) {
+                if (!dateString) return '';
+                
+                try {
+                    const date = this.parseDate(dateString);
+                    if (!date) return dateString;
+                    
+                    return date.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    });
+                } catch (error) {
+                    console.error('Error formatting date:', dateString, error);
+                    return dateString;
+                }
+            }
+
+            // === POLLING ===
+
+            startPolling() {
+                console.log('Setting up polling for updates');
+                
+                // Clear any existing polling
+                if (this.pollingTimer) {
+                    clearInterval(this.pollingTimer);
+                }
+                
+                // Set up new polling
+                this.pollingTimer = setInterval(() => {
+                    this.loadInventoryData(false);
+                }, this.pollingInterval);
+                
+                console.log('Polling started');
+            }
 
     // === EXPORTACIÓN ===
 
-    async exportToCSV(includeFiltered = true) {
-
-        const data = includeFiltered ? this.filteredData : this.inventoryData;
-
-        
-
-        if (data.length === 0) {
-
-            this.showNotification(this.translate('noDataToExport'), 'warning');
-
-            return;
-
-        }
-
-        
-
-        try {
-
-            const headers = [
-
-                this.translate('dateInDetail'),
-
-                this.translate('keys'),
-
-                this.translate('stockNumber'),
-
-                this.translate('vehicle'),
-
-                this.translate('writeUpDate'),
-
-                this.translate('notes')
-
-            ];
-
-            
-
-            const csvContent = this.generateCSV(headers, data);
-
-            const filename = `inventory-${new Date().toISOString().split('T')[0]}.csv`;
-
-            
-
-            this.downloadFile(csvContent, filename, 'text/csv;charset=utf-8;');
-
-            this.showNotification(this.translate('exportSuccess'), 'success');
-
-            
-
-        } catch (error) {
-
-            this.showNotification(this.translate('exportError'), 'error');
-
-            console.error('Export error:', error);
-
-        }
-
-    }
-
-    
-
-    async exportToExcel() {
-
-        const data = this.filteredData;
-
-        if (data.length === 0) {
-
-            this.showNotification(this.translate('noDataToExport'), 'warning');
-
-            return;
-
-        }
-
-        
-
-        try {
-
-            const headers = [
-
-                this.translate('dateInDetail'),
-
-                this.translate('keys'),
-
-                this.translate('stockNumber'),
-
-                this.translate('vehicle'),
-
-                this.translate('writeUpDate'),
-
-                this.translate('notes')
-
-            ];
-
-            
-
-            let html = '<table><tr>' + headers.map(h => `<th>${h}</th>`).join('') + '</tr>';
-
-            
-
-            data.forEach(row => {
-
-                html += '<tr>' + row.map(cell => `<td>${this.escapeHtml(cell || '')}</td>`).join('') + '</tr>';
-
-            });
-
-            html += '</table>';
-
-            
-
-            const filename = `inventory-${new Date().toISOString().split('T')[0]}.xls`;
-
-            this.downloadFile(html, filename, 'application/vnd.ms-excel');
-
-            this.showNotification(this.translate('exportSuccess'), 'success');
-
-            
-
-        } catch (error) {
-
-            this.showNotification(this.translate('exportError'), 'error');
-
-            console.error('Export error:', error);
-
-        }
-
-    }
-
-    
-
-    generateCSV(headers, data) {
-
-        const BOM = '\uFEFF'; // UTF-8 BOM
-
-        const headerRow = headers.map(h => this.escapeCSVField(h)).join(',');
-
-        const dataRows = data.map(row => 
-
-            row.map(cell => this.escapeCSVField(cell || '')).join(',')
-
-        );
-
-        
-
-        return BOM + [headerRow, ...dataRows].join('\n');
-
-    }
-
-    
-
-    escapeCSVField(field) {
-
-        const stringField = field.toString();
-
-        if (stringField.includes(',') || stringField.includes('"') || stringField.includes('\n')) {
-
-            return `"${stringField.replace(/"/g, '""')}"`;
-
-        }
-
-        return stringField;
-
-    }
-
-    
-
-    downloadFile(content, filename, type) {
-
-        const blob = new Blob([content], { type: type });
-
-        const url = window.URL.createObjectURL(blob);
-
-        const a = document.createElement('a');
-
-        a.href = url;
-
-        a.download = filename;
-
-        document.body.appendChild(a);
-
-        a.click();
-
-        window.URL.revokeObjectURL(url);
-
-        document.body.removeChild(a);
-
-    }
-
-    
-
-    // === UTILIDADES ===
-
-    refreshData() {
-
-        this.loadInventoryData(true);
-
-    }
-
-    
-
-    changeLanguage() {
-
-        const selector = document.getElementById('languageSelector');
-
-        if (selector) {
-
-            this.currentLanguage = selector.value;
-
-            this.updateLanguage();
-
-            
-
-            // Update DataTables language
-
-            if (this.dataTable) {
-
-                const dtLanguage = this.getDataTablesLanguage();
-
-                this.dataTable.settings()[0].oLanguage = dtLanguage;
-
-                this.dataTable.draw();
-
+            exportData() {
+                if (!this.inventoryData || this.inventoryData.length === 0) {
+                    alert('No data to export');
+                    return;
+                }
+                
+                // Create CSV content
+                const headers = ['Row #', 'Date in Detail', 'Days in Detail', '# Keys', 'Stock #', 'Vehicle', 'Write Up Date', 'Notes'];
+                let csvContent = headers.join(',') + '\n';
+                
+                this.inventoryData.forEach((row, index) => {
+                    const dateInDetail = row[0] || '';
+                    const daysInDetail = this.calculateDaysInDetail(dateInDetail);
+                    
+                    const csvRow = [
+                        index + 1, // Row number
+                        dateInDetail,
+                        daysInDetail,
+                        row[1] || '',
+                        row[2] || '',
+                        row[3] || '',
+                        row[4] || '',
+                        row[5] || ''
+                    ].map(field => {
+                        const fieldStr = String(field || '');
+                        if (fieldStr.includes(',') || fieldStr.includes('"') || fieldStr.includes('\n')) {
+                            return '"' + fieldStr.replace(/"/g, '""') + '"';
+                        }
+                        return fieldStr;
+                    }).join(',');
+                    csvContent += csvRow + '\n';
+                });
+                
+                // Create and trigger download
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', `bos_inventory_${new Date().toISOString().split('T')[0]}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
             }
 
-        }
+            // === UTILITY METHODS ===
 
-    }
-
-    
-
-    updateLanguage() {
-
-        const elements = document.querySelectorAll('[data-translate]');
-
-        elements.forEach(element => {
-
-            const key = element.getAttribute('data-translate');
-
-            if (this.translations[this.currentLanguage] && this.translations[this.currentLanguage][key]) {
-
-                element.textContent = this.translations[this.currentLanguage][key];
-
+            updateStats(totalRecords) {
+                const totalEl = document.getElementById('totalRecords');
+                if (totalEl) {
+                    totalEl.textContent = totalRecords.toLocaleString();
+                }
             }
-
-        });
-
-        
-
-        // Update placeholder
-
-        const searchBox = document.getElementById('searchBox');
-
-        if (searchBox) {
-
-            const placeholderKey = searchBox.getAttribute('data-translate-placeholder');
-
-            if (this.translations[this.currentLanguage] && this.translations[this.currentLanguage][placeholderKey]) {
-
-                searchBox.placeholder = this.translations[this.currentLanguage][placeholderKey];
-
-            }
-
-        }
-
-        
-
-        document.title = this.translations[this.currentLanguage].title;
-
-        this.updatePaginationInfo();
-
-    }
-
-    
-
-    translate(key, params = {}) {
-
-        let text = this.translations[this.currentLanguage][key] || this.translations['en'][key] || key;
-
-        Object.keys(params).forEach(param => {
-
-            text = text.replace(`{${param}}`, params[param]);
-
-        });
-
-        return text;
-
-    }
-
-    
-
-    updateCacheInfo(meta) {
-
-        const cacheIndicator = document.getElementById('cacheIndicator');
-
-        if (cacheIndicator) {
-
-            const cacheTime = new Date(meta.timestamp).toLocaleTimeString();
-
-            cacheIndicator.textContent = meta.cached ? 
-
-                `📋 Cached (${cacheTime})` : 
-
-                `🔄 Fresh (${cacheTime})`;
-
-            cacheIndicator.className = meta.cached ? 'cache-indicator cached' : 'cache-indicator fresh';
-
-        }
-
-    }
-
-    
 
     updateLastUpdate() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString();
+                
+                const lastUpdateTimeEl = document.getElementById('lastUpdateTime');
+                const lastUpdateStatEl = document.getElementById('lastUpdateStat');
 
-        this.lastUpdate = new Date();
-
-        const lastUpdateEl = document.getElementById('lastUpdate');
-
-        if (lastUpdateEl) {
-
-            lastUpdateEl.textContent = `Last update: ${this.lastUpdate.toLocaleTimeString()}`;
-
-        }
-
-    }
-
-    
-
-    updateStats(current, total = null) {
-
-        const statsText = total && total !== current ? 
-
-            this.translate('showingRecords', { current, total }) : 
-
-            this.translate('totalRecords', { total: current });
-
-        const statsEl = document.getElementById('totalRecords');
-
-        if (statsEl) {
-
-            statsEl.textContent = statsText;
-
-        }
-
-    }
-
-    
-
-    showNotification(message, type = 'info') {
-
-        // Remove existing notifications
-
-        document.querySelectorAll('.notification').forEach(n => n.remove());
-
-        
-
-        const notification = document.createElement('div');
-
-        notification.className = `notification notification-${type}`;
-
-        notification.innerHTML = `
-
-            <span>${message}</span>
-
-            <button class="notification-close" onclick="this.parentElement.remove()">&times;</button>
-
-        `;
-
-        
-
-        document.body.appendChild(notification);
-
-        
-
-        setTimeout(() => {
-
-            if (notification.parentElement) {
-
-                notification.remove();
-
+                if (lastUpdateTimeEl) {
+                    lastUpdateTimeEl.textContent = `Last updated: ${timeString}`;
+                }
+                
+                if (lastUpdateStatEl) {
+                    lastUpdateStatEl.textContent = timeString;
+                }
+                
+                // Update average days if user is authenticated
+                if (this.isAuthenticated) {
+                    this.updateAverageDays();
+                }
             }
 
-        }, 5000);
+            // === AUTHENTICATION & AVERAGE CALCULATION ===
+            
+            async checkAuthentication() {
+                try {
+                    const response = await fetch('./check_auth.php', {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        cache: 'no-cache'
+                    });
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        this.isAuthenticated = result.authenticated || false;
+                        this.userInfo = result.user || null;
+                        
+                        if (this.debugMode) {
+                            console.log('Authentication check:', {
+                                authenticated: this.isAuthenticated,
+                                user: this.userInfo
+                            });
+                        }
+                        
+                        // Show/hide average days info based on authentication
+                        const avgDaysInfo = document.getElementById('avgDaysInfo');
+                        if (avgDaysInfo) {
+                            avgDaysInfo.style.display = this.isAuthenticated ? 'flex' : 'none';
+                        }
+                    } else {
+                        console.warn('Authentication check failed:', response.status);
+                        this.isAuthenticated = false;
+                    }
+                } catch (error) {
+                    console.error('Error checking authentication:', error);
+                    this.isAuthenticated = false;
+                }
+            }
+            
+            calculateAverageDays() {
+                if (!this.inventoryData || this.inventoryData.length === 0) {
+                    return 0;
+                }
+                
+                let totalDays = 0;
+                let validEntries = 0;
+                
+                this.inventoryData.forEach(row => {
+                    const dateInDetail = row[0]; // First column is date
+                    if (dateInDetail) {
+                        const days = this.calculateDaysInDetail(dateInDetail);
+                        if (days >= 0) {
+                            totalDays += days;
+                            validEntries++;
+                        }
+                    }
+                });
+                
+                if (validEntries === 0) return 0;
+                
+                const average = totalDays / validEntries;
+                return Math.round(average * 10) / 10; // Round to 1 decimal place
+            }
+            
+            updateAverageDays() {
+                if (!this.isAuthenticated) return;
+                
+                const avgDaysValue = document.getElementById('avgDaysValue');
+                const avgDaysInfo = document.getElementById('avgDaysInfo');
+                
+                if (avgDaysValue && avgDaysInfo) {
+                    const average = this.calculateAverageDays();
+                    avgDaysValue.textContent = average.toFixed(1);
+                    
+                    // Show the info if it's hidden
+                    if (avgDaysInfo.style.display === 'none') {
+                        avgDaysInfo.style.display = 'flex';
+                    }
+                    
+                    if (this.debugMode) {
+                        console.log('Average days updated:', average);
+                    }
+                }
+            }
 
-    }
+            // === ERROR HANDLING ===
+            
+            handleLoadError(error) {
+                console.error('Error loading inventory data:', error);
+                this.showError(`Failed to load inventory data: ${error.message}`);
+                
+                if (this.retryCount < this.maxRetries) {
+                    this.retryCount++;
+                    console.log(`Retrying... (${this.retryCount}/${this.maxRetries})`);
+        setTimeout(() => {
+                        this.loadInventoryData();
+                    }, 2000 * this.retryCount);
+                } else {
+                    console.error('Max retries reached. Please refresh the page.');
+                    this.showError('Max retries reached. Please refresh the page manually.');
+                }
+            }
 
-    
-
-    showLoading(show) {
-
-        const indicator = document.getElementById('loadingIndicator');
-
-        if (indicator) {
-
-            indicator.style.display = show ? 'block' : 'none';
-
-        }
-
-    }
-
-    
+            showError(message) {
+                const errorContainer = document.getElementById('errorContainer');
+                if (errorContainer) {
+                    errorContainer.textContent = message;
+                    errorContainer.classList.add('show');
+                }
+            }
 
     hideError() {
-
-        const errorMessage = document.getElementById('errorMessage');
-
-        if (errorMessage) {
-
-            errorMessage.style.display = 'none';
-
-        }
-
-    }
-
-    
-
-    showError(message) {
-
-        const errorDiv = document.getElementById('errorMessage');
-
-        if (errorDiv) {
-
-            const span = errorDiv.querySelector('span');
-
-            if (span) {
-
-                span.textContent = message;
-
+                const errorContainer = document.getElementById('errorContainer');
+                if (errorContainer) {
+                    errorContainer.classList.remove('show');
+                }
             }
 
-            errorDiv.style.display = 'flex';
-
-        }
-
-    }
-
-    
-
-    // Helper functions
-
-    debounce(func, wait) {
-
-        let timeout;
-
-        return function executedFunction(...args) {
-
-            const later = () => {
-
-                clearTimeout(timeout);
-
-                func(...args);
-
-            };
-
-            clearTimeout(timeout);
-
-            timeout = setTimeout(later, wait);
-
-        };
-
-    }
-
-    
-
-    delay(ms) {
-
-        return new Promise(resolve => setTimeout(resolve, ms));
-
-    }
-
-    
-
-    escapeHtml(text) {
-
-        const div = document.createElement('div');
-
-        div.textContent = text;
-
-        return div.innerHTML;
-
-    }
-
-    
-
-    arraysEqual(a, b) {
-
-        if (a === b) return true;
-
-        if (a == null || b == null) return false;
-
-        if (a.length !== b.length) return false;
-
-        
-
-        for (let i = 0; i < a.length; ++i) {
-
-            if (JSON.stringify(a[i]) !== JSON.stringify(b[i])) return false;
-
-        }
-
-        return true;
-
-    }
-
-    
-
-    adjustTableLayout() {
-
-        const table = document.getElementById('inventoryTable');
-
-        if (table) {
-
-            if (window.innerWidth < 768) {
-
-                table.classList.add('mobile-view');
-
+            showLoading(show) {
+                // Use custom loader instead of DataTables processing
+                const tableContainer = document.querySelector('.table-container');
+                if (tableContainer) {
+                    if (show) {
+                        if (!document.getElementById('customLoader')) {
+                            const loader = document.createElement('div');
+                            loader.id = 'customLoader';
+                            loader.style.cssText = `
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                right: 0;
+                                bottom: 0;
+                                background: rgba(255, 255, 255, 0.95);
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                z-index: 1000;
+                                border-radius: var(--radius-lg);
+                            `;
+                            loader.innerHTML = `
+                                <div style="text-align: center; color: var(--text-secondary);">
+                                    <div style="width: 2.5rem; height: 2.5rem; border: 3px solid var(--border-color); border-radius: 50%; border-top-color: var(--primary-color); animation: spin 1s linear infinite; margin: 0 auto 1rem;"></div>
+                                    <div style="font-weight: 500; font-size: 0.875rem;">Loading data...</div>
+                                </div>
+                            `;
+                            tableContainer.style.position = 'relative';
+                            tableContainer.appendChild(loader);
+                        }
             } else {
-
-                table.classList.remove('mobile-view');
-
+                        const loader = document.getElementById('customLoader');
+                        if (loader) {
+                            loader.remove();
+                        }
+                    }
+                }
             }
-
         }
 
-    }
-
-    
-
-    destroy() {
-
-        if (this.refreshInterval) {
-
-            clearInterval(this.refreshInterval);
-
-        }
-
-        
-
-        if (this.dataTable) {
-
-            this.dataTable.destroy();
-
-            this.dataTable = null;
-
-        }
-
-    }
-
-}
-
-
-
-// Inicializar sistema
-
-let inventoryManager;
-
-
-
-document.addEventListener('DOMContentLoaded', function() {
-
-    inventoryManager = new InventoryManager();
-
-    
-
-    // Exponer funciones globales para compatibilidad con HTML
-
-    window.changeLanguage = () => inventoryManager.changeLanguage();
-
-    window.inventoryManager = inventoryManager;
-
-});
-
-
-
-// Cleanup al cerrar página
-
-window.addEventListener('beforeunload', function() {
-
-    if (inventoryManager) {
-
-        inventoryManager.destroy();
-
-    }
-
-});
-
+        // Initialize the inventory manager when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof $ !== 'undefined' && typeof feather !== 'undefined') {
+                console.log('Starting BOS inventory manager...');
+                window.inventoryManager = new InventoryManager();
+                
+                // Initialize feather icons
+                feather.replace();
+} else {
+                console.error('Required libraries not loaded');
+            }
+        });
    </script>
 
-    <!-- jQuery and DataTables JS -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-
 </body>
-
 </html>
