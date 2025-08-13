@@ -6,24 +6,26 @@ class BosController extends BaseController
 {
     /**
      * Display the BOS index page without authentication
-     * This serves the HTML file from public/bos/index.html
+     * This serves the PHP file from public/bos/index.php
      */
     public function index()
     {
-        // Get the path to the HTML file
-        $htmlPath = FCPATH . 'bos/index.html';
+        // Get the path to the PHP file
+        $phpPath = FCPATH . 'bos/index.php';
         
         // Check if the file exists
-        if (!file_exists($htmlPath)) {
+        if (!file_exists($phpPath)) {
             throw new \CodeIgniter\Exceptions\PageNotFoundException('BOS index file not found');
         }
         
-        // Read and return the HTML content
-        $htmlContent = file_get_contents($htmlPath);
+        // Include and execute the PHP file
+        ob_start();
+        include $phpPath;
+        $phpContent = ob_get_clean();
         
         // Set the content type to HTML
         $this->response->setHeader('Content-Type', 'text/html; charset=UTF-8');
         
-        return $this->response->setBody($htmlContent);
+        return $this->response->setBody($phpContent);
     }
 }
