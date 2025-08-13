@@ -741,6 +741,33 @@
             background: var(--text-muted);
         }
 
+        /* Responsive table improvements */
+        @media (max-width: 768px) {
+            .table-wrapper {
+                font-size: 0.8rem;
+            }
+            
+            th, td {
+                padding: 0.5rem 0.25rem !important;
+            }
+            
+            .table-container {
+                margin: 0 -0.5rem;
+                border-radius: 0;
+            }
+        }
+
+        @media (max-width: 576px) {
+            th:nth-child(n+6), 
+            td:nth-child(n+6) {
+                display: none;
+            }
+            
+            .table-wrapper {
+                font-size: 0.75rem;
+            }
+        }
+
 
 
         table {
@@ -1486,11 +1513,13 @@
 
                 <div class="table-wrapper">
 
-                    <table id="inventoryTable">
+                    <table id="inventoryTable" class="table table-borderless table-hover align-middle mb-0">
 
-                        <thead>
+                        <thead class="table-light">
 
                             <tr>
+
+                                <th class="text-center" style="width: 60px;">#</th>
 
                                 <th data-translate="dateInDetail">Date in Detail</th>
 
@@ -1510,7 +1539,7 @@
 
                         <tbody id="tableBody">
 
-                            <tr><td colspan="6" class="no-data" data-translate="loadingData">Loading data...</td></tr>
+                            <tr><td colspan="7" class="no-data" data-translate="loadingData">Loading data...</td></tr>
 
                         </tbody>
 
@@ -2636,7 +2665,7 @@ class InventoryManager {
 
         if (!Array.isArray(data) || data.length === 0) {
 
-            tbody.innerHTML = `<tr><td colspan="6" class="no-data">${this.translate('noData')}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" class="no-data">${this.translate('noData')}</td></tr>`;
 
             return;
 
@@ -2646,15 +2675,21 @@ class InventoryManager {
 
         const fragment = document.createDocumentFragment();
 
+        const startIndex = (this.currentPage - 1) * this.pageSize;
+
         
 
-        data.forEach((row) => {
+        data.forEach((row, index) => {
 
             const tr = document.createElement('tr');
 
             tr.className = 'fade-in';
 
+            const rowNumber = startIndex + index + 1;
+
             tr.innerHTML = `
+
+                <td class="text-center fw-semibold text-muted">${rowNumber}</td>
 
                 <td>${this.escapeHtml(row[0] || '')}</td>
 
