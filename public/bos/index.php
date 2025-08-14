@@ -22,7 +22,7 @@
 
     <style>
         :root {
-            --primary-color: #405189;
+            --primary-color:rgb(33, 59, 192);
             --primary-color-rgb: 64, 81, 137;
             --primary-hover: #364574;
             --secondary-color: #74788d;
@@ -45,139 +45,140 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #f8fafc;
+            background-color: #f0f0f0;
             color: var(--text-primary);
             line-height: 1.6;
-            font-size: 14px;
+            font-size: 15px;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-            background: var(--white);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-md);
-        }
+                 .container {
+             max-width: 1400px;
+             margin: 0 auto;
+             padding: 0.75rem;
+             
+             
+         }
 
-        .page-header {
-            text-align: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 3px solid var(--primary-color);
-            background: linear-gradient(135deg, var(--light-gray) 0%, #f1f3f4 100%);
-            border-radius: var(--radius-md);
-            padding: 2rem;
-        }
+                 .page-header {
+             text-align: center;
+             margin-bottom: 0.75rem;
+             padding: 0.75rem;
+             background: var(--white);
+             border-radius: var(--radius-md);
+             box-shadow: 10px 10px 20px #babecc, -10px -10px 20px #ffffff;
+         }
 
-        .page-title {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--primary-color);
-            margin: 0;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+         .page-title {
+             font-size: 1.5rem;
+             font-weight: 700;
+             color: var(--primary-color);
+             margin: 0;
+             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+             line-height: 1.2;
+         }
 
-        .page-subtitle {
-            font-size: 1.125rem;
-            color: var(--text-secondary);
-            margin-top: 0.5rem;
-            font-weight: 500;
-        }
+         .page-subtitle {
+             font-size: 0.8rem;
+             color: var(--text-secondary);
+             margin-top: 0.15rem;
+             font-weight: 500;
+             line-height: 1.1;
+         }
 
-        /* Stats Container - Single Row Layout */
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
+                 /* Stats Container - Single Row Layout */
+         .stats-container {
+             display: grid;
+             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+             gap: 0.75rem;
+             margin-bottom: 0.75rem;
+         }
 
         .stat-widget {
-            background: var(--card-bg);
+            background: var(--white);
             border-radius: var(--radius-lg);
             border: 1px solid var(--border-color);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            box-shadow: 10px 10px 20px #babecc, -10px -10px 20px #ffffff;
             transition: all 0.3s ease;
             overflow: hidden;
         }
 
         .stat-widget:hover {
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            box-shadow: 12px 12px 24px #babecc, -12px -12px 24px #ffffff;
             transform: translateY(-2px);
         }
 
-        .widget-header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 1rem 1.25rem;
-            background: linear-gradient(135deg, var(--primary-color) 0%, #4a5fc1 100%);
-            color: white;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
+                 .widget-header {
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             gap: 0.3rem;
+             padding: 0.6rem 1rem;
+             background: var(--secondary-color)!important;
+             color: white;
+             font-weight: 600;
+             font-size: 0.75rem;
+         }
 
-        .widget-icon {
-            width: 18px;
-            height: 18px;
-        }
+         .widget-icon {
+             width: 14px;
+             height: 14px;
+         }
 
-        .widget-title {
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
+         .widget-title {
+             font-size: 0.75rem;
+             font-weight: 600;
+         }
 
-        .widget-content {
-            padding: 1.5rem 1.25rem;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 120px;
-        }
+         .widget-content {
+             padding: 0.5rem 0.5rem;
+             text-align: center;
+             display: flex;
+             flex-direction: column;
+             justify-content: center;
+             align-items: center;
+             min-height: 60px;
+         }
 
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            line-height: 1;
-            margin: 0;
-        }
+                 .stat-value {
+             font-size: 1.5rem;
+             font-weight: 700;
+             color: var(--primary-color);
+             line-height: 0.9;
+             margin: 0;
+         }
 
-        .stat-unit {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
+         .stat-unit {
+             font-size: 0.75rem;
+             color: var(--text-muted);
+             font-weight: 500;
+         }
 
-        .stat-subtitle {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            text-align: center;
-            margin: 0.5rem 0;
-        }
+         .stat-subtitle {
+             font-size: 0.65rem;
+             color: var(--text-muted);
+             text-align: center;
+             margin: 0.1rem 0;
+             line-height: 1.1;
+         }
 
-        .stat-trend {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.4rem;
-            padding: 0.4rem 0.8rem;
-            background: rgba(var(--primary-color-rgb), 0.1);
-            border-radius: var(--radius-sm);
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: var(--primary-color);
-            margin-top: 0.5rem;
-        }
+                 .stat-trend {
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             gap: 0.2rem;
+             padding: 0.15rem 0.4rem;
+             background: rgba(var(--primary-color-rgb), 0.1);
+             border-radius: var(--radius-sm);
+             font-size: 0.6rem;
+             font-weight: 500;
+             color: var(--primary-color);
+             margin-top: 0.15rem;
+         }
 
-        .trend-icon {
-            width: 14px;
-            height: 14px;
-        }
+         .trend-icon {
+             width: 10px;
+             height: 10px;
+         }
 
         .stat-status {
             display: inline-block;
@@ -189,26 +190,27 @@
             margin-top: 0.5rem;
         }
 
-        /* Chart Widget - Horizontal Bars */
-        .chart-widget .widget-content {
-            padding: 1.5rem 1.25rem;
-            justify-content: flex-start;
-            min-height: 140px;
-        }
+                 /* Chart Widget - Horizontal Bars */
+         .chart-widget .widget-content {
+             padding: 0.5rem 0.5rem;
+             justify-content: center;
+             min-height: 60px;
+         }
 
-        .distribution-bars {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-            margin-top: 0.5rem;
-            width: 100%;
-        }
+                 .distribution-bars {
+             display: flex;
+             flex-direction: column;
+             gap: 0.4rem;
+             margin-top: 0.2rem;
+             width: 100%;
+             padding: 0.5rem 0.5rem;
+         }
 
-        .bar-item {
-            display: flex;
-            flex-direction: column;
-            gap: 0.4rem;
-        }
+         .bar-item {
+             display: flex;
+             flex-direction: column;
+             gap: 0.2rem;
+         }
 
         .bar-info {
             display: flex;
@@ -216,24 +218,24 @@
             align-items: center;
         }
 
-        .bar-label {
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: var(--text-secondary);
-        }
+                 .bar-label {
+             font-size: 0.65rem;
+             font-weight: 500;
+             color: var(--text-secondary);
+         }
 
-        .bar-value {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
+         .bar-value {
+             font-size: 0.65rem;
+             font-weight: 600;
+             color: var(--text-primary);
+         }
 
-        .bar-container {
-            height: 8px;
-            background: var(--light-gray);
-            border-radius: 4px;
-            overflow: hidden;
-        }
+         .bar-container {
+             height: 6px;
+             background: var(--light-gray);
+             border-radius: 3px;
+             overflow: hidden;
+         }
 
         .bar {
             height: 100%;
@@ -242,15 +244,15 @@
         }
 
         .bar-excellent {
-            background: linear-gradient(90deg, #10b981, #059669);
+            background: #10b981;
         }
 
         .bar-good {
-            background: linear-gradient(90deg, #f59e0b, #d97706);
+            background: #f59e0b;
         }
 
         .bar-warning {
-            background: linear-gradient(90deg, #ef4444, #dc2626);
+            background: #ef4444;
         }
 
 
@@ -288,29 +290,29 @@
             }
         }
 
-        .controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
+                 .controls {
+             display: flex;
+             justify-content: space-between;
+             align-items: center;
+             margin-bottom: 0.75rem;
+             gap: 0.5rem;
+             flex-wrap: wrap;
+         }
 
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--radius-sm);
-            font-weight: 600;
-            font-size: 0.875rem;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            position: relative;
-            overflow: hidden;
-        }
+                 .btn {
+             padding: 0.4rem 0.8rem;
+             border-radius: var(--radius-sm);
+             font-weight: 600;
+             font-size: 0.75rem;
+             border: none;
+             cursor: pointer;
+             transition: all 0.2s ease;
+             display: inline-flex;
+             align-items: center;
+             gap: 0.3rem;
+             position: relative;
+             overflow: hidden;
+         }
 
         .btn::before {
             content: '';
@@ -319,7 +321,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            background: rgba(255, 255, 255, 0.1);
             transition: left 0.5s;
         }
 
@@ -328,14 +330,14 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+            background: var(--secundary-color);
             color: white;
-            box-shadow: 0 2px 8px rgba(64, 81, 137, 0.3);
+            box-shadow: 5px 5px 10px #babecc, -5px -5px 10px #ffffff;
         }
 
         .btn-primary:hover {
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(64, 81, 137, 0.4);
+            box-shadow: 7px 7px 14px #babecc, -7px -7px 14px #ffffff;
         }
 
         .btn-outline-secondary {
@@ -359,27 +361,27 @@
 
 
         .avg-status.excellent {
-            background: linear-gradient(135deg, var(--success-color) 0%, #0ea57a 100%);
+            background: var(--success-color);
             color: white;
-            box-shadow: 0 2px 4px rgba(10, 179, 156, 0.3);
+            box-shadow: 3px 3px 6px #babecc, -3px -3px 6px #ffffff;
         }
 
         .avg-status.good {
-            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            background: #22c55e;
             color: white;
-            box-shadow: 0 2px 4px rgba(34, 197, 94, 0.3);
+            box-shadow: 3px 3px 6px #babecc, -3px -3px 6px #ffffff;
         }
 
         .avg-status.warning {
-            background: linear-gradient(135deg, var(--warning-color) 0%, #e6a637 100%);
+            background: var(--warning-color);
             color: white;
-            box-shadow: 0 2px 4px rgba(247, 184, 75, 0.3);
+            box-shadow: 3px 3px 6px #babecc, -3px -3px 6px #ffffff;
         }
 
         .avg-status.critical {
-            background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%);
+            background: var(--danger-color);
             color: white;
-            box-shadow: 0 2px 4px rgba(240, 101, 72, 0.3);
+            box-shadow: 3px 3px 6px #babecc, -3px -3px 6px #ffffff;
         }
 
         /* Animation for when average updates */
@@ -407,126 +409,249 @@
             display: block;
         }
 
-        .table-container {
-            background: var(--white);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-            padding: 1.5rem;
-        }
+                 .table-container {
+             background: var(--white);
+             border-radius: var(--radius-lg);
+             box-shadow: 10px 10px 20px #babecc, -10px -10px 20px #ffffff;
+             
+             overflow: hidden;
+             padding: 0.75rem;
+         }
 
-        .table-header {
-            text-align: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid var(--border-color);
-        }
+         .table-header {
+             text-align: center;
+             margin-bottom: 0.75rem;
+             padding-bottom: 0.5rem;
+             border-bottom: 2px solid var(--border-color);
+         }
 
-        .table-title {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-        }
+         .table-title {
+             font-size: 1.1rem;
+             font-weight: 700;
+             color: var(--primary-color);
+             margin: 0;
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             gap: 0.4rem;
+             line-height: 1.2;
+         }
 
-        .table-icon {
-            width: 1.5rem;
-            height: 1.5rem;
-            color: var(--primary-color);
-        }
+         .table-icon {
+             width: 1.1rem;
+             height: 1.1rem;
+             color: var(--primary-color);
+         }
 
-        .table-subtitle {
-            font-size: 1rem;
-            color: var(--text-secondary);
-            margin: 0.5rem 0 0 0;
-            font-weight: 500;
-        }
+         .table-subtitle {
+             font-size: 0.7rem;
+             color: var(--text-secondary);
+             margin: 0.15rem 0 0 0;
+             font-weight: 500;
+             line-height: 1.1;
+         }
 
         .table-wrapper {
-            margin: -0.5rem;
+            margin: -0.5rem 1.5rem;
             border-radius: var(--radius-md);
             overflow: hidden;
-            border: 1px solid var(--border-color);
+            border: 0px solid var(--border-color);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            position: relative;
         }
 
-        .table {
-            margin: 0;
-            font-size: 0.875rem;
-            border-collapse: separate;
-            border-spacing: 0;
-            width: 100%;
+        /* Custom scrollbar for webkit browsers */
+        .table-wrapper::-webkit-scrollbar {
+            height: 8px;
         }
 
-        .table thead th {
-            background: linear-gradient(135deg, var(--light-gray) 0%, #f1f3f4 100%);
-            border: none;
-            border-bottom: 2px solid var(--primary-color);
-            color: var(--text-primary);
-            font-weight: 700;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            padding: 1.25rem 1rem;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            white-space: nowrap;
+        .table-wrapper::-webkit-scrollbar-track {
+           /* background: #f1f1f1;*/
+            border-radius: 4px;
         }
 
-        .table thead th:first-child {
-            border-top-left-radius: var(--radius-md);
+        .table-wrapper::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
         }
 
-        .table thead th:last-child {
-            border-top-right-radius: var(--radius-md);
+        .table-wrapper::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-hover);
         }
 
-        .table tbody tr {
-            transition: all 0.2s ease;
-            border-bottom: 1px solid #f1f3f6;
-        }
+         /* Custom table header styles - CarWash style */
+         .table thead th {
+             background-color: #f8f9fa;
+             border-bottom: 2px solid #dee2e6;
+             font-weight: 600;
+             font-size: 0.75rem;
+             text-align: center !important;
+             vertical-align: middle !important;
+             color: var(--text-primary);
+             padding: 0.75rem 0.5rem;
+             line-height: 1.2;
+         }
 
-        .table tbody tr:hover {
-            background-color: rgba(64, 81, 137, 0.02);
-            transform: scale(1.001);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        }
+         /* Custom table body styles - CarWash style */
+         .table tbody td {
+             text-align: center !important;
+             vertical-align: middle !important;
+             padding: 0.75rem 0.5rem !important;
+             line-height: 1.4;
+             transition: background-color 0.2s ease;
+         }
 
-        .table tbody td {
-            padding: 1rem;
-            vertical-align: middle;
-            border: none;
-            color: var(--text-primary);
-        }
+         /* Left align only the first column (row number) for better readability */
+         .table thead th:first-child,
+         .table tbody td:first-child {
+             text-align: left !important;
+         }
 
-        .table tbody tr:last-child td:first-child {
-            border-bottom-left-radius: var(--radius-md);
-        }
+         /* Table row hover effects - CarWash style */
+         .table tbody tr {
+             transition: all 0.2s ease;
+         }
 
-        .table tbody tr:last-child td:last-child {
-            border-bottom-right-radius: var(--radius-md);
-        }
+         .table tbody tr:hover {
+             background-color: rgba(64, 81, 137, 0.08) !important;
+             transform: translateY(-1px);
+             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+         }
 
-        /* Days badge styling - Bootstrap badges with custom enhancements */
-        .badge {
-            font-size: 0.75rem;
-            font-weight: 700;
-            min-width: 35px;
-            padding: 0.35rem 0.6rem;
-            border-radius: 6px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: all 0.2s ease;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-        }
+         /* Remove row number badge styling */
+         .row-number {
+             font-weight: 600;
+             color: var(--text-primary);
+             font-size: 0.65rem;
+         }
+
+         /* Combined vehicle and stock styling */
+         .vehicle-stock-container {
+             display: flex;
+             flex-direction: column;
+             align-items: center;
+             gap: 0.5rem;
+         }
+
+         /* Date with days badge styling */
+         .date-with-badge {
+             display: flex;
+             flex-direction: column;
+             align-items: center;
+             gap: 0.25rem;
+             font-size: 0.875rem;
+         }
+
+         /* Notes tooltip styling */
+         .notes-short {
+             position: relative;
+             cursor: help;
+             max-width: 200px;
+             white-space: nowrap;
+             overflow: hidden;
+             text-overflow: ellipsis;
+             display: inline-block;
+             font-size: 0.875rem;
+         }
+
+         .notes-short[title]:hover::after {
+             content: attr(title);
+             position: absolute;
+             bottom: 100%;
+             left: 50%;
+             transform: translateX(-50%);
+             background: #333;
+             color: white;
+             padding: 0.5rem;
+             border-radius: 4px;
+             font-size: 0.8rem;
+             white-space: normal;
+             width: 300px;
+             z-index: 1000;
+             box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+             margin-bottom: 5px;
+         }
+
+         .notes-short[title]:hover::before {
+             content: '';
+             position: absolute;
+             bottom: 100%;
+             left: 50%;
+             transform: translateX(-50%);
+             border: 5px solid transparent;
+             border-top-color: #333;
+             margin-bottom: -5px;
+             z-index: 1000;
+         }
+
+         /* COMMENTED OUT - Custom table styles to see Bootstrap classes */
+         /*
+         .table {
+             margin: 0;
+             font-size: 0.95rem;
+             border-collapse: separate;
+             border-spacing: 0;
+             width: 100%;
+             min-width: 800px;
+             line-height: 1.5;
+         }
+
+
+
+         .table thead th:first-child {
+             border-top-left-radius: var(--radius-md);
+         }
+
+         .table thead th:last-child {
+             border-top-right-radius: var(--radius-md);
+         }
+
+         .table tbody tr {
+             transition: all 0.2s ease;
+             border-bottom: 1px solid #f1f3f6;
+         }
+
+         .table tbody tr:hover {
+             background-color: rgba(64, 81, 137, 0.03);
+             transform: scale(1.002);
+             box-shadow: 5px 5px 15px #babecc, -5px -5px 15px #ffffff;
+             border-radius: 8px;
+         }
+
+         .table tbody td {
+             padding: 1.25rem 1.25rem;
+             vertical-align: middle;
+             border: none;
+             color: var(--text-primary);
+             font-weight: 500;
+             transition: all 0.2s ease;
+         }
+
+         .table tbody tr:last-child td:first-child {
+             border-bottom-left-radius: var(--radius-md);
+         }
+
+         .table tbody tr:last-child td:last-child {
+             border-bottom-right-radius: var(--radius-md);
+         }
+         */
+
+                 /* Days badge styling - CarWash style */
+         .badge {
+             font-size: 0.75em;
+             font-weight: 600;
+             padding: 0.35em 0.65em;
+             border-radius: 0.375rem;
+             text-align: center;
+             display: inline-block;
+             line-height: 1;
+             transition: all 0.15s ease-in-out;
+         }
 
         .badge:hover {
             transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
         /* Override Bootstrap badge colors for better contrast and consistency */
@@ -545,37 +670,56 @@
             color: white;
         }
 
-        /* Stock number styling */
-        .stock-number {
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-            background: linear-gradient(135deg, var(--primary-color) 0%, #364574 100%);
-            color: white;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+                 /* Stock number styling */
+         .stock-number {
+             font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+             background: var(--primary-color);
+             color: white;
+             padding: 0.35em 0.65em;
+             border-radius: 0.375rem;
+             font-size: 0.75em;
+             font-weight: 600;
+             letter-spacing: 0.5px;
+             transition: all 0.15s ease-in-out;
+             line-height: 1;
+             display: inline-block;
+         }
+
+        .stock-number:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
-        /* Vehicle styling */
-        .vehicle-info {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
+                 /* Vehicle styling */
+         .vehicle-info {
+             font-weight: 500;
+             color: var(--text-primary);
+             font-size: 1.1rem;
+             line-height: 1;
+         }
 
         /* Notes preview styling */
         .notes-preview {
             color: var(--text-secondary);
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             line-height: 1.4;
             cursor: default;
+            font-style: italic;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            background: rgba(116, 120, 141, 0.05);
         }
 
         .notes-preview.has-content {
             cursor: help;
-            border-bottom: 1px dotted var(--text-muted);
+            border: 1px solid rgba(116, 120, 141, 0.2);
+            background: rgba(116, 120, 141, 0.08);
+            transition: all 0.2s ease;
+        }
+
+        .notes-preview.has-content:hover {
+            background: rgba(116, 120, 141, 0.12);
+            border-color: rgba(116, 120, 141, 0.3);
         }
 
         /* Row number styling */
@@ -583,15 +727,20 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 28px;
-            height: 28px;
-            background: linear-gradient(135deg, var(--text-muted) 0%, #8b9dc3 100%);
+            width: 32px;
+            height: 32px;
+            background: var(--text-muted);
             color: white;
             border-radius: 50%;
-            font-size: 0.75rem;
+            font-size: 1.5rem;
             font-weight: 700;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 3px 3px 6px #babecc, -3px -3px 6px #ffffff;
+            transition: all 0.2s ease;
+        }
+
+        .row-number-badge:hover {
+            transform: translateY(-1px);
+            box-shadow: 4px 4px 8px #babecc, -4px -4px 8px #ffffff;
         }
 
         /* Loading spinner animation */
@@ -602,10 +751,10 @@
 
         /* Top Bar for authenticated users */
         .top-bar {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+            background: var(--primary-color);
             color: white;
             padding: 0.75rem 0;
-            box-shadow: 0 2px 8px rgba(64, 81, 137, 0.2);
+            box-shadow: 5px 5px 10px #babecc, -5px -5px 10px #ffffff;
             position: sticky;
             top: 0;
             z-index: 1000;
@@ -680,13 +829,14 @@
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            background: #ffffff;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
             color: var(--primary-color);
             font-size: 0.9rem;
+            box-shadow: 2px 2px 4px #babecc, -2px -2px 4px #ffffff;
         }
 
         .user-details {
@@ -738,14 +888,15 @@
 
         /* Debug info styling */
         .debug-info {
-            background: #1a1a1a;
-            color: #00ff00;
+            background: var(--white);
+            color: var(--text-primary);
             padding: 1rem;
             margin: 1rem 0;
             border-radius: var(--radius-sm);
             font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
             font-size: 0.8rem;
-            border: 1px solid #333;
+            border: 1px solid var(--border-color);
+            box-shadow: 5px 5px 10px #babecc, -5px -5px 10px #ffffff;
             display: none;
         }
 
@@ -758,53 +909,260 @@
             white-space: pre-wrap;
         }
 
-        /* Responsive design */
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-                margin: 1rem;
-            }
+                 /* Desktop enhancements */
+         @media (min-width: 1024px) {
+             .container {
+                 padding: 1rem;
+             }
+             
+             .page-header {
+                 padding: 1rem;
+             }
 
-            .page-title {
-                font-size: 2rem;
-            }
+             .table-wrapper {
+                 margin: 2rem 5rem;
+             }
+             
+             .page-title {
+                 font-size: 1.75rem;
+             }
 
-            .stats-container {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-            
-            .stat-widget .widget-content {
-                padding: 1rem;
-            }
-            
-            .stat-value {
-                font-size: 2rem;
-            }
+             .stat-value {
+                 font-size: 1.75rem;
+             }
 
-            .controls {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .distribution-bars {
-                gap: 0.6rem;
-            }
-            
-            .bar-container {
-                height: 6px;
-            }
-        }
+             .widget-content {
+                 padding: 0.75rem;
+                 min-height: 70px;
+             }
+             
+             .table thead th {
+                 font-size: 0.75rem;
+                 padding: 0.5rem 0.375rem;
+             }
+             
+             .table tbody td {
+                 padding: 0.5rem 0.375rem !important;
+             }
+             
+             .badge {
+                 font-size: 0.7em;
+                 padding: 0.3em 0.6em;
+             }
+             
+             .stock-number {
+                 font-size: 0.7em;
+                 padding: 0.3em 0.6em;
+             }
+             
+             .vehicle-info {
+                 font-size: 0.8rem;
+             }
+         }
 
-        @media (max-width: 480px) {
-            .page-title {
-                font-size: 1.75rem;
-            }
-            
-            .table-container {
-                padding: 1rem;
-            }
-        }
+                 /* Responsive design */
+         @media (max-width: 768px) {
+             .container {
+                 padding: 0.75rem;
+                 margin: 0.5rem;
+             }
+
+             .table-wrapper {
+                 margin: -0.5rem 0.5rem;
+             }
+
+             .page-title {
+                 font-size: 1.5rem;
+             }
+
+             .page-header {
+                 padding: 0.75rem;
+                 margin-bottom: 0.75rem;
+             }
+
+             .stats-container {
+                 grid-template-columns: repeat(2, 1fr);
+                 gap: 0.75rem;
+                 margin-bottom: 0.75rem;
+             }
+             
+             .stat-widget .widget-content {
+                 padding: 0.4rem 0.4rem;
+                 min-height: 50px;
+             }
+             
+             .stat-value {
+                 font-size: 1.5rem;
+             }
+
+             .controls {
+                 margin-bottom: 0.75rem;
+             }
+             
+             .distribution-bars {
+                 gap: 0.4rem;
+                 padding: 0.9rem 0.9rem;
+             }
+             
+             .bar-container {
+                 height: 5px;
+             }
+             
+             /* Table responsive improvements */
+             .table-container {
+                 padding: 0.75rem;
+                 margin: 0 -0.25rem;
+             }
+             
+             .table {
+                 font-size: 0.75rem;
+                 min-width: 600px;
+             }
+             
+             .table thead th {
+                 padding: 0.4rem 0.3rem;
+                 font-size: 0.7rem;
+             }
+             
+             .table tbody td {
+                 padding: 0.4rem 0.3rem !important;
+             }
+             
+             .badge {
+                 font-size: 0.65em;
+                 padding: 0.25em 0.5em;
+             }
+             
+             .stock-number {
+                 font-size: 0.65em;
+                 padding: 0.25em 0.5em;
+             }
+             
+             .vehicle-info {
+                 font-size: 0.75rem;
+             }
+             
+             .date-with-badge {
+                 font-size: 0.7rem;
+             }
+             
+             /* Horizontal scroll indicator */
+             .table-wrapper::after {
+                 content: "← Desliza para ver más →";
+                 display: block;
+                 text-align: center;
+                 padding: 0.4rem;
+                 font-size: 0.65rem;
+                 color: var(--text-muted);
+                 background: rgba(116, 120, 141, 0.05);
+                 font-style: italic;
+             }
+         }
+
+                 @media (max-width: 480px) {
+             .table-wrapper {
+                 margin: -0.5rem 0.25rem;
+             }
+
+             .page-title {
+                 font-size: 1.25rem;
+             }
+
+             .page-header {
+                 padding: 0.5rem;
+                 margin-bottom: 0.5rem;
+             }
+
+             .stats-container {
+                 grid-template-columns: 1fr;
+                 gap: 0.5rem;
+                 margin-bottom: 0.5rem;
+             }
+
+             .stat-widget .widget-content {
+                 padding: 0.4rem;
+                 min-height: 45px;
+             }
+
+             .stat-value {
+                 font-size: 1.25rem;
+             }
+             
+             .table-container {
+                 padding: 0.5rem;
+                 margin: 0;
+             }
+             
+             .table {
+                 font-size: 0.7rem;
+                 min-width: 550px;
+             }
+             
+             .table thead th {
+                 padding: 0.4rem 0.25rem;
+                 font-size: 0.55rem;
+             }
+             
+             .table tbody td {
+                 padding: 0.2rem 0.2rem !important;
+             }
+             
+             .badge {
+                 font-size: 0.55rem;
+                 padding: 0.15rem 0.3rem;
+                 min-width: 20px;
+             }
+             
+             .stock-number {
+                 font-size: 0.55rem;
+                 padding: 0.15rem 0.3rem;
+             }
+             
+             .vehicle-info {
+                 font-size: 0.6rem;
+             }
+
+             .date-with-badge {
+                 font-size: 0.75rem;
+             }
+
+             .notes-short {
+                 max-width: 120px;
+                 font-size: 0.75rem;
+             }
+
+             .row-number {
+                 font-size: 0.75rem;
+             }
+
+             .badge {
+                 font-size: 0.6em;
+                 padding: 0.2em 0.4em;
+             }
+             
+             .stock-number {
+                 font-size: 0.6em;
+                 padding: 0.2em 0.4em;
+             }
+             
+             .vehicle-info {
+                 font-size: 0.7rem;
+             }
+
+             .table {
+                 font-size: 0.75rem;
+                 min-width: 600px;
+             }
+             
+             .table thead th {
+                 padding: 0.35rem 0.25rem;
+                 font-size: 0.65rem;
+             }
+             
+             .table tbody td {
+                 padding: 0.35rem 0.25rem !important;
+             }
+         }
     </style>
 </head>
 
@@ -870,7 +1228,7 @@
             <div class="stat-widget">
                 <div class="widget-header">
                     <i data-feather="database" class="widget-icon"></i>
-                    <span class="widget-title">Total Records</span>
+                    <span class="widget-title">Total Vehicles</span>
                 </div>
                 <div class="widget-content">
                     <div class="stat-value" id="totalRecords">0</div>
@@ -976,26 +1334,25 @@
         <!-- Table -->
         <div class="table-container">
             <div class="table-header">
-                <h3 class="table-title">
+                <h3  class="table-title">
                     <i data-feather="list" class="table-icon"></i>
                     Vehicle Inventory Detail Report
                 </h3>
                 <p class="table-subtitle">Real-time tracking of vehicles in Detail Department</p>
             </div>
             <div class="table-wrapper">
-                <table id="inventoryTable" class="table table-hover" style="width: 100%">
-                    <thead>
-                        <tr>
-                            <th width="50">#</th>
-                            <th>Date in Detail</th>
-                            <th id="daysInDetailColumn" style="display: none;">Days in Detail</th>
-                            <th># Keys</th>
-                            <th>Stock #</th>
-                            <th>Vehicle</th>
-                            <th>Write Up Date</th>
-                            <th>Notes</th>
-                        </tr>
-                    </thead>
+                                    <table id="inventoryTable" class="table table-borderless table-hover table-nowrap align-middle mb-0 w-100">
+                                         <thead class="table-light">
+                         <tr>
+                             <th width="50">#</th>
+                             <th>Date in Detail</th>
+                             <th id="daysInDetailColumn" style="display: none;">Days in Detail</th>
+                             <th># Keys</th>
+                             <th>Vehicle & Stock</th>
+                             <th style="display: none;">Write Up Date</th>
+                             <th>Notes</th>
+                         </tr>
+                     </thead>
                     <tbody>
                         <!-- DataTables will populate this -->
                     </tbody>
@@ -1105,52 +1462,48 @@ class InventoryManager {
             responsive: true,
             autoWidth: false,
             order: [[1, 'desc']], // Order by Date in Detail (descending)
-            columnDefs: [
-                {
-                    targets: 0,
-                    className: 'text-center row-number',
-                    orderable: false,
-                    searchable: false,
-                    width: '50px'
-                },
-                {
-                    targets: 1,
-                    className: 'text-center',
-                    width: '120px'
-                },
-                {
-                    targets: 2, // Days in Detail column
-                    visible: false, // Hidden by default, will be shown for authenticated users
-                    className: 'text-center',
-                    width: '100px'
-                },
-                {
-                    targets: 3, // # Keys
-                    className: 'text-center',
-                    width: '80px'
-                },
-                {
-                    targets: 4, // Stock #
-                    className: 'text-center',
-                    width: '120px'
-                },
-                {
-                    targets: 5, // Vehicle
-                    className: 'text-left',
-                    width: '200px'
-                },
-                {
-                    targets: 6, // Write Up Date
-                    className: 'text-center',
-                    width: '120px'
-                },
-                {
-                    targets: 7, // Notes
-                    className: 'text-left notes-column',
-                    orderable: false,
-                    width: 'auto'
-                }
-            ],
+                         columnDefs: [
+                 {
+                     targets: 0,
+                     className: 'text-center row-number',
+                     orderable: false,
+                     searchable: false,
+                     width: '50px'
+                 },
+                 {
+                     targets: 1,
+                     className: 'text-center',
+                     width: '150px'
+                 },
+                 {
+                     targets: 2, // Days in Detail column (hidden)
+                     visible: false,
+                     className: 'text-center',
+                     width: '100px'
+                 },
+                 {
+                     targets: 3, // # Keys
+                     className: 'text-center',
+                     width: '80px'
+                 },
+                 {
+                     targets: 4, // Vehicle & Stock (combined)
+                     className: 'text-center',
+                     width: '200px'
+                 },
+                 {
+                     targets: 5, // Write Up Date (hidden)
+                     visible: false,
+                     className: 'text-center',
+                     width: '120px'
+                 },
+                 {
+                     targets: 6, // Notes
+                     className: 'text-left notes-column',
+                     orderable: false,
+                     width: 'auto'
+                 }
+             ],
             language: {
                 processing: 'Loading data...',
                 lengthMenu: 'Show _MENU_ entries',
@@ -1166,15 +1519,15 @@ class InventoryManager {
                     previous: 'Previous'
                 }
             },
-            drawCallback: function() {
-                this.api().column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
-                    cell.innerHTML = '<span class="row-number-badge">' + (i + 1) + '</span>';
-                });
-                
-                if (typeof feather !== 'undefined') {
-                    feather.replace();
-                }
-            },
+                         drawCallback: function() {
+                 this.api().column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                     cell.innerHTML = '<span class="row-number">' + (i + 1) + '</span>';
+                 });
+                 
+                 if (typeof feather !== 'undefined') {
+                     feather.replace();
+                 }
+             },
             initComplete: function() {
                 console.log('DataTables initialized successfully');
             }
@@ -1277,16 +1630,15 @@ class InventoryManager {
                 const dateInDetail = row[0] || '';
                 const daysInDetail = this.calculateDaysInDetail(dateInDetail);
                 
-                const rowData = [
-                    '', // Row number (will be populated by drawCallback)
-                    this.formatDate(dateInDetail), // Date in Detail
-                    this.formatDaysInDetail(daysInDetail), // Days in Detail
-                    row[1] || '', // Keys
-                    this.formatStockNumber(row[2] || ''), // Stock #
-                    this.formatVehicle(row[3] || ''), // Vehicle
-                    this.formatDate(row[4] || ''), // Write Up Date
-                    this.formatNotes(row[5] || '') // Notes
-                ];
+                                 const rowData = [
+                     '', // Row number (will be populated by drawCallback)
+                     this.formatDateWithBadge(dateInDetail, daysInDetail), // Date in Detail with badge
+                     this.formatDaysInDetail(daysInDetail), // Days in Detail (hidden)
+                     row[1] || '', // Keys
+                     this.formatVehicleAndStock(row[3] || '', row[2] || ''), // Vehicle & Stock combined
+                     this.formatDate(row[4] || ''), // Write Up Date (hidden)
+                     this.formatNotesShort(row[5] || '') // Notes (short with tooltip)
+                 ];
                 this.dataTable.row.add(rowData);
             });
             
@@ -1402,13 +1754,45 @@ class InventoryManager {
         return `<span class="vehicle-info">${vehicle}</span>`;
     }
 
-    formatNotes(notes) {
-        if (!notes) return '';
-        const hasContent = notes.trim().length > 0;
-        const className = hasContent ? 'notes-preview has-content' : 'notes-preview';
-        const displayText = notes.length > 50 ? notes.substring(0, 50) + '...' : notes;
-        return `<span class="${className}">${displayText}</span>`;
-    }
+         formatNotes(notes) {
+         if (!notes) return '';
+         const hasContent = notes.trim().length > 0;
+         const className = hasContent ? 'notes-preview has-content' : 'notes-preview';
+         const displayText = notes.length > 50 ? notes.substring(0, 50) + '...' : notes;
+         return `<span class="${className}">${displayText}</span>`;
+     }
+
+     formatDateWithBadge(dateString, daysInDetail) {
+         if (!dateString) return '';
+         const formattedDate = this.formatDate(dateString);
+         const daysBadge = this.formatDaysInDetail(daysInDetail);
+         
+         return `<div class="date-with-badge">
+             <div>${formattedDate}</div>
+             <div>${daysBadge}</div>
+         </div>`;
+     }
+
+     formatVehicleAndStock(vehicle, stockNumber) {
+         if (!vehicle && !stockNumber) return '';
+         
+         const stockBadge = stockNumber ? this.formatStockNumber(stockNumber) : '';
+         const vehicleInfo = vehicle ? `<div class="vehicle-info">${vehicle}</div>` : '';
+         
+         return `<div class="vehicle-stock-container">
+             ${stockBadge}
+             ${vehicleInfo}
+         </div>`;
+     }
+
+     formatNotesShort(notes) {
+         if (!notes) return '';
+         const trimmedNotes = notes.trim();
+         if (trimmedNotes.length === 0) return '';
+         
+         const shortText = trimmedNotes.length > 20 ? trimmedNotes.substring(0, 20) + '...' : trimmedNotes;
+         return `<span class="notes-short" title="${trimmedNotes}">${shortText}</span>`;
+     }
 
     formatDate(dateString) {
         if (!dateString) return '';
@@ -1454,24 +1838,23 @@ class InventoryManager {
             return;
         }
         
-        // Create CSV content
-        const headers = ['Row #', 'Date in Detail', 'Days in Detail', '# Keys', 'Stock #', 'Vehicle', 'Write Up Date', 'Notes'];
-        let csvContent = headers.join(',') + '\n';
+                 // Create CSV content
+         const headers = ['Row #', 'Date in Detail', 'Days in Detail', '# Keys', 'Stock #', 'Vehicle', 'Notes'];
+         let csvContent = headers.join(',') + '\n';
         
         this.inventoryData.forEach((row, index) => {
             const dateInDetail = row[0] || '';
             const daysInDetail = this.calculateDaysInDetail(dateInDetail);
             
-            const csvRow = [
-                index + 1, // Row number
-                dateInDetail,
-                daysInDetail,
-                row[1] || '',
-                row[2] || '',
-                row[3] || '',
-                row[4] || '',
-                row[5] || ''
-            ].map(field => {
+                         const csvRow = [
+                 index + 1, // Row number
+                 dateInDetail,
+                 daysInDetail,
+                 row[1] || '', // Keys
+                 row[2] || '', // Stock
+                 row[3] || '', // Vehicle
+                 row[5] || ''  // Notes (skipping Write Up Date)
+             ].map(field => {
                 // Escape quotes and wrap in quotes if contains comma or quotes
                 const stringField = String(field);
                 if (stringField.includes(',') || stringField.includes('"') || stringField.includes('\n')) {
@@ -1709,40 +2092,28 @@ class InventoryManager {
         }
     }
 
-    toggleDaysInDetailColumn() {
-        console.log('🔐 toggleDaysInDetailColumn called - isAuthenticated:', this.isAuthenticated);
-        console.log('🔐 DataTable exists:', !!this.dataTable);
-        
-        if (!this.dataTable) {
-            console.warn('⚠️ DataTable not initialized yet, scheduling retry...');
-            setTimeout(() => this.toggleDaysInDetailColumn(), 1000);
-            return;
-        }
-        
-        try {
-            // Show/hide the column based on authentication status
-            const column = this.dataTable.column(2); // Days in Detail is column index 2
-            console.log('🔐 Column 2 exists:', !!column);
-            
-            column.visible(this.isAuthenticated);
-            console.log('🔐 Column visibility set to:', this.isAuthenticated);
-            
-            // Also show/hide the header
-            const header = document.getElementById('daysInDetailColumn');
-            if (header) {
-                header.style.display = this.isAuthenticated ? 'table-cell' : 'none';
-                console.log('🔐 Header display set to:', header.style.display);
-            } else {
-                console.warn('⚠️ Header element not found');
-            }
-            
-            // Force table redraw
-            this.dataTable.draw();
-            
-        } catch (error) {
-            console.error('❌ Error toggling Days in Detail column:', error);
-        }
-    }
+         toggleDaysInDetailColumn() {
+         console.log('🔐 toggleDaysInDetailColumn called - isAuthenticated:', this.isAuthenticated);
+         console.log('🔐 DataTable exists:', !!this.dataTable);
+         
+         if (!this.dataTable) {
+             console.warn('⚠️ DataTable not initialized yet, scheduling retry...');
+             setTimeout(() => this.toggleDaysInDetailColumn(), 1000);
+             return;
+         }
+         
+         try {
+             // The days badge is now shown in the Date in Detail column for authenticated users
+             // We can show/hide the badge via CSS or just keep it always visible since it's integrated
+             console.log('🔐 Days badge is now integrated in Date column');
+             
+             // Force table redraw to ensure proper formatting
+             this.dataTable.draw();
+             
+         } catch (error) {
+             console.error('❌ Error toggling Days in Detail column:', error);
+         }
+     }
 
     debugColumnState() {
         console.log('🐛 === DEBUG COLUMN STATE ===');

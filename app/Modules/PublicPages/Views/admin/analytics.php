@@ -281,3 +281,4 @@
 console.log('Analytics page loaded for page ID: <?= $page['id'] ?>');
 </script>
 <?= $this->endSection() ?>
+
