@@ -7,18 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="BOS Inventory Management System" name="description" />
     <meta content="BOS" name="author" />
-    <!-- App favicon -->
-    <link rel="shortcut icon" href="../../assets/images/favicon.ico">
     
-    <!-- Bootstrap CSS -->
-    <link href="../../assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-    <!-- Icons CSS -->
-    <link href="../../assets/css/icons.min.css" rel="stylesheet" type="text/css" />
-    <!-- App CSS -->
-    <link href="../../assets/css/app.min.css" rel="stylesheet" type="text/css" />
-    <!-- DataTables CSS -->
-    <link href="../../assets/libs/datatables/dataTables.bootstrap5.min.css" rel="stylesheet" type="text/css" />
-    <link href="../../assets/libs/datatables/responsive.bootstrap5.min.css" rel="stylesheet" type="text/css" />
+    <?php include 'partials/head-css.php'; ?>
 
     <style>
         :root {
@@ -567,7 +557,7 @@
             margin: 0 -1rem;
             border-radius: var(--radius-xl);
             overflow: hidden;
-            border: 1px solid var(--border-color);
+            border: 0px solid ;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
             position: relative;
@@ -1584,13 +1574,7 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT -->
-    <script src="../../assets/libs/jquery/jquery.min.js"></script>
-    <script src="../../assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="../../assets/libs/feather-icons/feather.min.js"></script>
-    <script src="../../assets/libs/datatables/jquery.dataTables.min.js"></script>
-    <script src="../../assets/libs/datatables/dataTables.bootstrap5.min.js"></script>
-    <script src="../../assets/libs/datatables/dataTables.responsive.min.js"></script>
+    <?php include 'partials/vendor-scripts.php'; ?>
     
 
 
@@ -2662,6 +2646,37 @@ class InventoryManager {
     }
 }
 
+// Global toast function
+window.showToast = function(type, message) {
+    console.log('showToast called:', type, message);
+    console.log('Swal available:', typeof Swal !== 'undefined');
+    
+    if (typeof Swal === 'undefined') {
+        console.error('SweetAlert2 (Swal) is not loaded!');
+        // Fallback to alert
+        alert(message);
+        return;
+    }
+    
+    // Simple toast notification using SweetAlert2
+    const icon = type === 'success' ? 'success' : type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'info';
+    
+    try {
+        Swal.fire({
+            icon: icon,
+            title: message,
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true
+        });
+    } catch (error) {
+        console.error('Error showing toast:', error);
+        alert(message); // Fallback
+    }
+};
+
 // Initialize the inventory manager when the page loads
 document.addEventListener('DOMContentLoaded', function() {
     if (typeof $ !== 'undefined' && typeof feather !== 'undefined') {
@@ -2672,6 +2687,9 @@ document.addEventListener('DOMContentLoaded', function() {
         feather.replace();
     } else {
         console.error('Required libraries not loaded');
+        console.log('jQuery available:', typeof $ !== 'undefined');
+        console.log('Feather available:', typeof feather !== 'undefined');
+        console.log('Swal available:', typeof Swal !== 'undefined');
     }
 });
    </script>

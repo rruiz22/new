@@ -560,15 +560,27 @@ waitForjQueryServices(function() {
             contentType: false,
             success: function(response) {
                 if (response.success) {
-                    showToast('success', response.message || 'Service saved successfully');
+                    if (typeof window.showToast === 'function') {
+                        window.showToast('success', response.message || 'Service saved successfully');
+                    } else {
+                        console.log('Service saved successfully');
+                    }
                     $('#serviceModal').modal('hide');
                     servicesTable.ajax.reload();
                 } else {
-                    showToast('error', response.message || 'Failed to save service');
+                    if (typeof window.showToast === 'function') {
+                        window.showToast('error', response.message || 'Failed to save service');
+                    } else {
+                        console.error('Failed to save service:', response.message);
+                    }
                 }
             },
             error: function() {
-                showToast('error', 'An error occurred while saving the service');
+                if (typeof window.showToast === 'function') {
+                    window.showToast('error', 'An error occurred while saving the service');
+                } else {
+                    console.error('An error occurred while saving the service');
+                }
             }
         });
     });
@@ -643,11 +655,19 @@ waitForjQueryServices(function() {
                 $('#serviceModalLabel').text('Edit Service');
                 $('#serviceModal').modal('show');
             } else {
-                showToast('error', 'Service not found');
+                if (typeof window.showToast === 'function') {
+                    window.showToast('error', 'Service not found');
+                } else {
+                    console.error('Service not found');
+                }
             }
         },
         error: function() {
-            showToast('error', 'Error loading service data');
+            if (typeof window.showToast === 'function') {
+                window.showToast('error', 'Error loading service data');
+            } else {
+                console.error('Error loading service data');
+            }
         }
     });
 };
@@ -659,44 +679,99 @@ window.deleteReconService = function(serviceId) {
         return;
     }
     
-    if (confirm('Are you sure you want to delete this service? This action cannot be undone.')) {
-        $.ajax({
-            url: '<?= base_url('recon_orders/services/delete/') ?>' + serviceId,
-            type: 'POST',
-            success: function(response) {
-                if (response.success) {
-                    showToast('success', 'Service deleted successfully');
-                    // Refresh the services table
-                    if (typeof refreshAllReconOrdersData === 'function') {
-                        refreshAllReconOrdersData();
-                    }
-                } else {
-                    showToast('error', response.message || 'Failed to delete service');
-                }
-            },
-            error: function() {
-                showToast('error', 'An error occurred while deleting the service');
-            }
-        });
+    // Check if SweetAlert2 is available
+    if (typeof Swal === 'undefined') {
+        console.error('SweetAlert2 not available, using confirm fallback');
+        if (confirm('Are you sure you want to delete this service? This action cannot be undone.')) {
+            performServiceDelete(serviceId);
+        }
+        return;
     }
+    
+    // Use SweetAlert2 for confirmation
+    Swal.fire({
+        title: '<?= lang('App.are_you_sure') ?>',
+        text: 'Are you sure you want to delete this service? This action cannot be undone.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: '<?= lang('App.yes_delete') ?>',
+        cancelButtonText: '<?= lang('App.cancel') ?>',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            performServiceDelete(serviceId);
+        }
+    });
 };
 
-// Define showToast function if not available
+function performServiceDelete(serviceId) {
+    $.ajax({
+        url: '<?= base_url('recon_orders/services/delete/') ?>' + serviceId,
+        type: 'POST',
+        success: function(response) {
+            if (response.success) {
+                if (typeof window.showToast === 'function') {
+                    window.showToast('success', 'Service deleted successfully');
+                } else {
+                    console.log('Service deleted successfully');
+                }
+                // Refresh the services table
+                if (typeof refreshAllReconOrdersData === 'function') {
+                    refreshAllReconOrdersData();
+                }
+            } else {
+                if (typeof window.showToast === 'function') {
+                    window.showToast('error', response.message || 'Failed to delete service');
+                } else {
+                    console.error('Failed to delete service:', response.message);
+                }
+            }
+        },
+        error: function() {
+            if (typeof window.showToast === 'function') {
+                window.showToast('error', 'An error occurred while deleting the service');
+            } else {
+                console.error('An error occurred while deleting the service');
+            }
+        }
+    });
+}
+
+// Define showToast function if not available or ensure it works properly
 if (typeof window.showToast === 'undefined') {
     window.showToast = function(type, message) {
+        console.log('Local showToast called:', type, message);
+        console.log('Swal available:', typeof Swal !== 'undefined');
+        
+        if (typeof Swal === 'undefined') {
+            console.error('SweetAlert2 (Swal) is not loaded!');
+            // Fallback to alert
+            alert(message);
+            return;
+        }
+        
         // Simple toast notification using SweetAlert2
         const icon = type === 'success' ? 'success' : type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'info';
         
-        Swal.fire({
-            icon: icon,
-            title: message,
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true
-        });
+        try {
+            Swal.fire({
+                icon: icon,
+                title: message,
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+            });
+        } catch (error) {
+            console.error('Error showing toast:', error);
+            alert(message); // Fallback
+        }
     };
+} else {
+    console.log('Global showToast already available, using that one');
 }
 }); // Close waitForjQueryServices
 </script> 

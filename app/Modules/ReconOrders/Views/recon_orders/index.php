@@ -471,7 +471,11 @@ waitForJQuery(function() {
         console.log('   - clearReconOrdersData() - Clear all saved data');
     });
 });
+</script>
 
+<?= $this->include('Modules\ReconOrders\Views\recon_orders/partials/swal-handler') ?>
+
+<script>
 // Global ReconOrders Action Functions
 window.editReconOrder = function(id) {
     if (!id) {
@@ -502,8 +506,20 @@ window.deleteReconOrder = function(id) {
         return;
     }
     
-    // Show confirmation dialog
-    if (typeof Swal !== 'undefined') {
+    // Use global confirmation dialog if available
+    if (typeof window.showConfirmDialog === 'function') {
+        window.showConfirmDialog(
+            '<?= lang('App.are_you_sure') ?>',
+            'Are you sure you want to delete this recon order?',
+            '<?= lang('App.yes_delete') ?>',
+            '<?= lang('App.cancel') ?>'
+        ).then((result) => {
+            if (result.isConfirmed) {
+                performDeleteOrder(id);
+            }
+        });
+    } else if (typeof Swal !== 'undefined') {
+        // Fallback to direct Swal usage
         Swal.fire({
             title: '<?= lang('App.are_you_sure') ?>',
             text: 'Are you sure you want to delete this recon order?',
@@ -520,6 +536,7 @@ window.deleteReconOrder = function(id) {
             }
         });
     } else {
+        // Final fallback to confirm
         if (confirm('Are you sure you want to delete this recon order?')) {
             performDeleteOrder(id);
         }
