@@ -97,6 +97,34 @@
     text-align: center !important;
 }
 
+/* Stock Number Badge Styling */
+.stock-number-badge .badge {
+    border-radius: 12px !important;
+    text-transform: uppercase !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.2s ease !important;
+    border: 1px solid rgba(var(--bs-primary-rgb), 0.2) !important;
+}
+
+.stock-number-badge .badge:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* VIN Number Styling */
+.vin-number {
+    background: rgba(var(--bs-secondary-rgb), 0.05);
+    border-radius: 8px;
+    padding: 4px 8px;
+    margin: 2px 0;
+    border: 1px solid rgba(var(--bs-secondary-rgb), 0.1);
+}
+
+.vin-number small {
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
 /* Action buttons styling */
 .action-buttons {
     position: relative;
@@ -184,11 +212,9 @@ function initializeDashboardTable() {
                     render: function(data, type, row) {
                         let html = `<div>`;
                         
-                        // Add service date
-                        if (data && data !== 'N/A') {
-                            const date = new Date(data);
-                            const formattedDate = date.toLocaleDateString();
-                            html += `<span class="fw-medium">${formattedDate}</span>`;
+                        // The date is already formatted by the controller
+                        if (data && data !== 'N/A' && data !== 'No Date' && data.trim() !== '') {
+                            html += `<span class="fw-medium">${data}</span>`;
                         } else {
                             html += `<span class="fw-medium text-muted">No Date</span>`;
                         }
@@ -217,8 +243,10 @@ function initializeDashboardTable() {
                                     break;
                             }
                             
-                            html += `<div class="small mt-1 ${statusClass}">
-                                <i class="${statusIcon} me-1"></i>${row.status.charAt(0).toUpperCase() + row.status.slice(1).replace('_', ' ')}
+                            html += `<div class="mt-1">
+                                <span class="badge ${statusClass.replace('text-', 'bg-').replace('text-', '')}-subtle ${statusClass} fw-semibold px-2 py-1" style="font-size: 0.8rem;">
+                                    <i class="${statusIcon} me-1"></i>${row.status.charAt(0).toUpperCase() + row.status.slice(1).replace('_', ' ')}
+                                </span>
                             </div>`;
                         }
                         
@@ -229,7 +257,52 @@ function initializeDashboardTable() {
                 {
                     data: 'stock',
                     render: function(data, type, row) {
-                        return `<div><span class="fw-medium">${data || 'N/A'}</span></div>`;
+                        let html = `<div class="text-center">`;
+                        
+                        // Stock number - más pequeño
+                        if (data && data !== 'N/A') {
+                            html += `<div class="stock-number-badge mb-1">
+                                <span class="badge bg-primary-subtle text-primary fw-bold px-2 py-1" style="font-size: 0.75rem; letter-spacing: 0.3px;">
+                                    ${data}
+                                </span>
+                            </div>`;
+                        } else {
+                            html += `<div class="stock-number-badge mb-1">
+                                <span class="badge bg-secondary-subtle text-secondary fw-bold px-2 py-1" style="font-size: 0.75rem;">
+                                    N/A
+                                </span>
+                            </div>`;
+                        }
+                        
+                        // VIN number - intentar múltiples campos posibles
+                        let vinNumber = row.vin || row.vin_number || row.vehicle_vin || row.VIN || '';
+                        
+                        // Debug: mostrar todos los campos disponibles
+                        console.log('Row data for VIN:', {
+                            vin: row.vin,
+                            vin_number: row.vin_number,
+                            vehicle_vin: row.vehicle_vin,
+                            VIN: row.VIN,
+                            full_row: row
+                        });
+                        
+                        if (vinNumber && vinNumber !== 'N/A' && vinNumber.toString().trim() !== '') {
+                            html += `<div class="vin-number mt-1">
+                                <small class="text-muted d-block" style="font-size: 0.7rem; font-family: monospace; letter-spacing: 0.2px; line-height: 1.2;">
+                                    <i class="ri-barcode-line me-1" style="font-size: 0.8rem;"></i>${vinNumber}
+                                </small>
+                            </div>`;
+                        } else {
+                            // Mostrar placeholder para debug
+                            html += `<div class="vin-number mt-1">
+                                <small class="text-muted d-block" style="font-size: 0.65rem; opacity: 0.6;">
+                                    <i class="ri-barcode-line me-1"></i>No VIN
+                                </small>
+                            </div>`;
+                        }
+                        
+                        html += `</div>`;
+                        return html;
                     }
                 },
                 {

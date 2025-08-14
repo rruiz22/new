@@ -36,6 +36,9 @@ return function (RouteCollection $routes) {
         $routes->get('services_content', 'ReconOrdersController::services_content');
         $routes->post('services_content', 'ReconOrdersController::services_content');
         
+        $routes->get('vehicles_content', 'ReconOrdersController::vehicles_content');
+        $routes->post('vehicles_content', 'ReconOrdersController::vehicles_content');
+        
         // Data endpoints for DataTables
         $routes->get('getDashboardOrders', 'ReconOrdersController::getDashboardOrders');
         $routes->get('getTodayOrders', 'ReconOrdersController::getTodayOrders');

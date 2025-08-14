@@ -705,8 +705,8 @@ class ReconOrdersController extends BaseController
                         'service_name' => $order['service_name'] ?? 'N/A',
                         'vehicle' => $order['vehicle'] ?? 'N/A',
                         'vin_number' => $order['vin_number'] ?? 'N/A',
-                        'date' => date('M d, Y', strtotime($order['created_at'] ?? 'now')),
-                        'status' => '<span class="badge bg-' . $this->getStatusColor($order['status'] ?? 'pending') . '">' . ucfirst($order['status'] ?? 'pending') . '</span>',
+                        'service_date' => $order['service_date'] ? date('M d, Y', strtotime($order['service_date'])) : 'No Date',
+                        'status' => $order['status'] ?? 'pending',
                         'service_color' => $order['service_color'] ?? '#007bff'
                     ];
                 }
@@ -842,8 +842,8 @@ class ReconOrdersController extends BaseController
                         'service_name' => $order['service_name'] ?? 'N/A',
                         'vehicle' => $order['vehicle'] ?? 'N/A',
                         'vin_number' => $order['vin_number'] ?? 'N/A',
-                        'date' => date('M d, Y', strtotime($order['created_at'] ?? 'now')),
-                        'status' => '<span class="badge bg-' . $this->getStatusColor($order['status'] ?? 'pending') . '">' . ucfirst($order['status'] ?? 'pending') . '</span>',
+                        'service_date' => $order['service_date'] ? date('M d, Y', strtotime($order['service_date'])) : 'No Date',
+                        'status' => $order['status'] ?? 'pending',
                         'service_color' => $order['service_color'] ?? '#007bff'
                     ];
                 }
@@ -973,8 +973,8 @@ class ReconOrdersController extends BaseController
                         'service_name' => $order['service_name'] ?? 'N/A',
                         'vehicle' => $order['vehicle'] ?? 'N/A',
                         'vin_number' => $order['vin_number'] ?? 'N/A',
-                        'date' => date('M d, Y', strtotime($order['created_at'] ?? 'now')),
-                        'status' => '<span class="badge bg-' . $this->getStatusColor($order['status'] ?? 'pending') . '">' . ucfirst($order['status'] ?? 'pending') . '</span>',
+                        'service_date' => $order['service_date'] ? date('M d, Y', strtotime($order['service_date'])) : 'No Date',
+                        'status' => $order['status'] ?? 'pending',
                         'service_color' => $order['service_color'] ?? '#007bff'
                     ];
                 }
@@ -1069,7 +1069,7 @@ class ReconOrdersController extends BaseController
                         'order_id' => 'RO-' . str_pad($order['id'], 5, '0', STR_PAD_LEFT),
                         'client_name' => $order['client_name'] ?? 'N/A',
                         'vehicle' => $order['vehicle'] ?? 'N/A',
-                        'date' => date('M d, Y', strtotime($order['created_at'] ?? 'now')),
+                        'service_date' => $order['service_date'] ? date('M d, Y', strtotime($order['service_date'])) : 'No Date',
                         'deleted_at' => date('M d, Y', strtotime($order['deleted_at'] ?? 'now'))
                     ];
                 }
@@ -1095,6 +1095,112 @@ class ReconOrdersController extends BaseController
         
         // Return view for GET requests
         return view('Modules\ReconOrders\Views\recon_orders\deleted_content');
+    }
+    
+    // Vehicles content
+    public function vehicles_content()
+    {
+        // Check if it's an AJAX request for DataTables
+        $isPost = strtolower($this->request->getMethod()) === 'post';
+        $isAjax = $this->request->isAJAX() || 
+                  $this->request->hasHeader('X-Requested-With') || 
+                  $this->request->getPost('ajax') === true ||
+                  $this->request->getPost('ajax') === 'true';
+        
+        if ($isPost && $isAjax) {
+            $draw = $this->request->getPost('draw') ?? 1;
+            $start = (int) ($this->request->getPost('start') ?? 0);
+            $length = (int) ($this->request->getPost('length') ?? 10);
+            $searchValue = $this->request->getPost('search')['value'] ?? '';
+            
+            try {
+                $db = \Config\Database::connect();
+                
+                // Check if tables exist
+                if (!$db->tableExists('recon_orders')) {
+                    return $this->response->setJSON([
+                        'draw' => $draw,
+                        'recordsTotal' => 0,
+                        'recordsFiltered' => 0,
+                        'data' => []
+                    ]);
+                }
+                
+                // Get unique vehicles from recon_orders
+                $builder = $db->table('recon_orders');
+                
+                // Select distinct vehicles with their details
+                if ($db->tableExists('clients')) {
+                    $builder->select('recon_orders.vehicle, recon_orders.vin_number, recon_orders.stock, 
+                                     clients.name as client_name, 
+                                     COUNT(recon_orders.id) as total_orders,
+                                     MAX(recon_orders.created_at) as last_order_date,
+                                     GROUP_CONCAT(DISTINCT recon_orders.status) as statuses')
+                           ->join('clients', 'clients.id = recon_orders.client_id', 'left');
+                } else {
+                    $builder->select('recon_orders.vehicle, recon_orders.vin_number, recon_orders.stock,
+                                     "" as client_name,
+                                     COUNT(recon_orders.id) as total_orders,
+                                     MAX(recon_orders.created_at) as last_order_date,
+                                     GROUP_CONCAT(DISTINCT recon_orders.status) as statuses');
+                }
+                
+                $builder->where('recon_orders.deleted_at IS NULL')
+                       ->groupBy('recon_orders.vehicle, recon_orders.vin_number, recon_orders.stock');
+                
+                // Apply search filter
+                if (!empty($searchValue)) {
+                    $builder->groupStart()
+                        ->like('recon_orders.vehicle', $searchValue)
+                        ->orLike('recon_orders.vin_number', $searchValue)
+                        ->orLike('recon_orders.stock', $searchValue)
+                        ->groupEnd();
+                }
+                
+                // Get total count
+                $totalRecords = $builder->countAllResults(false);
+                
+                // Apply pagination and ordering
+                $builder->orderBy('last_order_date', 'DESC')
+                    ->limit($length, $start);
+                
+                $vehicles = $builder->get()->getResultArray();
+                
+                // Format data for DataTables
+                $data = [];
+                foreach ($vehicles as $vehicle) {
+                    $data[] = [
+                        'vehicle' => $vehicle['vehicle'] ?? 'N/A',
+                        'vin_number' => $vehicle['vin_number'] ?? 'N/A',
+                        'stock' => $vehicle['stock'] ?? 'N/A',
+                        'client_name' => $vehicle['client_name'] ?? 'N/A',
+                        'total_orders' => (int)($vehicle['total_orders'] ?? 0),
+                        'last_order_date' => $vehicle['last_order_date'] ? date('M d, Y', strtotime($vehicle['last_order_date'])) : 'N/A',
+                        'statuses' => $vehicle['statuses'] ?? 'N/A'
+                    ];
+                }
+                
+                return $this->response->setJSON([
+                    'draw' => $draw,
+                    'recordsTotal' => $totalRecords,
+                    'recordsFiltered' => $totalRecords,
+                    'data' => $data
+                ]);
+                
+            } catch (\Exception $e) {
+                log_message('error', 'Vehicles content error: ' . $e->getMessage());
+                return $this->response->setJSON([
+                    'draw' => $draw ?? 1,
+                    'recordsTotal' => 0,
+                    'recordsFiltered' => 0,
+                    'data' => [],
+                    'error' => $e->getMessage()
+                ]);
+            }
+        }
+        
+        // Return view for GET requests
+        return view('Modules\ReconOrders\Views\recon_orders\vehicles_content');
     }
     
     // Get deleted orders

@@ -89,12 +89,18 @@
                             <p class="text-muted small mb-0"><?= lang('App.complete_history_vehicles') ?></p>
                         </div>
                         <div class="col-auto">
-                            <div class="search-bar">
-                                <div class="input-group">
-                                    <span class="input-group-text">
-                                        <i class="ri-search-line"></i>
-                                    </span>
-                                    <input type="text" class="form-control" id="vehicleSearch" placeholder="<?= lang('App.search') ?> VIN, <?= lang('App.vehicle_make') ?>, <?= lang('App.vehicle_model') ?>...">
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-primary" id="refreshVehiclesBtn" onclick="refreshVehiclesData()">
+                                    <i class="ri-refresh-line me-1"></i>
+                                    <?= lang('App.refresh') ?>
+                                </button>
+                                <div class="search-bar">
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="ri-search-line"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="vehicleSearch" placeholder="<?= lang('App.search') ?> VIN, <?= lang('App.vehicle_make') ?>, <?= lang('App.vehicle_model') ?>...">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -234,7 +240,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const $ = window.jQuery;
 
     // Initialize DataTable
-    const vehiclesTable = $('#vehiclesTable').DataTable({
+    window.vehiclesTable = $('#vehiclesTable').DataTable({
         processing: true,
         serverSide: true,
         ajax: {
@@ -344,7 +350,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Search functionality
     $('#vehicleSearch').on('keyup', function() {
-        vehiclesTable.search(this.value).draw();
+        window.vehiclesTable.search(this.value).draw();
     });
 
     function refreshStats() {
@@ -372,6 +378,22 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize the vehicles table
     initVehiclesTable();
 });
+
+// Global function to refresh vehicles data
+function refreshVehiclesData() {
+    console.log('🔄 Refreshing vehicles data...');
+    
+    // Check if vehiclesTable is defined
+    if (typeof window.vehiclesTable !== 'undefined' && window.vehiclesTable) {
+        window.vehiclesTable.ajax.reload(function() {
+            console.log('✅ Vehicles table refreshed');
+            showToast('Vehicles data refreshed successfully!', 'success');
+        }, false);
+    } else {
+        console.warn('⚠️ Vehicles table not initialized');
+        showToast('Unable to refresh: table not initialized', 'error');
+    }
+}
 
 function showToast(message, type = 'success') {
     Toastify({
