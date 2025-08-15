@@ -662,7 +662,7 @@
                 const vehicle = document.getElementById('vehicle').value;
                 
                 if (!clientId || !serviceId || !stock || !vehicle) {
-                    showToast('error', '<?= lang('App.fill_required_fields') ?>');
+                    showToast('<?= lang('App.fill_required_fields') ?>', 'error');
                     return;
                 }
                 
@@ -697,7 +697,7 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        showToast('success', data.message || '<?= lang('App.order_created_successfully') ?>');
+                        showToast(data.message || '<?= lang('App.order_created_successfully') ?>', 'success');
                         
                         // Clear inventory data after successful submission
                         const modal = document.getElementById('reconOrderModal');
@@ -758,7 +758,7 @@
                                         .then(response => response.json())
                                         .then(forceData => {
                                             if (forceData.success) {
-                                                showToast('success', forceData.message || '<?= lang('App.order_created_successfully') ?>');
+                                                showToast(forceData.message || '<?= lang('App.order_created_successfully') ?>', 'success');
                                                 
                                                 // Clear inventory data after successful submission
                                                 const modal = document.getElementById('reconOrderModal');
@@ -779,12 +779,12 @@
                                                     }
                                                 }, 200);
                                             } else {
-                                                showToast('error', forceData.message || '<?= lang('App.error_creating_order') ?>');
+                                                showToast(forceData.message || '<?= lang('App.error_creating_order') ?>', 'error');
                                             }
                                         })
                                         .catch(error => {
                                             console.error('Force create error:', error);
-                                            showToast('error', '<?= lang('App.network_error') ?>');
+                                            showToast('<?= lang('App.network_error') ?>', 'error');
                                         });
                                     }
                                 });
@@ -802,7 +802,7 @@
                                     .then(response => response.json())
                                     .then(forceData => {
                                         if (forceData.success) {
-                                            showToast('success', forceData.message || '<?= lang('App.order_created_successfully') ?>');
+                                            showToast(forceData.message || '<?= lang('App.order_created_successfully') ?>', 'success');
                                             
                                             // Close modal and refresh data
                                             const modal = document.getElementById('reconOrderModal');
@@ -817,19 +817,19 @@
                                                 }
                                             }, 200);
                                         } else {
-                                            showToast('error', forceData.message || '<?= lang('App.error_creating_order') ?>');
+                                            showToast(forceData.message || '<?= lang('App.error_creating_order') ?>', 'error');
                                         }
                                     });
                                 }
                             }
                     } else {
-                        showToast('error', data.message || '<?= lang('App.create_failed') ?>');
+                        showToast(data.message || '<?= lang('App.create_failed') ?>', 'error');
                         }
                     }
                 })
                 .catch(error => {
                     console.error('Create error:', error);
-                    showToast('error', '<?= lang('App.error_occurred') ?>');
+                    showToast('<?= lang('App.error_occurred') ?>', 'error');
                 })
                 .finally(() => {
                     // Restore button state
@@ -842,9 +842,9 @@
         }
         
         // Simple toast function
-        function showToast(type, message) {
+        function showToast(message, type) {
             if (typeof window.showToast === 'function') {
-                window.showToast(type, message);
+                window.showToast(message, type);
             } else {
                 // Fallback
                 alert(message);

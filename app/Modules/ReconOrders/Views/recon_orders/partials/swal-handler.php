@@ -22,19 +22,34 @@ waitForLibraries(function() {
     if (typeof window.showToast === 'undefined' || !window.showToast.toString().includes('Swal')) {
         console.log('🔧 Setting up global showToast with SweetAlert2');
         
-        window.showToast = function(type, message) {
-            console.log('🍞 Global showToast called:', type, message);
+        window.showToast = function(message, type) {
+            console.log('🍞 Global showToast called with:', { message, type });
+            console.log('🔍 Swal available:', typeof Swal !== 'undefined');
+            console.log('🔍 Message type:', typeof message);
+            console.log('🔍 Type type:', typeof type);
             
             if (typeof Swal === 'undefined') {
                 console.error('❌ SweetAlert2 (Swal) is not loaded!');
-                alert(message);
+                alert(`${type}: ${message}`);
                 return;
             }
             
+            // Validate parameters
+            if (!message || typeof message !== 'string') {
+                console.error('❌ Invalid message parameter:', message);
+                message = 'Unknown message';
+            }
+            
+            if (!type || typeof type !== 'string') {
+                console.error('❌ Invalid type parameter:', type);
+                type = 'info';
+            }
+            
             const icon = type === 'success' ? 'success' : type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'info';
+            console.log('🎯 Using icon:', icon, 'for type:', type);
             
             try {
-                Swal.fire({
+                const toastConfig = {
                     icon: icon,
                     title: message,
                     toast: true,
@@ -46,7 +61,10 @@ waitForLibraries(function() {
                         toast.addEventListener('mouseenter', Swal.stopTimer);
                         toast.addEventListener('mouseleave', Swal.resumeTimer);
                     }
-                });
+                };
+                
+                console.log('🚀 Firing Swal with config:', toastConfig);
+                Swal.fire(toastConfig);
             } catch (error) {
                 console.error('❌ Error showing toast:', error);
                 alert(message);

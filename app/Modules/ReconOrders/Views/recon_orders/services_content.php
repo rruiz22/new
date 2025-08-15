@@ -561,7 +561,7 @@ waitForjQueryServices(function() {
             success: function(response) {
                 if (response.success) {
                     if (typeof window.showToast === 'function') {
-                        window.showToast('success', response.message || 'Service saved successfully');
+                        window.showToast(response.message || 'Service saved successfully', 'success');
                     } else {
                         console.log('Service saved successfully');
                     }
@@ -569,7 +569,7 @@ waitForjQueryServices(function() {
                     servicesTable.ajax.reload();
                 } else {
                     if (typeof window.showToast === 'function') {
-                        window.showToast('error', response.message || 'Failed to save service');
+                        window.showToast(response.message || 'Failed to save service', 'error');
                     } else {
                         console.error('Failed to save service:', response.message);
                     }
@@ -577,7 +577,7 @@ waitForjQueryServices(function() {
             },
             error: function() {
                 if (typeof window.showToast === 'function') {
-                    window.showToast('error', 'An error occurred while saving the service');
+                    window.showToast('An error occurred while saving the service', 'error');
                 } else {
                     console.error('An error occurred while saving the service');
                 }
@@ -656,7 +656,7 @@ waitForjQueryServices(function() {
                 $('#serviceModal').modal('show');
             } else {
                 if (typeof window.showToast === 'function') {
-                    window.showToast('error', 'Service not found');
+                    window.showToast('Service not found', 'error');
                 } else {
                     console.error('Service not found');
                 }
@@ -664,7 +664,7 @@ waitForjQueryServices(function() {
         },
         error: function() {
             if (typeof window.showToast === 'function') {
-                window.showToast('error', 'Error loading service data');
+                window.showToast('Error loading service data', 'error');
             } else {
                 console.error('Error loading service data');
             }
@@ -713,7 +713,7 @@ function performServiceDelete(serviceId) {
         success: function(response) {
             if (response.success) {
                 if (typeof window.showToast === 'function') {
-                    window.showToast('success', 'Service deleted successfully');
+                    window.showToast('Service deleted successfully', 'success');
                 } else {
                     console.log('Service deleted successfully');
                 }
@@ -723,7 +723,7 @@ function performServiceDelete(serviceId) {
                 }
             } else {
                 if (typeof window.showToast === 'function') {
-                    window.showToast('error', response.message || 'Failed to delete service');
+                    window.showToast(response.message || 'Failed to delete service', 'error');
                 } else {
                     console.error('Failed to delete service:', response.message);
                 }
@@ -731,7 +731,7 @@ function performServiceDelete(serviceId) {
         },
         error: function() {
             if (typeof window.showToast === 'function') {
-                window.showToast('error', 'An error occurred while deleting the service');
+                window.showToast('An error occurred while deleting the service', 'error');
             } else {
                 console.error('An error occurred while deleting the service');
             }
@@ -741,7 +741,7 @@ function performServiceDelete(serviceId) {
 
 // Define showToast function if not available or ensure it works properly
 if (typeof window.showToast === 'undefined') {
-    window.showToast = function(type, message) {
+    window.showToast = function(message, type) {
         console.log('Local showToast called:', type, message);
         console.log('Swal available:', typeof Swal !== 'undefined');
         

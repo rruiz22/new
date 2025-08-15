@@ -804,7 +804,7 @@ function initializeQuickForm() {
         
         // Validate required fields
         if (!formData.client_id || !formData.stock || !formData.vin_number || !formData.vehicle || !formData.service_id) {
-            showToast('error', '<?= lang('App.complete_all_fields') ?>');
+            showToast('<?= lang('App.complete_all_fields') ?>', 'error');
             return false;
         }
         
@@ -829,7 +829,7 @@ function initializeQuickForm() {
             },
             success: function(response) {
                 if (response.success) {
-                    showToast('success', response.message || '<?= lang('App.order_saved_successfully') ?>');
+                    showToast(response.message || '<?= lang('App.order_saved_successfully') ?>', 'success');
                     
                     // Reset validation messages and classes
                     $('#quickOrderForm').removeClass('was-validated');
@@ -867,7 +867,7 @@ function initializeQuickForm() {
                         }
                     }
                 } else {
-                    showToast('error', response.message || '<?= lang('App.error_saving_order') ?>');
+                    showToast(response.message || '<?= lang('App.error_saving_order') ?>', 'error');
                 }
             },
             error: function(xhr) {
@@ -889,7 +889,7 @@ function initializeQuickForm() {
                 // Don't clear form on error, just reset submission state
                 $('#quickOrderForm').data('submitting', false);
                 
-                showToast('error', errorMessage);
+                showToast(errorMessage, 'error');
             },
             complete: function() {
                 // Reset button state
@@ -1093,7 +1093,7 @@ function clearQuickForm() {
 }
 
 // Global toast function (if not already defined)
-function showToast(type, message) {
+function showToast(message, type) {
     // Prevent duplicate toasts
     if (window.lastToastMessage === message && window.lastToastTime && (Date.now() - window.lastToastTime) < 2000) {
         return;
@@ -1131,7 +1131,7 @@ function editReconOrder(orderId) {
 
 function deleteReconOrder(orderId) {
     if (!orderId) {
-        showToast('error', 'Invalid order ID');
+        showToast('Invalid order ID', 'error');
         return;
     }
     
@@ -1166,7 +1166,7 @@ function performDeleteOrder(orderId) {
         dataType: 'json',
         success: function(response) {
             if (response.success) {
-                showToast('success', response.message || 'Recon order deleted successfully');
+                showToast(response.message || 'Recon order deleted successfully', 'success');
                 
                 // Refresh today's table
                 if (typeof $ !== 'undefined' && $.fn.DataTable && $('#today-table').length) {
@@ -1185,12 +1185,12 @@ function performDeleteOrder(orderId) {
                     }
                 }
             } else {
-                showToast('error', response.message || 'Failed to delete recon order');
+                showToast(response.message || 'Failed to delete recon order', 'error');
             }
         },
         error: function(xhr, status, error) {
             console.error('Delete error:', error);
-            showToast('error', 'An error occurred while deleting the order');
+            showToast('An error occurred while deleting the order', 'error');
         }
     });
 }

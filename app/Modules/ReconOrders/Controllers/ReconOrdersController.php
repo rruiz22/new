@@ -93,11 +93,12 @@ class ReconOrdersController extends BaseController
             return redirect()->to(base_url('recon_orders'))->with('error', 'Order not found');
         }
 
+        $userType = session()->get('user_type') ?? 'client';
         $data = [
             'title' => 'Edit Recon Order ' . $order['order_number'],
             'order' => $order,
             'clients' => $this->clientModel->where('status', 'active')->orderBy('name', 'ASC')->findAll(),
-            'services' => $this->reconServiceModel->getActiveServices()
+            'services' => $this->reconServiceModel->getActiveServices(null, $userType)
         ];
 
         return view('Modules\ReconOrders\Views\recon_orders\edit', $data);
@@ -1359,9 +1360,10 @@ class ReconOrdersController extends BaseController
     // Modal form
     public function modal_form()
     {
+        $userType = session()->get('user_type') ?? 'client';
         $data = [
             'clients' => $this->clientModel->where('status', 'active')->orderBy('name', 'ASC')->findAll(),
-            'services' => $this->reconServiceModel->getActiveServices()
+            'services' => $this->reconServiceModel->getActiveServices(null, $userType)
         ];
         
         return view('Modules\ReconOrders\Views\recon_orders\modal_form', $data);
@@ -1396,10 +1398,14 @@ class ReconOrdersController extends BaseController
                 ]);
             }
             
+            // Get services for the user type and client
+            $userType = session()->get('user_type') ?? 'client';
+            $services = $this->reconServiceModel->getActiveServices($order['client_id'], $userType);
+            
             $data = [
                 'order' => $order,
                 'clients' => $this->clientModel->where('status', 'active')->orderBy('name', 'ASC')->findAll(),
-                'services' => $this->reconServiceModel->getActiveServices()
+                'services' => $services
             ];
             
             return view('Modules\ReconOrders\Views\recon_orders\modal_edit', $data);
@@ -3851,11 +3857,15 @@ class ReconOrdersController extends BaseController
             if ($db->tableExists('clients') && $db->tableExists('users')) {
                 $builder->select('recon_orders.*, 
                                  clients.name as client_name,
-                                 users.first_name, users.last_name')
+                                 users.first_name, users.last_name,
+                                 COALESCE(recon_orders.from_inventory, 0) as from_inventory,
+                                 COALESCE(recon_orders.source_type, "manual") as source_type')
                        ->join('clients', 'clients.id = recon_orders.client_id', 'left')
                        ->join('users', 'users.id = recon_orders.created_by', 'left');
             } else {
-                $builder->select('recon_orders.*');
+                $builder->select('recon_orders.*,
+                                 COALESCE(recon_orders.from_inventory, 0) as from_inventory,
+                                 COALESCE(recon_orders.source_type, "manual") as source_type');
             }
 
             // Filter for orders created from inventory using the new flag field

@@ -772,6 +772,10 @@ function showEditVINToast(type, message) {
         const serviceSelect = document.getElementById('edit_service_id');
         const vinInput = document.getElementById('edit_vin_number');
         const submitBtn = document.getElementById('updateOrderBtn');
+        
+        // Log service select initialization
+        console.log('🔍 Service select found with', serviceSelect ? serviceSelect.options.length : 0, 'options');
+        console.log('🔍 Client ID:', '<?= $order['client_id'] ?>', 'Service ID:', '<?= $order['service_id'] ?>');
     
     // Load services when client changes
     if (clientSelect) {
@@ -811,7 +815,7 @@ function showEditVINToast(type, message) {
             const vehicle = document.getElementById('edit_vehicle').value;
             
             if (!clientId || !serviceId || !stock || !vinNumber || !vehicle) {
-                showToast('error', '<?= lang('App.fill_required_fields') ?>');
+                showToast('<?= lang('App.fill_required_fields') ?>', 'error');
                 return;
             }
             
@@ -836,7 +840,7 @@ function showEditVINToast(type, message) {
             .then(data => {
                 if (data.success) {
                     console.log('✅ Order update successful, starting post-update actions');
-                    showToast('success', data.message || '<?= lang('App.order_updated_successfully') ?>');
+                    showToast(data.message || '<?= lang('App.order_updated_successfully') ?>', 'success');
                     
                     // Close modal and refresh data - check both possible modal IDs
                     let modal = document.getElementById('editReconOrderModal') || document.getElementById('reconOrderModal');
@@ -875,12 +879,12 @@ function showEditVINToast(type, message) {
                         }
                     }, 500);
                 } else {
-                    showToast('error', data.message || '<?= lang('App.update_failed') ?>');
+                    showToast(data.message || '<?= lang('App.update_failed') ?>', 'error');
                 }
             })
             .catch(error => {
                 console.error('Update error:', error);
-                showToast('error', '<?= lang('App.error_occurred') ?>');
+                showToast('<?= lang('App.error_occurred') ?>', 'error');
             })
             .finally(() => {
                 // Restore button state
@@ -948,9 +952,9 @@ function showEditVINToast(type, message) {
     }
     
     // Simple toast function
-    function showToast(type, message) {
+    function showToast(message, type) {
         if (typeof window.showToast === 'function') {
-            window.showToast(type, message);
+            window.showToast(message, type);
         } else {
             // Fallback
             alert(message);

@@ -364,11 +364,18 @@ waitForJQuery(function() {
                     console.warn('⚠️ initializeServicesTable function not found');
                 }
                 
-                if (typeof window.initializeDeletedOrdersTable === 'function') {
-                    window.initializeDeletedOrdersTable();
-                } else {
-                    console.warn('⚠️ initializeDeletedOrdersTable function not found');
-                }
+                // Don't initialize deleted table on page load - wait for tab activation
+                
+                // Initialize deleted table only when tab is activated
+                $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+                    const target = $(e.target).attr("href");
+                    if (target === '#deleted') {
+                        console.log('🔧 Deleted tab activated, initializing table...');
+                        if (typeof window.initializeDeletedOrdersTable === 'function') {
+                            window.initializeDeletedOrdersTable();
+                        }
+                    }
+                });
                 
                 console.log('✅ All tables initialized');
             } catch (error) {
@@ -480,7 +487,7 @@ waitForJQuery(function() {
 // Global ReconOrders Action Functions
 window.editReconOrder = function(id) {
     if (!id) {
-        showToast('error', 'Invalid order ID');
+        showToast('Invalid order ID', 'error');
         return;
     }
     
@@ -493,7 +500,7 @@ window.editReconOrder = function(id) {
 
 window.viewReconOrder = function(id) {
     if (!id) {
-        showToast('error', 'Invalid order ID');
+        showToast('Invalid order ID', 'error');
         return;
     }
     
@@ -503,7 +510,7 @@ window.viewReconOrder = function(id) {
 
 window.deleteReconOrder = function(id) {
     if (!id) {
-        showToast('error', 'Invalid order ID');
+        showToast('Invalid order ID', 'error');
         return;
     }
     
@@ -550,16 +557,16 @@ function performDeleteOrder(id) {
         type: 'DELETE',
         success: function(response) {
             if (response.success) {
-                showToast('success', response.message || 'Recon order deleted successfully');
+                showToast(response.message || 'Recon order deleted successfully', 'success');
                 refreshAllReconOrdersData();
                 console.log('✅ Order deleted and all data refreshed');
             } else {
-                showToast('error', response.message || 'Failed to delete recon order');
+                showToast(response.message || 'Failed to delete recon order', 'error');
             }
         },
         error: function(xhr, status, error) {
             console.error('Delete error:', error);
-            showToast('error', 'An error occurred while deleting the order');
+            showToast('An error occurred while deleting the order', 'error');
         }
     });
 }
@@ -577,7 +584,7 @@ window.refreshAllReconOrdersData = function(options = {}) {
     
     // Show progress indicator if requested
     if (showProgress && typeof window.showToast === 'function') {
-        progressToast = window.showToast('info', '🔄 Refreshing tables...', { duration: 0 });
+        progressToast = window.showToast('🔄 Refreshing tables...', 'info', { duration: 0 });
     }
     
     // Refresh all DataTables that are currently loaded - including vehicles tab tables
@@ -610,7 +617,7 @@ window.refreshAllReconOrdersData = function(options = {}) {
                         progressToast.close();
                     }
                     if (showToast && typeof window.showToast === 'function') {
-                        window.showToast('success', `✅ ${totalTables} tables refreshed successfully!`);
+                        window.showToast(`✅ ${totalTables} tables refreshed successfully!`, 'success');
                     }
                     console.log('✅ All ReconOrders tables refresh completed');
                 }
@@ -639,10 +646,18 @@ window.manualRefreshReconOrders = function() {
     refreshAllReconOrdersData({ showToast: true });
 };
 
-// Global toast function
-window.showToast = function(type, message) {
+// Global toast function - This will be overridden by swal-handler.php
+window.showToast = function(message, type) {
+    console.log('🍞 Index.php showToast called with:', { message, type });
+    
     // Simple toast notification using SweetAlert2
     const icon = type === 'success' ? 'success' : type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'info';
+    
+    if (typeof Swal === 'undefined') {
+        console.error('❌ SweetAlert2 not available in index.php');
+        alert(`${type}: ${message}`);
+        return;
+    }
     
     Swal.fire({
         icon: icon,
@@ -739,7 +754,7 @@ function setupFilterEventListeners() {
     });
     
     document.getElementById('applyGlobalFilters').addEventListener('click', function() {
-        showToast('success', 'Filters applied to all tables');
+        showToast('Filters applied to all tables', 'success');
         refreshAllReconOrdersData();
     });
     
@@ -779,7 +794,7 @@ function clearAllFilters() {
     localStorage.removeItem('reconOrdersGlobalDateToFilter');
     
     updateActiveFiltersCounter();
-    showToast('success', 'All filters cleared');
+    showToast('All filters cleared', 'success');
     refreshAllReconOrdersData();
 }
 

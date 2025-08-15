@@ -769,7 +769,7 @@ $(document).ready(function() {
 
 // Define showToast function if not available
 if (typeof window.showToast === 'undefined') {
-    window.showToast = function(type, message) {
+    window.showToast = function(message, type) {
         // Simple toast notification using SweetAlert2
         const icon = type === 'success' ? 'success' : type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'info';
         

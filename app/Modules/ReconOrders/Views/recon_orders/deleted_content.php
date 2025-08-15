@@ -12,7 +12,7 @@
             </div>
 
             <div class="card-body">
-                <div class="table-responsive">
+                <div class="table-responsive" style="position: relative; z-index: 1;">
                     <table id="deleted-table" class="table table-borderless table-hover table-nowrap align-middle mb-0 w-100">
                         <thead class="table-light">
                             <tr>
@@ -35,6 +35,41 @@
 </div>
 
 <style>
+/* Force deleted table to stay within tab content */
+#deleted {
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+#deleted .card {
+    position: relative !important;
+    z-index: 1 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+#deleted .card-body {
+    position: relative !important;
+    overflow: visible !important;
+}
+
+#deleted-table_wrapper {
+    position: relative !important;
+    z-index: 1 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+#deleted-table_wrapper .dataTables_length,
+#deleted-table_wrapper .dataTables_filter,
+#deleted-table_wrapper .dataTables_info,
+#deleted-table_wrapper .dataTables_paginate {
+    position: relative !important;
+    z-index: 2 !important;
+}
+
 /* SalesOrders Table Styles */
 .dataTables_wrapper .dataTables_paginate .paginate_button {
     padding: 0.5rem 0.75rem !important;
@@ -185,6 +220,9 @@ function initializeDeletedOrdersTable() {
             responsive: false,
             scrollX: false,
             autoWidth: false,
+            dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>><"row"<"col-sm-12"tr>><"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+            scrollCollapse: true,
+            deferRender: true,
             ajax: {
                 url: '<?= base_url('recon_orders/deleted_content') ?>',
                 type: 'POST',
@@ -406,6 +444,28 @@ function initializeDeletedOrdersTable() {
         $('#deleted-table tbody').on('mouseenter', 'tr', function() {
             $(this).css('cursor', 'pointer');
         });
+
+        // Force table to stay within its container after initialization
+        setTimeout(function() {
+            var wrapper = $('#deleted-table_wrapper');
+            var container = $('#deleted .card-body');
+            
+            if (wrapper.length && container.length) {
+                // Ensure wrapper is inside the correct container
+                if (!container.find('#deleted-table_wrapper').length) {
+                    console.log('Moving table wrapper to correct container...');
+                    wrapper.appendTo(container);
+                }
+                
+                // Apply containment styles
+                wrapper.css({
+                    'position': 'relative',
+                    'width': '100%',
+                    'max-width': '100%',
+                    'overflow': 'visible'
+                });
+            }
+        }, 100);
 
         console.log('Deleted Orders Table initialized successfully');
     } catch (error) {

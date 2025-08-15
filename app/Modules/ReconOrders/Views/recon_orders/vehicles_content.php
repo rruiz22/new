@@ -162,6 +162,14 @@
                         </div>
                         <div class="col-auto">
                             <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-outline-info" id="filterIncompleteBtn">
+                                    <i class="ri-filter-line me-1"></i>
+                                    Show Incomplete Only
+                                </button>
+                                <button type="button" class="btn btn-outline-warning btn-sm" id="testToastBtn" onclick="testToast()">
+                                    <i class="ri-notification-line me-1"></i>
+                                    Test Toast
+                                </button>
                                 <button type="button" class="btn btn-success" id="convertSelectedBtn" disabled>
                                     <i class="ri-arrow-right-line me-1"></i>
                                     <?= lang('App.move_selected') ?>
@@ -1274,6 +1282,53 @@
     z-index: 1001 !important;
     opacity: 0.3 !important;
 }
+
+/* Incomplete Filter Button Styles */
+#filterIncompleteBtn {
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+#filterIncompleteBtn.btn-info {
+    background: linear-gradient(135deg, #0dcaf0, #0a9ec7);
+    border-color: #0dcaf0;
+    box-shadow: 0 2px 8px rgba(13, 202, 240, 0.3);
+    transform: translateY(-1px);
+}
+
+#filterIncompleteBtn.btn-info:hover {
+    background: linear-gradient(135deg, #31d2f2, #0dcaf0);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(13, 202, 240, 0.4);
+}
+
+#filterIncompleteBtn.btn-info::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 8px;
+    height: 8px;
+    background: #28a745;
+    border-radius: 50%;
+    border: 2px solid white;
+    animation: pulse-filter 2s infinite;
+}
+
+@keyframes pulse-filter {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 0.7;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
 </style>
 
 <script>
@@ -1588,7 +1643,29 @@ document.addEventListener('DOMContentLoaded', function() {
                     data: null,
                     orderable: false,
                     render: function(data, type, row) {
-                        return `<button class="btn btn-success btn-sm convert-single-btn" data-row='${JSON.stringify(row)}'>
+                        // Check if the item has a status (should be disabled if it has any status)
+                        const stockNumber = row.stock_number;
+                        let hasStatus = false;
+                        let statusText = 'No Status';
+                        
+                        if (stockNumber && window.orderInfoLookup && window.orderInfoLookup[stockNumber]) {
+                            hasStatus = true;
+                            const orderInfo = window.orderInfoLookup[stockNumber];
+                            statusText = orderInfo.status || 'Unknown Status';
+                        }
+                        
+                        // Button is enabled only when there's NO status (no status yet)
+                        const isEnabled = !hasStatus;
+                        const buttonClass = isEnabled ? 'btn-success' : 'btn-secondary';
+                        const disabledAttr = isEnabled ? '' : 'disabled';
+                        const titleText = isEnabled ? 
+                            'Move to Recon Orders' : 
+                            `Cannot move: Item already has status (${statusText})`;
+                        
+                        return `<button class="btn ${buttonClass} btn-sm convert-single-btn" 
+                                       data-row='${JSON.stringify(row)}' 
+                                       ${disabledAttr}
+                                       title="${titleText}">
                             <i class="ri-arrow-right-line me-1"></i>
                             <?= lang('App.move_to_recon') ?>
                         </button>`;
@@ -2052,26 +2129,75 @@ document.addEventListener('DOMContentLoaded', function() {
         // Convert selected button
         $('#convertSelectedBtn').on('click', function() {
             const selectedItems = [];
+            const itemsWithStatus = [];
+            
             $('.inventory-checkbox:checked').each(function() {
                 const rowData = window.inventoryTable.row($(this).closest('tr')).data();
                 if (rowData) {
-                    selectedItems.push(rowData);
+                    const stockNumber = rowData.stock_number;
+                    
+                    // Check if item has status
+                    let hasStatus = false;
+                    let statusText = 'No Status';
+                    
+                    if (stockNumber && window.orderInfoLookup && window.orderInfoLookup[stockNumber]) {
+                        hasStatus = true;
+                        const orderInfo = window.orderInfoLookup[stockNumber];
+                        statusText = orderInfo.status || 'Unknown Status';
+                    }
+                    
+                    if (hasStatus) {
+                        itemsWithStatus.push({
+                            stock: stockNumber,
+                            status: statusText
+                        });
+                    } else {
+                        // Only add items without status
+                        selectedItems.push(rowData);
+                    }
                 }
             });
 
-            if (selectedItems.length === 0) {
+            if (selectedItems.length === 0 && itemsWithStatus.length === 0) {
                 showToast('<?= lang('App.select_items_to_convert') ?>', 'warning');
                 return;
             }
+            
+            if (selectedItems.length === 0 && itemsWithStatus.length > 0) {
+                const statusList = itemsWithStatus.map(item => `${item.stock} (${item.status})`).join(', ');
+                showToast(`Cannot move selected items: All items already have status. Items: ${statusList}`, 'warning');
+                return;
+            }
+            
+            if (itemsWithStatus.length > 0) {
+                const statusList = itemsWithStatus.map(item => `${item.stock} (${item.status})`).join(', ');
+                showToast(`Skipped ${itemsWithStatus.length} items with existing status: ${statusList}. Moving ${selectedItems.length} items without status.`, 'info');
+            }
 
-            // For bulk conversion, we'll show a simplified modal
+            // For bulk conversion, we'll show a simplified modal with only items without status
             showBulkConversionModal(selectedItems);
         });
 
         // Single convert buttons - Open main modal with inventory data
-        $(document).on('click', '.convert-single-btn', function() {
+        $(document).on('click', '.convert-single-btn', function(e) {
+            // Prevent action if button is disabled
+            if ($(this).prop('disabled')) {
+                e.preventDefault();
+                console.log('❌ Convert button clicked but is disabled');
+                return false;
+            }
+            
             const rowData = JSON.parse($(this).attr('data-row'));
             console.log('🔄 Convert button clicked, row data:', rowData);
+            
+            // Double-check status before proceeding
+            const stockNumber = rowData.stock_number;
+            if (stockNumber && window.orderInfoLookup && window.orderInfoLookup[stockNumber]) {
+                const orderInfo = window.orderInfoLookup[stockNumber];
+                showToast(`Cannot move: Item already has status (${orderInfo.status})`, 'warning');
+                return false;
+            }
+            
             openMainModalWithInventoryData(rowData);
         });
 
@@ -2122,6 +2248,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
         $('#refreshAllOrdersBtn').on('click', function() {
             window.allOrdersTable.ajax.reload();
+        });
+
+        // Filter Incomplete Button
+        $('#filterIncompleteBtn').on('click', function() {
+            toggleIncompleteFilter();
         });
 
 
@@ -2428,11 +2559,14 @@ Original Vehicle: ${rowData.vehicle || 'N/A'}`;
         // Remove active class from all widgets
         $('.filter-widget').removeClass('active');
         
-        // Clear current filter
+        // Clear current filters
         window.currentDayFilter = '';
+        window.incompleteFilterActive = false;
         
         // Apply empty filter (show all)
         applyDayRangeFilter('');
+        removeIncompleteFilter();
+        updateIncompleteFilterButton(false);
         
         // Save state
         window.saveVehiclesState();
@@ -2444,12 +2578,22 @@ Original Vehicle: ${rowData.vehicle || 'N/A'}`;
         const $ = window.jQuery;
         const savedState = window.loadVehiclesState();
         
-        if (savedState && savedState.activeFilter !== undefined) {
-            // Find the widget with the saved filter
-            const $widget = $(`.filter-widget[data-filter="${savedState.activeFilter}"]`);
-            if ($widget.length > 0) {
-                // Apply the saved filter
-                applyWidgetFilter(savedState.activeFilter, $widget);
+        if (savedState) {
+            // Restore day range filter
+            if (savedState.activeFilter !== undefined) {
+                // Find the widget with the saved filter
+                const $widget = $(`.filter-widget[data-filter="${savedState.activeFilter}"]`);
+                if ($widget.length > 0) {
+                    // Apply the saved filter
+                    applyWidgetFilter(savedState.activeFilter, $widget);
+                }
+            }
+            
+            // Restore incomplete filter
+            if (savedState.incompleteFilter) {
+                window.incompleteFilterActive = true;
+                updateIncompleteFilterButton(true);
+                applyIncompleteFilter();
             }
         }
     }
@@ -2517,6 +2661,91 @@ Original Vehicle: ${rowData.vehicle || 'N/A'}`;
         
     }
 
+    // Function to toggle incomplete filter
+    function toggleIncompleteFilter() {
+        window.incompleteFilterActive = !window.incompleteFilterActive;
+        updateIncompleteFilterButton(window.incompleteFilterActive);
+        
+        if (window.incompleteFilterActive) {
+            applyIncompleteFilter();
+            console.log('🧪 Testing showToast with incomplete filter message');
+            showToast('Showing incomplete items only', 'info');
+        } else {
+            removeIncompleteFilter();
+            console.log('🧪 Testing showToast with show all items message');
+            showToast('Showing all items', 'info');
+        }
+        
+        // Save state
+        window.saveVehiclesState();
+    }
+
+    // Function to update incomplete filter button appearance
+    function updateIncompleteFilterButton(isActive) {
+        const $ = window.jQuery;
+        const $btn = $('#filterIncompleteBtn');
+        
+        if (isActive) {
+            $btn.removeClass('btn-outline-info').addClass('btn-info');
+            $btn.html('<i class="ri-filter-fill me-1"></i>Show Incomplete Only');
+        } else {
+            $btn.removeClass('btn-info').addClass('btn-outline-info');
+            $btn.html('<i class="ri-filter-line me-1"></i>Show Incomplete Only');
+        }
+    }
+
+    // Function to apply incomplete filter
+    function applyIncompleteFilter() {
+        if (!window.inventoryTable) return;
+        
+        // Remove existing incomplete filter first
+        removeIncompleteFilter();
+        
+        // Add the incomplete filter function
+        const incompleteFilterFn = function(settings, data, dataIndex) {
+            if (settings.nTable.id !== 'inventoryTable') return true;
+            
+            // Get the actual row data from DataTables
+            const table = window.inventoryTable;
+            const rowData = table.row(dataIndex).data();
+            
+            if (!rowData || !rowData.stock_number) return true;
+            
+            const stockNumber = rowData.stock_number.toString().trim();
+            
+            // Check if item has completed status
+            if (window.orderInfoLookup && window.orderInfoLookup[stockNumber]) {
+                const orderInfo = window.orderInfoLookup[stockNumber];
+                const status = orderInfo.status;
+                
+                // Hide if status is 'completed'
+                return status !== 'completed';
+            }
+            
+            // Show items without status (they are incomplete)
+            return true;
+        };
+        
+        incompleteFilterFn.name = 'incompleteFilter';
+        $.fn.dataTable.ext.search.push(incompleteFilterFn);
+        
+        // Redraw table
+        window.inventoryTable.draw();
+    }
+
+    // Function to remove incomplete filter
+    function removeIncompleteFilter() {
+        // Remove incomplete filter from DataTables search extensions
+        $.fn.dataTable.ext.search = $.fn.dataTable.ext.search.filter(function(fn) {
+            return fn.name !== 'incompleteFilter';
+        });
+        
+        // Redraw table
+        if (window.inventoryTable) {
+            window.inventoryTable.draw();
+        }
+    }
+
     // Function to initialize localStorage for vehicles tab
     function initializeVehiclesLocalStorage() {
         const STORAGE_KEY = 'reconOrders_vehiclesTab_state';
@@ -2525,6 +2754,7 @@ Original Vehicle: ${rowData.vehicle || 'N/A'}`;
         window.saveVehiclesState = function() {
             const state = {
                 activeFilter: window.currentDayFilter || '',
+                incompleteFilter: window.incompleteFilterActive || false,
                 timestamp: Date.now()
             };
             localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -2641,6 +2871,69 @@ Original Vehicle: ${rowData.vehicle || 'N/A'}`;
                 $element.html('<div class="d-flex flex-column align-items-center"><span class="badge bg-secondary-subtle text-secondary px-2 py-1 fw-bold text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px;">NO STATUS YET</span></div>');
             }
         });
+        
+        // Update Move to Recon buttons based on status
+        updateMoveToReconButtons();
+        
+        // Reapply incomplete filter if active
+        if (window.incompleteFilterActive) {
+            applyIncompleteFilter();
+        }
+    }
+    
+    // Function to update Move to Recon buttons based on status
+    function updateMoveToReconButtons() {
+        const $ = window.jQuery;
+        
+        console.log('🔄 Updating Move to Recon buttons based on status...');
+        const buttons = $('.convert-single-btn');
+        console.log('Found', buttons.length, 'Move to Recon buttons to update');
+        
+        buttons.each(function() {
+            const $button = $(this);
+            
+            try {
+                // Get row data from the button's data attribute
+                const rowDataStr = $button.attr('data-row');
+                if (!rowDataStr) return;
+                
+                const rowData = JSON.parse(rowDataStr);
+                const stockNumber = rowData.stock_number;
+                
+                if (!stockNumber) return;
+                
+                // Check if the item has a status
+                let hasStatus = false;
+                let statusText = 'No Status';
+                
+                if (window.orderInfoLookup && window.orderInfoLookup[stockNumber]) {
+                    hasStatus = true;
+                    const orderInfo = window.orderInfoLookup[stockNumber];
+                    statusText = orderInfo.status || 'Unknown Status';
+                }
+                
+                // Button is enabled only when there's NO status (no status yet)
+                const isEnabled = !hasStatus;
+                
+                // Update button appearance and state
+                if (isEnabled) {
+                    $button.removeClass('btn-secondary').addClass('btn-success');
+                    $button.prop('disabled', false);
+                    $button.attr('title', 'Move to Recon Orders');
+                    console.log(`✅ Enabled button for stock: ${stockNumber} (no status)`);
+                } else {
+                    $button.removeClass('btn-success').addClass('btn-secondary');
+                    $button.prop('disabled', true);
+                    $button.attr('title', `Cannot move: Item already has status (${statusText})`);
+                    console.log(`❌ Disabled button for stock: ${stockNumber} (status: ${statusText})`);
+                }
+                
+            } catch (error) {
+                console.error('❌ Error updating button:', error);
+            }
+        });
+        
+        console.log('✅ Move to Recon buttons update completed');
     }
     
     // Make loadOrderInfoForInventory available globally for refresh
@@ -2745,31 +3038,67 @@ Original Vehicle: ${rowData.vehicle || 'N/A'}`;
     window.stopRealTimeSync = stopRealTimeSync;
 });
 
+// Test function for debugging toast issues
+window.testToast = function() {
+    console.log('🧪 Testing toast function...');
+    console.log('🔍 window.showToast available:', typeof window.showToast);
+    console.log('🔍 Swal available:', typeof Swal);
+    
+    if (typeof window.showToast === 'function') {
+        console.log('✅ Calling showToast with test message');
+        showToast('This is a test message! 🚀', 'success');
+        
+        setTimeout(() => {
+            showToast('This is a warning test! ⚠️', 'warning');
+        }, 1000);
+        
+        setTimeout(() => {
+            showToast('This is an error test! ❌', 'error');
+        }, 2000);
+        
+        setTimeout(() => {
+            showToast('This is an info test! ℹ️', 'info');
+        }, 3000);
+    } else {
+        console.error('❌ showToast function not available');
+        alert('showToast function not available');
+    }
+};
+
 
 
 function showToast(message, type = 'success') {
-    // Try to use global showToast first
+    // Try to use global showToast first (with correct parameter order)
     if (typeof window.showToast === 'function') {
-        window.showToast(type, message);
+        window.showToast(message, type);
         return;
     }
     
     // Fallback to Toastify if available
     if (typeof Toastify !== 'undefined') {
-    Toastify({
-        text: message,
-        duration: 3000,
-        gravity: "top",
-        position: "right",
-            backgroundColor: type === 'success' ? "#10b981" : (type === 'warning' ? "#f59e0b" : "#ef4444"),
-    }).showToast();
+        // Define colors for different toast types
+        const colors = {
+            'success': "#10b981",
+            'info': "#3b82f6", 
+            'warning': "#f59e0b",
+            'error': "#ef4444"
+        };
+        
+        Toastify({
+            text: message,
+            duration: 3000,
+            gravity: "top",
+            position: "right",
+            backgroundColor: colors[type] || colors['success'],
+            className: `toast-${type}`,
+            close: true,
+            stopOnFocus: true
+        }).showToast();
         return;
     }
     
     // Final fallback to alert
-    if (type === 'error') {
-        alert(message);
-    }
+    alert(`${type.toUpperCase()}: ${message}`);
 }
 </script>
 
