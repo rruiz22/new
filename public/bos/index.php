@@ -794,57 +794,7 @@ if (!function_exists('base_url')) {
              z-index: 1000;
          }
 
-         /* COMMENTED OUT - Custom table styles to see Bootstrap classes */
-         /*
-         .table {
-             margin: 0;
-             font-size: 0.95rem;
-             border-collapse: separate;
-             border-spacing: 0;
-             width: 100%;
-             min-width: 800px;
-             line-height: 1.5;
-         }
-
-
-
-         .table thead th:first-child {
-             border-top-left-radius: var(--radius-md);
-         }
-
-         .table thead th:last-child {
-             border-top-right-radius: var(--radius-md);
-         }
-
-         .table tbody tr {
-             transition: all 0.2s ease;
-             border-bottom: 1px solid #f1f3f6;
-         }
-
-         .table tbody tr:hover {
-             background-color: rgba(64, 81, 137, 0.03);
-             transform: scale(1.002);
-             box-shadow: 5px 5px 15px #babecc, -5px -5px 15px #ffffff;
-             border-radius: 8px;
-         }
-
-         .table tbody td {
-             padding: 1.25rem 1.25rem;
-             vertical-align: middle;
-             border: none;
-             color: var(--text-primary);
-             font-weight: 500;
-             transition: all 0.2s ease;
-         }
-
-         .table tbody tr:last-child td:first-child {
-             border-bottom-left-radius: var(--radius-md);
-         }
-
-         .table tbody tr:last-child td:last-child {
-             border-bottom-right-radius: var(--radius-md);
-         }
-         */
+        
 
          /* Modern badge styling */
          .badge {

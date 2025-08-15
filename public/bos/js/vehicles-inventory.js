@@ -251,6 +251,26 @@ document.addEventListener('DOMContentLoaded', function() {
             ajax: {
                 url: './get_inventory.php',
                 type: 'GET',
+                error: function(xhr, error, code) {
+                    console.warn('⚠️ Main inventory table Ajax error:', error);
+                    
+                    // Handle session expiry
+                    if (xhr.status === 401) {
+                        console.log('🔐 Session expired during main inventory load');
+                        try {
+                            const response = JSON.parse(xhr.responseText);
+                            handleSessionExpiry(response);
+                            return false;
+                        } catch (e) {
+                            console.warn('Could not parse error response');
+                            // Fallback session expiry handling
+                            handleSessionExpiry({redirect: '/login'});
+                            return false;
+                        }
+                    }
+                    
+                    return false;
+                },
                 dataSrc: function(json) {
                     let data = json;
                     if (json.success && json.data) {
@@ -401,7 +421,15 @@ document.addEventListener('DOMContentLoaded', function() {
                         },
                         error: function(xhr, error, code) {
                             console.warn('⚠️ Inventory Orders table Ajax error:', error);
-                            // Hide the error from user
+                            
+                            // Handle session expiry
+                            if (xhr.status === 401) {
+                                console.log('🔐 Session expired, redirecting to login...');
+                                handleSessionExpiry(xhr.responseJSON);
+                                return false;
+                            }
+                            
+                            // Hide other errors from user
                             return false;
                         }
                     },
@@ -447,6 +475,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         },
                         error: function(xhr, error, code) {
                             console.warn('⚠️ All Orders table Ajax error:', error);
+                            
+                            // Handle session expiry
+                            if (xhr.status === 401) {
+                                console.log('🔐 Session expired, redirecting to login...');
+                                handleSessionExpiry(xhr.responseJSON);
+                                return false;
+                            }
+                            
                             return false;
                         }
                     },
@@ -816,6 +852,19 @@ document.addEventListener('DOMContentLoaded', function() {
             .fail(function(xhr, status, error) {
                 console.error('❌ Failed to load order info:', status, error);
                 console.log('Response:', xhr.responseText?.substring(0, 200));
+                
+                // Handle session expiry
+                if (xhr.status === 401) {
+                    console.log('🔐 Session expired during order info fetch');
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        handleSessionExpiry(response);
+                        return; // Don't update status columns if session expired
+                    } catch (e) {
+                        console.warn('Could not parse error response');
+                    }
+                }
+                
                 // Fallback to showing "NO STATUS YET" for all
                 updateInventoryStatusColumns();
             });
@@ -1068,3 +1117,38 @@ function showToast(message, type = 'success') {
         alert(message);
     }
 }
+
+// Handle session expiry
+function handleSessionExpiry(response) {
+    console.log('🔐 Handling session expiry...');
+    
+    // Show a user-friendly message
+    if (window.Swal) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Session Expired',
+            text: 'Your session has expired. Please login again to continue.',
+            confirmButtonText: 'Go to Login',
+            allowOutsideClick: false,
+            allowEscapeKey: false
+        }).then((result) => {
+            if (result.isConfirmed && response?.redirect) {
+                window.location.href = response.redirect;
+            } else {
+                // Fallback redirect
+                window.location.href = '/login';
+            }
+        });
+    } else {
+        // Fallback without SweetAlert
+        alert('Your session has expired. Please login again.');
+        if (response?.redirect) {
+            window.location.href = response.redirect;
+        } else {
+            window.location.href = '/login';
+        }
+    }
+}
+
+// Make functions globally available
+window.handleSessionExpiry = handleSessionExpiry;

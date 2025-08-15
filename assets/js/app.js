@@ -43,11 +43,11 @@ File: Main Js File
 			var languages = document.getElementsByClassName("language");
 			
 			if (!languages || languages.length === 0) {
-				if (retryCount < 10) { // Limit to 10 retries (1 second total)
-					console.log(`Language elements not found, retrying in 100ms... (${retryCount + 1}/10)`);
+				if (retryCount < 5) { // Limit to 5 retries (500ms total)
+					console.log(`Language elements not found, retrying in 100ms... (${retryCount + 1}/5)`);
 					setTimeout(() => setupLanguageSelector(retryCount + 1), 100);
 				} else {
-					console.log('Language elements not found after 10 retries, skipping language selector setup');
+					console.log('Language elements not found after 5 retries, skipping language selector setup');
 				}
 				return;
 			}
