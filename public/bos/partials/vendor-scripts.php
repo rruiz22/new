@@ -10,6 +10,9 @@ $fullBaseUrl = $baseUrl . $appPath;
 <script src="<?= $fullBaseUrl ?>/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="<?= $fullBaseUrl ?>/assets/libs/feather-icons/feather.min.js"></script>
 
+<!-- Node Waves -->
+<script src="<?= $fullBaseUrl ?>/assets/libs/node-waves/waves.min.js"></script>
+
 <!-- DataTables -->
 <script src="<?= $fullBaseUrl ?>/assets/libs/datatables/jquery.dataTables.min.js"></script>
 <script src="<?= $fullBaseUrl ?>/assets/libs/datatables/dataTables.bootstrap5.min.js"></script>

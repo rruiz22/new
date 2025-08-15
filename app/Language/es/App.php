@@ -1959,4 +1959,16 @@ return [
     'good_turnaround' => 'Buena Rotación',
     'needs_attention' => 'Requiere Atención',
     'critical_delay' => 'Retraso Crítico',
+    
+    // Duplicate order confirmation
+    'duplicate_order_found' => 'Orden Duplicada Encontrada',
+    'yes_create_anyway' => 'Sí, Crear de Todas Formas',
+    'create_anyway_question' => '¿Desea crear la orden de todas formas?',
+    'network_error' => 'Error de red. Por favor, inténtelo de nuevo.',
+    'error_creating_order' => 'Error al crear la orden',
+    
+    // Duplicate stock alerts
+    'duplicate_stock_detected' => '¡Número de stock duplicado detectado!',
+    'duplicates_found' => 'Stocks duplicados encontrados',
+    'multiple_duplicates_found' => 'Múltiples stocks duplicados encontrados',
 ];

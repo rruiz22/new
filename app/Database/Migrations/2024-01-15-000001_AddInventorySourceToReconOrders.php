@@ -18,6 +18,13 @@ class AddInventorySourceToReconOrders extends Migration
                     'null' => false,
                     'comment' => 'Flag to indicate if order was created from inventory system'
                 ],
+                'source_type' => [
+                    'type' => 'VARCHAR',
+                    'constraint' => 20,
+                    'default' => 'manual',
+                    'null' => false,
+                    'comment' => 'Source type: manual, inventory, api, etc.'
+                ],
                 'inventory_data' => [
                     'type' => 'TEXT',
                     'null' => true,
@@ -42,6 +49,10 @@ class AddInventorySourceToReconOrders extends Migration
         if ($this->db->tableExists('recon_orders')) {
             if ($this->db->fieldExists('from_inventory', 'recon_orders')) {
                 $this->forge->dropColumn('recon_orders', 'from_inventory');
+            }
+            
+            if ($this->db->fieldExists('source_type', 'recon_orders')) {
+                $this->forge->dropColumn('recon_orders', 'source_type');
             }
             
             if ($this->db->fieldExists('inventory_data', 'recon_orders')) {

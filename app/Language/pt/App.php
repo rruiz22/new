@@ -1809,4 +1809,9 @@ return [
     'move_selected' => 'Mover Selecionados',
     'moving_to_recon' => 'Movendo para Recon...',
     'move_multiple_stocks' => 'Mover múltiplos estoques para ordens',
+    
+    // Duplicate stock alerts
+    'duplicate_stock_detected' => 'Número de estoque duplicado detectado!',
+    'duplicates_found' => 'Estoques duplicados encontrados',
+    'multiple_duplicates_found' => 'Múltiplos estoques duplicados encontrados',
 ];

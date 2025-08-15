@@ -19,6 +19,7 @@ return function (RouteCollection $routes) {
         $routes->post('store', 'ReconOrdersController::store');
         $routes->post('update/(:num)', 'ReconOrdersController::update/$1');
         $routes->post('delete/(:num)', 'ReconOrdersController::delete/$1');
+        $routes->delete('delete/(:num)', 'ReconOrdersController::delete/$1');
         
         // Tab content routes (GET for views, POST for AJAX data)
         $routes->get('dashboard_content', 'ReconOrdersController::dashboard_content');
@@ -132,5 +133,7 @@ return function (RouteCollection $routes) {
         // Inventory integration routes
         $routes->post('inventory_orders_data', 'ReconOrdersController::inventory_orders_data');
         $routes->post('convert_from_inventory', 'ReconOrdersController::convert_from_inventory');
+        $routes->get('get_order_info_by_stock', 'ReconOrdersController::get_order_info_by_stock');
+        $routes->post('get_order_info_by_stock', 'ReconOrdersController::get_order_info_by_stock');
     }); 
 }; 

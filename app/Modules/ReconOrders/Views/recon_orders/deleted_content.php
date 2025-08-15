@@ -205,7 +205,7 @@ function initializeDeletedOrdersTable() {
             ],
             columns: [
                 {
-                    data: 'order_id',
+                    data: 'order_number',
                     render: function(data, type, row) {
                         let html = `<div><span class="fw-medium text-primary">${data || 'N/A'}</span>`;
                         
@@ -287,20 +287,21 @@ function initializeDeletedOrdersTable() {
                             </div>`;
                         }
                         
-                        // VIN number - intentar múltiples campos posibles
-                        let vinNumber = row.vin || row.vin_number || row.vehicle_vin || row.VIN || '';
-                        
-                        if (vinNumber && vinNumber !== 'N/A' && vinNumber.toString().trim() !== '') {
-                            html += `<div class="vin-number mt-1">
-                                <small class="text-muted d-block" style="font-size: 0.7rem; font-family: monospace; letter-spacing: 0.2px; line-height: 1.2;">
-                                    <i class="ri-barcode-line me-1" style="font-size: 0.8rem;"></i>${vinNumber}
-                                </small>
+                        // Service information instead of VIN
+                        if (row.service_name && row.service_name !== 'N/A') {
+                            const serviceColor = row.service_color || '#007bff';
+                            html += `<div class="service-info mt-1">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <div class="service-color-dot me-1" style="width: 8px; height: 8px; border-radius: 50%; background-color: ${serviceColor};"></div>
+                                    <small class="text-muted" style="font-size: 0.7rem;">
+                                        ${row.service_name}
+                                    </small>
+                                </div>
                             </div>`;
                         } else {
-                            // Mostrar placeholder para debug
-                            html += `<div class="vin-number mt-1">
-                                <small class="text-muted d-block" style="font-size: 0.65rem; opacity: 0.6;">
-                                    <i class="ri-barcode-line me-1"></i>No VIN
+                            html += `<div class="service-info mt-1">
+                                <small class="text-muted" style="font-size: 0.65rem; opacity: 0.6;">
+                                    No Service
                                 </small>
                             </div>`;
                         }
@@ -312,7 +313,21 @@ function initializeDeletedOrdersTable() {
                 {
                     data: 'vehicle',
                     render: function(data, type, row) {
-                        return `<div><span class="fw-medium">${data || 'N/A'}</span></div>`;
+                        let html = `<div><span class="fw-medium">${data || 'N/A'}</span>`;
+                        
+                        // VIN number - moved from stock column
+                        let vinNumber = row.vin || row.vin_number || row.vehicle_vin || row.VIN || '';
+                        
+                        if (vinNumber && vinNumber !== 'N/A' && vinNumber.toString().trim() !== '') {
+                            html += `<div class="vin-number mt-1">
+                                <small class="text-muted d-block" style="font-size: 0.7rem; font-family: monospace; letter-spacing: 0.2px; line-height: 1.2;">
+                                    <i class="ri-barcode-line me-1" style="font-size: 0.8rem;"></i>${vinNumber}
+                                </small>
+                            </div>`;
+                        }
+                        
+                        html += `</div>`;
+                        return html;
                     }
                 },
                 { data: 'deleted_at' },

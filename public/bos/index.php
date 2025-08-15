@@ -1,3 +1,105 @@
+<?php
+// Start session before any HTML output
+session_start();
+
+// Check if user is authenticated for staff-only features
+// Default to true for initial load, JavaScript will handle the real check
+$isAuthenticated = true; // Changed to true by default
+$userType = 'staff';
+
+// Look for CodeIgniter session cookie
+$ciSessionFound = false;
+foreach ($_COOKIE as $name => $value) {
+    if (strpos($name, 'ci_session') !== false) {
+        $ciSessionFound = true;
+        break;
+    }
+}
+
+// If no CI session cookie found, check for other session indicators
+if (!$ciSessionFound) {
+    $authIndicators = [
+        'user', 'isLoggedIn', 'user_id', 'logged_in', 
+        'auth_login', 'login_user', 'user_data'
+    ];
+    
+    $sessionAuthFound = false;
+    foreach ($authIndicators as $indicator) {
+        if (isset($_SESSION[$indicator])) {
+            $sessionAuthFound = true;
+            break;
+        }
+    }
+    
+    // If no session indicators, set as guest but still show interface
+    // JavaScript will handle the final authentication state
+    if (!$sessionAuthFound) {
+        $userType = 'guest';
+        // Keep $isAuthenticated = true for initial UI display
+    }
+}
+
+// Set staff-only classes
+$staffOnlyClass = $isAuthenticated ? '' : 'staff-only';
+$staffOnlyStyle = $isAuthenticated ? '' : 'style="display: none !important;"';
+
+// Mock lang function if not available
+if (!function_exists('lang')) {
+    function lang($key) {
+        $translations = [
+            'App.dealer_inventory' => 'Dealer Inventory',
+            'App.available_stock' => 'Available stock',
+            'App.refresh_inventory' => 'Refresh Inventory',
+            'App.move_selected' => 'Move Selected',
+            'App.date_in_detail' => 'Date in Detail',
+            'App.day_in_this_step' => 'Day in this Step',
+            'App.keys' => 'Keys',
+            'App.stock_number' => 'Stock Number',
+            'App.vehicle' => 'Vehicle',
+            'App.status' => 'Status',
+            'App.actions' => 'Actions',
+            'App.total_stock_items' => 'Total Stock Items',
+            'App.recent_items' => 'Recent Items',
+            'App.moderate_items' => 'Moderate Items',
+            'App.aged_items' => 'Aged Items',
+            'App.avg_in_this_step' => 'Avg in this Step',
+            'App.clear_filters' => 'Clear Filters',
+            'App.order_number' => 'Order Number',
+            'App.client_name' => 'Client Name',
+            'App.service_date' => 'Service Date',
+            'App.refresh' => 'Refresh',
+            'App.filters_applied' => 'Filters applied',
+            'App.filters_cleared' => 'Filters cleared',
+            'App.excellent_turnaround' => 'Excellent turnaround',
+            'App.good_turnaround' => 'Good turnaround',
+            'App.needs_attention' => 'Needs attention',
+            'App.critical_delay' => 'Critical delay',
+            'App.confirm_conversion' => 'Confirm Conversion',
+            'App.move_multiple_stocks' => 'Move multiple stocks',
+            'App.selected_items' => 'selected items',
+            'App.yes_convert' => 'Yes, Convert',
+            'App.cancel' => 'Cancel',
+            'App.inventory_stats' => 'Inventory Statistics',
+            'App.click_to_filter' => 'Click to filter results',
+            'App.time_analysis' => 'Time Analysis',
+            'App.inventory_table' => 'Inventory Table',
+            'App.detailed_inventory_view' => 'Detailed inventory view',
+            'App.orders_from_inventory' => 'Orders from Inventory',
+            'App.created_from_inventory' => 'Created from inventory',
+            'App.all_orders' => 'All Orders',
+            'App.complete_orders_list' => 'Complete orders list'
+        ];
+        return isset($translations[$key]) ? $translations[$key] : $key;
+    }
+}
+
+// Mock base_url function if not available
+if (!function_exists('base_url')) {
+    function base_url($path = '') {
+        return '../' . ltrim($path, '/');
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -867,6 +969,12 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
+        /* Status loading animation */
+        .ri-loader-4-line {
+            display: inline-block;
+            animation: spin 1s linear infinite;
+        }
 
         /* Top Bar for authenticated users - Modern Design */
         .top-bar {
@@ -1376,6 +1484,664 @@
                 border: 1px solid #000;
             }
         }
+
+        /* Staff-only elements */
+        .staff-only {
+            display: none !important;
+        }
+
+        /* Modern Container Styles */
+        .dashboard-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.1);
+            border: none;
+            overflow: hidden;
+        }
+
+        .dashboard-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: none;
+            padding: 2rem;
+        }
+
+        .dashboard-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-subtitle {
+            color: #6b7280;
+            font-size: 1rem;
+            font-weight: 500;
+            margin: 0;
+        }
+
+        .dashboard-body {
+            background: #ffffff;
+            padding: 2rem;
+        }
+
+        /* Enhanced Card Styles */
+        .modern-card {
+            background: #ffffff;
+            border-radius: 16px;
+            border: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        .modern-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .modern-card-header {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: none;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .modern-card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .modern-card-title i {
+            margin-right: 0.75rem;
+            font-size: 1.3rem;
+        }
+
+        .modern-card-subtitle {
+            color: #64748b;
+            font-size: 0.875rem;
+            margin: 0.25rem 0 0 0;
+            font-weight: 500;
+        }
+
+        .modern-card-body {
+            padding: 2rem;
+        }
+
+        /* Staff Container Styles */
+        .staff-container {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(245, 158, 11, 0.1);
+            border: none;
+            overflow: hidden;
+        }
+
+        .staff-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: none;
+            padding: 2rem;
+        }
+
+        .staff-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Mini Average Days Widget */
+        .avg-days-mini-widget {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
+            color: #1e293b;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .avg-days-mini-widget:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .avg-days-value {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .avg-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .avg-label {
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            opacity: 0.9;
+        }
+
+        /* Table improvements */
+        #inventoryTable th {
+            vertical-align: middle;
+            border-bottom: 2px solid #e5e7eb;
+            font-weight: 600;
+            color: #374151;
+            background-color: #f9fafb !important;
+        }
+
+        #inventoryTable td {
+            vertical-align: middle;
+            padding: 0.75rem 0.5rem;
+        }
+
+        .form-check {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+
+        .form-check-input {
+            margin: 0;
+        }
+
+        /* Hide Actions column completely */
+        #inventoryTable th:nth-child(9),
+        #inventoryTable td:nth-child(9) {
+            display: none !important;
+        }
+
+        /* Styles from vehicles_content.php */
+        .stats-card {
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: #ffffff;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .stats-mini {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats-mini:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            border-color: #3b82f6;
+            background-color: #f8fafc;
+        }
+
+        .stats-mini.active {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .stats-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            margin-right: 0.75rem;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .stats-content h6 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .filter-widget .filter-indicator {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            color: #6b7280;
+            font-size: 0.8rem;
+        }
+
+        .filter-widget:hover .filter-indicator,
+        .filter-widget.active .filter-indicator {
+            opacity: 1;
+        }
+
+        .filter-widget.active .filter-indicator {
+            color: #3b82f6;
+        }
+
+        .filter-active {
+            background-color: #eff6ff !important;
+            border-left: 4px solid #3b82f6 !important;
+        }
+
+        .filter-widget:focus {
+            outline: 2px solid #3b82f6;
+            outline-offset: 2px;
+        }
+
+        /* Average Days Widget - Medium */
+        .avg-days-widget-medium {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            height: 120px;
+        }
+
+        .avg-days-widget-medium:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-color: #cbd5e1;
+        }
+
+        .widget-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .widget-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #ffffff;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .widget-title {
+            flex: 1;
+        }
+
+        .widget-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #1e293b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 2px;
+        }
+
+        .widget-range {
+            font-size: 0.75rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .progress-section {
+            margin-bottom: 12px;
+        }
+
+        .progress-bar-container {
+            position: relative;
+        }
+
+        .progress-bar-track {
+            height: 8px;
+            background: #f1f5f9;
+            border-radius: 4px;
+            position: relative;
+            overflow: visible;
+            margin-bottom: 8px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: all 0.8s ease;
+            width: 0%;
+        }
+
+        .progress-indicator {
+            position: absolute;
+            top: -8px;
+            transform: translateX(-50%);
+            transition: left 0.8s ease;
+            left: 0%;
+        }
+
+        .indicator-value {
+            background: #1e293b;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .indicator-arrow {
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 4px solid #1e293b;
+            margin: 0 auto;
+        }
+
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.6875rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .widget-status {
+            font-size: 0.75rem;
+            color: #64748b;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        /* Dynamic colors for widgets */
+        .widget-icon.excellent,
+        .progress-bar-fill.excellent {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .widget-icon.good,
+        .progress-bar-fill.good {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .widget-icon.poor,
+        .progress-bar-fill.poor {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .widget-icon.neutral,
+        .progress-bar-fill.neutral {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+        }
+
+        /* Days badge styling */
+        .days-badge {
+            font-size: 0.75rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-transform: lowercase;
+        }
+
+        /* Duplicate Stock Alert Styling */
+        .duplicate-alert,
+        [id^="duplicate-icon-"] {
+            animation: pulse-warning 2s infinite;
+            filter: drop-shadow(0 0 2px rgba(245, 158, 11, 0.5));
+            position: relative;
+            z-index: 10;
+        }
+
+        .duplicate-alert:hover,
+        [id^="duplicate-icon-"]:hover {
+            transform: scale(1.1);
+            transition: transform 0.2s ease;
+        }
+
+        @keyframes pulse-warning {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        /* Custom tooltip for duplicate alerts */
+        .duplicate-alert::after {
+            content: attr(title);
+            position: absolute;
+            bottom: 130%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            white-space: nowrap;
+            z-index: 1050;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            min-width: max-content;
+        }
+
+        .duplicate-alert::before {
+            content: '';
+            position: absolute;
+            bottom: 120%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: rgba(0, 0, 0, 0.9);
+            z-index: 1050;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .duplicate-alert:hover::after,
+        .duplicate-alert:hover::before {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .duplicate-alert:hover::after {
+            transform: translateX(-50%) translateY(-2px);
+        }
+
+        /* Duplicate stock row highlighting */
+        .inventory-row.has-duplicate {
+            background-color: #fef3cd !important;
+            border-left: 3px solid #ffc107 !important;
+        }
+
+        .inventory-row.has-duplicate:hover {
+            background-color: #fff3cd !important;
+        }
+
+        /* Center align table headers */
+        #inventoryTable thead th,
+        #inventoryOrdersTable thead th,
+        #allOrdersTable thead th {
+            text-align: center !important;
+            vertical-align: middle !important;
+        }
+
+        /* Center align specific columns content */
+        #inventoryTable tbody td:nth-child(2), /* Date in Detail */
+        #inventoryTable tbody td:nth-child(3), /* Day in This Step */
+        #inventoryTable tbody td:nth-child(4), /* Keys */
+        #inventoryTable tbody td:nth-child(5), /* Stock Number */
+        #inventoryTable tbody td:nth-child(8), /* Status */
+        #inventoryTable tbody td:nth-child(9)  /* Actions */
+        {
+            text-align: center !important;
+            vertical-align: middle !important;
+        }
+
+        /* Hidden loading indicator */
+        .dataTables_processing {
+            display: none !important;
+        }
+
+        /* Alternative: Very discrete loading in table header */
+        .dataTables_wrapper .dataTables_processing {
+            position: absolute !important;
+            top: -2px !important;
+            right: 5px !important;
+            left: auto !important;
+            width: auto !important;
+            height: auto !important;
+            margin: 0 !important;
+            padding: 2px 6px !important;
+            background: transparent !important;
+            border: none !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            font-size: 0.6rem !important;
+            color: rgba(108, 117, 125, 0.5) !important;
+            z-index: 1001 !important;
+            opacity: 0.3 !important;
+        }
+
+        .inventory-row.selected {
+            background-color: #eff6ff !important;
+        }
+
+        .conversion-badge {
+            background: #e0f2fe;
+            color: #0277bd;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+        }
+
+        /* Status column styling */
+        .status-service-info,
+        [id^="status-info-"] {
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Stock column styling */
+        [id^="stock-"] {
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Enhanced stock number styling - text only */
+        .stock-number-enhanced {
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Consolas', monospace;
+            color: var(--primary-color);
+            font-size: 1.25em;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            line-height: 1;
+            display: inline-block;
+            text-transform: uppercase;
+            text-shadow: 0 1px 2px rgba(37, 99, 235, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .stock-number-enhanced:hover {
+            color: var(--primary-hover);
+            text-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
+            transform: scale(1.05);
+        }
+
+        /* Enhanced date styling */
+        .date-enhanced {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: 0.5px;
+        }
+
+        /* Status-based row background colors */
+        .status-pending {
+            background-color: rgba(245, 158, 11, 0.08) !important;
+            border-left: 4px solid #f59e0b !important;
+        }
+
+        .status-pending:hover {
+            background-color: rgba(245, 158, 11, 0.12) !important;
+        }
+
+        .status-in-progress {
+            background-color: rgba(59, 130, 246, 0.08) !important;
+            border-left: 4px solid #3b82f6 !important;
+        }
+
+        .status-in-progress:hover {
+            background-color: rgba(59, 130, 246, 0.12) !important;
+        }
+
+        .status-completed {
+            background-color: rgba(16, 185, 129, 0.08) !important;
+            border-left: 4px solid #10b981 !important;
+        }
+
+        .status-completed:hover {
+            background-color: rgba(16, 185, 129, 0.12) !important;
+        }
+
+        .status-cancelled {
+            background-color: rgba(239, 68, 68, 0.08) !important;
+            border-left: 4px solid #ef4444 !important;
+        }
+
+        .status-cancelled:hover {
+            background-color: rgba(239, 68, 68, 0.12) !important;
+        }
+
+        .status-no-status {
+            background-color: rgba(107, 114, 128, 0.05) !important;
+            border-left: 4px solid #6b7280 !important;
+        }
+
+        .status-no-status:hover {
+            background-color: rgba(107, 114, 128, 0.08) !important;
+        }
+
+        /* Ensure status rows have smooth transitions */
+        #inventoryTable tbody tr {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
     </style>
 </head>
 
@@ -1422,392 +2188,310 @@
         <pre id="debugContent"></pre>
     </div>
 
+    <!-- Inventory Management Content -->
+
     <div class="container">
-        <!-- Page Header -->
-        <div class="page-header fade-in">
-            <h1 class="page-title">
-                <i data-feather="database" style="width: 2.25rem; height: 2.25rem;"></i>
-                BOS Inventory Management
-            </h1>
-            <p class="page-subtitle">Real-time vehicle tracking & analytics system</p>
+        <div class="dashboard-container mb-4">
+        <div class="dashboard-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h4 class="dashboard-title">
+                                <i class="ri-dashboard-3-line me-2"></i>
+                                Inventory Management Dashboard
+                                <span id="syncIndicator" class="badge bg-success ms-2" style="font-size: 0.75rem; font-weight: 500;">
+                                    <i class="ri-wifi-line me-1"></i>Live Sync
+                                </span>
+                            </h4>
+                            <p class="dashboard-subtitle">
+                                 • Auto-refresh every 30s
+                                <br>
+                                <span id="lastRefreshInfo" style="font-size: 0.7rem; opacity: 0.7;">
+                                    Last refresh: Loading...
+                                </span>
+                            </p>
         </div>
-
-        <!-- Error Container -->
-        <div id="errorContainer" class="error"></div>
-
-        <!-- Stats & Analytics Widgets Row -->
-        <div class="stats-container">
-            <!-- Total Records Widget -->
-            <div class="stat-widget">
-                <div class="widget-header">
-                    <i data-feather="database" class="widget-icon"></i>
-                    <span class="widget-title">Total Vehicles</span>
-                </div>
-                <div class="widget-content">
-                    <div class="stat-value" id="totalRecords">0</div>
-                    <div class="stat-subtitle">vehicles in detail</div>
-                    <div class="stat-trend" id="recordsTrend">
-                        <i data-feather="trending-up" class="trend-icon"></i>
-                        <span class="trend-text">Active tracking</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Average Days Widget (Only for authenticated users) -->
-            <div id="avgDaysWidget" class="stat-widget" style="display: none;">
-                <div class="widget-header">
-                    <i data-feather="clock" class="widget-icon"></i>
-                    <span class="widget-title">Average Days in Detail</span>
-                </div>
-                <div class="widget-content">
-                    <div class="stat-value" id="avgDaysValue">0.0</div>
-                    <div class="stat-subtitle">days average</div>
-                    <div class="stat-trend" id="avgDaysStatus">
-                        <i data-feather="activity" class="trend-icon"></i>
-                        <span class="trend-text">Calculating...</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Days Distribution Chart Widget (Only for authenticated users) -->
-            <div id="daysDistributionWidget" class="stat-widget chart-widget" style="display: none;">
-                <div class="widget-header">
-                    <i data-feather="bar-chart-2" class="widget-icon"></i>
-                    <span class="widget-title">Days Distribution</span>
-                </div>
-                <div class="widget-content">
-                    <div class="stat-subtitle">vehicle breakdown</div>
-                    <div class="distribution-bars" id="distributionBars">
-                        <div class="bar-item">
-                            <div class="bar-info">
-                                <span class="bar-label">0-1 Days</span>
-                                <span class="bar-value" id="excellentCount">0</span>
-                            </div>
-                            <div class="bar-container">
-                                <div class="bar bar-excellent" id="excellentBar" style="width: 0%"></div>
-                            </div>
-                        </div>
-                        <div class="bar-item">
-                            <div class="bar-info">
-                                <span class="bar-label">2-4 Days</span>
-                                <span class="bar-value" id="goodCount">0</span>
-                            </div>
-                            <div class="bar-container">
-                                <div class="bar bar-good" id="goodBar" style="width: 0%"></div>
-                            </div>
-                        </div>
-                        <div class="bar-item">
-                            <div class="bar-info">
-                                <span class="bar-label">5+ Days</span>
-                                <span class="bar-value" id="warningCount">0</span>
-                            </div>
-                            <div class="bar-container">
-                                <div class="bar bar-warning" id="warningBar" style="width: 0%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Last Update Widget -->
-            <div class="stat-widget">
-                <div class="widget-header">
-                    <i data-feather="refresh-cw" class="widget-icon"></i>
-                    <span class="widget-title">Last Update</span>
-                </div>
-                <div class="widget-content">
-                    <div class="stat-value" id="lastUpdateStat">--:--</div>
-                    <div class="stat-subtitle">real-time sync</div>
-                    <div class="stat-trend" id="updateStatus">
-                        <i data-feather="wifi" class="trend-icon"></i>
-                        <span class="trend-text">Connected</span>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="dashboard-body">
+            
 
-        <!-- Controls -->
-        <div class="controls">
-            <button id="refreshBtn" class="btn btn-primary">
-                <i data-feather="refresh-cw"></i>
+    <!-- Filter Widgets Row -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="modern-card">
+                <div class="modern-card-header">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h5 class="modern-card-title">
+                                <i class="ri-bar-chart-line"></i>
+                                <?= lang('App.inventory_stats') ?>
+                            </h5>
+                            <p class="modern-card-subtitle"><?= lang('App.click_to_filter') ?></p>
+                </div>
+                        <div class="avg-days-mini-widget">
+                            <div class="avg-days-value" id="avgDaysCompact">
+                                <span class="avg-number" id="avgDaysNumber">0</span>
+                                <span class="avg-label">Avg Days</span>
+                    </div>
+                </div>
+            </div>
+                </div>
+                <div class="modern-card-body">
+                    <!-- Inventory Stats - Interactive Filter Widgets -->
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <div class="stats-mini filter-widget" data-filter="" role="button" tabindex="0">
+                                <div class="stats-icon bg-primary">
+                                    <i class="ri-car-line"></i>
+                    </div>
+                                <div class="stats-content">
+                                    <h6 class="mb-0" id="totalInventoryItems">0</h6>
+                                    <small class="text-muted"><?= lang('App.total_stock_items') ?></small>
+                </div>
+                                <div class="filter-indicator">
+                                    <i class="ri-eye-line"></i>
+            </div>
+                </div>
+                            </div>
+                        <div class="col-md-3">
+                            <div class="stats-mini filter-widget" data-filter="0-1" role="button" tabindex="0">
+                                <div class="stats-icon bg-success" id="recentItemsIcon">
+                                    <i class="ri-calendar-check-line"></i>
+                            </div>
+                                <div class="stats-content">
+                                    <h6 class="mb-0" id="recentItems">0</h6>
+                                    <small class="text-muted"><?= lang('App.recent_items') ?></small>
+                        </div>
+                                <div class="filter-indicator">
+                                    <i class="ri-filter-line"></i>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stats-mini filter-widget" data-filter="2-5" role="button" tabindex="0">
+                                <div class="stats-icon bg-warning" id="moderateItemsIcon">
+                                    <i class="ri-calendar-line"></i>
+                            </div>
+                                <div class="stats-content">
+                                    <h6 class="mb-0" id="moderateItems">0</h6>
+                                    <small class="text-muted"><?= lang('App.moderate_items') ?></small>
+                            </div>
+                                <div class="filter-indicator">
+                                    <i class="ri-filter-line"></i>
+                        </div>
+                    </div>
+                </div>
+                        <div class="col-md-3">
+                            <div class="stats-mini filter-widget" data-filter="6+" role="button" tabindex="0">
+                                <div class="stats-icon bg-danger" id="agedItemsIcon">
+                                    <i class="ri-calendar-close-line"></i>
+            </div>
+                                <div class="stats-content">
+                                    <h6 class="mb-0" id="agedItems">0</h6>
+                                    <small class="text-muted"><?= lang('App.aged_items') ?></small>
+                </div>
+                                <div class="filter-indicator">
+                                    <i class="ri-filter-line"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    <!-- Inventory Table Row -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="modern-card">
+                <div class="modern-card-header">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h5 class="modern-card-title">
+                                <i class="ri-table-line"></i>
+                                <?= lang('App.inventory_table') ?>
+                            </h5>
+                            <p class="modern-card-subtitle"><?= lang('App.detailed_inventory_view') ?></p>
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn btn-outline-primary" id="refreshInventoryBtn">
+                        <i class="ri-refresh-line me-1"></i>
+                        <?= lang('App.refresh_inventory') ?>
+            </button>
+        </div>
+
+            </div>
+                            </div>
+                <div class="modern-card-body">
+                    <div class="table-responsive">
+                        <table id="inventoryTable" class="table table-hover align-middle" style="width:100%">
+                            <thead class="table-light">
+                                <tr>
+                                    <th width="40" class="text-center <?php echo $staffOnlyClass; ?>" <?php echo $staffOnlyStyle; ?>>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="selectAllInventory">
+                        </div>
+                                    </th>
+                                    <th class="text-center"><?= lang('App.date_in_detail') ?></th>
+                                    <th class="text-center"><?= lang('App.day_in_this_step') ?></th>
+                                    <th class="text-center"><?= lang('App.keys') ?></th>
+                                    <th class="text-center"><?= lang('App.stock_number') ?></th>
+                                    <th class="text-center"><?= lang('App.vehicle') ?></th>
+                                    <th class="text-center">Notes</th>
+                                    <th class="text-center"><?= lang('App.status') ?></th>
+                                    <th class="text-center" style="display: none !important;"><?= lang('App.actions') ?></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- DataTables will populate this -->
+                            </tbody>
+                        </table>
+                            </div>
+                            </div>
+                        </div>
+                            </div>
+                            </div>
+        
+                        </div>
+                    </div>
+
+    <!-- Staff Management Container - Staff Only -->
+    <div class="staff-container mb-4 <?php echo $staffOnlyClass; ?>" <?php echo $staffOnlyStyle; ?>>
+        <div class="staff-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h4 class="staff-title">
+                        <i class="ri-admin-line me-2"></i>
+                        Staff Management Tools
+                    </h4>
+                    <p class="dashboard-subtitle">Advanced tools for staff members only</p>
+    </div>
+            </div>
+        </div>
+        <div class="dashboard-body">
+            
+            <!-- Orders from Inventory Section - Staff Only -->
+    <div class="row mb-4 <?php echo $staffOnlyClass; ?>" <?php echo $staffOnlyStyle; ?>>
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h5 class="card-title mb-0">
+                                <i class="ri-file-list-3-line me-2"></i>
+                                <?= lang('App.orders_from_inventory') ?>
+                            </h5>
+                            <p class="text-muted small mb-0"><?= lang('App.created_from_inventory') ?></p>
+                </div>
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-outline-primary" id="refreshInventoryOrdersBtn">
+                                <i class="ri-refresh-line me-1"></i>
+                                <?= lang('App.refresh') ?>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="inventoryOrdersTable" class="table table-hover align-middle" style="width:100%">
+                            <thead class="table-light">
+                                <tr>
+                                    <th><?= lang('App.order_number') ?></th>
+                                    <th><?= lang('App.stock_number') ?></th>
+                                    <th><?= lang('App.vehicle') ?></th>
+                                    <th><?= lang('App.client_name') ?></th>
+                                    <th><?= lang('App.service_date') ?></th>
+                                    <th><?= lang('App.status') ?></th>
+                                    <th>Source</th>
+                                    <th><?= lang('App.actions') ?></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- DataTables will populate this -->
+                            </tbody>
+                        </table>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <!-- All Orders Section - Staff Only -->
+    <div class="row mb-4 <?php echo $staffOnlyClass; ?>" <?php echo $staffOnlyStyle; ?>>
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h5 class="card-title mb-0">
+                                <i class="ri-list-check-3 me-2"></i>
+                                All Orders
+                            </h5>
+                            <p class="text-muted small mb-0">All orders with source indicators</p>
+                        </div>
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-outline-primary" id="refreshAllOrdersBtn">
+                                <i class="ri-refresh-line me-1"></i>
                 Refresh
             </button>
-            <button id="exportBtn" class="btn btn-outline-secondary">
-                <i data-feather="download"></i>
-                Export
-            </button>
-            <button id="debugColumnBtn" class="btn btn-warning" style="display: none;">
-                <i data-feather="tool"></i>
-                Debug Column
-            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="allOrdersTable" class="table table-hover align-middle" style="width:100%">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Order #</th>
+                                    <th>Stock</th>
+                                    <th>Vehicle</th>
+                                    <th>Client</th>
+                                    <th>Service Date</th>
+                                    <th>Status</th>
+                                    <th>Source</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- DataTables will populate this -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
         </div>
 
-
-
-        <!-- Table -->
-        <div class="table-container">
-            <div class="table-header">
-                <h3  class="table-title">
-                    <i data-feather="list" class="table-icon"></i>
-                    Vehicle Inventory Detail Report
-                </h3>
-                <p class="table-subtitle">Real-time tracking of vehicles in Detail Department</p>
-            </div>
-            <div class="table-wrapper">
-                                    <table id="inventoryTable" class="table table-borderless table-hover table-nowrap align-middle mb-0 w-100">
-                                         <thead class="table-light">
-                         <tr>
-                             <th width="50">#</th>
-                             <th>Date in Detail</th>
-                             <th id="daysInDetailColumn" style="display: none;">Days in Detail</th>
-                             <th># Keys</th>
-                             <th>Vehicle & Stock</th>
-                             <th style="display: none;">Write Up Date</th>
-                             <th>Notes</th>
-                         </tr>
-                     </thead>
-                    <tbody>
-                        <!-- DataTables will populate this -->
-                    </tbody>
-                </table>
-            </div>
         </div>
     </div>
+
+    </div>
+
+   <script>
+// Pass authentication status to JavaScript
+window.isAuthenticated = <?php echo $isAuthenticated ? 'true' : 'false'; ?>;
+window.userType = '<?php echo $userType; ?>';
+</script>
 
     <?php include 'partials/vendor-scripts.php'; ?>
     
 
 
+   <!-- Include the vehicles inventory JavaScript -->
+   <script src="js/vehicles-inventory.js"></script>
+   
    <script>
-        // ========================================
-        // BOS INVENTORY MANAGEMENT SYSTEM
-        // ========================================
-
-class InventoryManager {
-    constructor() {
-        // Configuration
-        this.debugMode = new URLSearchParams(window.location.search).get('debug') === 'true';
-        this.pollingInterval = 30000; // 30 seconds
-        this.maxRetries = 3;
-        this.retryCount = 0;
-
-        // State
-        this.inventoryData = [];
-        this.dataTable = null;
-        this.pollingTimer = null;
-        this.isAuthenticated = false;
-        this.userInfo = null;
-
-        
-        // Initialization
-        this.init();
-    }
-
-    async init() {
-        try {
-            console.log('Initializing BOS inventory manager...');
-            
-            // Wait for DOM to be ready
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', () => this.initializeSystem());
-            } else {
-                this.initializeSystem();
-            }
-        } catch (error) {
-            console.error('Failed to initialize inventory manager:', error);
-            this.showError('Failed to initialize system: ' + error.message);
-        }
-    }
-
-    async initializeSystem() {
-        await this.checkAuthentication();
-        this.setupEventListeners();
-        this.initializeDataTables();
-        
-        // Initialize analytics (for authenticated users)
-        if (this.isAuthenticated) {
-            this.initializeDistributionBars();
-        }
-        
-        this.loadInventoryData();
-        this.startPolling();
-    }
-
-    setupEventListeners() {
-        // Refresh button
-        const refreshBtn = document.getElementById('refreshBtn');
-        if (refreshBtn) {
-            refreshBtn.addEventListener('click', () => {
-                this.loadInventoryData();
-            });
-        }
-        
-        // Export button
-        const exportBtn = document.getElementById('exportBtn');
-        if (exportBtn) {
-            exportBtn.addEventListener('click', () => {
-                this.exportData();
-            });
-        }
-
-        // Debug column button (only show in debug mode)
-        const debugColumnBtn = document.getElementById('debugColumnBtn');
-        if (debugColumnBtn) {
-            debugColumnBtn.addEventListener('click', () => this.debugColumnState());
-            debugColumnBtn.style.display = this.debugMode ? 'inline-flex' : 'none';
-        }
-    }
-
-    initializeDataTables() {
-        console.log('Initializing DataTables...');
-        
-        this.dataTable = $('#inventoryTable').DataTable({
-            processing: true,
-            serverSide: false,
-            pageLength: 25,
-            lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
-            responsive: true,
-            autoWidth: false,
-            order: [[1, 'desc']], // Order by Date in Detail (descending)
-                         columnDefs: [
-                 {
-                     targets: 0,
-                     className: 'text-center row-number',
-                     orderable: false,
-                     searchable: false,
-                     width: '50px'
-                 },
-                 {
-                     targets: 1,
-                     className: 'text-center',
-                     width: '150px'
-                 },
-                 {
-                     targets: 2, // Days in Detail column (hidden)
-                     visible: false,
-                     className: 'text-center',
-                     width: '100px'
-                 },
-                 {
-                     targets: 3, // # Keys
-                     className: 'text-center',
-                     width: '80px'
-                 },
-                 {
-                     targets: 4, // Vehicle & Stock (combined)
-                     className: 'text-center',
-                     width: '200px'
-                 },
-                 {
-                     targets: 5, // Write Up Date (hidden)
-                     visible: false,
-                     className: 'text-center',
-                     width: '120px'
-                 },
-                 {
-                     targets: 6, // Notes
-                     className: 'text-left notes-column',
-                     orderable: false,
-                     width: 'auto'
-                 }
-             ],
-            language: {
-                processing: 'Loading data...',
-                lengthMenu: 'Show _MENU_ entries',
-                zeroRecords: 'No vehicles found in detail',
-                info: 'Showing _START_ to _END_ of _TOTAL_ vehicles',
-                infoEmpty: 'No vehicles available',
-                infoFiltered: '(filtered from _MAX_ total vehicles)',
-                search: 'Search vehicles:',
-                paginate: {
-                    first: 'First',
-                    last: 'Last',
-                    next: 'Next',
-                    previous: 'Previous'
-                }
-            },
-                         drawCallback: function() {
-                 this.api().column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
-                     cell.innerHTML = '<span class="row-number">' + (i + 1) + '</span>';
-                 });
-                 
-                 if (typeof feather !== 'undefined') {
-                     feather.replace();
-                 }
-             },
-            initComplete: function() {
-                console.log('DataTables initialized successfully');
-            }
-        });
-    }
-
-    // === DATA LOADING ===
-
-    async loadInventoryData(showLoadingIndicator = true) {
-        if (showLoadingIndicator) {
-            this.showLoading(true);
-        }
-        this.hideError();
-
-        try {
-            const url = this.buildApiUrl();
-            const response = await this.fetchWithRetry(url);
-
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${await response.text()}`);
-            }
-
-            const result = await response.json();
-
-            if (!result.success) {
-                throw new Error(result.error || 'Unknown error occurred');
-            }
-
-            this.inventoryData = result.data || [];
-
-            if (this.dataTable) {
-                this.updateDataTable();
-            }
-
-            this.updateLastUpdate();
-            this.updateStats();
-            
-            // Update charts (always calculate, but only show for authenticated users)
-            this.updateDistributionBars();
-            
-            // Force column visibility update after data is loaded
-            if (this.isAuthenticated) {
-                setTimeout(() => this.toggleDaysInDetailColumn(), 500);
-            }
-            
-            this.retryCount = 0;
-
-        } catch (error) {
-            this.handleLoadError(error);
-        } finally {
-            if (showLoadingIndicator) {
-                this.showLoading(false);
-            }
-        }
-    }
-
-    buildApiUrl() {
-        const params = new URLSearchParams();
-        if (this.debugMode) {
-            params.append('debug', 'true');
-        }
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('refresh') === 'true') {
-            params.append('refresh', 'true');
-        }
-        const queryString = params.toString();
-        return `./get_inventory.php${queryString ? '?' + queryString : ''}`;
-    }
-
-    async fetchWithRetry(url, retries = 3) {
-        for (let i = 0; i < retries; i++) {
-            try {
-                const response = await fetch(url, {
+   // Legacy authentication check for backward compatibility
+   document.addEventListener('DOMContentLoaded', async function() {
+       try {
+           // Check authentication via existing auth system
+           const response = await fetch('./check_auth.php', {
                     method: 'GET',
                     headers: {
                         'Accept': 'application/json',
@@ -1815,881 +2499,86 @@ class InventoryManager {
                     },
                     cache: 'no-cache'
                 });
-                return response;
-            } catch (error) {
-                if (i === retries - 1) throw error;
-                await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
-            }
-        }
-    }
-
-    // === DATATABLES METHODS ===
-
-    updateDataTable() {
-        if (!this.dataTable) return;
-        
-        try {
-            // Clear existing data
-            this.dataTable.clear();
-            
-            // Add new rows
-            this.inventoryData.forEach((row, index) => {
-                const dateInDetail = row[0] || '';
-                const daysInDetail = this.calculateDaysInDetail(dateInDetail);
-                
-                                 const rowData = [
-                     '', // Row number (will be populated by drawCallback)
-                     this.formatDateWithBadge(dateInDetail, daysInDetail), // Date in Detail with badge
-                     this.formatDaysInDetail(daysInDetail), // Days in Detail (hidden)
-                     row[1] || '', // Keys
-                     this.formatVehicleAndStock(row[3] || '', row[2] || ''), // Vehicle & Stock combined
-                     this.formatDate(row[4] || ''), // Write Up Date (hidden)
-                     this.formatNotesShort(row[5] || '') // Notes (short with tooltip)
-                 ];
-                this.dataTable.row.add(rowData);
-            });
-            
-            // Redraw the table
-            this.dataTable.draw();
-        } catch (error) {
-            console.error('Error updating DataTable:', error);
-        }
-    }
-
-    // Helper methods for formatting data
-    parseDate(dateString) {
-        if (!dateString) return null;
-        
-        try {
-            let date;
-            
-            // Handle different date formats
-            if (dateString.includes('/')) {
-                // Handle MM/DD or MM/DD/YY or MM/DD/YYYY format
-                const parts = dateString.split('/');
-                if (parts.length === 2) {
-                    // MM/DD format - assume current year
-                    const currentYear = new Date().getFullYear();
-                    date = new Date(currentYear, parseInt(parts[0]) - 1, parseInt(parts[1]));
-                } else if (parts.length === 3) {
-                    // MM/DD/YY or MM/DD/YYYY format
-                    let year = parseInt(parts[2]);
-                    
-                    // Handle 2-digit years
-                    if (year < 100) {
-                        // If year is 00-30, assume 20xx, otherwise 19xx
-                        year = year <= 30 ? 2000 + year : 1900 + year;
-                    }
-                    
-                    // If year is clearly wrong (like 2001 for current data), use current year
-                    const currentYear = new Date().getFullYear();
-                    if (year < currentYear - 1) {
-                        year = currentYear;
-                    }
-                    
-                    date = new Date(year, parseInt(parts[0]) - 1, parseInt(parts[1]));
-                }
-            } else {
-                // Try parsing as standard date format
-                date = new Date(dateString);
-                
-                // If year is clearly wrong, adjust to current year
-                const currentYear = new Date().getFullYear();
-                if (date.getFullYear() < currentYear - 1) {
-                    date.setFullYear(currentYear);
-                }
-            }
-            
-            if (isNaN(date.getTime())) return null;
-            return date;
-        } catch (error) {
-            console.error('Error parsing date:', dateString, error);
-            return null;
-        }
-    }
-
-    calculateDaysInDetail(dateString) {
-        if (!dateString) return 0;
-        
-        try {
-            const detailDate = this.parseDate(dateString);
-            if (!detailDate) return 0;
-            
-            const now = new Date();
-            
-            // Reset time to avoid timezone issues
-            detailDate.setHours(0, 0, 0, 0);
-            now.setHours(0, 0, 0, 0);
-            
-            const diffTime = now - detailDate;
-            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-            
-            // Debug logging
-            if (this.debugMode) {
-                console.log(`Date: ${dateString} -> Parsed: ${detailDate.toDateString()} -> Days: ${diffDays}`);
-            }
-            
-            return Math.max(0, diffDays);
-        } catch (error) {
-            console.error('Error calculating days in detail:', error);
-            return 0;
-        }
-    }
-
-    formatDaysInDetail(days) {
-        let badgeClass = 'bg-success';
-        let label = `${days}d`;
-        
-        if (days >= 0 && days <= 1) {
-            badgeClass = 'bg-success';
-        } else if (days >= 2 && days <= 4) {
-            badgeClass = 'bg-warning';
-        } else if (days >= 5) {
-            badgeClass = 'bg-danger';
-        }
-        
-        return `<span class="badge ${badgeClass}" data-days="${days}">${label}</span>`;
-    }
-
-    formatStockNumber(stockNumber) {
-        if (!stockNumber) return '';
-        return `<span class="stock-number">${stockNumber}</span>`;
-    }
-
-    formatVehicle(vehicle) {
-        if (!vehicle) return '';
-        return `<span class="vehicle-info">${vehicle}</span>`;
-    }
-
-         formatNotes(notes) {
-         if (!notes) return '';
-         const hasContent = notes.trim().length > 0;
-         const className = hasContent ? 'notes-preview has-content' : 'notes-preview';
-         const displayText = notes.length > 50 ? notes.substring(0, 50) + '...' : notes;
-         return `<span class="${className}">${displayText}</span>`;
-     }
-
-     formatDateWithBadge(dateString, daysInDetail) {
-         if (!dateString) return '';
-         const formattedDate = this.formatDate(dateString);
-         const daysBadge = this.formatDaysInDetail(daysInDetail);
-         
-         return `<div class="date-with-badge">
-             <div>${formattedDate}</div>
-             <div>${daysBadge}</div>
-         </div>`;
-     }
-
-     formatVehicleAndStock(vehicle, stockNumber) {
-         if (!vehicle && !stockNumber) return '';
-         
-         const stockBadge = stockNumber ? this.formatStockNumber(stockNumber) : '';
-         const vehicleInfo = vehicle ? `<div class="vehicle-info">${vehicle}</div>` : '';
-         
-         return `<div class="vehicle-stock-container">
-             ${stockBadge}
-             ${vehicleInfo}
-         </div>`;
-     }
-
-     formatNotesShort(notes) {
-         if (!notes) return '';
-         const trimmedNotes = notes.trim();
-         if (trimmedNotes.length === 0) return '';
-         
-         const shortText = trimmedNotes.length > 20 ? trimmedNotes.substring(0, 20) + '...' : trimmedNotes;
-         return `<span class="notes-short" title="${trimmedNotes}">${shortText}</span>`;
-     }
-
-    formatDate(dateString) {
-        if (!dateString) return '';
-        
-        try {
-            const date = this.parseDate(dateString);
-            if (!date) return dateString;
-            
-            return date.toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-            });
-        } catch (error) {
-            console.error('Error formatting date:', dateString, error);
-            return dateString;
-        }
-    }
-
-    // === POLLING ===
-
-    startPolling() {
-        console.log('Setting up polling for updates');
-        
-        // Clear any existing polling
-        if (this.pollingTimer) {
-            clearInterval(this.pollingTimer);
-        }
-        
-        // Set up new polling
-        this.pollingTimer = setInterval(() => {
-            this.loadInventoryData(false);
-        }, this.pollingInterval);
-        
-        console.log('Polling started');
-    }
-
-    // === EXPORT ===
-
-    exportData() {
-        if (!this.inventoryData || this.inventoryData.length === 0) {
-            alert('No data to export');
-            return;
-        }
-        
-                 // Create CSV content
-         const headers = ['Row #', 'Date in Detail', 'Days in Detail', '# Keys', 'Stock #', 'Vehicle', 'Notes'];
-         let csvContent = headers.join(',') + '\n';
-        
-        this.inventoryData.forEach((row, index) => {
-            const dateInDetail = row[0] || '';
-            const daysInDetail = this.calculateDaysInDetail(dateInDetail);
-            
-                         const csvRow = [
-                 index + 1, // Row number
-                 dateInDetail,
-                 daysInDetail,
-                 row[1] || '', // Keys
-                 row[2] || '', // Stock
-                 row[3] || '', // Vehicle
-                 row[5] || ''  // Notes (skipping Write Up Date)
-             ].map(field => {
-                // Escape quotes and wrap in quotes if contains comma or quotes
-                const stringField = String(field);
-                if (stringField.includes(',') || stringField.includes('"') || stringField.includes('\n')) {
-                    return '"' + stringField.replace(/"/g, '""') + '"';
-                }
-                return stringField;
-            }).join(',');
-            csvContent += csvRow + '\n';
-        });
-        
-        // Create and download file
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        link.setAttribute('href', url);
-        link.setAttribute('download', `bos_inventory_${new Date().toISOString().split('T')[0]}.csv`);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-
-    // === STATS UPDATE ===
-
-    updateStats() {
-        const totalRecords = this.inventoryData ? this.inventoryData.length : 0;
-        
-        const totalEl = document.getElementById('totalRecords');
-        if (totalEl) {
-            totalEl.textContent = totalRecords.toLocaleString();
-        }
-    }
-
-    updateLastUpdate() {
-        const now = new Date();
-        const timeString = now.toLocaleTimeString();
-        
-        const lastUpdateStatEl = document.getElementById('lastUpdateStat');
-
-        if (lastUpdateStatEl) {
-            lastUpdateStatEl.textContent = timeString;
-        }
-        
-        // Update average days if user is authenticated
-        if (this.isAuthenticated) {
-            this.updateAverageDays();
-        }
-    }
-
-    // === CHARTS & ANALYTICS ===
-    
-    initializeDistributionBars() {
-        console.log('📊 Distribution bars initialized');
-    }
-
-    updateDistributionBars() {
-        console.log('📊 updateDistributionBars called');
-        console.log('📊 inventoryData length:', this.inventoryData.length);
-        console.log('📊 isAuthenticated:', this.isAuthenticated);
-        
-        if (!this.inventoryData.length) {
-            console.warn('⚠️ No inventory data available for distribution bars');
-            return;
-        }
-
-        // Calculate distribution
-        const distribution = { excellent: 0, good: 0, warning: 0 };
-        
-        this.inventoryData.forEach((item, index) => {
-            const dateInDetail = item[0] || ''; // First column is date
-            const days = this.calculateDaysInDetail(dateInDetail);
-            if (this.debugMode) {
-                console.log(`📊 Vehicle ${index + 1}: date="${dateInDetail}", calculated days=${days}`);
-            }
-            
-            if (days >= 0 && days <= 1) {
-                distribution.excellent++;
-            } else if (days >= 2 && days <= 4) {
-                distribution.good++;
-            } else if (days >= 5) {
-                distribution.warning++;
-            }
-        });
-
-        const total = distribution.excellent + distribution.good + distribution.warning;
-
-        // Update counts and bar widths
-        const excellentCount = document.getElementById('excellentCount');
-        const goodCount = document.getElementById('goodCount');
-        const warningCount = document.getElementById('warningCount');
-        
-        const excellentBar = document.getElementById('excellentBar');
-        const goodBar = document.getElementById('goodBar');
-        const warningBar = document.getElementById('warningBar');
-
-        if (excellentCount) excellentCount.textContent = distribution.excellent;
-        if (goodCount) goodCount.textContent = distribution.good;
-        if (warningCount) warningCount.textContent = distribution.warning;
-
-        // Calculate percentages for bar widths
-        const excellentPercent = total > 0 ? (distribution.excellent / total) * 100 : 0;
-        const goodPercent = total > 0 ? (distribution.good / total) * 100 : 0;
-        const warningPercent = total > 0 ? (distribution.warning / total) * 100 : 0;
-
-        // Animate bars
-        if (excellentBar) {
-            setTimeout(() => excellentBar.style.width = `${excellentPercent}%`, 100);
-        }
-        if (goodBar) {
-            setTimeout(() => goodBar.style.width = `${goodPercent}%`, 200);
-        }
-        if (warningBar) {
-            setTimeout(() => warningBar.style.width = `${warningPercent}%`, 300);
-        }
-
-        console.log('📊 Distribution calculated:', distribution);
-        console.log('📊 Total vehicles:', total);
-        console.log('📊 Percentages - Excellent:', excellentPercent, 'Good:', goodPercent, 'Warning:', warningPercent);
-        
-        if (this.debugMode) {
-            console.log('📊 Distribution bars updated:', distribution);
-        }
-    }
-
-    // === AUTHENTICATION & AVERAGE CALCULATION ===
-    
-    async checkAuthentication() {
-        try {
-            // Add debug parameter if in debug mode
-            const url = this.debugMode ? './check_auth.php?debug=true' : './check_auth.php';
-            
-            console.log('🔐 Checking authentication...', url);
-            
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                cache: 'no-cache',
-                timeout: 10000 // 10 second timeout
-            });
-            
-            console.log('🔐 Response status:', response.status, response.statusText);
             
             if (response.ok) {
                 const result = await response.json();
-                this.isAuthenticated = result.authenticated || false;
-                this.userInfo = result.user || null;
+               window.isAuthenticated = result.authenticated || false;
+               window.userInfo = result.user || null;
                 
                 console.log('🔐 Authentication result:', {
-                    authenticated: this.isAuthenticated,
-                    method: result.method || 'Unknown',
-                    user: this.userInfo ? this.userInfo.username : 'None'
-                });
-                
-                if (this.debugMode) {
-                    console.log('🔍 Full authentication response:', result);
-                    
-                    // Show debug info
-                    this.showDebugInfo(result);
-                }
+                   authenticated: window.isAuthenticated,
+                   method: result.method || 'Unknown'
+               });
+               
+               // Mark auth check as completed
+               window.authCheckCompleted = true;
                 
                 // Update UI based on authentication
-                this.updateAuthenticationUI();
-                
-            } else {
-                console.warn('❌ Authentication check failed:', response.status, response.statusText);
-                
-                // Try to get error details
-                try {
-                    const errorText = await response.text();
-                    console.error('❌ Error response body:', errorText);
-                } catch (e) {
-                    console.error('❌ Could not read error response');
-                }
-                
-                this.isAuthenticated = false;
-                this.updateAuthenticationUI();
-            }
-        } catch (error) {
-            console.error('❌ Network error checking authentication:', error);
-            
-            // Show user-friendly error if in debug mode
-            if (this.debugMode) {
-                this.showError('Authentication check failed: ' + error.message);
-            }
-            
-            this.isAuthenticated = false;
-            this.updateAuthenticationUI();
-        }
-    }
-
-    updateAuthenticationUI() {
-        console.log('🔐 updateAuthenticationUI called - isAuthenticated:', this.isAuthenticated);
-        
-        // Show/hide analytics widgets based on authentication
-        const avgDaysWidget = document.getElementById('avgDaysWidget');
-        const daysDistributionWidget = document.getElementById('daysDistributionWidget');
-        
-        if (avgDaysWidget) {
-            avgDaysWidget.style.display = this.isAuthenticated ? 'block' : 'none';
-            console.log('🔐 avgDaysWidget display:', avgDaysWidget.style.display);
-        }
-        
-        if (daysDistributionWidget) {
-            daysDistributionWidget.style.display = this.isAuthenticated ? 'block' : 'none';
-            console.log('🔐 daysDistributionWidget display:', daysDistributionWidget.style.display);
-        }
-        
-        // Show/hide Days in Detail column based on authentication
-        this.toggleDaysInDetailColumn();
-        
-        // Show/hide top bar based on authentication
-        const topBar = document.getElementById('topBar');
-        if (topBar) {
-            if (this.isAuthenticated) {
-                topBar.classList.add('show');
-                this.updateUserInfo();
-            } else {
-                topBar.classList.remove('show');
+               updateAuthenticationUI();
+               
+               // Update top bar if authenticated
+               const topBar = document.getElementById('topBar');
+               if (topBar && window.isAuthenticated) {
+                   topBar.classList.add('show');
+                   
+                   // Update user info if available
+                   if (window.userInfo) {
+                       const userName = document.getElementById('userName');
+                       const userRole = document.getElementById('userRole');
+                       const userAvatar = document.getElementById('userAvatar');
+                       
+                       if (userName && window.userInfo.username) {
+                           userName.textContent = window.userInfo.username;
+                       }
+                       
+                       if (userRole && window.userInfo.groups && window.userInfo.groups.length > 0) {
+                           userRole.textContent = window.userInfo.groups[0];
+                       }
+                       
+                       if (userAvatar && window.userInfo.username) {
+                           userAvatar.textContent = window.userInfo.username.charAt(0).toUpperCase();
+                       }
             }
         }
         
         // Show debug toggle if in debug mode
+               const debugMode = new URLSearchParams(window.location.search).get('debug') === 'true';
         const debugToggle = document.getElementById('debugToggle');
-        if (debugToggle && this.debugMode) {
+               if (debugToggle && debugMode) {
             debugToggle.style.display = 'flex';
             debugToggle.addEventListener('click', () => {
                 const debugInfo = document.getElementById('debugInfo');
                 if (debugInfo) {
                     debugInfo.classList.toggle('show');
-                }
-            });
-        }
-    }
-
-         toggleDaysInDetailColumn() {
-         console.log('🔐 toggleDaysInDetailColumn called - isAuthenticated:', this.isAuthenticated);
-         console.log('🔐 DataTable exists:', !!this.dataTable);
-         
-         if (!this.dataTable) {
-             console.warn('⚠️ DataTable not initialized yet, scheduling retry...');
-             setTimeout(() => this.toggleDaysInDetailColumn(), 1000);
-             return;
-         }
-         
-         try {
-             // The days badge is now shown in the Date in Detail column for authenticated users
-             // We can show/hide the badge via CSS or just keep it always visible since it's integrated
-             console.log('🔐 Days badge is now integrated in Date column');
-             
-             // Force table redraw to ensure proper formatting
-             this.dataTable.draw();
-             
-         } catch (error) {
-             console.error('❌ Error toggling Days in Detail column:', error);
-         }
-     }
-
-    debugColumnState() {
-        console.log('🐛 === DEBUG COLUMN STATE ===');
-        console.log('🐛 isAuthenticated:', this.isAuthenticated);
-        console.log('🐛 DataTable exists:', !!this.dataTable);
-        
-        if (this.dataTable) {
-            const column = this.dataTable.column(2);
-            console.log('🐛 Column 2 visible:', column.visible());
-            console.log('🐛 Column 2 data:', column.data().toArray().slice(0, 5));
-        }
-        
-        const header = document.getElementById('daysInDetailColumn');
-        console.log('🐛 Header exists:', !!header);
-        if (header) {
-            console.log('🐛 Header display:', header.style.display);
-            console.log('🐛 Header computed display:', window.getComputedStyle(header).display);
-        }
-        
-        const avgWidget = document.getElementById('avgDaysWidget');
-        const distWidget = document.getElementById('daysDistributionWidget');
-        console.log('🐛 avgDaysWidget display:', avgWidget ? avgWidget.style.display : 'not found');
-        console.log('🐛 daysDistributionWidget display:', distWidget ? distWidget.style.display : 'not found');
-        
-        console.log('🐛 inventoryData length:', this.inventoryData.length);
-        console.log('🐛 === END DEBUG ===');
-        
-        // Force toggle
-        this.toggleDaysInDetailColumn();
-    }
-
-    updateUserInfo() {
-        if (!this.userInfo) return;
-        
-        const userName = document.getElementById('userName');
-        const userRole = document.getElementById('userRole');
-        const userAvatar = document.getElementById('userAvatar');
-        
-        if (userName && this.userInfo.username) {
-            userName.textContent = this.userInfo.username;
-        }
-        
-        if (userRole && this.userInfo.groups && this.userInfo.groups.length > 0) {
-            userRole.textContent = this.userInfo.groups[0];
-        }
-        
-        if (userAvatar && this.userInfo.username) {
-            userAvatar.textContent = this.userInfo.username.charAt(0).toUpperCase();
-        }
-    }
-
-    showDebugInfo(authResult) {
+                           
+                           // Show debug info
         const debugContent = document.getElementById('debugContent');
         if (debugContent) {
             const debugData = {
                 timestamp: new Date().toISOString(),
-                authenticated: this.isAuthenticated,
-                user_info: this.userInfo,
-                auth_response: authResult,
+                                   authenticated: window.isAuthenticated,
+                                   user_info: window.userInfo,
+                                   auth_response: result,
                 current_url: window.location.href,
                 user_agent: navigator.userAgent
             };
             
             debugContent.textContent = JSON.stringify(debugData, null, 2);
-        }
-    }
-    
-    calculateAverageDays() {
-        if (!this.inventoryData || this.inventoryData.length === 0) {
-            return 0;
-        }
-        
-        let totalDays = 0;
-        let validEntries = 0;
-        
-        this.inventoryData.forEach(row => {
-            const dateInDetail = row[0]; // First column is date
-            if (dateInDetail) {
-                const days = this.calculateDaysInDetail(dateInDetail);
-                if (days >= 0) {
-                    totalDays += days;
-                    validEntries++;
                 }
             }
         });
-        
-        if (validEntries === 0) return 0;
-        
-        const average = totalDays / validEntries;
-        return Math.round(average * 10) / 10; // Round to 1 decimal place
-    }
-    
-    updateAverageDays() {
-        if (!this.isAuthenticated) return;
-        
-        const avgDaysValue = document.getElementById('avgDaysValue');
-        const avgDaysWidget = document.getElementById('avgDaysWidget');
-        const avgDaysStatus = document.getElementById('avgDaysStatus');
-        
-        if (avgDaysValue && avgDaysWidget) {
-            const average = this.calculateAverageDays();
-            const currentValue = parseFloat(avgDaysValue.textContent) || 0;
-            
-            // Only update if value has changed
-            if (Math.abs(average - currentValue) > 0.1) {
-                // Add animation class
-                avgDaysValue.classList.add('updating');
-                
-                // Update the value
-                setTimeout(() => {
-                    avgDaysValue.textContent = average.toFixed(1);
-                    
-                    // Remove animation class after animation completes
-                    setTimeout(() => {
-                        avgDaysValue.classList.remove('updating');
-                    }, 600);
-                }, 100);
-            } else if (currentValue === 0) {
-                // First time setting the value
-                avgDaysValue.textContent = average.toFixed(1);
-            }
-            
-            // Update status indicator (now in trend format)
-            if (avgDaysStatus) {
-                this.updateAverageStatusTrend(average, avgDaysStatus);
-            }
-            
-            // Show the widget if it's hidden
-            if (avgDaysWidget.style.display === 'none') {
-                avgDaysWidget.style.display = 'block';
-                
-                // Add a subtle fade-in animation
-                avgDaysWidget.style.opacity = '0';
-                avgDaysWidget.style.transform = 'translateY(20px)';
-                
-                setTimeout(() => {
-                    avgDaysWidget.style.transition = 'all 0.6s ease';
-                    avgDaysWidget.style.opacity = '1';
-                    avgDaysWidget.style.transform = 'translateY(0)';
-                }, 150);
-            }
-            
-            if (this.debugMode) {
-                console.log('Average days updated:', average, 'Previous:', currentValue);
-            }
-        }
-    }
-
-    updateAverageStatus(average, statusElement) {
-        let statusText = '';
-        let statusClass = '';
-        
-        if (average <= 1.5) {
-            statusText = '🚀 Excellent';
-            statusClass = 'excellent';
-        } else if (average <= 3.0) {
-            statusText = '✅ Good';
-            statusClass = 'good';
-        } else if (average <= 5.0) {
-            statusText = '⚠️ Attention';
-            statusClass = 'warning';
+               }
         } else {
-            statusText = '🚨 Critical';
-            statusClass = 'critical';
-        }
-        
-        // Remove all status classes
-        statusElement.className = 'avg-status';
-        statusElement.classList.add(statusClass);
-        statusElement.textContent = statusText;
-        
-        // Add a subtle animation when status changes
-        statusElement.style.transform = 'scale(0.9)';
-        setTimeout(() => {
-            statusElement.style.transition = 'transform 0.3s ease';
-            statusElement.style.transform = 'scale(1)';
-        }, 100);
-    }
-
-    updateAverageStatusTrend(average, trendElement) {
-        let statusText = '';
-        let iconName = 'activity';
-
-        if (average <= 1.5) {
-            statusText = 'Excellent';
-            iconName = 'trending-up';
-        } else if (average <= 3.0) {
-            statusText = 'Good';
-            iconName = 'check-circle';
-        } else if (average <= 5.0) {
-            statusText = 'Attention';
-            iconName = 'alert-triangle';
-        } else {
-            statusText = 'Critical';
-            iconName = 'alert-circle';
-        }
-
-        // Update the trend text
-        const trendText = trendElement.querySelector('.trend-text');
-        const trendIcon = trendElement.querySelector('.trend-icon');
-        
-        if (trendText) {
-            trendText.textContent = statusText;
-        }
-        
-        if (trendIcon) {
-            // Update the icon
-            trendIcon.setAttribute('data-feather', iconName);
-            // Re-initialize feather icons for this element
-            if (typeof feather !== 'undefined') {
-                feather.replace();
-            }
-        }
-
-        // Add a subtle animation when status changes
-        trendElement.style.transform = 'scale(0.95)';
-        setTimeout(() => {
-            trendElement.style.transform = 'scale(1)';
-        }, 150);
-    }
-
-    // === ERROR HANDLING ===
-    
-    handleLoadError(error) {
-        console.error('Error loading inventory data:', error);
-        this.showError(`Failed to load inventory data: ${error.message}`);
-        
-        if (this.retryCount < this.maxRetries) {
-            this.retryCount++;
-            console.log(`Retrying... (${this.retryCount}/${this.maxRetries})`);
-            setTimeout(() => {
-                this.loadInventoryData();
-            }, 2000 * this.retryCount);
-        } else {
-            console.error('Max retries reached. Please refresh the page.');
-            this.showError('Max retries reached. Please refresh the page manually.');
-        }
-    }
-
-    showError(message) {
-        const errorContainer = document.getElementById('errorContainer');
-        if (errorContainer) {
-            errorContainer.textContent = message;
-            errorContainer.classList.add('show');
-        }
-    }
-
-    hideError() {
-        const errorContainer = document.getElementById('errorContainer');
-        if (errorContainer) {
-            errorContainer.classList.remove('show');
-        }
-    }
-
-    showLoading(show) {
-        // Use custom loader instead of DataTables processing
-        const tableContainer = document.querySelector('.table-container');
-        if (tableContainer) {
-            if (show) {
-                if (!document.getElementById('customLoader')) {
-                    const loader = document.createElement('div');
-                    loader.id = 'customLoader';
-                    loader.style.cssText = `
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        right: 0;
-                        bottom: 0;
-                        background: rgba(255, 255, 255, 0.97);
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        z-index: 1000;
-                        border-radius: var(--radius-2xl);
-                        backdrop-filter: blur(4px);
-                        opacity: 0;
-                        transition: opacity 0.3s ease;
-                    `;
-                    loader.innerHTML = `
-                        <div style="text-align: center; color: var(--text-secondary);">
-                            <div style="
-                                width: 3rem; 
-                                height: 3rem; 
-                                border: 3px solid var(--border-color); 
-                                border-radius: 50%; 
-                                border-top-color: var(--primary-color); 
-                                animation: spin 1s linear infinite; 
-                                margin: 0 auto 1.5rem;
-                            "></div>
-                            <div style="
-                                font-weight: 600; 
-                                font-size: 1rem; 
-                                color: var(--primary-color);
-                                margin-bottom: 0.5rem;
-                            ">Loading data...</div>
-                            <div style="
-                                font-size: 0.875rem; 
-                                color: var(--text-muted);
-                            ">Please wait a moment</div>
-                        </div>
-                    `;
-                    tableContainer.style.position = 'relative';
-                    tableContainer.appendChild(loader);
-                    
-                    // Add fade-in animation
-                    setTimeout(() => {
-                        loader.style.opacity = '1';
-                    }, 10);
-                }
-            } else {
-                const loader = document.getElementById('customLoader');
-                if (loader) {
-                    // Add fade-out animation
-                    loader.style.opacity = '0';
-                    setTimeout(() => {
-                        if (loader.parentNode) {
-                            loader.remove();
-                        }
-                    }, 300);
-                }
-            }
-        }
-    }
-}
-
-// Global toast function
-window.showToast = function(type, message) {
-    console.log('showToast called:', type, message);
-    console.log('Swal available:', typeof Swal !== 'undefined');
-    
-    if (typeof Swal === 'undefined') {
-        console.error('SweetAlert2 (Swal) is not loaded!');
-        // Fallback to alert
-        alert(message);
-        return;
-    }
-    
-    // Simple toast notification using SweetAlert2
-    const icon = type === 'success' ? 'success' : type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'info';
-    
-    try {
-        Swal.fire({
-            icon: icon,
-            title: message,
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true
-        });
+               console.warn('❌ Authentication check failed:', response.status, response.statusText);
+               window.isAuthenticated = false;
+               window.authCheckCompleted = true;
+               updateAuthenticationUI();
+           }
     } catch (error) {
-        console.error('Error showing toast:', error);
-        alert(message); // Fallback
-    }
-};
-
-// Initialize the inventory manager when the page loads
-document.addEventListener('DOMContentLoaded', function() {
-    if (typeof $ !== 'undefined' && typeof feather !== 'undefined') {
-        console.log('Starting BOS inventory manager...');
-        window.inventoryManager = new InventoryManager();
-        
-        // Initialize feather icons
-        feather.replace();
-    } else {
-        console.error('Required libraries not loaded');
-        console.log('jQuery available:', typeof $ !== 'undefined');
-        console.log('Feather available:', typeof feather !== 'undefined');
-        console.log('Swal available:', typeof Swal !== 'undefined');
+           console.error('❌ Network error checking authentication:', error);
+           window.isAuthenticated = false;
+           window.authCheckCompleted = true;
+           updateAuthenticationUI();
     }
 });
    </script>

@@ -1,4 +1,32 @@
-<div class="container-fluid">
+<div class="container">
+    
+    <!-- Inventory Management Container -->
+    <div class="dashboard-container mb-4">
+        <div class="dashboard-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h4 class="dashboard-title">
+                                <i class="ri-dashboard-3-line me-2"></i>
+                                Inventory Management Dashboard
+                                <span id="syncIndicator" class="badge bg-success ms-2" style="font-size: 0.75rem; font-weight: 500;">
+                                    <i class="ri-wifi-line me-1"></i>Live Sync
+                                </span>
+                            </h4>
+                            <p class="dashboard-subtitle">
+                                <?= lang('App.available_stock') ?> • Auto-refresh every 30s
+                                <br>
+                                <span id="lastRefreshInfo" style="font-size: 0.7rem; opacity: 0.7;">
+                                    Last refresh: Loading...
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="dashboard-body">
     
     <!-- Dealer Inventory Section -->
     <div class="row mb-4">
@@ -11,7 +39,7 @@
                                 <i class="ri-store-3-line me-2"></i>
                                 <?= lang('App.dealer_inventory') ?>
                             </h5>
-                            <p class="text-muted small mb-0"><?= lang('App.available_stock') ?></p>
+                            <p class="text-muted small mb-0">Current inventory items available for processing</p>
                         </div>
                         <div class="col-auto">
                             <div class="d-flex gap-2">
@@ -19,15 +47,40 @@
                                     <i class="ri-refresh-line me-1"></i>
                                     <?= lang('App.refresh_inventory') ?>
                                 </button>
-                                <button type="button" class="btn btn-success" id="convertSelectedBtn" disabled>
-                                    <i class="ri-arrow-right-line me-1"></i>
-                                    <?= lang('App.move_selected') ?>
+                                <button type="button" class="btn btn-outline-primary" id="clearAllFilters">
+                                    <i class="ri-filter-off-line me-1"></i>
+                                    <?= lang('App.clear_filters') ?>
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="card-body">
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Widgets Row -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="modern-card">
+                <div class="modern-card-header">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h5 class="modern-card-title">
+                                <i class="ri-bar-chart-line"></i>
+                                <?= lang('App.inventory_stats') ?>
+                            </h5>
+                            <p class="modern-card-subtitle"><?= lang('App.click_to_filter') ?></p>
+                        </div>
+                        <div class="avg-days-mini-widget">
+                            <div class="avg-days-value" id="avgDaysCompact">
+                                <span class="avg-number" id="avgDaysNumber">0</span>
+                                <span class="avg-label">Avg Days</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modern-card-body">
                     <!-- Inventory Stats - Interactive Filter Widgets -->
                     <div class="row mb-3">
                         <div class="col-md-3">
@@ -79,7 +132,7 @@
                                 </div>
                                 <div class="stats-content">
                                     <h6 class="mb-0" id="agedItems">0</h6>
-                                    <small class="text-muted"><?= lang('App.aged_items') ?></small>
+                                    <small class="text-muted"><?= lang('App.moderate_items') ?></small>
                                 </div>
                                 <div class="filter-indicator">
                                     <i class="ri-filter-line"></i>
@@ -87,66 +140,46 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Medium Progress Widget -->
-                    <div class="row mb-3">
-                        <div class="col-md-8">
-                            <div class="avg-days-widget-medium">
-                                <div class="widget-header">
-                                    <div class="widget-icon" id="avgDaysIcon">
-                                        <i class="ri-time-line"></i>
                                     </div>
-                                    <div class="widget-title">
-                                        <span class="widget-label"><?= lang('App.avg_in_this_step') ?></span>
-                                        <span class="widget-range" id="avgDaysRange">0 - 0 días</span>
-                                    </div>
-                                </div>
-                                <div class="progress-section">
-                                    <div class="progress-bar-container">
-                                        <div class="progress-bar-track" id="progressTrack">
-                                            <div class="progress-bar-fill" id="progressFill"></div>
-                                            <div class="progress-indicator" id="progressIndicator">
-                                                <div class="indicator-value" id="avgDaysInDetail">0</div>
-                                                <div class="indicator-arrow"></div>
-                                            </div>
-                                        </div>
-                                        <div class="progress-labels">
-                                            <span class="progress-min">0</span>
-                                            <span class="progress-max" id="maxDaysLabel">0</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="widget-status" id="avgDaysStatus">Calculando estadísticas...</div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="d-flex align-items-center justify-content-end h-100">
-                                <button type="button" class="btn btn-outline-primary" id="clearAllFilters">
-                                    <i class="ri-filter-off-line me-2"></i>
-                                    <?= lang('App.clear_filters') ?>
-                                </button>
                             </div>
                         </div>
                     </div>
                     
 
                     
+    <!-- Inventory Table Row -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="modern-card">
+                <div class="modern-card-header">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h5 class="modern-card-title">
+                                <i class="ri-table-line"></i>
+                                <?= lang('App.inventory_table') ?>
+                            </h5>
+                            <p class="modern-card-subtitle"><?= lang('App.detailed_inventory_view') ?></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
                     <div class="table-responsive">
                         <table id="inventoryTable" class="table table-hover align-middle" style="width:100%">
                             <thead class="table-light">
                                 <tr>
-                                    <th width="40">
+                                    <th width="40" class="text-center">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" id="selectAllInventory">
                                         </div>
                                     </th>
-                                    <th><?= lang('App.date_in_detail') ?></th>
-                                    <th><?= lang('App.day_in_this_step') ?></th>
-                                    <th><?= lang('App.keys') ?></th>
-                                    <th><?= lang('App.stock_number') ?></th>
-                                    <th><?= lang('App.vehicle') ?></th>
-                                    <th><?= lang('App.write_up_date') ?></th>
-                                    <th><?= lang('App.actions') ?></th>
+                                    <th class="text-center"><?= lang('App.date_in_detail') ?></th>
+                                    <th class="text-center"><?= lang('App.day_in_this_step') ?></th>
+                                    <th class="text-center"><?= lang('App.keys') ?></th>
+                                    <th class="text-center"><?= lang('App.stock_number') ?></th>
+                                    <th class="text-center"><?= lang('App.vehicle') ?></th>
+                                    <th class="text-center">Notes</th>
+                                    <th class="text-center"><?= lang('App.status') ?></th>
+                                    <th class="text-center" style="display: none !important;"><?= lang('App.actions') ?></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -158,6 +191,24 @@
             </div>
         </div>
     </div>
+        
+        </div>
+    </div>
+
+    <!-- Staff Management Container -->
+    <div class="staff-container mb-4">
+        <div class="staff-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h4 class="staff-title">
+                        <i class="ri-admin-line me-2"></i>
+                        Staff Management Tools
+                    </h4>
+                    <p class="dashboard-subtitle">Advanced tools for staff members only</p>
+                </div>
+            </div>
+        </div>
+        <div class="dashboard-body">
 
     <!-- Orders from Inventory Section -->
     <div class="row mb-4">
@@ -191,8 +242,54 @@
                                     <th><?= lang('App.client_name') ?></th>
                                     <th><?= lang('App.service_date') ?></th>
                                     <th><?= lang('App.status') ?></th>
-                                    <th><?= lang('App.converted_by') ?></th>
+                                    <th>Source</th>
                                     <th><?= lang('App.actions') ?></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- DataTables will populate this -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- All Orders Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h5 class="card-title mb-0">
+                                <i class="ri-list-check-3 me-2"></i>
+                                All Orders
+                            </h5>
+                            <p class="text-muted small mb-0">All orders with source indicators</p>
+                        </div>
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-outline-primary" id="refreshAllOrdersBtn">
+                                <i class="ri-refresh-line me-1"></i>
+                                Refresh
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="allOrdersTable" class="table table-hover align-middle" style="width:100%">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Order #</th>
+                                    <th>Stock</th>
+                                    <th>Vehicle</th>
+                                    <th>Client</th>
+                                    <th>Service Date</th>
+                                    <th>Status</th>
+                                    <th>Source</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -213,6 +310,185 @@
 
 
 <style>
+/* Modern Container Styles */
+.dashboard-container {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(102, 126, 234, 0.1);
+    border: none;
+    overflow: hidden;
+}
+
+.dashboard-header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: none;
+    padding: 2rem;
+}
+
+.dashboard-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-subtitle {
+    color: #6b7280;
+    font-size: 1rem;
+    font-weight: 500;
+    margin: 0;
+}
+
+.dashboard-body {
+    background: #ffffff;
+    padding: 2rem;
+}
+
+/* Enhanced Card Styles */
+.modern-card {
+    background: #ffffff;
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.modern-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.modern-card-header {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border: none;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.modern-card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+.modern-card-title i {
+    margin-right: 0.75rem;
+    font-size: 1.3rem;
+}
+
+.modern-card-subtitle {
+    color: #64748b;
+    font-size: 0.875rem;
+    margin: 0.25rem 0 0 0;
+    font-weight: 500;
+}
+
+.modern-card-body {
+    padding: 2rem;
+}
+
+/* Staff Container Styles */
+.staff-container {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(245, 158, 11, 0.1);
+    border: none;
+    overflow: hidden;
+}
+
+.staff-header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: none;
+    padding: 2rem;
+}
+
+.staff-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+}
+
+/* Mini Average Days Widget */
+.avg-days-mini-widget {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    color: #1e293b;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.avg-days-mini-widget:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.avg-days-value {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.avg-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.avg-label {
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.9;
+}
+
+/* Table improvements */
+#inventoryTable th {
+    vertical-align: middle;
+    border-bottom: 2px solid #e5e7eb;
+    font-weight: 600;
+    color: #374151;
+    background-color: #f9fafb !important;
+}
+
+#inventoryTable td {
+    vertical-align: middle;
+    padding: 0.75rem 0.5rem;
+}
+
+.form-check {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+}
+
+.form-check-input {
+    margin: 0;
+}
+
+/* Hide Actions column completely */
+#inventoryTable th:nth-child(9),
+#inventoryTable td:nth-child(9) {
+    display: none !important;
+}
+
 .stats-card {
     transition: all 0.3s ease;
     border: none;
@@ -783,6 +1059,217 @@
     padding: 0.2rem 0.4rem;
     border-radius: 4px;
 }
+
+/* Enhanced stock number styling - text only */
+.stock-number-enhanced {
+    font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Consolas', monospace;
+    color: #2563eb;
+    font-size: 1.25em;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    line-height: 1;
+    display: inline-block;
+    text-transform: uppercase;
+    text-shadow: 0 1px 2px rgba(37, 99, 235, 0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stock-number-enhanced:hover {
+    color: #1d4ed8;
+    text-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
+    transform: scale(1.05);
+}
+
+/* Enhanced date styling */
+.date-enhanced {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #1e293b;
+    letter-spacing: 0.5px;
+}
+
+/* Status-based row background colors */
+.status-pending {
+    background-color: rgba(245, 158, 11, 0.08) !important;
+    border-left: 4px solid #f59e0b !important;
+}
+
+.status-pending:hover {
+    background-color: rgba(245, 158, 11, 0.12) !important;
+}
+
+.status-in-progress {
+    background-color: rgba(59, 130, 246, 0.08) !important;
+    border-left: 4px solid #3b82f6 !important;
+}
+
+.status-in-progress:hover {
+    background-color: rgba(59, 130, 246, 0.12) !important;
+}
+
+.status-completed {
+    background-color: rgba(16, 185, 129, 0.08) !important;
+    border-left: 4px solid #10b981 !important;
+}
+
+.status-completed:hover {
+    background-color: rgba(16, 185, 129, 0.12) !important;
+}
+
+.status-cancelled {
+    background-color: rgba(239, 68, 68, 0.08) !important;
+    border-left: 4px solid #ef4444 !important;
+}
+
+.status-cancelled:hover {
+    background-color: rgba(239, 68, 68, 0.12) !important;
+}
+
+.status-no-status {
+    background-color: rgba(107, 114, 128, 0.05) !important;
+    border-left: 4px solid #6b7280 !important;
+}
+
+.status-no-status:hover {
+    background-color: rgba(107, 114, 128, 0.08) !important;
+}
+
+/* Ensure status rows have smooth transitions */
+#inventoryTable tbody tr {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Duplicate Stock Alert Styling */
+.duplicate-alert,
+[id^="duplicate-icon-"] {
+    animation: pulse-warning 2s infinite;
+    filter: drop-shadow(0 0 2px rgba(245, 158, 11, 0.5));
+    position: relative;
+    z-index: 10;
+}
+
+.duplicate-alert:hover,
+[id^="duplicate-icon-"]:hover {
+    transform: scale(1.1);
+    transition: transform 0.2s ease;
+}
+
+@keyframes pulse-warning {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Enhanced tooltip for duplicates */
+.duplicate-alert {
+    position: relative;
+}
+
+/* Custom tooltip for duplicate alerts */
+.duplicate-alert::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 130%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+    z-index: 1050;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    min-width: max-content;
+}
+
+.duplicate-alert::before {
+    content: '';
+    position: absolute;
+    bottom: 120%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.9);
+    z-index: 1050;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.duplicate-alert:hover::after,
+.duplicate-alert:hover::before {
+    opacity: 1;
+    visibility: visible;
+}
+
+.duplicate-alert:hover::after {
+    transform: translateX(-50%) translateY(-2px);
+}
+
+/* Duplicate stock row highlighting */
+.inventory-row.has-duplicate {
+    background-color: #fef3cd !important;
+    border-left: 3px solid #ffc107 !important;
+}
+
+.inventory-row.has-duplicate:hover {
+    background-color: #fff3cd !important;
+}
+
+/* Center align table headers */
+#inventoryTable thead th {
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+/* Center align specific columns content */
+#inventoryTable tbody td:nth-child(2), /* Date in Detail */
+#inventoryTable tbody td:nth-child(3), /* Day in This Step */
+#inventoryTable tbody td:nth-child(4), /* Keys */
+#inventoryTable tbody td:nth-child(5), /* Stock Number */
+#inventoryTable tbody td:nth-child(8), /* Status */
+#inventoryTable tbody td:nth-child(9)  /* Actions */
+{
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+/* Hidden loading indicator */
+.dataTables_processing {
+    display: none !important;
+}
+
+/* Alternative: Very discrete loading in table header */
+.dataTables_wrapper .dataTables_processing {
+    position: absolute !important;
+    top: -2px !important;
+    right: 5px !important;
+    left: auto !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 2px 6px !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    font-size: 0.6rem !important;
+    color: rgba(108, 117, 125, 0.5) !important;
+    z-index: 1001 !important;
+    opacity: 0.3 !important;
+}
 </style>
 
 <script>
@@ -790,6 +1277,87 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize localStorage for vehicles tab
     initializeVehiclesLocalStorage();
+    
+    // Function to detect duplicate stock numbers
+    function detectDuplicateStocks(data) {
+        console.log('🔍 Starting duplicate detection with', data.length, 'items');
+        
+        const stockCounts = new Map();
+        const duplicates = new Set();
+        const allStocks = [];
+        
+        // Count occurrences of each stock number
+        data.forEach((row, index) => {
+            const stockNumber = row[2]; // stock_number is at index 2
+            if (stockNumber && stockNumber.toString().trim() !== '') {
+                const cleanStock = stockNumber.toString().trim();
+                allStocks.push(cleanStock);
+                
+                const count = stockCounts.get(cleanStock) || 0;
+                stockCounts.set(cleanStock, count + 1);
+                
+                console.log(`Row ${index}: Stock "${cleanStock}" - Count: ${count + 1}`);
+            }
+        });
+        
+        // Identify duplicates (stocks that appear more than once)
+        stockCounts.forEach((count, stockNumber) => {
+            if (count > 1) {
+                duplicates.add(stockNumber);
+                console.log(`🚨 Duplicate found: "${stockNumber}" appears ${count} times`);
+            }
+        });
+        
+        // Store duplicates globally for use in column rendering
+        window.duplicateStocks = duplicates;
+        window.allStockNumbers = allStocks; // For debugging
+        
+        // Log duplicate information for debugging
+        console.log('📊 Stock analysis:', {
+            totalItems: data.length,
+            uniqueStocks: stockCounts.size,
+            duplicateStocks: duplicates.size,
+            duplicateList: Array.from(duplicates)
+        });
+        
+        if (duplicates.size > 0) {
+            console.log('🚨 Duplicate stock numbers detected:', Array.from(duplicates));
+            
+            // Only show toast if duplicates have changed or it's the first time
+            const duplicateKey = Array.from(duplicates).sort().join(',');
+            if (!window.lastDuplicateKey || window.lastDuplicateKey !== duplicateKey) {
+                const duplicateCount = duplicates.size;
+                const duplicateList = Array.from(duplicates).slice(0, 3).join(', ');
+                const message = duplicateCount > 3 
+                    ? `<?= lang('App.multiple_duplicates_found') ?>: ${duplicateCount} (${duplicateList}...)`
+                    : `<?= lang('App.duplicates_found') ?>: ${duplicateList}`;
+                
+                showToast(message, 'warning');
+                window.lastDuplicateKey = duplicateKey;
+            }
+        } else {
+            console.log('✅ No duplicate stock numbers found');
+            // Clear the duplicate key if no duplicates found
+            window.lastDuplicateKey = null;
+        }
+        
+        return duplicates;
+    }
+
+    // Function to update duplicate icons in stock column
+    function updateDuplicateIcons() {
+        if (!window.inventoryTable || !window.duplicateStocks || window.duplicateStocks.size === 0) {
+            console.log('⚠️ No duplicates to update or table not ready');
+            return;
+        }
+        
+        console.log('🔄 Updating duplicate icons in stock column for:', Array.from(window.duplicateStocks));
+        
+        // Force a complete redraw to ensure the render function is called
+        window.inventoryTable.draw(false);
+        
+        console.log('✅ Table redrawn to show duplicate icons');
+    }
     
     // Function to initialize all tables
     function initializeTables() {
@@ -834,6 +1402,21 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                     
                     updateInventoryStats(data);
+                    
+                    // Detect duplicate stock numbers
+                    detectDuplicateStocks(data);
+                    
+                    // Schedule order info loading after table data is processed
+                    setTimeout(() => {
+                        loadOrderInfoForInventory();
+                        
+                        // Force table redraw to show duplicate icons immediately
+                        if (window.duplicateStocks && window.duplicateStocks.size > 0) {
+                            console.log('🔄 Forcing table redraw to show duplicate icons for:', Array.from(window.duplicateStocks));
+                            updateDuplicateIcons();
+                        }
+                    }, 100); // Reduced timeout for faster response
+                    
                     return data.map((row, index) => {
                         // Calculate days from date_detail if it exists
                         let calculatedDays = '';
@@ -892,7 +1475,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             keys: row[1] || '', // Shifted: was row[2]
                             stock_number: row[2] || '', // Shifted: was row[3] 
                             vehicle: row[3] || '', // Shifted: was row[4]
-                            write_up_date: row[4] || '', // Shifted: was row[5]
+                            notes: row[5] || '', // Notes from webhook (was write_up_date)
                             raw_data: row
                         };
                         
@@ -919,7 +1502,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 {
                     data: 'date_detail',
                     render: function(data, type, row) {
-                        return data ? `<span class="text-muted">${data}</span>` : '-';
+                        return data ? `<span class="date-enhanced">${data}</span>` : '-';
                     }
                 },
                 {
@@ -955,7 +1538,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 {
                     data: 'stock_number',
                     render: function(data, type, row) {
-                        return data ? `<strong class="text-primary">${data}</strong>` : '-';
+                        if (!data) return '<div class="text-center">-</div>';
+                        
+                        // Check for duplicates
+                        let duplicateIcon = '';
+                        if (window.duplicateStocks && window.duplicateStocks.has(data.toString().trim())) {
+                            duplicateIcon = `<i class="ri-alert-line text-warning ms-2 duplicate-alert" 
+                                title="<?= lang('App.duplicate_stock_detected') ?>" 
+                                style="font-size: 0.9rem; cursor: pointer; animation: pulse-warning 2s infinite;"></i>`;
+                            console.log('🚨 Rendering duplicate icon for stock:', data);
+                        }
+                        
+                        return `<div class="d-flex align-items-center justify-content-center">
+                            <span class="stock-number-enhanced">${data}</span>
+                            ${duplicateIcon}
+                        </div>`;
                     }
                 },
                 {
@@ -965,9 +1562,22 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 },
                 {
-                    data: 'write_up_date',
+                    data: 'notes',
                     render: function(data, type, row) {
-                        return data ? `<span class="text-muted">${data}</span>` : '-';
+                        if (!data || data.trim() === '') return '-';
+                        // Show first 30 characters with tooltip for full content
+                        const shortText = data.length > 30 ? data.substring(0, 30) + '...' : data;
+                        return `<span class="text-muted" title="${data}" data-bs-toggle="tooltip">${shortText}</span>`;
+                    }
+                },
+                {
+                    data: null,
+                    orderable: false,
+                    render: function(data, type, row) {
+                        // This will be populated by the order info lookup
+                        return `<div class="status-service-info" data-stock="${row.stock_number}">
+                            <span class="text-muted">Loading...</span>
+                        </div>`;
                     }
                 },
                 {
@@ -982,13 +1592,59 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             ],
             order: [[2, 'desc']], // Sort by days in this step (descending - most days first)
-            pageLength: 10,
+            pageLength: 25,
+            lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
             responsive: true,
             language: {
-                processing: '<div class="d-flex justify-content-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>',
+                processing: '<span style="font-size: 0.6rem; color: rgba(108, 117, 125, 0.4);">•</span>',
                 emptyTable: '<div class="text-center py-4"><i class="ri-store-3-line display-4 text-muted"></i><h6 class="mt-2"><?= lang('App.no_inventory_available') ?></h6><p class="text-muted"><?= lang('App.inventory_empty') ?></p></div>'
+            },
+            drawCallback: function(settings) {
+                const $ = window.jQuery;
+                
+                // Highlight rows with duplicate stocks
+                if (window.duplicateStocks && window.duplicateStocks.size > 0) {
+                    console.log('📋 DrawCallback: Highlighting duplicate rows for:', Array.from(window.duplicateStocks));
+                    
+                    $('#inventoryTable tbody tr').each(function() {
+                        const $row = $(this);
+                        const rowData = window.inventoryTable.row($row).data();
+                        
+                        if (rowData && rowData.stock_number && window.duplicateStocks.has(rowData.stock_number.toString().trim())) {
+                            $row.addClass('has-duplicate');
+                            console.log('🎨 Added duplicate highlighting to row with stock:', rowData.stock_number);
+                        }
+                    });
+                }
+                
+                // Initialize tooltips if available (non-blocking)
+                setTimeout(() => {
+                    try {
+                        if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+                            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                                return new bootstrap.Tooltip(tooltipTriggerEl);
+                            });
+                        }
+                    } catch (error) {
+                        // Silently fail - tooltips are not critical
+                    }
+                }, 100);
             }
         });
+
+        // Initialize last refresh time
+        const lastRefreshInfo = document.getElementById('lastRefreshInfo');
+        if (lastRefreshInfo) {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', {
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            lastRefreshInfo.textContent = `Last refresh: ${timeString} (Initial)`;
+        }
 
         // Initialize Inventory Orders Table
         window.inventoryOrdersTable = $('#inventoryOrdersTable').DataTable({
@@ -1010,19 +1666,78 @@ document.addEventListener('DOMContentLoaded', function() {
                 {
                     data: 'order_number',
                     render: function(data, type, row) {
-                        return `<strong class="text-primary">#${data}</strong>`;
+                        let html = `<div class="d-flex align-items-center">`;
+                        
+                        // Add inventory source indicator (all orders in this table are from inventory)
+                        html += `<span class="badge bg-info-subtle text-info me-2" title="Created from Inventory">
+                            <i class="ri-store-3-line"></i>
+                        </span>`;
+                        
+                        html += `<strong class="text-primary">#${data}</strong></div>`;
+                        return html;
                     }
                 },
                 {
                     data: 'stock',
                     render: function(data, type, row) {
-                        return data ? `<span class="badge bg-light text-dark">${data}</span>` : '-';
+                        let html = `<div class="text-center">`;
+                        
+                        // Stock number
+                        if (data && data !== 'N/A') {
+                            html += `<div class="stock-number-badge mb-1">
+                                <span class="badge bg-primary-subtle text-primary fw-bold px-2 py-1" style="font-size: 0.75rem; letter-spacing: 0.3px;">
+                                    ${data}
+                                </span>
+                            </div>`;
+                        } else {
+                            html += `<div class="stock-number-badge mb-1">
+                                <span class="badge bg-secondary-subtle text-secondary fw-bold px-2 py-1" style="font-size: 0.75rem;">
+                                    N/A
+                                </span>
+                            </div>`;
+                        }
+                        
+                        // Service information instead of VIN
+                        if (row.service_name && row.service_name !== 'N/A') {
+                            const serviceColor = row.service_color || '#007bff';
+                            html += `<div class="service-info mt-1">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <div class="service-color-dot me-1" style="width: 8px; height: 8px; border-radius: 50%; background-color: ${serviceColor};"></div>
+                                    <small class="text-muted" style="font-size: 0.7rem;">
+                                        ${row.service_name}
+                                    </small>
+                                </div>
+                            </div>`;
+                        } else {
+                            html += `<div class="service-info mt-1">
+                                <small class="text-muted" style="font-size: 0.65rem; opacity: 0.6;">
+                                    No Service
+                                </small>
+                            </div>`;
+                        }
+                        
+                        html += `</div>`;
+                        return html;
                     }
                 },
                 {
                     data: 'vehicle',
                     render: function(data, type, row) {
-                        return data || '-';
+                        let html = `<div><span class="fw-medium">${data || 'N/A'}</span>`;
+                        
+                        // VIN number - moved from stock column
+                        let vinNumber = row.vin || row.vin_number || row.vehicle_vin || row.VIN || '';
+                        
+                        if (vinNumber && vinNumber !== 'N/A' && vinNumber.toString().trim() !== '') {
+                            html += `<div class="vin-number mt-1">
+                                <small class="text-muted d-block" style="font-size: 0.7rem; font-family: monospace; letter-spacing: 0.2px; line-height: 1.2;">
+                                    <i class="ri-barcode-line me-1" style="font-size: 0.8rem;"></i>${vinNumber}
+                                </small>
+                            </div>`;
+                        }
+                        
+                        html += `</div>`;
+                        return html;
                     }
                 },
                 {
@@ -1051,9 +1766,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 },
                 {
-                    data: 'created_by_name',
+                    data: 'source_type',
                     render: function(data, type, row) {
-                        return data ? `<small class="text-muted">${data}</small>` : '-';
+                        // All orders in this table are from inventory
+                        const sourceText = 'Inventory';
+                        const sourceBadgeClass = 'bg-info';
+                        const sourceIcon = 'ri-store-3-line';
+                        
+                        return `<span class="badge ${sourceBadgeClass}">
+                            <i class="${sourceIcon} me-1"></i>${sourceText}
+                        </span>`;
                     }
                 },
                 {
@@ -1075,11 +1797,218 @@ document.addEventListener('DOMContentLoaded', function() {
             pageLength: 10,
             responsive: true,
             language: {
-                processing: '<div class="d-flex justify-content-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>',
+                processing: '<span style="font-size: 0.6rem; color: rgba(108, 117, 125, 0.4);">•</span>',
                 emptyTable: '<div class="text-center py-4"><i class="ri-file-list-3-line display-4 text-muted"></i><h6 class="mt-2">No orders from inventory</h6><p class="text-muted">Orders created from inventory will appear here</p></div>'
+            },
+            drawCallback: function(settings) {
+                $('[data-bs-toggle="tooltip"]').tooltip();
+                
+                // Apply status color to rows
+                $('#inventoryOrdersTable tbody tr').each(function() {
+                    var $row = $(this);
+                    var rowData = inventoryOrdersTable.row($row).data();
+                    if (rowData && rowData.status) {
+                        const statusColors = {
+                            'pending': '#ffc107',
+                            'in_progress': '#17a2b8',
+                            'completed': '#28a745',
+                            'cancelled': '#dc3545'
+                        };
+                        var color = statusColors[rowData.status] || '#6c757d';
+                        var rgba = hexToRgba(color, 0.15);
+                        $row.css({
+                            'background-color': rgba,
+                            'border-left': '4px solid ' + color,
+                            'transition': 'all 0.3s ease'
+                        });
+                    }
+                });
             }
         });
 
+        // Initialize All Orders Table
+        window.allOrdersTable = $('#allOrdersTable').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: '<?= base_url('recon_orders/all_orders_content') ?>',
+                type: 'POST',
+                data: function(d) {
+                    d.ajax = true;
+                    return d;
+                },
+                error: function(xhr, error, thrown) {
+                    showToast('Error loading all orders', 'error');
+                }
+            },
+            columns: [
+                {
+                    data: 'order_number',
+                    render: function(data, type, row) {
+                        let html = `<div class="d-flex align-items-center">`;
+                        
+                        // Add source indicator badge
+                        const isFromInventory = row.from_inventory == 1;
+                        const sourceIcon = isFromInventory ? 'ri-store-3-line' : 'ri-edit-line';
+                        const sourceBadgeClass = isFromInventory ? 'bg-info-subtle text-info' : 'bg-primary-subtle text-primary';
+                        const sourceTitle = isFromInventory ? 'Created from Inventory' : 'Created Manually';
+                        
+                        html += `<span class="badge ${sourceBadgeClass} me-2" title="${sourceTitle}">
+                            <i class="${sourceIcon}"></i>
+                        </span>`;
+                        
+                        html += `<strong class="text-primary">${data}</strong></div>`;
+                        return html;
+                    }
+                },
+                {
+                    data: 'stock',
+                    render: function(data, type, row) {
+                        let html = `<div class="text-center">`;
+                        
+                        // Stock number
+                        if (data && data !== 'N/A') {
+                            html += `<div class="stock-number-badge mb-1">
+                                <span class="badge bg-primary-subtle text-primary fw-bold px-2 py-1" style="font-size: 0.75rem; letter-spacing: 0.3px;">
+                                    ${data}
+                                </span>
+                            </div>`;
+                        } else {
+                            html += `<div class="stock-number-badge mb-1">
+                                <span class="badge bg-secondary-subtle text-secondary fw-bold px-2 py-1" style="font-size: 0.75rem;">
+                                    N/A
+                                </span>
+                            </div>`;
+                        }
+                        
+                        // Service information instead of VIN
+                        if (row.service_name && row.service_name !== 'N/A') {
+                            const serviceColor = row.service_color || '#007bff';
+                            html += `<div class="service-info mt-1">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <div class="service-color-dot me-1" style="width: 8px; height: 8px; border-radius: 50%; background-color: ${serviceColor};"></div>
+                                    <small class="text-muted" style="font-size: 0.7rem;">
+                                        ${row.service_name}
+                                    </small>
+                                </div>
+                            </div>`;
+                        } else {
+                            html += `<div class="service-info mt-1">
+                                <small class="text-muted" style="font-size: 0.65rem; opacity: 0.6;">
+                                    No Service
+                                </small>
+                            </div>`;
+                        }
+                        
+                        html += `</div>`;
+                        return html;
+                    }
+                },
+                {
+                    data: 'vehicle',
+                    render: function(data, type, row) {
+                        let html = `<div><span class="fw-medium">${data || 'N/A'}</span>`;
+                        
+                        // VIN number - moved from stock column
+                        let vinNumber = row.vin || row.vin_number || row.vehicle_vin || row.VIN || '';
+                        
+                        if (vinNumber && vinNumber !== 'N/A' && vinNumber.toString().trim() !== '') {
+                            html += `<div class="vin-number mt-1">
+                                <small class="text-muted d-block" style="font-size: 0.7rem; font-family: monospace; letter-spacing: 0.2px; line-height: 1.2;">
+                                    <i class="ri-barcode-line me-1" style="font-size: 0.8rem;"></i>${vinNumber}
+                                </small>
+                            </div>`;
+                        }
+                        
+                        html += `</div>`;
+                        return html;
+                    }
+                },
+                {
+                    data: 'client_name',
+                    render: function(data, type, row) {
+                        return data || '-';
+                    }
+                },
+                {
+                    data: 'service_date',
+                    render: function(data, type, row) {
+                        return data || '-';
+                    }
+                },
+                {
+                    data: 'status',
+                    render: function(data, type, row) {
+                        const statusColors = {
+                            'pending': 'warning',
+                            'in_progress': 'info',
+                            'completed': 'success',
+                            'cancelled': 'danger'
+                        };
+                        const color = statusColors[data] || 'secondary';
+                        return `<span class="badge bg-${color}">${data}</span>`;
+                    }
+                },
+                {
+                    data: 'source_type',
+                    render: function(data, type, row) {
+                        const isFromInventory = row.from_inventory == 1;
+                        const sourceText = isFromInventory ? 'Inventory' : 'Manual';
+                        const sourceBadgeClass = isFromInventory ? 'bg-info' : 'bg-primary';
+                        const sourceIcon = isFromInventory ? 'ri-store-3-line' : 'ri-edit-line';
+                        
+                        return `<span class="badge ${sourceBadgeClass}">
+                            <i class="${sourceIcon} me-1"></i>${sourceText}
+                        </span>`;
+                    }
+                },
+                {
+                    data: null,
+                    orderable: false,
+                    render: function(data, type, row) {
+                        return `<div class="btn-group btn-group-sm">
+                            <a href="<?= base_url('recon_orders/view/') ?>${row.id}" class="btn btn-outline-primary btn-sm">
+                                <i class="ri-eye-line"></i>
+                            </a>
+                            <a href="<?= base_url('recon_orders/edit/') ?>${row.id}" class="btn btn-outline-secondary btn-sm">
+                                <i class="ri-edit-line"></i>
+                            </a>
+                        </div>`;
+                    }
+                }
+            ],
+            order: [[0, 'desc']], // Sort by order number
+            pageLength: 10,
+            responsive: true,
+            language: {
+                processing: '<span style="font-size: 0.6rem; color: rgba(108, 117, 125, 0.4);">•</span>',
+                emptyTable: '<div class="text-center py-4"><i class="ri-list-check-3 display-4 text-muted"></i><h6 class="mt-2">No orders found</h6><p class="text-muted">Orders will appear here</p></div>'
+            },
+            drawCallback: function(settings) {
+                $('[data-bs-toggle="tooltip"]').tooltip();
+                
+                // Apply status color to rows
+                $('#allOrdersTable tbody tr').each(function() {
+                    var $row = $(this);
+                    var rowData = window.allOrdersTable.row($row).data();
+                    if (rowData && rowData.status) {
+                        const statusColors = {
+                            'pending': '#ffc107',
+                            'in_progress': '#17a2b8',
+                            'completed': '#28a745',
+                            'cancelled': '#dc3545'
+                        };
+                        var color = statusColors[rowData.status] || '#6c757d';
+                        var rgba = hexToRgba(color, 0.15);
+                        $row.css({
+                            'background-color': rgba,
+                            'border-left': '4px solid ' + color,
+                            'transition': 'all 0.3s ease'
+                        });
+                    }
+                });
+            }
+        });
 
 
         // Event Handlers
@@ -1138,17 +2067,57 @@ document.addEventListener('DOMContentLoaded', function() {
         // Single convert buttons - Open main modal with inventory data
         $(document).on('click', '.convert-single-btn', function() {
             const rowData = JSON.parse($(this).attr('data-row'));
+            console.log('🔄 Convert button clicked, row data:', rowData);
             openMainModalWithInventoryData(rowData);
         });
 
         // Refresh buttons
         $('#refreshInventoryBtn').on('click', function() {
-            window.inventoryTable.ajax.reload();
+            const $btn = $(this);
+            const originalHtml = $btn.html();
+            
+            // Update button to show loading
+            $btn.html('<i class="ri-refresh-line me-1 spinner-border spinner-border-sm"></i> Refreshing...');
+            $btn.prop('disabled', true);
+            
+            window.inventoryTable.ajax.reload(function() {
+                // Update last refresh time
+                const lastRefreshInfo = document.getElementById('lastRefreshInfo');
+                if (lastRefreshInfo) {
+                    const now = new Date();
+                    const timeString = now.toLocaleTimeString('en-US', {
+                        hour12: false,
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                    });
+                    lastRefreshInfo.textContent = `Last refresh: ${timeString} (Manual)`;
+                }
+                
+                // Restore button
+                $btn.html(originalHtml);
+                $btn.prop('disabled', false);
+                
+                // Also refresh order status info
+                loadOrderInfoForInventory();
+                
+                // Update duplicate icons after refresh
+                setTimeout(() => {
+                    if (window.duplicateStocks && window.duplicateStocks.size > 0) {
+                        updateDuplicateIcons();
+                    }
+                }, 300);
+                
             showToast('<?= lang('App.inventory_refreshed') ?>', 'success');
+            });
         });
 
         $('#refreshInventoryOrdersBtn').on('click', function() {
             window.inventoryOrdersTable.ajax.reload();
+        });
+
+        $('#refreshAllOrdersBtn').on('click', function() {
+            window.allOrdersTable.ajax.reload();
         });
 
 
@@ -1167,6 +2136,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function openMainModalWithInventoryData(rowData) {
+        console.log('🔄 openMainModalWithInventoryData called with:', rowData);
+        
         // Create inventory notes in the requested format
         const daysText = rowData.days_detail ? 
             (rowData.days_detail === 1 ? `${rowData.days_detail} day` : `${rowData.days_detail} days`) : 
@@ -1181,13 +2152,19 @@ Write Up Date: ${rowData.write_up_date || 'N/A'}
 Stock Number: ${rowData.stock_number || 'N/A'}
 Original Vehicle: ${rowData.vehicle || 'N/A'}`;
 
-        // Store inventory data in the main modal
-        $('#reconOrderModal').data('inventory-data', {
+        const inventoryData = {
             stock: rowData.stock_number || '',
             vehicle: rowData.vehicle || '',
             notes: inventoryNotes,
             service_date: new Date().toISOString().split('T')[0]
-        });
+        };
+
+        console.log('📦 Setting inventory data:', inventoryData);
+        
+        // Store inventory data in the main modal
+        $('#reconOrderModal').data('inventory-data', inventoryData);
+        
+        console.log('🔄 Opening modal...');
         
         // Open the main modal
         $('#reconOrderModal').modal('show');
@@ -1287,15 +2264,25 @@ Original Vehicle: ${rowData.vehicle || 'N/A'}`;
     function updateInventoryStats(data) {
         if (!Array.isArray(data)) return;
         
-        const total = data.length;
+        // Filter out completed items for stats calculation
+        const filteredData = data.filter(row => {
+            const stockNumber = row[2]; // stock_number is at index 2
+            if (!stockNumber || !window.orderInfoLookup) return true; // Include if no status info available
+            
+            const orderInfo = window.orderInfoLookup[stockNumber.toString().trim()];
+            return !orderInfo || orderInfo.status !== 'completed'; // Exclude completed items
+        });
         
-        // Calculate days and categorize items
+        const total = filteredData.length;
+        const totalAll = data.length; // Keep track of all items for reference
+        
+        // Calculate days and categorize items (only non-completed)
         const daysData = [];
         let recentItems = 0; // 0-1 days
         let moderateItems = 0; // 2-5 days  
         let agedItems = 0; // 6+ days
         
-        data.forEach(row => {
+        filteredData.forEach(row => {
             if (row[0]) { // date_detail exists
                 try {
                     // Handle different date formats that might come from Google Sheets
@@ -1342,9 +2329,14 @@ Original Vehicle: ${rowData.vehicle || 'N/A'}`;
         
         const avgDays = daysData.length > 0 ? Math.round(daysData.reduce((a, b) => a + b, 0) / daysData.length) : 0;
         
-        // Update basic stats
+        console.log(`📊 Stats updated - Total: ${total} (filtered), All: ${totalAll}, Avg Days: ${avgDays}`);
+        
+        // Update basic stats (showing filtered counts)
         $('#totalInventoryItems').text(total);
         $('#avgDaysInDetail').text(avgDays);
+        
+        // Update mini widget average days
+        $('#avgDaysNumber').text(avgDays);
         
         // Update category counts
         $('#recentItems').text(recentItems);
@@ -1562,6 +2554,191 @@ Original Vehicle: ${rowData.vehicle || 'N/A'}`;
     
     // Refresh stats every 30 seconds
     setInterval(refreshStats, 30000);
+    
+    // Function to load order information for inventory matching
+    function loadOrderInfoForInventory() {
+        const $ = window.jQuery;
+        
+        console.log('🔍 Loading order info for inventory matching...');
+        
+        $.post('<?= base_url('recon_orders/get_order_info_by_stock') ?>', { ajax: true })
+            .done(function(response) {
+                console.log('📦 Order info response:', response);
+                
+                // Check if response is JSON
+                if (typeof response === 'string') {
+                    try {
+                        response = JSON.parse(response);
+                    } catch (e) {
+                        console.error('❌ Invalid JSON response:', response.substring(0, 200));
+                        return;
+                    }
+                }
+                
+                if (response.success && response.data) {
+                    window.orderInfoLookup = response.data;
+                    console.log('✅ Order info loaded:', Object.keys(response.data).length, 'items');
+                    console.log('📋 Sample data:', Object.keys(response.data).slice(0, 3).map(key => ({
+                        stock: key,
+                        info: response.data[key]
+                    })));
+                    updateInventoryStatusColumns();
+                } else {
+                    console.log('⚠️ No order info data received');
+                    console.log('Response details:', response);
+                }
+            })
+            .fail(function(xhr, status, error) {
+                console.error('❌ Failed to load order info:', status, error);
+                console.log('Response:', xhr.responseText?.substring(0, 200));
+            });
+    }
+    
+    // Function to update status/service columns in inventory table
+    function updateInventoryStatusColumns() {
+        const $ = window.jQuery;
+        
+        console.log('🔄 Updating inventory status columns...');
+        const statusElements = $('.status-service-info');
+        console.log('Found', statusElements.length, 'status elements to update');
+        
+        statusElements.each(function() {
+            const $element = $(this);
+            const stockNumber = $element.data('stock');
+            console.log('Processing stock number:', stockNumber);
+            
+            if (stockNumber && window.orderInfoLookup && window.orderInfoLookup[stockNumber]) {
+                const orderInfo = window.orderInfoLookup[stockNumber];
+                
+                let html = '<div class="d-flex flex-column align-items-center gap-1">';
+                
+                // Status badge - highlighted and prominent
+                const statusColors = {
+                    'pending': 'warning',
+                    'in_progress': 'info', 
+                    'completed': 'success',
+                    'cancelled': 'danger'
+                };
+                const statusColor = statusColors[orderInfo.status] || 'secondary';
+                html += `<span class="badge bg-${statusColor} px-2 py-1 fw-bold text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px;">${orderInfo.status}</span>`;
+                
+                // Service info below - smaller and muted
+                if (orderInfo.service_name) {
+                    const serviceColor = orderInfo.service_color || '#007bff';
+                    html += `<div class="d-flex align-items-center mt-1">
+                        <div class="service-color-dot me-1" style="width: 5px; height: 5px; border-radius: 50%; background-color: ${serviceColor};"></div>
+                        <small class="text-muted" style="font-size: 0.6rem; opacity: 0.8;">${orderInfo.service_name}</small>
+                    </div>`;
+                }
+                
+                html += '</div>';
+                $element.html(html);
+            } else {
+                $element.html('<div class="d-flex flex-column align-items-center"><span class="badge bg-secondary-subtle text-secondary px-2 py-1 fw-bold text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px;">NO STATUS YET</span></div>');
+            }
+        });
+    }
+    
+    // Make loadOrderInfoForInventory available globally for refresh
+    window.loadOrderInfoForInventory = loadOrderInfoForInventory;
+    
+    // Debug function to test duplicate detection (temporary)
+    window.testDuplicateDetection = function() {
+        console.log('🧪 Testing duplicate detection...');
+        
+        // Create test data with duplicates
+        const testData = [
+            ['8/4/2025', '12', '2', 'BN28875', '2018 BMW 530'],
+            ['8/6/2025', '10', '2', 'B35232B', '2023 BMW 330XE'],
+            ['8/6/2025', '10', '2', 'BN28875', '2018 BMW 530'], // Duplicate
+            ['8/8/2025', '8', '2', 'B35396A', '2023 BMW X5'],
+            ['8/9/2025', '7', '1', 'B35232B', '2023 BMW 330XE'] // Duplicate
+        ];
+        
+        const duplicates = detectDuplicateStocks(testData);
+        console.log('🧪 Test results - Duplicates found:', Array.from(duplicates));
+        
+        if (window.inventoryTable) {
+            updateDuplicateIcons();
+        }
+    };
+    
+    // Real-time sync functionality
+    let pollingTimer = null;
+    const pollingInterval = 30000; // 30 seconds
+    
+    function startRealTimeSync() {
+        console.log('🔄 Starting real-time sync for inventory table');
+        
+        // Clear any existing polling
+        if (pollingTimer) {
+            clearInterval(pollingTimer);
+        }
+        
+        // Set up new polling
+        pollingTimer = setInterval(() => {
+            console.log('🔄 Real-time sync: Refreshing inventory data');
+            
+            // Update sync indicator
+            const syncIndicator = document.getElementById('syncIndicator');
+            if (syncIndicator) {
+                syncIndicator.innerHTML = '<i class="ri-refresh-line"></i> Syncing...';
+                syncIndicator.className = 'badge bg-warning-subtle text-warning ms-2';
+            }
+            
+            if (window.inventoryTable) {
+                window.inventoryTable.ajax.reload(function() {
+                    // Update sync indicator on completion
+                    if (syncIndicator) {
+                        syncIndicator.innerHTML = '<i class="ri-wifi-line"></i> Live Sync';
+                        syncIndicator.className = 'badge bg-success-subtle text-success ms-2';
+                    }
+                    
+                    // Update last refresh time
+                    const lastRefreshInfo = document.getElementById('lastRefreshInfo');
+                    if (lastRefreshInfo) {
+                        const now = new Date();
+                        const timeString = now.toLocaleTimeString('en-US', {
+                            hour12: false,
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit'
+                        });
+                        lastRefreshInfo.textContent = `Last refresh: ${timeString}`;
+                    }
+                    
+                    loadOrderInfoForInventory(); // Also refresh order status info
+                    
+                    // Update duplicate icons after auto-refresh
+                    setTimeout(() => {
+                        if (window.duplicateStocks && window.duplicateStocks.size > 0) {
+                            updateDuplicateIcons();
+                        }
+                    }, 300);
+                }, false); // false = don't reset paging
+            }
+        }, pollingInterval);
+        
+        console.log('✅ Real-time sync started');
+    }
+    
+    function stopRealTimeSync() {
+        if (pollingTimer) {
+            clearInterval(pollingTimer);
+            pollingTimer = null;
+            console.log('⏹️ Real-time sync stopped');
+        }
+    }
+    
+    // Start real-time sync
+    startRealTimeSync();
+    
+    // Stop polling when page is about to unload
+    window.addEventListener('beforeunload', stopRealTimeSync);
+    
+    // Make functions available globally
+    window.startRealTimeSync = startRealTimeSync;
+    window.stopRealTimeSync = stopRealTimeSync;
 });
 
 
@@ -1591,3 +2768,8 @@ function showToast(message, type = 'success') {
     }
 }
 </script>
+
+        </div>
+    </div>
+
+</div>

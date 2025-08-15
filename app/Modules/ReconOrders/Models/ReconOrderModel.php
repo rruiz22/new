@@ -16,7 +16,8 @@ class ReconOrderModel extends Model
         'order_number', 'client_id', 'stock', 'vin_number', 'vehicle', 'service_id', 'service_date', 'services', 'pictures',
         'status', 'notes', 'internal_notes', 'assigned_to',
         'short_url', 'short_url_slug', 'lima_link_id', 'qr_generated_at',
-        'created_by', 'updated_by', 'deleted_by'
+        'created_by', 'updated_by', 'deleted_by',
+        'from_inventory', 'source_type', 'inventory_data'
     ];
 
     // Dates

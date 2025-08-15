@@ -480,7 +480,7 @@ function initializeTodayTable() {
             ],
             columns: [
                 {
-                    data: 'order_id',
+                    data: 'order_number',
                     render: function(data, type, row) {
                         let html = `<div><span class="fw-medium text-primary">${data || 'N/A'}</span>`;
                         
@@ -562,20 +562,21 @@ function initializeTodayTable() {
                             </div>`;
                         }
                         
-                        // VIN number - intentar múltiples campos posibles
-                        let vinNumber = row.vin || row.vin_number || row.vehicle_vin || row.VIN || '';
-                        
-                        if (vinNumber && vinNumber !== 'N/A' && vinNumber.toString().trim() !== '') {
-                            html += `<div class="vin-number mt-1">
-                                <small class="text-muted d-block" style="font-size: 0.7rem; font-family: monospace; letter-spacing: 0.2px; line-height: 1.2;">
-                                    <i class="ri-barcode-line me-1" style="font-size: 0.8rem;"></i>${vinNumber}
-                                </small>
+                        // Service information instead of VIN
+                        if (row.service_name && row.service_name !== 'N/A') {
+                            const serviceColor = row.service_color || '#007bff';
+                            html += `<div class="service-info mt-1">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <div class="service-color-dot me-1" style="width: 8px; height: 8px; border-radius: 50%; background-color: ${serviceColor};"></div>
+                                    <small class="text-muted" style="font-size: 0.7rem;">
+                                        ${row.service_name}
+                                    </small>
+                                </div>
                             </div>`;
                         } else {
-                            // Mostrar placeholder para debug
-                            html += `<div class="vin-number mt-1">
-                                <small class="text-muted d-block" style="font-size: 0.65rem; opacity: 0.6;">
-                                    <i class="ri-barcode-line me-1"></i>No VIN
+                            html += `<div class="service-info mt-1">
+                                <small class="text-muted" style="font-size: 0.65rem; opacity: 0.6;">
+                                    No Service
                                 </small>
                             </div>`;
                         }
@@ -587,7 +588,21 @@ function initializeTodayTable() {
                 {
                     data: 'vehicle',
                     render: function(data, type, row) {
-                        return `<div><span class="fw-medium">${data || 'N/A'}</span></div>`;
+                        let html = `<div><span class="fw-medium">${data || 'N/A'}</span>`;
+                        
+                        // VIN number - moved from stock column
+                        let vinNumber = row.vin || row.vin_number || row.vehicle_vin || row.VIN || '';
+                        
+                        if (vinNumber && vinNumber !== 'N/A' && vinNumber.toString().trim() !== '') {
+                            html += `<div class="vin-number mt-1">
+                                <small class="text-muted d-block" style="font-size: 0.7rem; font-family: monospace; letter-spacing: 0.2px; line-height: 1.2;">
+                                    <i class="ri-barcode-line me-1" style="font-size: 0.8rem;"></i>${vinNumber}
+                                </small>
+                            </div>`;
+                        }
+                        
+                        html += `</div>`;
+                        return html;
                     }
                 },
                 {
@@ -634,13 +649,19 @@ function initializeTodayTable() {
             drawCallback: function(settings) {
                 $('[data-bs-toggle="tooltip"]').tooltip();
                 
-                // Apply service color to rows
+                // Apply status color to rows
                 $('#today-table tbody tr').each(function() {
                     var $row = $(this);
                     var rowData = todayTable.row($row).data();
-                    if (rowData && rowData.DT_RowData && rowData.DT_RowData['service-color']) {
-                        var color = rowData.DT_RowData['service-color'];
-                        var rgba = hexToRgba(color, 0.1);
+                    if (rowData && rowData.status) {
+                        const statusColors = {
+                            'pending': '#ffc107',
+                            'in_progress': '#17a2b8',
+                            'completed': '#28a745',
+                            'cancelled': '#dc3545'
+                        };
+                        var color = statusColors[rowData.status] || '#6c757d';
+                        var rgba = hexToRgba(color, 0.15);
                         $row.css({
                             'background-color': rgba,
                             'border-left': '4px solid ' + color,
@@ -817,22 +838,34 @@ function initializeQuickForm() {
                     
                     clearQuickForm();
                     
-                                         // Refresh today's table
-                     if (typeof $ !== 'undefined' && $.fn.DataTable && $('#today-table').length) {
-                         var todayTable = $('#today-table').DataTable();
-                         if (todayTable) {
-                             todayTable.ajax.reload();
-                         }
-                     }
-                    
-                                         // Refresh other tables if they exist
-                     if (typeof refreshAllReconOrdersData === 'function') {
-                         try {
-                             refreshAllReconOrdersData();
-                         } catch (e) {
-                             console.log('Error refreshing all recon orders data:', e);
-                         }
-                     }
+                    // Refresh all tables using the comprehensive refresh function
+                    if (typeof refreshAllReconOrdersData === 'function') {
+                        try {
+                            console.log('🔄 Refreshing all tables after quick form submission');
+                            refreshAllReconOrdersData({ 
+                                showToast: false, // Don't show refresh toast since we already showed success
+                                showProgress: true // Show visual progress indicator
+                            });
+                        } catch (e) {
+                            console.error('Error refreshing all recon orders data:', e);
+                            // Fallback: refresh only today's table
+                            if (typeof $ !== 'undefined' && $.fn.DataTable && $('#today-table').length) {
+                                var todayTable = $('#today-table').DataTable();
+                                if (todayTable) {
+                                    todayTable.ajax.reload();
+                                }
+                            }
+                        }
+                    } else {
+                        // Fallback: refresh only today's table
+                        console.warn('⚠️ Global refresh function not available, refreshing today table only');
+                        if (typeof $ !== 'undefined' && $.fn.DataTable && $('#today-table').length) {
+                            var todayTable = $('#today-table').DataTable();
+                            if (todayTable) {
+                                todayTable.ajax.reload();
+                            }
+                        }
+                    }
                 } else {
                     showToast('error', response.message || '<?= lang('App.error_saving_order') ?>');
                 }

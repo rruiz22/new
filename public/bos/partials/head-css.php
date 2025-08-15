@@ -46,5 +46,5 @@ $fullBaseUrl = $baseUrl . $appPath;
 <!-- SweetAlert2 CSS -->
 <link href="<?= $fullBaseUrl ?>/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
 
-<!-- Feather Icons -->
-<link href="<?= $fullBaseUrl ?>/assets/libs/feather-icons/feather.css" rel="stylesheet" type="text/css" />
+<!-- Node Waves CSS -->
+<link href="<?= $fullBaseUrl ?>/assets/libs/node-waves/waves.min.css" rel="stylesheet" type="text/css" />

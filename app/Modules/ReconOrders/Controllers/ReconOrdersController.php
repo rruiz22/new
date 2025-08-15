@@ -121,6 +121,14 @@ class ReconOrdersController extends BaseController
             // Log incoming data for debugging
             log_message('debug', 'Recon Order Store - Incoming data: ' . json_encode($formData));
             
+            // Specifically log source tracking fields
+            log_message('debug', 'Source tracking - from_inventory: ' . ($formData['from_inventory'] ?? 'NOT SET'));
+            log_message('debug', 'Source tracking - source_type: ' . ($formData['source_type'] ?? 'NOT SET'));
+            
+            // Force log to file immediately
+            error_log('RECON ORDER DEBUG - from_inventory: ' . ($formData['from_inventory'] ?? 'NOT SET'));
+            error_log('RECON ORDER DEBUG - source_type: ' . ($formData['source_type'] ?? 'NOT SET'));
+            
             // Validate required fields (including new required fields)
             $requiredFields = ['client_id', 'stock', 'vin_number', 'vehicle', 'service_id'];
             $missingFields = [];
@@ -159,11 +167,17 @@ class ReconOrdersController extends BaseController
                 'pictures' => isset($formData['pictures']) ? 1 : 0,
                 'status' => $formData['status'] ?? 'pending',
                 'notes' => !empty($formData['notes']) ? trim($formData['notes']) : null,
-                'created_by' => $userId
+                'created_by' => $userId,
+                'from_inventory' => (int) ($formData['from_inventory'] ?? 0),
+                'source_type' => $formData['source_type'] ?? 'manual'
             ];
             
             // Log processed data
             log_message('debug', 'Recon Order Store - Processed data: ' . json_encode($orderData));
+            
+            // Force log the final data being inserted
+            error_log('RECON ORDER FINAL DATA - from_inventory: ' . ($orderData['from_inventory'] ?? 'NOT SET'));
+            error_log('RECON ORDER FINAL DATA - source_type: ' . ($orderData['source_type'] ?? 'NOT SET'));
 
             // Check for duplicate orders (same client, stock, VIN within last 5 minutes)
             $duplicateCheck = $this->reconOrderModel
@@ -175,11 +189,17 @@ class ReconOrdersController extends BaseController
                 ->where('deleted_at IS NULL')
                 ->first();
             
-            if ($duplicateCheck) {
+            // Handle force creation parameter for duplicates
+            $forceCreate = $this->request->getPost('force_create') === '1';
+            
+            if ($duplicateCheck && !$forceCreate) {
                 log_message('warning', 'Duplicate order attempt detected: ' . json_encode($orderData));
                 return $this->response->setJSON([
                     'success' => false,
-                    'message' => 'A similar order was already created recently. Order ID: ' . $duplicateCheck['order_number']
+                    'duplicate_found' => true,
+                    'duplicate_order' => $duplicateCheck,
+                    'message' => 'A similar order was created recently. Do you want to create it anyway?',
+                    'confirmation_required' => true
                 ]);
             }
 
@@ -388,7 +408,9 @@ class ReconOrdersController extends BaseController
             $builder = $db->table('recon_orders')
                 ->select('recon_orders.*, clients.name as client_name,
                          (SELECT COUNT(*) FROM recon_comments WHERE order_id = recon_orders.id) as comments_count,
-                         (SELECT COUNT(*) FROM recon_notes WHERE order_id = recon_orders.id AND deleted_at IS NULL) as internal_notes_count')
+                         (SELECT COUNT(*) FROM recon_notes WHERE order_id = recon_orders.id AND deleted_at IS NULL) as internal_notes_count,
+                         COALESCE(recon_orders.from_inventory, 0) as from_inventory,
+                         COALESCE(recon_orders.source_type, "manual") as source_type')
                 ->join('clients', 'clients.id = recon_orders.client_id', 'left')
                 ->where('recon_orders.deleted_at IS NULL')
                 ->where('DATE(recon_orders.created_at)', date('Y-m-d')); // Today's orders
@@ -443,7 +465,9 @@ class ReconOrdersController extends BaseController
             $builder = $db->table('recon_orders')
                 ->select('recon_orders.*, clients.name as client_name,
                          (SELECT COUNT(*) FROM recon_comments WHERE order_id = recon_orders.id) as comments_count,
-                         (SELECT COUNT(*) FROM recon_notes WHERE order_id = recon_orders.id AND deleted_at IS NULL) as internal_notes_count')
+                         (SELECT COUNT(*) FROM recon_notes WHERE order_id = recon_orders.id AND deleted_at IS NULL) as internal_notes_count,
+                         COALESCE(recon_orders.from_inventory, 0) as from_inventory,
+                         COALESCE(recon_orders.source_type, "manual") as source_type')
                 ->join('clients', 'clients.id = recon_orders.client_id', 'left')
                 ->where('recon_orders.deleted_at IS NULL');
             
@@ -699,7 +723,7 @@ class ReconOrdersController extends BaseController
                     $data[] = [
                         'DT_RowData' => ['service-color' => $order['service_color'] ?? '#007bff'],
                         'id' => $order['id'],
-                        'order_id' => 'RO-' . str_pad($order['id'], 5, '0', STR_PAD_LEFT),
+                        'order_number' => 'RO-' . str_pad($order['id'], 5, '0', STR_PAD_LEFT),
                         'client_name' => $order['client_name'] ?? 'N/A',
                         'stock' => $order['stock'] ?? 'N/A',
                         'service_name' => $order['service_name'] ?? 'N/A',
@@ -707,7 +731,9 @@ class ReconOrdersController extends BaseController
                         'vin_number' => $order['vin_number'] ?? 'N/A',
                         'service_date' => $order['service_date'] ? date('M d, Y', strtotime($order['service_date'])) : 'No Date',
                         'status' => $order['status'] ?? 'pending',
-                        'service_color' => $order['service_color'] ?? '#007bff'
+                        'service_color' => $order['service_color'] ?? '#007bff',
+                        'from_inventory' => (int) ($order['from_inventory'] ?? 0),
+                        'source_type' => $order['source_type'] ?? 'manual'
                     ];
                 }
                 
@@ -836,7 +862,7 @@ class ReconOrdersController extends BaseController
                     $data[] = [
                         'DT_RowData' => ['service-color' => $order['service_color'] ?? '#007bff'],
                         'id' => $order['id'],
-                        'order_id' => 'RO-' . str_pad($order['id'], 5, '0', STR_PAD_LEFT),
+                        'order_number' => 'RO-' . str_pad($order['id'], 5, '0', STR_PAD_LEFT),
                         'client_name' => $order['client_name'] ?? 'N/A',
                         'stock' => $order['stock'] ?? 'N/A',
                         'service_name' => $order['service_name'] ?? 'N/A',
@@ -844,7 +870,9 @@ class ReconOrdersController extends BaseController
                         'vin_number' => $order['vin_number'] ?? 'N/A',
                         'service_date' => $order['service_date'] ? date('M d, Y', strtotime($order['service_date'])) : 'No Date',
                         'status' => $order['status'] ?? 'pending',
-                        'service_color' => $order['service_color'] ?? '#007bff'
+                        'service_color' => $order['service_color'] ?? '#007bff',
+                        'from_inventory' => (int) ($order['from_inventory'] ?? 0),
+                        'source_type' => $order['source_type'] ?? 'manual'
                     ];
                 }
                 
@@ -932,14 +960,20 @@ class ReconOrdersController extends BaseController
                 
                 // Join with clients and services if tables exist
                 if ($db->tableExists('clients') && $db->tableExists('recon_services')) {
-                    $builder->select('recon_orders.*, clients.name as client_name, recon_services.name as service_name, recon_services.color as service_color')
+                    $builder->select('recon_orders.*, clients.name as client_name, recon_services.name as service_name, recon_services.color as service_color,
+                                     COALESCE(recon_orders.from_inventory, 0) as from_inventory,
+                                     COALESCE(recon_orders.source_type, "manual") as source_type')
                            ->join('clients', 'clients.id = recon_orders.client_id', 'left')
                            ->join('recon_services', 'recon_services.id = recon_orders.service_id', 'left');
                 } else if ($db->tableExists('clients')) {
-                    $builder->select('recon_orders.*, clients.name as client_name, "" as service_name, "" as service_color')
+                    $builder->select('recon_orders.*, clients.name as client_name, "" as service_name, "" as service_color,
+                                     COALESCE(recon_orders.from_inventory, 0) as from_inventory,
+                                     COALESCE(recon_orders.source_type, "manual") as source_type')
                            ->join('clients', 'clients.id = recon_orders.client_id', 'left');
                 } else {
-                    $builder->select('recon_orders.*, "" as client_name, "" as service_name, "" as service_color');
+                    $builder->select('recon_orders.*, "" as client_name, "" as service_name, "" as service_color,
+                                     COALESCE(recon_orders.from_inventory, 0) as from_inventory,
+                                     COALESCE(recon_orders.source_type, "manual") as source_type');
                 }
                 
                 $builder->where('recon_orders.deleted_at IS NULL');
@@ -967,7 +1001,7 @@ class ReconOrdersController extends BaseController
                     $data[] = [
                         'DT_RowData' => ['service-color' => $order['service_color'] ?? '#007bff'],
                         'id' => $order['id'],
-                        'order_id' => 'RO-' . str_pad($order['id'], 5, '0', STR_PAD_LEFT),
+                        'order_number' => 'RO-' . str_pad($order['id'], 5, '0', STR_PAD_LEFT),
                         'client_name' => $order['client_name'] ?? 'N/A',
                         'stock' => $order['stock'] ?? 'N/A',
                         'service_name' => $order['service_name'] ?? 'N/A',
@@ -975,7 +1009,9 @@ class ReconOrdersController extends BaseController
                         'vin_number' => $order['vin_number'] ?? 'N/A',
                         'service_date' => $order['service_date'] ? date('M d, Y', strtotime($order['service_date'])) : 'No Date',
                         'status' => $order['status'] ?? 'pending',
-                        'service_color' => $order['service_color'] ?? '#007bff'
+                        'service_color' => $order['service_color'] ?? '#007bff',
+                        'from_inventory' => (int) ($order['from_inventory'] ?? 0),
+                        'source_type' => $order['source_type'] ?? 'manual'
                     ];
                 }
                 
@@ -1066,7 +1102,7 @@ class ReconOrdersController extends BaseController
                 foreach ($orders as $order) {
                     $data[] = [
                         'id' => $order['id'],
-                        'order_id' => 'RO-' . str_pad($order['id'], 5, '0', STR_PAD_LEFT),
+                        'order_number' => 'RO-' . str_pad($order['id'], 5, '0', STR_PAD_LEFT),
                         'client_name' => $order['client_name'] ?? 'N/A',
                         'vehicle' => $order['vehicle'] ?? 'N/A',
                         'service_date' => $order['service_date'] ? date('M d, Y', strtotime($order['service_date'])) : 'No Date',
@@ -3960,6 +3996,9 @@ class ReconOrdersController extends BaseController
             if ($db->fieldExists('from_inventory', 'recon_orders')) {
                 $orderData['from_inventory'] = 1;
             }
+            if ($db->fieldExists('source_type', 'recon_orders')) {
+                $orderData['source_type'] = 'inventory';
+            }
             if ($db->fieldExists('inventory_data', 'recon_orders')) {
                 $orderData['inventory_data'] = json_encode($inventoryData);
             }
@@ -4001,6 +4040,106 @@ class ReconOrdersController extends BaseController
                 'message' => lang('App.conversion_failed') . ': ' . $e->getMessage()
             ]);
         }
+    }
+
+    /**
+     * Get order info by stock number for inventory matching
+     */
+    public function get_order_info_by_stock()
+    {
+        try {
+            log_message('debug', 'get_order_info_by_stock method called');
+            
+            $db = \Config\Database::connect();
+            
+            // Check if recon_orders table exists
+            if (!$db->tableExists('recon_orders')) {
+                log_message('error', 'recon_orders table does not exist');
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'recon_orders table not found'
+                ]);
+            }
+            
+            // Build query - check if services table exists for join
+            $hasServicesTable = $db->tableExists('services');
+            
+            if ($hasServicesTable) {
+                // Get all orders with their stock numbers, status, and service info
+                $builder = $db->table('recon_orders')
+                    ->select('recon_orders.stock, recon_orders.status, recon_orders.notes, services.name as service_name, services.color as service_color')
+                    ->join('services', 'services.id = recon_orders.service_id', 'left')
+                    ->where('recon_orders.deleted_at IS NULL')
+                    ->where('recon_orders.stock IS NOT NULL')
+                    ->where('recon_orders.stock !=', '');
+            } else {
+                // Get orders without service info if services table doesn't exist
+                $builder = $db->table('recon_orders')
+                    ->select('recon_orders.stock, recon_orders.status, recon_orders.notes')
+                    ->where('recon_orders.deleted_at IS NULL')
+                    ->where('recon_orders.stock IS NOT NULL')
+                    ->where('recon_orders.stock !=', '');
+            }
+            
+            log_message('debug', 'Executing query: ' . $builder->getCompiledSelect());
+            
+            $orders = $builder->get()->getResultArray();
+            
+            log_message('debug', 'Found ' . count($orders) . ' orders with stock numbers');
+            
+            // Create a lookup array indexed by stock number
+            $stockLookup = [];
+            foreach ($orders as $order) {
+                $stockNumber = trim($order['stock']);
+                if (!empty($stockNumber)) {
+                    $stockLookup[$stockNumber] = [
+                        'status' => $order['status'],
+                        'service_name' => $order['service_name'] ?? null,
+                        'service_color' => $order['service_color'] ?? null,
+                        'has_notes_with_date' => $this->checkNotesForDate($order['notes'])
+                    ];
+                }
+            }
+            
+            log_message('debug', 'Created lookup with ' . count($stockLookup) . ' stock numbers');
+            
+            return $this->response->setJSON([
+                'success' => true,
+                'data' => $stockLookup,
+                'count' => count($stockLookup)
+            ]);
+            
+        } catch (\Exception $e) {
+            log_message('error', 'Error getting order info by stock: ' . $e->getMessage());
+            log_message('error', 'Stack trace: ' . $e->getTraceAsString());
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Error retrieving order information: ' . $e->getMessage()
+            ]);
+        }
+    }
+    
+    /**
+     * Check if notes contain a date pattern
+     */
+    private function checkNotesForDate($notes)
+    {
+        if (empty($notes)) return false;
+        
+        // Look for date patterns like "Date in Detail: MM/DD/YYYY" or similar
+        $patterns = [
+            '/Date in Detail:\s*\d{1,2}\/\d{1,2}\/\d{2,4}/i',
+            '/\d{1,2}\/\d{1,2}\/\d{2,4}/',
+            '/\d{4}-\d{1,2}-\d{1,2}/'
+        ];
+        
+        foreach ($patterns as $pattern) {
+            if (preg_match($pattern, $notes)) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     /**

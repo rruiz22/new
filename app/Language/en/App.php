@@ -2456,4 +2456,16 @@ return [
     'no_deleted_orders' => 'No Deleted Orders',
     'no_deleted_orders_desc' => 'Great! There are no deleted orders to show.',
     'yes_restore' => 'Yes, Restore',
+    
+    // Duplicate order confirmation
+    'duplicate_order_found' => 'Duplicate Order Found',
+    'yes_create_anyway' => 'Yes, Create Anyway',
+    'create_anyway_question' => 'Do you want to create the order anyway?',
+    'network_error' => 'Network error occurred. Please try again.',
+    'error_creating_order' => 'Error creating order',
+    
+    // Duplicate stock alerts
+    'duplicate_stock_detected' => 'Duplicate stock number detected!',
+    'duplicates_found' => 'Duplicate stocks found',
+    'multiple_duplicates_found' => 'Multiple duplicate stocks found',
 ]; 

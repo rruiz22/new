@@ -567,27 +567,53 @@ function performDeleteOrder(id) {
 // Comprehensive refresh function for all ReconOrders data
 window.refreshAllReconOrdersData = function(options = {}) {
     var showToast = options.showToast || false;
+    var showProgress = options.showProgress || false;
+    var progressToast = null;
     
     console.log('🔄 Starting ReconOrders data refresh...');
     console.log('🔍 jQuery available:', typeof $);
     console.log('🔍 DataTable available:', typeof $.fn.DataTable);
     console.log('🔍 Active tab:', document.querySelector('.nav-tabs .nav-link.active')?.getAttribute('href'));
     
-    // Refresh all DataTables that are currently loaded - corrected table IDs
+    // Show progress indicator if requested
+    if (showProgress && typeof window.showToast === 'function') {
+        progressToast = window.showToast('info', '🔄 Refreshing tables...', { duration: 0 });
+    }
+    
+    // Refresh all DataTables that are currently loaded - including vehicles tab tables
     var tableSelectors = [
         '#dashboard-table',
         '#today-table', 
         '#all-orders-table',
         '#deleted-table',
-        '#servicesTable'
+        '#servicesTable',
+        '#inventoryTable',
+        '#inventoryOrdersTable',
+        '#allOrdersTable'
     ];
+    
+    var refreshedCount = 0;
+    var totalTables = 0;
     
     tableSelectors.forEach(function(selector) {
         var table = document.querySelector(selector);
         console.log('🔍 Checking table:', selector, 'Found:', !!table, 'IsDataTable:', table && $.fn.DataTable && $.fn.DataTable.isDataTable(table));
         if (table && $.fn.DataTable && $.fn.DataTable.isDataTable(table)) {
+            totalTables++;
             $(table).DataTable().ajax.reload(function() {
-                console.log('✅ Refreshed DataTable:', selector);
+                refreshedCount++;
+                console.log('✅ Refreshed DataTable:', selector, `(${refreshedCount}/${totalTables})`);
+                
+                // If all tables are refreshed, hide progress and show completion
+                if (refreshedCount === totalTables) {
+                    if (progressToast && typeof progressToast.close === 'function') {
+                        progressToast.close();
+                    }
+                    if (showToast && typeof window.showToast === 'function') {
+                        window.showToast('success', `✅ ${totalTables} tables refreshed successfully!`);
+                    }
+                    console.log('✅ All ReconOrders tables refresh completed');
+                }
             }, false);
         } else if (table) {
             console.warn('⚠️ Table found but not initialized as DataTable:', selector);
@@ -596,11 +622,15 @@ window.refreshAllReconOrdersData = function(options = {}) {
         }
     });
     
-    if (showToast) {
-        showToast('success', 'Data refreshed successfully!');
+    // If no tables were found to refresh, hide progress immediately
+    if (totalTables === 0) {
+        if (progressToast && typeof progressToast.close === 'function') {
+            progressToast.close();
+        }
+        console.log('ℹ️ No DataTables found to refresh');
     }
     
-    console.log('✅ ReconOrders refresh completed');
+    console.log(`🔄 Started refresh for ${totalTables} tables`);
 };
 
 // Manual refresh function for buttons

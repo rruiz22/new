@@ -1,188 +1,8 @@
+
 <style>
-    .modal-dialog {
-        max-width: 700px;
-    }
-
-    .modal-content {
-        border-radius: 0.5rem;
-        border: 1px solid #dee2e6;
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-    }
-
-    .modal-header {
-        background-color: #f8f9fa;
-        border-bottom: 1px solid #dee2e6;
-        border-radius: 0.5rem 0.5rem 0 0;
-    }
-
-    .modal-body {
-        background-color: #fff;
-        padding: 1.5rem;
-    }
-
-    .modal-footer {
-        background-color: #f8f9fa;
-        border-top: 1px solid #dee2e6;
-        border-radius: 0 0 0.5rem 0.5rem;
-    }
-
-    .form-label {
-        font-weight: 600;
-        font-size: 0.9rem;
-        margin-bottom: 0.5rem;
-        color: #333;
-    }
-
-    .form-control,
-    .form-select {
-        font-size: 0.9rem;
-        padding: 0.75rem;
-        border: 1px solid #ddd;
-        border-radius: 0.375rem;
-        background-color: #fff;
-        transition: border-color 0.15s ease-in-out;
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    .form-select {
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
-        background-repeat: no-repeat;
-        background-position: right 0.75rem center;
-        background-size: 16px 12px;
-        padding-right: 2.5rem;
-        cursor: pointer;
-    }
-
-    .form-select:focus,
-    .form-control:focus {
-        border-color: #0066cc;
-        box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.1);
-        outline: 0;
-    }
-
-    .form-select:hover,
-    .form-control:hover {
-        border-color: #0066cc;
-    }
-
-    .form-section {
-        margin-bottom: 1.5rem;
-        padding: 0;
-        background: transparent;
-    }
-
-    .form-section:last-child {
-        margin-bottom: 0;
-    }
-
-    .text-danger {
-        color: #dc3545 !important;
-    }
-
-    .text-muted {
-        color: #6c757d !important;
-        font-size: 0.85rem;
-    }
-
-    textarea.form-control {
-        resize: vertical;
-        min-height: 100px;
-        font-family: inherit;
-        line-height: 1.5;
-    }
-
-    .btn {
-        padding: 0.75rem 1.5rem;
-        font-size: 0.9rem;
-        border-radius: 0.375rem;
-        font-weight: 500;
-        border: 1px solid transparent;
-        cursor: pointer;
-        transition: all 0.15s ease-in-out;
-    }
-
-    .btn-primary {
-        background-color: #0066cc;
-        border-color: #0066cc;
-        color: #fff;
-    }
-
-    .btn-primary:hover {
-        background-color: #0056b3;
-        border-color: #0056b3;
-    }
-
-    .btn-secondary {
-        background-color: #6c757d;
-        border-color: #6c757d;
-        color: #fff;
-    }
-
-    .btn-secondary:hover {
-        background-color: #5a6268;
-        border-color: #5a6268;
-    }
-
-    @media (max-width: 768px) {
-        .modal-dialog {
-            margin: 0.5rem;
-            max-width: calc(100% - 1rem);
-        }
-    }
-
-    /* VIN Decoding Styles - Simplified */
-    .vin-input-container {
-        position: relative;
-    }
-
-    .vin-status {
-        display: block;
-        font-size: 0.8rem;
-        margin-top: 0.25rem;
-        min-height: 1rem;
-    }
-
-    .vin-status-loading {
-        color: #666;
-    }
-
-    .vin-status-success {
-        color: #28a745;
-    }
-
-    .vin-status-error {
-        color: #dc3545;
-    }
-
-    .vin-status-warning {
-        color: #ffc107;
-    }
-
-    .vin-status-info {
-        color: #17a2b8;
-    }
-
-    .vin-decoding {
-        border-color: #17a2b8 !important;
-        background-color: #f8f9fa !important;
-    }
-
-    .vin-success {
-        border-color: #28a745 !important;
-    }
-
-    .vin-error {
-        border-color: #dc3545 !important;
-    }
-
-    .vin-warning {
-        border-color: #ffc107 !important;
-    }
-
-    .vin-decoded {
-        background-color: #f8f9fa !important;
-        border-color: #28a745 !important;
+    /* Modal size adjustment only */
+    #reconOrderModal .modal-dialog {
+        max-width: 900px;
     }
 </style>
 
@@ -193,8 +13,8 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="mb-3">
-                    <label for="client_id" class="form-label"><?= lang('App.client') ?> <span class="text-danger">*</span></label>
-                    <select class="form-select" id="client_id" name="client_id" required>
+                    <label for="recon_order_client_id" class="form-label"><?= lang('App.client') ?> <span class="text-danger">*</span></label>
+                    <select class="form-select" id="recon_order_client_id" name="client_id" required>
                         <option value=""><?= lang('App.select_client') ?></option>
                         <?php if (!empty($clients)): ?>
                             <?php foreach ($clients as $client): ?>
@@ -228,13 +48,18 @@
             </div>
             <div class="col-md-4">
                 <div class="mb-3">
-                    <label for="vin_number" class="form-label"><?= lang('App.vin') ?></label>
+                    <label for="vin_number" class="form-label">
+                        <?= lang('App.vin') ?> 
+                        <i class="fas fa-info-circle text-muted ms-1" 
+                           data-bs-toggle="tooltip" 
+                           data-bs-placement="top" 
+                           title="Enter complete 17-character VIN for automatic vehicle detection"></i>
+                    </label>
                     <div class="vin-input-container">
                         <input type="text" class="form-control" id="vin_number" name="vin_number" 
                                placeholder="<?= lang('App.enter_vin_placeholder') ?>" maxlength="17">
                         <small id="form-vin-status" class="vin-status"></small>
                     </div>
-                    <small class="text-muted"><?= lang('App.vin_help_text') ?></small>
                 </div>
             </div>
             <div class="col-md-4">
@@ -252,8 +77,8 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="mb-3">
-                    <label for="service_id" class="form-label"><?= lang('App.service') ?> <span class="text-danger">*</span></label>
-                    <select class="form-select" id="service_id" name="service_id" required>
+                    <label for="recon_order_service_id" class="form-label"><?= lang('App.service') ?> <span class="text-danger">*</span></label>
+                    <select class="form-select" id="recon_order_service_id" name="service_id" required>
                         <option value=""><?= lang('App.select') ?> <?= lang('App.service') ?></option>
                         <?php if (!empty($services)): ?>
                             <?php foreach ($services as $service): ?>
@@ -270,26 +95,30 @@
             </div>
             <div class="col-md-6">
                 <div class="mb-3">
-                    <label for="status" class="form-label"><?= lang('App.status') ?></label>
-                    <select class="form-select" id="status" name="status">
-                        <option value="pending" selected><?= lang('App.pending') ?></option>
-                        <option value="in_progress"><?= lang('App.in_progress') ?></option>
-                        <option value="completed"><?= lang('App.completed') ?></option>
-                        <option value="cancelled"><?= lang('App.cancelled') ?></option>
+                    <label for="recon_order_status" class="form-label"><?= lang('App.status') ?></label>
+                    <select class="form-select" id="recon_order_status" name="status" required>
+                        <option value="pending" selected>⏳ <?= lang('App.pending') ?></option>
+                        <option value="in_progress">🔄 <?= lang('App.in_progress') ?></option>
+                        <option value="completed">✅ <?= lang('App.completed') ?></option>
+                        <option value="cancelled">❌ <?= lang('App.cancelled') ?></option>
                     </select>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Notes Section -->
-    <div class="form-section">
+    <!-- Notes Section - Hidden -->
+    <div class="form-section" style="display: none;">
         <div class="mb-3">
             <label for="notes" class="form-label"><?= lang('App.notes') ?></label>
             <textarea class="form-control" id="notes" name="notes" rows="4" 
                       placeholder="<?= lang('App.enter_notes') ?>"></textarea>
         </div>
     </div>
+
+    <!-- Source tracking fields - Hidden -->
+    <input type="hidden" name="from_inventory" value="0" id="from_inventory_field">
+    <input type="hidden" name="source_type" value="manual" id="source_type_field">
 
 </form>
 
@@ -311,6 +140,35 @@
     setTimeout(function() {
         console.log('🔧 Initializing form modal elements after delay...');
         
+        // Check if there's inventory data or if fields are already set to inventory before resetting
+        const modal = document.getElementById('reconOrderModal');
+        const hasInventoryData = modal && $(modal).data('inventory-data');
+        
+        const fromInventoryField = document.getElementById('from_inventory_field');
+        const sourceTypeField = document.getElementById('source_type_field');
+        
+        // Check if fields are already set to inventory values
+        const alreadySetToInventory = fromInventoryField && fromInventoryField.value === '1' && 
+                                     sourceTypeField && sourceTypeField.value === 'inventory';
+        
+        if (!hasInventoryData && !alreadySetToInventory) {
+            // Only reset if no inventory data AND not already set to inventory - this is a manual order
+            if (fromInventoryField) {
+                fromInventoryField.value = '0';
+                console.log('🔄 Reset from_inventory to: 0 (manual order)');
+            }
+            if (sourceTypeField) {
+                sourceTypeField.value = 'manual';
+                console.log('🔄 Reset source_type to: manual (manual order)');
+            }
+        } else {
+            if (hasInventoryData) {
+                console.log('📦 Inventory data detected, skipping reset');
+            } else if (alreadySetToInventory) {
+                console.log('📦 Fields already set to inventory values, skipping reset');
+            }
+        }
+        
         // VIN decoder translations - Local scope to avoid conflicts
         const formModalVinTranslations = {
             vin_loading: '<?= lang('App.vin_loading') ?>',
@@ -328,8 +186,8 @@
         };
         
         const form = document.getElementById('reconOrderForm');
-        const clientSelect = document.getElementById('client_id');
-        const serviceSelect = document.getElementById('service_id');
+        const clientSelect = document.getElementById('recon_order_client_id');
+        const serviceSelect = document.getElementById('recon_order_service_id');
         const vinInput = document.getElementById('vin_number');
         const submitBtn = document.getElementById('createOrderBtn');
 
@@ -760,8 +618,10 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success && serviceSelect) {
+                    // Clear existing options
                     serviceSelect.innerHTML = '<option value=""><?= lang('App.select') ?> <?= lang('App.service') ?></option>';
                     
+                    // Add new services to native dropdown
                     data.data.forEach(service => {
                         if (service.is_active && service.show_in_form) {
                             const option = document.createElement('option');
@@ -772,6 +632,8 @@
                             serviceSelect.appendChild(option);
                         }
                     });
+                    
+                    console.log('✅ Services loaded into native dropdown - ' + data.data.length + ' services');
                 }
             })
             .catch(error => console.error('Error loading services:', error));
@@ -794,8 +656,8 @@
                 e.preventDefault();
                 
                 // Validate required fields
-                const clientId = document.getElementById('client_id').value;
-                const serviceId = document.getElementById('service_id').value;
+                const clientId = document.getElementById('recon_order_client_id').value;
+                const serviceId = document.getElementById('recon_order_service_id').value;
                 const stock = document.getElementById('stock').value;
                 const vehicle = document.getElementById('vehicle').value;
                 
@@ -813,6 +675,17 @@
                 // Prepare form data
                 const formData = new FormData(form);
                 
+                // Debug: Log all form data before sending
+                console.log('📤 Form data being sent:');
+                for (let [key, value] of formData.entries()) {
+                    console.log(`  ${key}: ${value}`);
+                }
+                
+                // Specifically check our source tracking fields
+                console.log('🔍 Source tracking fields:');
+                console.log('  from_inventory:', formData.get('from_inventory'));
+                console.log('  source_type:', formData.get('source_type'));
+                
                 // Submit form
                 fetch(form.action, {
                     method: 'POST',
@@ -826,19 +699,28 @@
                     if (data.success) {
                         showToast('success', data.message || '<?= lang('App.order_created_successfully') ?>');
                         
-                        // Close modal and refresh data
+                        // Clear inventory data after successful submission
                         const modal = document.getElementById('reconOrderModal');
+                        if (modal) {
+                            $(modal).removeData('inventory-data');
+                            console.log('🧹 Cleared inventory data after successful submission');
+                        }
+                        
+                        // Close modal and refresh data
                         if (modal && typeof bootstrap !== 'undefined') {
                             const bsModal = bootstrap.Modal.getInstance(modal);
                             if (bsModal) bsModal.hide();
                         }
                         
-                        // Refresh page data - prefer index.php refresh function over page reload
+                        // Refresh page data immediately after modal closes
                         setTimeout(() => {
                             if (typeof refreshAllReconOrdersData === 'function') {
                                 // Use index.php refresh function - refreshes all tables without page reload
-                                console.log('🔄 Refreshing ReconOrders tables after creating order');
-                                refreshAllReconOrdersData({ showToast: false }); // Don't show toast since we already showed success
+                                console.log('🔄 Refreshing all ReconOrders tables after creating order');
+                                refreshAllReconOrdersData({ 
+                                    showToast: false, // Don't show toast since we already showed success
+                                    showProgress: true // Show visual progress indicator
+                                });
                             } else if (typeof refreshReconOrderViewData === 'function') {
                                 // Fallback to view.php refresh function
                                 console.log('🔄 Using view.php refresh function');
@@ -848,9 +730,101 @@
                                 console.log('⚠️ No refresh function available, reloading page');
                                 window.location.reload();
                             }
-                        }, 500);
+                        }, 200); // Reduced delay for faster refresh
+                    } else {
+                        // Check if this is a duplicate confirmation case
+                        if (data.duplicate_found && data.confirmation_required) {
+                            // Show confirmation dialog for duplicate
+                            if (typeof Swal !== 'undefined') {
+                                Swal.fire({
+                                    title: '<?= lang('App.duplicate_order_found') ?>',
+                                    text: data.message,
+                                    icon: 'warning',
+                                    showCancelButton: true,
+                                    confirmButtonColor: '#3085d6',
+                                    cancelButtonColor: '#d33',
+                                    confirmButtonText: '<?= lang('App.yes_create_anyway') ?>',
+                                    cancelButtonText: '<?= lang('App.cancel') ?>'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        // Re-submit with force_create flag
+                                        const forceFormData = new FormData(form);
+                                        forceFormData.set('force_create', '1');
+                                        
+                                        fetch(form.action, {
+                                            method: 'POST',
+                                            body: forceFormData
+                                        })
+                                        .then(response => response.json())
+                                        .then(forceData => {
+                                            if (forceData.success) {
+                                                showToast('success', forceData.message || '<?= lang('App.order_created_successfully') ?>');
+                                                
+                                                // Clear inventory data after successful submission
+                                                const modal = document.getElementById('reconOrderModal');
+                                                if (modal) {
+                                                    $(modal).removeData('inventory-data');
+                                                }
+                                                
+                                                // Close modal and refresh data
+                                                if (modal && typeof bootstrap !== 'undefined') {
+                                                    const bsModal = bootstrap.Modal.getInstance(modal);
+                                                    if (bsModal) bsModal.hide();
+                                                }
+                                                
+                                                // Refresh all tables
+                                                setTimeout(() => {
+                                                    if (typeof refreshAllReconOrdersData === 'function') {
+                                                        refreshAllReconOrdersData({ showToast: false, showProgress: true });
+                                                    }
+                                                }, 200);
+                                            } else {
+                                                showToast('error', forceData.message || '<?= lang('App.error_creating_order') ?>');
+                                            }
+                                        })
+                                        .catch(error => {
+                                            console.error('Force create error:', error);
+                                            showToast('error', '<?= lang('App.network_error') ?>');
+                                        });
+                                    }
+                                });
+                            } else {
+                                // Fallback for when SweetAlert2 is not available
+                                if (confirm(data.message + '\n\n<?= lang('App.create_anyway_question') ?>')) {
+                                    // Re-submit with force_create flag
+                                    const forceFormData = new FormData(form);
+                                    forceFormData.set('force_create', '1');
+                                    
+                                    fetch(form.action, {
+                                        method: 'POST',
+                                        body: forceFormData
+                                    })
+                                    .then(response => response.json())
+                                    .then(forceData => {
+                                        if (forceData.success) {
+                                            showToast('success', forceData.message || '<?= lang('App.order_created_successfully') ?>');
+                                            
+                                            // Close modal and refresh data
+                                            const modal = document.getElementById('reconOrderModal');
+                                            if (modal && typeof bootstrap !== 'undefined') {
+                                                const bsModal = bootstrap.Modal.getInstance(modal);
+                                                if (bsModal) bsModal.hide();
+                                            }
+                                            
+                                            setTimeout(() => {
+                                                if (typeof refreshAllReconOrdersData === 'function') {
+                                                    refreshAllReconOrdersData({ showToast: false, showProgress: true });
+                                                }
+                                            }, 200);
+                                        } else {
+                                            showToast('error', forceData.message || '<?= lang('App.error_creating_order') ?>');
+                                        }
+                                    });
+                                }
+                            }
                     } else {
                         showToast('error', data.message || '<?= lang('App.create_failed') ?>');
+                        }
                     }
                 })
                 .catch(error => {
@@ -879,11 +853,28 @@
         
         // Check if modal has inventory data and pre-populate fields
         function checkAndPopulateInventoryData() {
+            console.log('🔍 Checking for inventory data...');
             const modal = document.getElementById('reconOrderModal');
+            console.log('📋 Modal element:', modal);
+            
             if (modal) {
                 const inventoryData = $(modal).data('inventory-data');
+                console.log('📦 Inventory data found:', inventoryData);
+                
                 if (inventoryData) {
                     console.log('🔄 Pre-populating form with inventory data:', inventoryData);
+                    
+                    // Mark as inventory source
+                    const fromInventoryField = document.getElementById('from_inventory_field');
+                    const sourceTypeField = document.getElementById('source_type_field');
+                    if (fromInventoryField) {
+                        fromInventoryField.value = '1';
+                        console.log('✅ Set from_inventory to: 1 (inventory source)');
+                    }
+                    if (sourceTypeField) {
+                        sourceTypeField.value = 'inventory';
+                        console.log('✅ Set source_type to: inventory (inventory source)');
+                    }
                     
                     // Pre-populate fields
                     if (inventoryData.stock && document.getElementById('stock')) {
@@ -902,17 +893,94 @@
                         document.getElementById('notes').value = inventoryData.notes;
                     }
                     
-                    // Clear the inventory data after use
-                    $(modal).removeData('inventory-data');
-                    
-                    console.log('✅ Form pre-populated with inventory data');
+                    console.log('✅ Form pre-populated with inventory data and marked as inventory source');
                 }
             }
         }
         
-        // Call the function to check for inventory data
+        // Call the function to check for inventory data with delay to ensure modal is ready
+        setTimeout(function() {
         checkAndPopulateInventoryData();
+        }, 100);
+        
+        // Also check when the modal is fully shown (in case the data is set after initial load)
+        $(document).ready(function() {
+            $('#reconOrderModal').on('shown.bs.modal', function() {
+                console.log('🔔 Modal shown event triggered, checking inventory data again...');
+                setTimeout(function() {
+                    checkAndPopulateInventoryData();
+                }, 50);
+            });
+        });
+        
+        // Initialize Bootstrap tooltips
+        initializeTooltips();
+        
+        console.log('✅ Modal form initialized with native HTML dropdowns and Bootstrap tooltips');
         
     }, 100); // End setTimeout
+
+// Function to initialize Bootstrap tooltips
+function initializeTooltips() {
+    // Initialize tooltips using Bootstrap 5 syntax
+    if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+        const tooltipTriggerList = document.querySelectorAll('#reconOrderModal [data-bs-toggle="tooltip"]');
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+        console.log('✅ Bootstrap tooltips initialized for modal');
+    } else {
+        console.warn('⚠️ Bootstrap tooltips not available');
+    }
+}
 })(); // IIFE - Execute immediately
+
+// Global function to populate form fields (for external use)
+window.populateReconOrderForm = function(data) {
+    console.log('🔄 Populating recon order form with data:', data);
+    
+    // Populate client
+    if (data.client_id && document.getElementById('recon_order_client_id')) {
+        document.getElementById('recon_order_client_id').value = data.client_id;
+        // Trigger change event to load services
+        document.getElementById('recon_order_client_id').dispatchEvent(new Event('change'));
+    }
+    
+    // Populate other fields
+    if (data.stock && document.getElementById('stock')) {
+        document.getElementById('stock').value = data.stock;
+    }
+    
+    if (data.vin_number && document.getElementById('vin_number')) {
+        document.getElementById('vin_number').value = data.vin_number;
+        // Trigger input event for VIN decoding
+        document.getElementById('vin_number').dispatchEvent(new Event('input'));
+    }
+    
+    if (data.vehicle && document.getElementById('vehicle')) {
+        document.getElementById('vehicle').value = data.vehicle;
+    }
+    
+    if (data.service_date && document.getElementById('service_date')) {
+        document.getElementById('service_date').value = data.service_date;
+    }
+    
+    if (data.notes && document.getElementById('notes')) {
+        document.getElementById('notes').value = data.notes;
+    }
+    
+    // Populate service after a delay to allow services to load
+    if (data.service_id) {
+        setTimeout(function() {
+            if (document.getElementById('recon_order_service_id')) {
+                document.getElementById('recon_order_service_id').value = data.service_id;
+            }
+        }, 500);
+    }
+    
+    // Populate status
+    if (data.status && document.getElementById('recon_order_status')) {
+        document.getElementById('recon_order_status').value = data.status;
+    }
+    
+    console.log('✅ Form populated successfully with native HTML elements');
+};
 </script> 

@@ -39,12 +39,16 @@ File: Main Js File
 		// Only set up the language selector event listeners
 		
 		// Initialize language selector with retry mechanism
-		function setupLanguageSelector() {
+		function setupLanguageSelector(retryCount = 0) {
 			var languages = document.getElementsByClassName("language");
 			
 			if (!languages || languages.length === 0) {
-				console.log('Language elements not found, retrying in 100ms...');
-				setTimeout(setupLanguageSelector, 100);
+				if (retryCount < 10) { // Limit to 10 retries (1 second total)
+					console.log(`Language elements not found, retrying in 100ms... (${retryCount + 1}/10)`);
+					setTimeout(() => setupLanguageSelector(retryCount + 1), 100);
+				} else {
+					console.log('Language elements not found after 10 retries, skipping language selector setup');
+				}
 				return;
 			}
 			
