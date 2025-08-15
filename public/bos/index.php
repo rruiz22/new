@@ -1626,11 +1626,7 @@ if (!function_exists('base_url')) {
             margin: 0;
         }
 
-        /* Hide Actions column completely */
-        #inventoryTable th:nth-child(9),
-        #inventoryTable td:nth-child(9) {
-            display: none !important;
-        }
+        /* Actions column visibility controlled by JavaScript based on authentication */
 
         /* Styles from vehicles_content.php */
         .stats-card {
@@ -2009,13 +2005,14 @@ if (!function_exists('base_url')) {
             border-radius: 4px;
         }
 
-        /* Status column styling */
+        /* Status column styling - more compact */
         .status-service-info,
         [id^="status-info-"] {
-            min-height: 40px;
+            min-height: 35px;
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 2px 4px;
         }
 
         /* Stock column styling */
@@ -2518,7 +2515,7 @@ if (!function_exists('base_url')) {
                                     <th class="text-center"><?= lang('App.vehicle') ?></th>
                                     <th class="text-center">Notes</th>
                                     <th class="text-center"><?= lang('App.status') ?></th>
-                                    <th class="text-center" style="display: none !important;"><?= lang('App.actions') ?></th>
+                                    <th class="text-center <?php echo $staffOnlyClass; ?>" <?php echo $staffOnlyStyle; ?>><?= lang('App.actions') ?></th>
                                 </tr>
                             </thead>
                             <tbody>

@@ -277,13 +277,22 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>`;
                 }
             },
-            // Actions column (always hidden)
+            // Actions column (visible only for authenticated users)
             {
                 data: null,
                 orderable: false,
-                visible: false, // Always hidden
+                visible: window.isAuthenticated,
                 render: function(data, type, row) {
-                    return ''; // Always return empty
+                    if (!window.isAuthenticated) return '';
+                    
+                    return `<div class="d-flex gap-1 justify-content-center">
+                        <button class="btn btn-sm btn-outline-primary" onclick="editInventoryItem('${row.stock_number}')" title="Edit">
+                            <i class="ri-edit-line"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteInventoryItem('${row.stock_number}')" title="Delete">
+                            <i class="ri-delete-bin-line"></i>
+                        </button>
+                    </div>`;
                 }
             }
         ];
@@ -1050,7 +1059,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (stockNumber && window.orderInfoLookup && window.orderInfoLookup[stockNumber]) {
                 const orderInfo = window.orderInfoLookup[stockNumber];
                 
-                let html = '<div class="d-flex flex-column align-items-center gap-1">';
+                let html = '<div class="d-flex flex-column align-items-center" style="gap: 2px; line-height: 1.1;">';
                 
                 // Status badge - highlighted and prominent
                 const statusColors = {
@@ -1081,28 +1090,43 @@ document.addEventListener('DOMContentLoaded', function() {
                     statusText = 'NO STATUS YET';
                 }
                 
-                html += `<span class="badge bg-${statusColor} px-2 py-1 fw-bold text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px;"${dataSourceIndicator}>${statusText}</span>`;
+                html += `<span class="badge bg-${statusColor} px-1 py-1 fw-bold text-uppercase" style="font-size: 0.6rem; letter-spacing: 0.3px;"${dataSourceIndicator}>${statusText}</span>`;
                 
                 // Service info below - smaller and muted
                 if (orderInfo.service_name && orderInfo.service_name !== 'No Order Found') {
                     const serviceColor = orderInfo.service_color || '#007bff';
-                    html += `<div class="d-flex align-items-center mt-1">
-                        <div class="service-color-dot me-1" style="width: 5px; height: 5px; border-radius: 50%; background-color: ${serviceColor};"></div>
-                        <small class="text-muted" style="font-size: 0.6rem; opacity: 0.8;"${dataSourceIndicator}>${orderInfo.service_name}</small>
+                    html += `<div class="d-flex align-items-center" style="margin-top: 1px;">
+                        <div class="service-color-dot me-1" style="width: 4px; height: 4px; border-radius: 50%; background-color: ${serviceColor};"></div>
+                        <small class="text-muted" style="font-size: 0.55rem; opacity: 0.8;"${dataSourceIndicator}>${orderInfo.service_name}</small>
                     </div>`;
                 }
                 
-                // Show service date if available (for real data)
+                // Show service date if available (for real data) - Format like Date in Detail column
                 if (orderInfo.real_data && orderInfo.service_date) {
-                    html += `<div class="mt-1">
-                        <small class="text-muted" style="font-size: 0.55rem; opacity: 0.7;">Service: ${orderInfo.service_date}</small>
+                    // Format date to match Date in Detail format (MM/DD/YYYY)
+                    let formattedDate = orderInfo.service_date;
+                    try {
+                        const date = new Date(orderInfo.service_date);
+                        if (!isNaN(date.getTime())) {
+                            formattedDate = date.toLocaleDateString('en-US', {
+                                month: '2-digit',
+                                day: '2-digit', 
+                                year: 'numeric'
+                            });
+                        }
+                    } catch (e) {
+                        // Keep original format if parsing fails
+                    }
+                    
+                    html += `<div style="margin-top: 1px;">
+                        <small class="text-muted" style="font-size: 0.5rem; opacity: 0.7;">Service: ${formattedDate}</small>
                     </div>`;
                 }
                 
                 html += '</div>';
                 $element.html(html);
             } else {
-                $element.html('<div class="d-flex flex-column align-items-center"><span class="badge bg-secondary-subtle text-secondary px-2 py-1 fw-bold text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px;">NO STATUS YET</span></div>');
+                $element.html('<div class="d-flex flex-column align-items-center"><span class="badge bg-secondary-subtle text-secondary px-1 py-1 fw-bold text-uppercase" style="font-size: 0.6rem; letter-spacing: 0.3px;">NO STATUS YET</span></div>');
             }
         });
         
@@ -1324,6 +1348,18 @@ function updateTableColumnsVisibility() {
         [...selectHeaders, ...selectCells].forEach(element => {
             element.style.display = displayValue;
         });
+        
+        // Also update DataTables column visibility if table exists
+        if (window.inventoryTable && typeof window.inventoryTable.column === 'function') {
+            try {
+                // Column 0 = Select checkboxes, Column 8 = Actions (0-indexed)
+                window.inventoryTable.column(0).visible(window.isAuthenticated);
+                window.inventoryTable.column(8).visible(window.isAuthenticated);
+                console.log(`🔄 Updated DataTables columns visibility - authenticated: ${window.isAuthenticated}`);
+            } catch (e) {
+                console.warn('⚠️ Could not update DataTables column visibility:', e);
+            }
+        }
         
         console.log(`🔄 Updated table columns visibility - authenticated: ${window.isAuthenticated}`);
     }
