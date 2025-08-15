@@ -2142,6 +2142,189 @@ if (!function_exists('base_url')) {
         #inventoryTable tbody tr {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
         }
+
+        /* Mobile responsive table - Stack columns vertically */
+        @media (max-width: 768px) {
+            #inventoryTable {
+                font-size: 0.875rem;
+            }
+            
+            /* Hide table headers on mobile */
+            #inventoryTable thead {
+                display: none;
+            }
+            
+            /* Make each row a card-like structure */
+            #inventoryTable tbody tr {
+                display: block;
+                margin-bottom: 1rem;
+                background: #ffffff;
+                border: 1px solid #e2e8f0;
+                border-radius: 12px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+                padding: 1rem;
+                position: relative;
+            }
+            
+            /* Make each cell a row with label */
+            #inventoryTable tbody td {
+                display: block;
+                text-align: left !important;
+                padding: 0.5rem 0 !important;
+                border: none;
+                border-bottom: 1px solid #f1f5f9;
+                position: relative;
+                padding-left: 40% !important;
+            }
+            
+            /* Remove border from last cell */
+            #inventoryTable tbody td:last-child {
+                border-bottom: none;
+            }
+            
+            /* Add labels before each cell content */
+            #inventoryTable tbody td:nth-child(1)::before { content: "Select: "; }
+            #inventoryTable tbody td:nth-child(2)::before { content: "Date in Detail: "; }
+            #inventoryTable tbody td:nth-child(3)::before { content: "Days: "; }
+            #inventoryTable tbody td:nth-child(4)::before { content: "Keys: "; }
+            #inventoryTable tbody td:nth-child(5)::before { content: "Stock #: "; }
+            #inventoryTable tbody td:nth-child(6)::before { content: "Vehicle: "; }
+            #inventoryTable tbody td:nth-child(7)::before { content: "Notes: "; }
+            #inventoryTable tbody td:nth-child(8)::before { content: "Status: "; }
+            #inventoryTable tbody td:nth-child(9)::before { content: "Actions: "; }
+            
+            /* Style the labels */
+            #inventoryTable tbody td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 0;
+                width: 35%;
+                padding-right: 0.5rem;
+                white-space: nowrap;
+                font-weight: 600;
+                color: #64748b;
+                font-size: 0.8rem;
+                text-transform: uppercase;
+                letter-spacing: 0.025em;
+            }
+            
+            /* Special styling for stock number on mobile */
+            #inventoryTable tbody td:nth-child(5) {
+                font-weight: 700;
+            }
+            
+            /* Special styling for status column on mobile */
+            #inventoryTable tbody td:nth-child(8) {
+                padding-bottom: 1rem !important;
+            }
+            
+            /* Hide checkbox column on mobile for non-authenticated users */
+            #inventoryTable tbody td:nth-child(1) {
+                display: none;
+            }
+            
+            /* Show checkbox only for authenticated users */
+            body.authenticated #inventoryTable tbody td:nth-child(1) {
+                display: block;
+            }
+            
+            /* Adjust vehicle info on mobile */
+            #inventoryTable tbody td:nth-child(6) {
+                font-size: 0.9rem;
+                line-height: 1.4;
+            }
+            
+            /* Make status badges more prominent on mobile */
+            #inventoryTable tbody td:nth-child(8) .badge {
+                font-size: 0.75rem;
+                padding: 0.375rem 0.75rem;
+            }
+        }
+        
+        /* Tablet responsive adjustments */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            #inventoryTable {
+                font-size: 0.85rem;
+            }
+            
+            #inventoryTable th,
+            #inventoryTable td {
+                padding: 0.75rem 0.5rem !important;
+            }
+            
+            /* Adjust badge sizes for tablet */
+            #inventoryTable .badge {
+                font-size: 0.7rem;
+                padding: 0.3rem 0.6rem;
+            }
+        }
+
+        /* Filter button styles */
+        #hideCompletedBtn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #hideCompletedBtn.btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            color: white;
+        }
+
+        #hideCompletedBtn.btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+        }
+
+        /* Mobile adjustments for filter controls */
+        @media (max-width: 768px) {
+            .modern-card-header .d-flex.gap-2 {
+                flex-direction: column;
+                gap: 0.5rem !important;
+            }
+            
+            .modern-card-header .btn {
+                font-size: 0.875rem;
+                padding: 0.5rem 1rem;
+            }
+            
+            /* Stack buttons vertically on mobile */
+            .modern-card-header .col-auto {
+                margin-top: 1rem;
+            }
+        }
+
+        /* Improved mobile card styling */
+        @media (max-width: 768px) {
+            #inventoryTable tbody tr {
+                margin-bottom: 1.5rem;
+                padding: 1.25rem;
+                border-radius: 16px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+            
+            /* Enhanced mobile labels */
+            #inventoryTable tbody td::before {
+                font-weight: 700;
+                color: #475569;
+                font-size: 0.75rem;
+                width: 38%;
+                padding-right: 0.75rem;
+            }
+            
+            /* Mobile status styling */
+            #inventoryTable tbody td:nth-child(8) {
+                padding-top: 0.75rem !important;
+                padding-bottom: 0.75rem !important;
+            }
+            
+            /* Mobile stock number enhancement */
+            #inventoryTable tbody td:nth-child(5) .stock-number-enhanced {
+                font-size: 1.1em;
+                font-weight: 800;
+            }
+        }
     </style>
 </head>
 
@@ -2320,10 +2503,16 @@ if (!function_exists('base_url')) {
                             <p class="modern-card-subtitle"><?= lang('App.detailed_inventory_view') ?></p>
                 </div>
                 <div class="col-auto">
-                    <button type="button" class="btn btn-outline-primary" id="refreshInventoryBtn">
-                        <i class="ri-refresh-line me-1"></i>
-                        <?= lang('App.refresh_inventory') ?>
-            </button>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline-secondary" id="hideCompletedBtn">
+                            <i class="ri-eye-off-line me-1"></i>
+                            Hide Completed
+                        </button>
+                        <button type="button" class="btn btn-outline-primary" id="refreshInventoryBtn">
+                            <i class="ri-refresh-line me-1"></i>
+                            <?= lang('App.refresh_inventory') ?>
+                        </button>
+                    </div>
         </div>
 
             </div>
@@ -2485,6 +2674,279 @@ window.userType = '<?php echo $userType; ?>';
 
    <!-- Include the vehicles inventory JavaScript -->
    <script src="js/vehicles-inventory.js"></script>
+   
+   <script>
+   // Mobile responsive and completed filter functionality
+   document.addEventListener('DOMContentLoaded', function() {
+       // Add authenticated class to body for mobile styling
+       if (window.isAuthenticated) {
+           document.body.classList.add('authenticated');
+       }
+       
+       // Wait for DataTables to be ready
+       function waitForDataTables(callback, maxAttempts = 20) {
+           let attempts = 0;
+           
+           function checkDataTables() {
+               attempts++;
+               
+               if (window.$ && window.$.fn && window.$.fn.dataTable && window.inventoryTable) {
+                   console.log('✅ DataTables ready, initializing mobile features');
+                   callback();
+               } else if (attempts < maxAttempts) {
+                   setTimeout(checkDataTables, 500);
+               } else {
+                   console.warn('⚠️ DataTables not ready after maximum attempts');
+                   // Still run callback for basic functionality
+                   callback();
+               }
+           }
+           
+           checkDataTables();
+       }
+       
+       // Initialize everything when DataTables is ready
+       waitForDataTables(function() {
+           initializeMobileAndFilters();
+       });
+       
+       function initializeMobileAndFilters() {
+           // Hide completed items filter
+           let hideCompleted = false;
+           const hideCompletedBtn = document.getElementById('hideCompletedBtn');
+           
+           if (hideCompletedBtn) {
+               console.log('✅ Hide Completed button found, setting up event listener');
+               
+               hideCompletedBtn.addEventListener('click', function(e) {
+                   e.preventDefault();
+                   
+                   hideCompleted = !hideCompleted;
+                   console.log('🔄 Button clicked, hideCompleted is now:', hideCompleted);
+                   
+                   if (hideCompleted) {
+                       this.innerHTML = '<i class="ri-eye-line me-1"></i>Show Completed';
+                       this.classList.remove('btn-outline-secondary');
+                       this.classList.add('btn-secondary');
+                       console.log('👁️ Button state: Show Completed (hiding completed items)');
+                   } else {
+                       this.innerHTML = '<i class="ri-eye-off-line me-1"></i>Hide Completed';
+                       this.classList.remove('btn-secondary');
+                       this.classList.add('btn-outline-secondary');
+                       console.log('🙈 Button state: Hide Completed (showing all items)');
+                   }
+                   
+                   // Apply filter to inventory table (wait for status to be loaded)
+                   waitForStatusLoaded(() => {
+                       filterCompletedItems();
+                   });
+               });
+           } else {
+               console.warn('⚠️ Hide Completed button not found');
+           }
+           
+           // Function to wait for status to be loaded
+           function waitForStatusLoaded(callback, maxAttempts = 10) {
+               let attempts = 0;
+               
+               function checkStatus() {
+                   attempts++;
+                   const statusElements = document.querySelectorAll('.status-service-info');
+                   let loadingCount = 0;
+                   let completedCount = 0;
+                   
+                   statusElements.forEach(element => {
+                       const text = element.textContent.toLowerCase();
+                       if (text.includes('loading')) {
+                           loadingCount++;
+                       } else if (text.includes('completed')) {
+                           completedCount++;
+                       }
+                   });
+                   
+                   console.log(`🔍 Status check attempt ${attempts}: ${loadingCount} loading, ${completedCount} completed, ${statusElements.length} total`);
+                   
+                   if (loadingCount === 0 && statusElements.length > 0) {
+                       console.log('✅ All status loaded, proceeding with filter');
+                       callback();
+                   } else if (attempts < maxAttempts) {
+                       setTimeout(checkStatus, 1000);
+                   } else {
+                       console.warn('⚠️ Status loading timeout, proceeding anyway');
+                       callback();
+                   }
+               }
+               
+               checkStatus();
+           }
+           
+           // Debug function to test filter manually
+           // Make filter functions globally accessible
+           window.applyCompletedFilter = function() {
+               if (hideCompleted) {
+                   console.log('🔄 Reapplying completed filter after status update');
+                   waitForStatusLoaded(() => {
+                       filterCompletedItems();
+                   });
+               }
+           };
+           
+           window.testCompletedFilter = function() {
+               console.log('🧪 Testing completed filter manually');
+               console.log('Current hideCompleted state:', hideCompleted);
+               console.log('DataTables search functions count:', $.fn.dataTable.ext.search.length);
+               
+               if (window.inventoryTable) {
+                   const info = window.inventoryTable.page.info();
+                   console.log('Table info:', info);
+                   
+                   // Check DOM status elements
+                   const statusElements = document.querySelectorAll('.status-service-info');
+                   console.log(`Found ${statusElements.length} status elements:`);
+                   
+                   statusElements.forEach((element, index) => {
+                       if (index < 5) { // Show first 5
+                           console.log(`Status ${index}:`, element.textContent.trim());
+                       }
+                   });
+               }
+           };
+           
+           // Function to filter completed items
+           function filterCompletedItems() {
+               if (window.inventoryTable && typeof window.inventoryTable.draw === 'function') {
+                   console.log('🔍 Applying completed filter:', hideCompleted);
+                   
+                   // Clear existing search functions first
+                   clearCompletedFilter();
+                   
+                   if (hideCompleted) {
+                       // Add new custom search function for DataTables
+                       const searchFunction = function(settings, data, dataIndex) {
+                           // Only apply to inventory table
+                           if (settings.nTable.id !== 'inventoryTable') {
+                               return true;
+                           }
+                           
+                           // Get the actual DOM element to check real status
+                           const row = settings.aoData[dataIndex];
+                           if (row && row.nTr) {
+                               const statusCell = row.nTr.querySelector('.status-service-info');
+                               if (statusCell) {
+                                   const statusText = statusCell.textContent.toLowerCase();
+                                   const isCompleted = statusText.includes('completed');
+                                   
+                                   // Debug first few rows
+                                   if (dataIndex < 3) {
+                                       console.log(`📊 Row ${dataIndex} DOM filter check:`, {
+                                           statusText: statusText.trim(),
+                                           isCompleted: isCompleted,
+                                           willShow: !isCompleted
+                                       });
+                                   }
+                                   
+                                   return !isCompleted;
+                               }
+                           }
+                           
+                           // Fallback to data array method
+                           const statusCell = data[7] || '';
+                           const statusText = statusCell.toLowerCase();
+                           const isCompleted = statusText.includes('completed') || 
+                                             statusText.includes('success') ||
+                                             statusText.includes('bg-success');
+                           
+                           return !isCompleted;
+                       };
+                       
+                       $.fn.dataTable.ext.search.push(searchFunction);
+                       console.log('➕ Added filter function');
+                   } else {
+                       console.log('🔄 Showing all items (no filter)');
+                   }
+                   
+                   // Redraw the table to apply the filter
+                   window.inventoryTable.draw();
+                   
+                   // Get current visible rows count
+                   setTimeout(() => {
+                       const info = window.inventoryTable.page.info();
+                       console.log('✅ Filter applied:', {
+                           totalRecords: info.recordsTotal,
+                           filteredRecords: info.recordsDisplay,
+                           hideCompleted: hideCompleted
+                       });
+                   }, 100);
+               } else {
+                   console.warn('⚠️ Inventory table not ready for filtering');
+               }
+           }
+           
+           // Remove the search function when not needed
+           function clearCompletedFilter() {
+               const originalLength = $.fn.dataTable.ext.search.length;
+               
+               // Remove our custom search function
+               $.fn.dataTable.ext.search = $.fn.dataTable.ext.search.filter(function(fn) {
+                   const fnString = fn.toString();
+                   return !fnString.includes('hideCompleted') && !fnString.includes('isCompleted');
+               });
+               
+               const newLength = $.fn.dataTable.ext.search.length;
+               console.log(`🧹 Cleared filters: ${originalLength} → ${newLength}`);
+           }
+           
+           // Mobile responsive enhancements
+           function enhanceMobileExperience() {
+               const isMobile = window.innerWidth <= 768;
+               
+               if (isMobile) {
+                   // Add mobile-specific enhancements
+                   const table = document.getElementById('inventoryTable');
+                   if (table) {
+                       // Add data labels for mobile
+                       const rows = table.querySelectorAll('tbody tr');
+                       rows.forEach(row => {
+                           const cells = row.querySelectorAll('td');
+                           const labels = ['Select', 'Date in Detail', 'Days', 'Keys', 'Stock #', 'Vehicle', 'Notes', 'Status', 'Actions'];
+                           
+                           cells.forEach((cell, index) => {
+                               if (labels[index]) {
+                                   cell.setAttribute('data-label', labels[index] + ':');
+                               }
+                           });
+                       });
+                   }
+               }
+           }
+           
+           // Call mobile enhancements
+           enhanceMobileExperience();
+           
+           // Re-run mobile enhancements when table is redrawn
+           function setupTableDrawListener() {
+               if (window.inventoryTable && typeof window.inventoryTable.on === 'function') {
+                   window.inventoryTable.on('draw', function() {
+                       setTimeout(enhanceMobileExperience, 100);
+                   });
+               } else {
+                   // Retry after a short delay if table is not ready
+                   setTimeout(setupTableDrawListener, 500);
+               }
+           }
+           
+           // Setup the listener with delay to ensure table is initialized
+           setTimeout(setupTableDrawListener, 1000);
+           
+           // Handle window resize
+           let resizeTimeout;
+           window.addEventListener('resize', function() {
+               clearTimeout(resizeTimeout);
+               resizeTimeout = setTimeout(enhanceMobileExperience, 250);
+           });
+       }
+   });
+   </script>
    
    <script>
    // Legacy authentication check for backward compatibility

@@ -846,6 +846,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 $element.html('<div class="d-flex flex-column align-items-center"><span class="badge bg-secondary-subtle text-secondary px-2 py-1 fw-bold text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px;">NO STATUS YET</span></div>');
             }
         });
+        
+        // Reapply completed filter if it's active
+        if (window.applyCompletedFilter) {
+            setTimeout(() => {
+                window.applyCompletedFilter();
+            }, 500);
+        }
     }
 
     function updateCheckboxStates() {
