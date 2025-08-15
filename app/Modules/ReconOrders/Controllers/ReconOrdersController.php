@@ -3785,4 +3785,316 @@ class ReconOrdersController extends BaseController
             ]);
         }
     }
+
+    /**
+     * Get inventory orders data for DataTable
+     */
+    public function inventory_orders_data()
+    {
+        try {
+            $draw = $this->request->getPost('draw') ?? 1;
+            $start = (int) ($this->request->getPost('start') ?? 0);
+            $length = (int) ($this->request->getPost('length') ?? 10);
+            $searchValue = $this->request->getPost('search')['value'] ?? '';
+
+            $db = \Config\Database::connect();
+            
+            // Check if tables exist
+            if (!$db->tableExists('recon_orders')) {
+                return $this->response->setJSON([
+                    'draw' => $draw,
+                    'recordsTotal' => 0,
+                    'recordsFiltered' => 0,
+                    'data' => []
+                ]);
+            }
+
+            // Base query for orders created from inventory
+            $builder = $db->table('recon_orders');
+            
+            if ($db->tableExists('clients') && $db->tableExists('users')) {
+                $builder->select('recon_orders.*, 
+                                 clients.name as client_name,
+                                 users.first_name, users.last_name')
+                       ->join('clients', 'clients.id = recon_orders.client_id', 'left')
+                       ->join('users', 'users.id = recon_orders.created_by', 'left');
+            } else {
+                $builder->select('recon_orders.*');
+            }
+
+            // Filter for orders created from inventory using the new flag field
+            $builder->where('recon_orders.deleted_at IS NULL');
+            
+            // Check if the from_inventory field exists, if not fall back to notes search
+            if ($db->fieldExists('from_inventory', 'recon_orders')) {
+                $builder->where('recon_orders.from_inventory', 1);
+            } else {
+                $builder->where("(recon_orders.notes LIKE '%inventory%' OR recon_orders.notes LIKE '%Inventario%')");
+            }
+
+            // Search functionality
+            if (!empty($searchValue)) {
+                $builder->groupStart()
+                       ->like('recon_orders.vehicle', $searchValue)
+                       ->orLike('recon_orders.stock', $searchValue)
+                       ->orLike('recon_orders.order_number', $searchValue)
+                       ->groupEnd();
+            }
+
+            // Get total count without limit
+            $totalQuery = clone $builder;
+            $recordsTotal = $totalQuery->countAllResults(false);
+            $recordsFiltered = $recordsTotal;
+
+            // Apply pagination
+            if ($length > 0) {
+                $builder->limit($length, $start);
+            }
+
+            $orders = $builder->orderBy('recon_orders.created_at', 'DESC')->get()->getResultArray();
+
+            // Format the data
+            foreach ($orders as &$order) {
+                if (empty($order['order_number'])) {
+                    $order['order_number'] = 'RO-' . str_pad($order['id'], 5, '0', STR_PAD_LEFT);
+                }
+                
+                // Format service date
+                if (!empty($order['service_date'])) {
+                    $order['service_date'] = date('M d, Y', strtotime($order['service_date']));
+                } else {
+                    $order['service_date'] = 'No Date';
+                }
+
+                // Add created by name
+                if (isset($order['first_name']) && isset($order['last_name'])) {
+                    $order['created_by_name'] = trim($order['first_name'] . ' ' . $order['last_name']);
+                } else {
+                    $order['created_by_name'] = 'Unknown';
+                }
+            }
+
+            return $this->response->setJSON([
+                'draw' => $draw,
+                'recordsTotal' => $recordsTotal,
+                'recordsFiltered' => $recordsFiltered,
+                'data' => $orders
+            ]);
+
+        } catch (\Exception $e) {
+            log_message('error', 'Error in inventory_orders_data: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'draw' => $draw ?? 1,
+                'recordsTotal' => 0,
+                'recordsFiltered' => 0,
+                'data' => []
+            ]);
+        }
+    }
+
+    /**
+     * Convert inventory item to recon order
+     */
+    public function convert_from_inventory()
+    {
+        if (!$this->request->isAJAX()) {
+            return redirect()->back();
+        }
+
+        try {
+            $inventoryData = $this->request->getPost('inventory_data');
+            $clientId = $this->request->getPost('client_id');
+            $serviceId = $this->request->getPost('service_id');
+            $serviceDate = $this->request->getPost('service_date');
+            $notes = $this->request->getPost('notes');
+            $autoConvert = $this->request->getPost('auto_convert') === true || $this->request->getPost('auto_convert') === 'true';
+
+            // Validate required data
+            if (!$inventoryData || (!$autoConvert && !$clientId)) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => lang('App.client_required')
+                ]);
+            }
+
+            // Get user ID
+            $userId = 1; // Default fallback
+            try {
+                if (auth()->loggedIn()) {
+                    $userId = auth()->user()->id;
+                } elseif (session()->has('user_id')) {
+                    $userId = session()->get('user_id');
+                }
+            } catch (\Exception $e) {
+                log_message('error', 'Error getting user ID: ' . $e->getMessage());
+            }
+
+            // For auto conversion, use a default client or create a placeholder
+            if ($autoConvert && !$clientId) {
+                // You might want to create a default "Inventory Conversion" client
+                $clientId = 1; // Use default client for now
+            }
+
+            // Prepare order data from inventory
+            $orderData = [
+                'client_id' => $clientId,
+                'vehicle' => $inventoryData['vehicle'] ?? '',
+                'stock' => $inventoryData['stock_number'] ?? '',
+                'vin_number' => '', // VIN not available in inventory data
+                'service_id' => $serviceId,
+                'service_date' => $serviceDate ?: date('Y-m-d'),
+                'status' => 'pending',
+                'priority' => 'normal',
+                'notes' => ($notes ?: lang('App.created_from_inventory')) . "\n\n" . 
+                          lang('App.original_inventory_data') . ":\n" .
+                          lang('App.date_in_detail') . ": " . ($inventoryData['date_detail'] ?? '') . "\n" .
+                          lang('App.days_in_detail') . ": " . ($inventoryData['days_detail'] ?? '') . "\n" .
+                          lang('App.keys') . ": " . ($inventoryData['keys'] ?? '') . "\n" .
+                          lang('App.write_up_date') . ": " . ($inventoryData['write_up_date'] ?? ''),
+                'created_by' => $userId,
+                'created_at' => date('Y-m-d H:i:s')
+            ];
+
+            // Add inventory-specific fields if they exist in the table
+            $db = \Config\Database::connect();
+            if ($db->fieldExists('from_inventory', 'recon_orders')) {
+                $orderData['from_inventory'] = 1;
+            }
+            if ($db->fieldExists('inventory_data', 'recon_orders')) {
+                $orderData['inventory_data'] = json_encode($inventoryData);
+            }
+
+            // Insert the order
+            $orderId = $this->reconOrderModel->insert($orderData);
+
+            if ($orderId) {
+                // Log the activity
+                try {
+                    $this->reconActivityModel->insert([
+                        'order_id' => $orderId,
+                        'user_id' => $userId,
+                        'action' => 'order_created',
+                        'description' => lang('App.created_from_inventory'),
+                        'created_at' => date('Y-m-d H:i:s')
+                    ]);
+                } catch (\Exception $e) {
+                    log_message('error', 'Error logging inventory conversion activity: ' . $e->getMessage());
+                }
+
+                return $this->response->setJSON([
+                    'success' => true,
+                    'message' => lang('App.converted_successfully'),
+                    'order_id' => $orderId,
+                    'order_number' => 'RO-' . str_pad($orderId, 5, '0', STR_PAD_LEFT)
+                ]);
+            } else {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => lang('App.conversion_failed')
+                ]);
+            }
+
+        } catch (\Exception $e) {
+            log_message('error', 'Error converting from inventory: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => lang('App.conversion_failed') . ': ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Get vehicles stats for the vehicles tab
+     */
+    public function vehicles_stats()
+    {
+        try {
+            $db = \Config\Database::connect();
+            
+            // Check if table exists
+            if (!$db->tableExists('recon_orders')) {
+                return $this->response->setJSON([
+                    'stats' => [
+                        'total_vehicles' => 0,
+                        'recent_vehicles' => 0,
+                        'most_serviced' => null,
+                        'popular_makes' => []
+                    ]
+                ]);
+            }
+
+            // Get total unique vehicles
+            $totalVehicles = $db->table('recon_orders')
+                              ->select('vehicle, vin_number')
+                              ->where('deleted_at IS NULL')
+                              ->groupBy('vehicle, vin_number')
+                              ->countAllResults();
+
+            // Get recent vehicles (this month)
+            $recentVehicles = $db->table('recon_orders')
+                               ->select('vehicle, vin_number')
+                               ->where('deleted_at IS NULL')
+                               ->where('MONTH(created_at)', date('m'))
+                               ->where('YEAR(created_at)', date('Y'))
+                               ->groupBy('vehicle, vin_number')
+                               ->countAllResults();
+
+            // Get most serviced vehicle
+            $mostServiced = $db->table('recon_orders')
+                             ->select('vehicle, vin_number, COUNT(*) as total_orders')
+                             ->where('deleted_at IS NULL')
+                             ->groupBy('vehicle, vin_number')
+                             ->orderBy('total_orders', 'DESC')
+                             ->limit(1)
+                             ->get()
+                             ->getRowArray();
+
+            // Get popular makes (extract from vehicle field)
+            $vehicles = $db->table('recon_orders')
+                         ->select('vehicle')
+                         ->where('deleted_at IS NULL')
+                         ->groupBy('vehicle')
+                         ->get()
+                         ->getResultArray();
+
+            $makes = [];
+            foreach ($vehicles as $vehicle) {
+                if (!empty($vehicle['vehicle'])) {
+                    // Try to extract make from vehicle string (first word usually)
+                    $parts = explode(' ', trim($vehicle['vehicle']));
+                    if (!empty($parts[0])) {
+                        $make = ucfirst(strtolower($parts[0]));
+                        if (!isset($makes[$make])) {
+                            $makes[$make] = 0;
+                        }
+                        $makes[$make]++;
+                    }
+                }
+            }
+
+            // Sort makes by popularity and take top 5
+            arsort($makes);
+            $popularMakes = array_slice(array_keys($makes), 0, 5);
+
+            return $this->response->setJSON([
+                'stats' => [
+                    'total_vehicles' => $totalVehicles,
+                    'recent_vehicles' => $recentVehicles,
+                    'most_serviced' => $mostServiced,
+                    'popular_makes' => $popularMakes
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            log_message('error', 'Error getting vehicles stats: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'stats' => [
+                    'total_vehicles' => 0,
+                    'recent_vehicles' => 0,
+                    'most_serviced' => null,
+                    'popular_makes' => []
+                ]
+            ]);
+        }
+    }
 } 

@@ -127,5 +127,10 @@ return function (RouteCollection $routes) {
         $routes->get('vehicles/search', 'ReconOrdersController::vehicleSearch');
         $routes->post('vehicles/data', 'ReconOrdersController::getVehiclesData');
         $routes->get('vehicles/stats', 'ReconOrdersController::getVehicleStats');
+        $routes->get('vehicles_stats', 'ReconOrdersController::vehicles_stats');
+        
+        // Inventory integration routes
+        $routes->post('inventory_orders_data', 'ReconOrdersController::inventory_orders_data');
+        $routes->post('convert_from_inventory', 'ReconOrdersController::convert_from_inventory');
     }); 
 }; 
