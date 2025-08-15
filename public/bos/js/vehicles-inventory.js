@@ -434,6 +434,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Update checkbox states
                 updateCheckboxStates();
+                
+                // Update table columns visibility based on authentication
+                updateTableColumnsVisibility();
             }
         });
 
@@ -1251,13 +1254,30 @@ function updateAuthenticationUI() {
     console.log('🔐 updateAuthenticationUI called - isAuthenticated:', window.isAuthenticated);
     
     // Show/hide staff-only elements
-    const staffOnlyElements = document.querySelectorAll('.staff-only');
-    staffOnlyElements.forEach(element => {
+    const staffOnlyElements = document.querySelectorAll('.staff-only, [class*="staff-only"]');
+    console.log('📋 Found', staffOnlyElements.length, 'staff-only elements');
+    
+    staffOnlyElements.forEach((element, index) => {
         if (window.isAuthenticated) {
+            // Show staff-only elements for authenticated users
             element.style.display = '';
+            element.style.removeProperty('display');
             element.classList.remove('staff-only');
+            console.log(`✅ Showing staff-only element ${index + 1}:`, element.tagName, element.className);
         } else {
-            element.style.display = 'none !important';
+            // Hide staff-only elements for non-authenticated users
+            element.style.display = 'none';
+            console.log(`❌ Hiding staff-only element ${index + 1}:`, element.tagName, element.className);
+        }
+    });
+
+    // Also handle inline style staff-only elements
+    const inlineStaffElements = document.querySelectorAll('[style*="display: none !important"]');
+    inlineStaffElements.forEach((element, index) => {
+        if (window.isAuthenticated) {
+            // Remove inline style to show element
+            element.style.removeProperty('display');
+            console.log(`✅ Showing inline staff-only element ${index + 1}:`, element.tagName);
         }
     });
 
@@ -1266,10 +1286,15 @@ function updateAuthenticationUI() {
     if (topBar) {
         if (window.isAuthenticated) {
             topBar.classList.add('show');
+            console.log('✅ Showing top bar');
         } else {
             topBar.classList.remove('show');
+            console.log('❌ Hiding top bar');
         }
     }
+    
+    // Update table columns visibility for Actions column
+    updateTableColumnsVisibility();
     
     // Reinitialize tables if they exist and auth state changed
     if (window.inventoryTable && typeof window.inventoryTable.destroy === 'function') {
@@ -1277,6 +1302,30 @@ function updateAuthenticationUI() {
         window.inventoryTable.destroy();
         window.inventoryTable = null;
         initializeTables();
+    }
+}
+
+// Function to update table columns visibility
+function updateTableColumnsVisibility() {
+    // Show/hide Actions column in inventory table based on authentication
+    const inventoryTable = document.getElementById('inventoryTable');
+    if (inventoryTable) {
+        const actionHeaders = inventoryTable.querySelectorAll('th:nth-child(9)'); // Actions column
+        const actionCells = inventoryTable.querySelectorAll('td:nth-child(9)');
+        const selectHeaders = inventoryTable.querySelectorAll('th:nth-child(1)'); // Select column  
+        const selectCells = inventoryTable.querySelectorAll('td:nth-child(1)');
+        
+        const displayValue = window.isAuthenticated ? '' : 'none';
+        
+        [...actionHeaders, ...actionCells].forEach(element => {
+            element.style.display = displayValue;
+        });
+        
+        [...selectHeaders, ...selectCells].forEach(element => {
+            element.style.display = displayValue;
+        });
+        
+        console.log(`🔄 Updated table columns visibility - authenticated: ${window.isAuthenticated}`);
     }
 }
 
