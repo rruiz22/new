@@ -3,9 +3,9 @@
 session_start();
 
 // Check if user is authenticated for staff-only features
-// Default to true for initial load, JavaScript will handle the real check
-$isAuthenticated = true; // Changed to true by default
-$userType = 'staff';
+// Default to false for initial load, JavaScript will handle the real check
+$isAuthenticated = false; // Default to false - hide staff-only elements initially
+$userType = 'guest';
 
 // Look for CodeIgniter session cookie
 $ciSessionFound = false;
@@ -16,8 +16,12 @@ foreach ($_COOKIE as $name => $value) {
     }
 }
 
-// If no CI session cookie found, check for other session indicators
-if (!$ciSessionFound) {
+// If CI session cookie found, likely authenticated
+if ($ciSessionFound) {
+    $isAuthenticated = true;
+    $userType = 'staff';
+} else {
+    // If no CI session cookie found, check for other session indicators
     $authIndicators = [
         'user', 'isLoggedIn', 'user_id', 'logged_in', 
         'auth_login', 'login_user', 'user_data'
@@ -31,11 +35,15 @@ if (!$ciSessionFound) {
         }
     }
     
-    // If no session indicators, set as guest but still show interface
+    // If no session indicators, set as guest and hide staff-only elements
     // JavaScript will handle the final authentication state
     if (!$sessionAuthFound) {
         $userType = 'guest';
-        // Keep $isAuthenticated = true for initial UI display
+        $isAuthenticated = false;
+    } else {
+        // Found session indicators, likely authenticated
+        $isAuthenticated = true;
+        $userType = 'staff';
     }
 }
 
