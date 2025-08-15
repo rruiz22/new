@@ -2468,4 +2468,11 @@ return [
     'duplicate_stock_detected' => 'Duplicate stock number detected!',
     'duplicates_found' => 'Duplicate stocks found',
     'multiple_duplicates_found' => 'Multiple duplicate stocks found',
+    
+    // Status Descriptions
+    'status_initial_processing' => 'Initial Processing',
+    'status_detail_in_progress' => 'Detail in Progress', 
+    'status_completed' => 'Completed',
+    'status_cancelled' => 'Cancelled',
+    'status_no_status_yet' => 'No Status Yet',
 ]; 

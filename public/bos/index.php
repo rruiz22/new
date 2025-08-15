@@ -87,7 +87,12 @@ if (!function_exists('lang')) {
             'App.orders_from_inventory' => 'Orders from Inventory',
             'App.created_from_inventory' => 'Created from inventory',
             'App.all_orders' => 'All Orders',
-            'App.complete_orders_list' => 'Complete orders list'
+            'App.complete_orders_list' => 'Complete orders list',
+            'App.status_initial_processing' => 'Initial Processing',
+            'App.status_detail_in_progress' => 'Detail in Progress',
+            'App.status_completed' => 'Completed',
+            'App.status_cancelled' => 'Cancelled',
+            'App.status_no_status_yet' => 'No Status Yet'
         ];
         return isset($translations[$key]) ? $translations[$key] : $key;
     }

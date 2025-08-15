@@ -1971,4 +1971,11 @@ return [
     'duplicate_stock_detected' => '¡Número de stock duplicado detectado!',
     'duplicates_found' => 'Stocks duplicados encontrados',
     'multiple_duplicates_found' => 'Múltiples stocks duplicados encontrados',
+    
+    // Status Descriptions
+    'status_initial_processing' => 'Procesamiento Inicial',
+    'status_detail_in_progress' => 'Detalle en Progreso', 
+    'status_completed' => 'Completado',
+    'status_cancelled' => 'Cancelado',
+    'status_no_status_yet' => 'Sin Estado Aún',
 ];
