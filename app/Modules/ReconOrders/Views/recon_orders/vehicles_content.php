@@ -160,6 +160,14 @@
                             </h5>
                             <p class="modern-card-subtitle"><?= lang('App.detailed_inventory_view') ?></p>
                         </div>
+                        <div class="col-auto">
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-success" id="convertSelectedBtn" disabled>
+                                    <i class="ri-arrow-right-line me-1"></i>
+                                    <?= lang('App.move_selected') ?>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="card-body">
@@ -179,7 +187,7 @@
                                     <th class="text-center"><?= lang('App.vehicle') ?></th>
                                     <th class="text-center">Notes</th>
                                     <th class="text-center"><?= lang('App.status') ?></th>
-                                    <th class="text-center" style="display: none !important;"><?= lang('App.actions') ?></th>
+                                    <th class="text-center"><?= lang('App.actions') ?></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -483,11 +491,7 @@
     margin: 0;
 }
 
-/* Hide Actions column completely */
-#inventoryTable th:nth-child(9),
-#inventoryTable td:nth-child(9) {
-    display: none !important;
-}
+/* Actions column visibility controlled by JavaScript based on authentication */
 
 .stats-card {
     transition: all 0.3s ease;

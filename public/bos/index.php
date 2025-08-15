@@ -100,7 +100,8 @@ if (!function_exists('lang')) {
             'App.status_detail_in_progress' => 'Detail in Progress',
             'App.status_completed' => 'Completed',
             'App.status_cancelled' => 'Cancelled',
-            'App.status_no_status_yet' => 'No Status Yet'
+            'App.status_no_status_yet' => 'No Status Yet',
+            'App.move_to_recon' => 'Move to Recon'
         ];
         return isset($translations[$key]) ? $translations[$key] : $key;
     }
@@ -2485,6 +2486,10 @@ if (!function_exists('base_url')) {
                 </div>
                 <div class="col-auto">
                     <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-success <?php echo $staffOnlyClass; ?>" id="convertSelectedBtn" disabled <?php echo $staffOnlyStyle; ?>>
+                            <i class="ri-arrow-right-line me-1"></i>
+                            <?= lang('App.move_selected') ?>
+                        </button>
                         <button type="button" class="btn btn-outline-secondary" id="hideCompletedBtn">
                             <i class="ri-eye-off-line me-1"></i>
                             Hide Completed

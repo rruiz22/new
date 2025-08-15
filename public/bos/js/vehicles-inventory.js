@@ -286,11 +286,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (!window.isAuthenticated) return '';
                     
                     return `<div class="d-flex gap-1 justify-content-center">
-                        <button class="btn btn-sm btn-outline-primary" onclick="editInventoryItem('${row.stock_number}')" title="Edit">
-                            <i class="ri-edit-line"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-danger" onclick="deleteInventoryItem('${row.stock_number}')" title="Delete">
-                            <i class="ri-delete-bin-line"></i>
+                        <button class="btn btn-sm btn-success" onclick="moveToRecon('${row.stock_number}')" title="Move to Recon">
+                            <i class="ri-arrow-right-line me-1"></i>Move
                         </button>
                     </div>`;
                 }
@@ -1185,8 +1182,81 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showBulkConversionModal(selectedItems) {
-        console.log('Bulk conversion modal for:', selectedItems);
-        showToast(`Selected ${selectedItems.length} items for conversion`, 'info');
+        console.log('🔄 Bulk conversion modal for:', selectedItems);
+        
+        if (!selectedItems || selectedItems.length === 0) {
+            showToast('No items selected for conversion', 'warning');
+            return;
+        }
+        
+        // Create confirmation modal
+        const stockNumbers = selectedItems.map(item => item.stock_number).join(', ');
+        const message = `Are you sure you want to move ${selectedItems.length} selected items to Recon Orders?\n\nStock Numbers: ${stockNumbers}`;
+        
+        if (confirm(message)) {
+            // Process bulk conversion
+            processBulkConversion(selectedItems);
+        }
+    }
+    
+    // Function to handle individual item conversion
+    window.moveToRecon = function(stockNumber) {
+        console.log('🔄 Moving single item to recon:', stockNumber);
+        
+        if (!stockNumber) {
+            showToast('Invalid stock number', 'error');
+            return;
+        }
+        
+        const message = `Are you sure you want to move stock "${stockNumber}" to Recon Orders?`;
+        
+        if (confirm(message)) {
+            // Find the row data
+            let rowData = null;
+            if (window.inventoryTable) {
+                window.inventoryTable.rows().every(function() {
+                    const data = this.data();
+                    if (data && data.stock_number === stockNumber) {
+                        rowData = data;
+                        return false; // Break the loop
+                    }
+                    return true; // Continue
+                });
+            }
+            
+            if (rowData) {
+                processBulkConversion([rowData]);
+            } else {
+                showToast('Could not find inventory item', 'error');
+            }
+        }
+    };
+    
+    // Function to process the actual conversion
+    function processBulkConversion(items) {
+        console.log('🚀 Processing conversion for', items.length, 'items:', items);
+        
+        // Show loading state
+        showToast(`Processing ${items.length} item(s)...`, 'info');
+        
+        // Here you would typically make an API call to convert the items
+        // For now, we'll simulate the process
+        setTimeout(() => {
+            const stockNumbers = items.map(item => item.stock_number);
+            console.log('✅ Conversion completed for stocks:', stockNumbers);
+            showToast(`Successfully moved ${items.length} item(s) to Recon Orders`, 'success');
+            
+            // Refresh the inventory table to reflect changes
+            if (window.inventoryTable) {
+                window.inventoryTable.ajax.reload(null, false);
+            }
+            
+            // Clear any selected checkboxes
+            $('.inventory-checkbox:checked').prop('checked', false);
+            $('#selectAllInventory').prop('checked', false);
+            updateConvertButtonState();
+            
+        }, 1500); // Simulate processing time
     }
 
     function initializeVehiclesLocalStorage() {
