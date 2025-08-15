@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container01">
     
     <!-- Inventory Management Container -->
     <div class="dashboard-container mb-4">
@@ -326,7 +326,7 @@
 
 
 <style>
-/* Modern Container Styles */
+/* Modern Container Styles
 .dashboard-container {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 20px;
@@ -361,7 +361,7 @@
     padding: 2rem;
 }
 
-/* Enhanced Card Styles */
+/* Enhanced Card Styles 
 .modern-card {
     background: #ffffff;
     border-radius: 16px;
@@ -408,7 +408,7 @@
     padding: 2rem;
 }
 
-/* Staff Container Styles */
+/* Staff Container Styles 
 .staff-container {
     background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
     border-radius: 20px;
@@ -474,7 +474,7 @@
     opacity: 0.9;
 }
 
-/* Table improvements */
+/* Table improvements 
 #inventoryTable th {
     vertical-align: middle;
     border-bottom: 2px solid #e5e7eb;
@@ -556,7 +556,7 @@
 
 
 .search-bar {
-    max-width: 400px;
+    max-width: 300px;
 }
 
 .icon-container {
