@@ -2143,101 +2143,122 @@ if (!function_exists('base_url')) {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
         }
 
-        /* Mobile responsive table - Stack columns vertically */
+        /* Mobile responsive table - Horizontal scroll with minimal padding */
         @media (max-width: 768px) {
+            /* Reduce container padding to minimum */
+            .container {
+                padding: 0.25rem !important;
+            }
+            
+            /* Reduce card padding */
+            .modern-card {
+                margin: 0.25rem;
+                border-radius: 8px;
+            }
+            
+            .modern-card-body {
+                padding: 0.5rem !important;
+            }
+            
+            /* Table wrapper for horizontal scroll */
+            .table-responsive {
+                margin: 0 -0.5rem;
+                padding: 0;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                border-radius: 8px;
+            }
+            
+            /* Enable horizontal scroll for table */
             #inventoryTable {
-                font-size: 0.875rem;
-            }
-            
-            /* Hide table headers on mobile */
-            #inventoryTable thead {
-                display: none;
-            }
-            
-            /* Make each row a card-like structure */
-            #inventoryTable tbody tr {
-                display: block;
-                margin-bottom: 1rem;
-                background: #ffffff;
-                border: 1px solid #e2e8f0;
-                border-radius: 12px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-                padding: 1rem;
-                position: relative;
-            }
-            
-            /* Make each cell a row with label */
-            #inventoryTable tbody td {
-                display: block;
-                text-align: left !important;
-                padding: 0.5rem 0 !important;
-                border: none;
-                border-bottom: 1px solid #f1f5f9;
-                position: relative;
-                padding-left: 40% !important;
-            }
-            
-            /* Remove border from last cell */
-            #inventoryTable tbody td:last-child {
-                border-bottom: none;
-            }
-            
-            /* Add labels before each cell content */
-            #inventoryTable tbody td:nth-child(1)::before { content: "Select: "; }
-            #inventoryTable tbody td:nth-child(2)::before { content: "Date in Detail: "; }
-            #inventoryTable tbody td:nth-child(3)::before { content: "Days: "; }
-            #inventoryTable tbody td:nth-child(4)::before { content: "Keys: "; }
-            #inventoryTable tbody td:nth-child(5)::before { content: "Stock #: "; }
-            #inventoryTable tbody td:nth-child(6)::before { content: "Vehicle: "; }
-            #inventoryTable tbody td:nth-child(7)::before { content: "Notes: "; }
-            #inventoryTable tbody td:nth-child(8)::before { content: "Status: "; }
-            #inventoryTable tbody td:nth-child(9)::before { content: "Actions: "; }
-            
-            /* Style the labels */
-            #inventoryTable tbody td::before {
-                content: attr(data-label);
-                position: absolute;
-                left: 0;
-                width: 35%;
-                padding-right: 0.5rem;
-                white-space: nowrap;
-                font-weight: 600;
-                color: #64748b;
-                font-size: 0.8rem;
-                text-transform: uppercase;
-                letter-spacing: 0.025em;
-            }
-            
-            /* Special styling for stock number on mobile */
-            #inventoryTable tbody td:nth-child(5) {
-                font-weight: 700;
-            }
-            
-            /* Special styling for status column on mobile */
-            #inventoryTable tbody td:nth-child(8) {
-                padding-bottom: 1rem !important;
-            }
-            
-            /* Hide checkbox column on mobile for non-authenticated users */
-            #inventoryTable tbody td:nth-child(1) {
-                display: none;
-            }
-            
-            /* Show checkbox only for authenticated users */
-            body.authenticated #inventoryTable tbody td:nth-child(1) {
-                display: block;
-            }
-            
-            /* Adjust vehicle info on mobile */
-            #inventoryTable tbody td:nth-child(6) {
-                font-size: 0.9rem;
-                line-height: 1.4;
-            }
-            
-            /* Make status badges more prominent on mobile */
-            #inventoryTable tbody td:nth-child(8) .badge {
+                min-width: 800px; /* Ensure table is wide enough to scroll */
                 font-size: 0.75rem;
-                padding: 0.375rem 0.75rem;
+                margin: 0;
+            }
+            
+            /* Keep table structure intact for horizontal scroll */
+            #inventoryTable thead th {
+                padding: 0.5rem 0.25rem !important;
+                font-size: 0.7rem;
+                white-space: nowrap;
+                min-width: 80px;
+            }
+            
+            #inventoryTable tbody td {
+                padding: 0.5rem 0.25rem !important;
+                font-size: 0.75rem;
+                white-space: nowrap;
+                vertical-align: middle;
+            }
+            
+            /* Stock number column wider */
+            #inventoryTable th:nth-child(5),
+            #inventoryTable td:nth-child(5) {
+                min-width: 100px;
+            }
+            
+            /* Vehicle column wider */
+            #inventoryTable th:nth-child(6),
+            #inventoryTable td:nth-child(6) {
+                min-width: 120px;
+                white-space: normal;
+                line-height: 1.2;
+            }
+            
+            /* Notes column */
+            #inventoryTable th:nth-child(7),
+            #inventoryTable td:nth-child(7) {
+                min-width: 100px;
+                max-width: 150px;
+                white-space: normal;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            
+            /* Status column */
+            #inventoryTable th:nth-child(8),
+            #inventoryTable td:nth-child(8) {
+                min-width: 100px;
+            }
+            
+            /* Adjust badges for mobile */
+            #inventoryTable .badge {
+                font-size: 0.6rem;
+                padding: 0.25rem 0.5rem;
+            }
+            
+            /* Stock number styling for mobile */
+            .stock-number-enhanced {
+                font-size: 1rem !important;
+            }
+            
+            /* Date styling for mobile */
+            .date-enhanced {
+                font-size: 0.9rem !important;
+            }
+            
+            /* Days badge styling */
+            .days-badge {
+                font-size: 0.6rem;
+                padding: 0.2rem 0.4rem;
+            }
+            
+            /* Horizontal scroll indicator */
+            .table-responsive::after {
+                content: "← Desliza para ver más →";
+                display: block;
+                text-align: center;
+                padding: 0.5rem;
+                font-size: 0.7rem;
+                color: #6b7280;
+                background: #f8fafc;
+                font-style: italic;
+                border-top: 1px solid #e5e7eb;
+            }
+            
+            /* Hide scroll indicator when not needed */
+            .table-responsive:not(.scrollable)::after {
+                display: none;
             }
         }
         
@@ -2896,53 +2917,31 @@ window.userType = '<?php echo $userType; ?>';
                console.log(`🧹 Cleared filters: ${originalLength} → ${newLength}`);
            }
            
-           // Mobile responsive enhancements
-           function enhanceMobileExperience() {
-               const isMobile = window.innerWidth <= 768;
+           // Mobile responsive enhancements - Horizontal scroll detection
+           function setupMobileScrollIndicator() {
+               const tableWrapper = document.querySelector('.table-responsive');
+               const table = document.getElementById('inventoryTable');
                
-               if (isMobile) {
-                   // Add mobile-specific enhancements
-                   const table = document.getElementById('inventoryTable');
-                   if (table) {
-                       // Add data labels for mobile
-                       const rows = table.querySelectorAll('tbody tr');
-                       rows.forEach(row => {
-                           const cells = row.querySelectorAll('td');
-                           const labels = ['Select', 'Date in Detail', 'Days', 'Keys', 'Stock #', 'Vehicle', 'Notes', 'Status', 'Actions'];
-                           
-                           cells.forEach((cell, index) => {
-                               if (labels[index]) {
-                                   cell.setAttribute('data-label', labels[index] + ':');
-                               }
-                           });
-                       });
+               if (tableWrapper && table && window.innerWidth <= 768) {
+                   // Check if horizontal scroll is needed
+                   const isScrollable = table.scrollWidth > tableWrapper.clientWidth;
+                   
+                   if (isScrollable) {
+                       tableWrapper.classList.add('scrollable');
+                   } else {
+                       tableWrapper.classList.remove('scrollable');
                    }
                }
            }
            
-           // Call mobile enhancements
-           enhanceMobileExperience();
+           // Setup mobile enhancements
+           setTimeout(setupMobileScrollIndicator, 1000);
            
-           // Re-run mobile enhancements when table is redrawn
-           function setupTableDrawListener() {
-               if (window.inventoryTable && typeof window.inventoryTable.on === 'function') {
-                   window.inventoryTable.on('draw', function() {
-                       setTimeout(enhanceMobileExperience, 100);
-                   });
-               } else {
-                   // Retry after a short delay if table is not ready
-                   setTimeout(setupTableDrawListener, 500);
-               }
-           }
-           
-           // Setup the listener with delay to ensure table is initialized
-           setTimeout(setupTableDrawListener, 1000);
-           
-           // Handle window resize
+           // Re-run on window resize
            let resizeTimeout;
            window.addEventListener('resize', function() {
                clearTimeout(resizeTimeout);
-               resizeTimeout = setTimeout(enhanceMobileExperience, 250);
+               resizeTimeout = setTimeout(setupMobileScrollIndicator, 250);
            });
        }
    });

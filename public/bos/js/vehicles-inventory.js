@@ -388,17 +388,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Initialize Inventory Orders Table
         if ($('#inventoryOrdersTable').length > 0) {
-            window.inventoryOrdersTable = $('#inventoryOrdersTable').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: {
-                    url: '../recon_orders/inventory_orders_data',
-                    type: 'POST',
-                    data: function(d) {
-                        d.ajax = true;
-                        return d;
-                    }
-                },
+            try {
+                window.inventoryOrdersTable = $('#inventoryOrdersTable').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ajax: {
+                        url: '../recon_orders/inventory_orders_data',
+                        type: 'POST',
+                        data: function(d) {
+                            d.ajax = true;
+                            return d;
+                        },
+                        error: function(xhr, error, code) {
+                            console.warn('⚠️ Inventory Orders table Ajax error:', error);
+                            // Hide the error from user
+                            return false;
+                        }
+                    },
                 columns: [
                     { data: 'order_number' },
                     { data: 'stock' },
@@ -421,21 +427,29 @@ document.addEventListener('DOMContentLoaded', function() {
                     emptyTable: 'No orders from inventory found'
                 }
             });
+            } catch (error) {
+                console.warn('⚠️ Failed to initialize Inventory Orders table:', error);
+            }
         }
 
         // Initialize All Orders Table
         if ($('#allOrdersTable').length > 0) {
-            window.allOrdersTable = $('#allOrdersTable').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: {
-                    url: '../recon_orders/all_orders_content',
-                    type: 'POST',
-                    data: function(d) {
-                        d.ajax = true;
-                        return d;
-                    }
-                },
+            try {
+                window.allOrdersTable = $('#allOrdersTable').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ajax: {
+                        url: '../recon_orders/all_orders_content',
+                        type: 'POST',
+                        data: function(d) {
+                            d.ajax = true;
+                            return d;
+                        },
+                        error: function(xhr, error, code) {
+                            console.warn('⚠️ All Orders table Ajax error:', error);
+                            return false;
+                        }
+                    },
                 columns: [
                     { data: 'order_number' },
                     { data: 'stock' },
@@ -458,6 +472,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     emptyTable: 'No orders found'
                 }
             });
+            } catch (error) {
+                console.warn('⚠️ Failed to initialize All Orders table:', error);
+            }
         }
     }
 
