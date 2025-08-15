@@ -21,7 +21,7 @@
                                 </button>
                                 <button type="button" class="btn btn-success" id="convertSelectedBtn" disabled>
                                     <i class="ri-arrow-right-line me-1"></i>
-                                    <?= lang('App.convert_selected') ?>
+                                    <?= lang('App.move_selected') ?>
                                 </button>
                             </div>
                         </div>
@@ -205,207 +205,12 @@
         </div>
     </div>
 
-    <!-- Statistics Cards -->
-    <div class="row mb-4">
-        <div class="col-xl-3 col-md-6">
-            <div class="card stats-card">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="icon-container icon-blue">
-                                <i class="ri-car-line"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <h5 class="mb-0" id="totalVehicles">0</h5>
-                            <p class="text-muted mb-0"><?= lang('App.total_vehicles') ?></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-xl-3 col-md-6">
-            <div class="card stats-card">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="icon-container icon-green">
-                                <i class="ri-calendar-check-line"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <h5 class="mb-0" id="recentVehicles">0</h5>
-                            <p class="text-muted mb-0"><?= lang('App.new_this_month') ?></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-xl-3 col-md-6">
-            <div class="card stats-card">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="icon-container icon-orange">
-                                <i class="ri-trophy-line"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <h5 class="mb-0" id="mostServicedCount">0</h5>
-                            <p class="text-muted mb-0"><?= lang('App.most_serviced') ?></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-xl-3 col-md-6">
-            <div class="card stats-card">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="icon-container icon-purple">
-                                <i class="ri-building-line"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <h5 class="mb-0" id="popularMakesCount">0</h5>
-                            <p class="text-muted mb-0"><?= lang('App.vehicle_makes') ?></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Vehicles Registry Table -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <div class="row align-items-center">
-                        <div class="col">
-                            <h5 class="card-title mb-0">
-                                <i class="ri-car-line me-2"></i>
-                                <?= lang('App.vehicle_registry') ?>
-                            </h5>
-                            <p class="text-muted small mb-0"><?= lang('App.complete_history_vehicles') ?></p>
-                        </div>
-                        <div class="col-auto">
-                            <div class="d-flex gap-2">
-                                <button type="button" class="btn btn-primary" id="refreshVehiclesBtn" onclick="refreshVehiclesData()">
-                                    <i class="ri-refresh-line me-1"></i>
-                                    <?= lang('App.refresh') ?>
-                                </button>
-                            <div class="search-bar">
-                                <div class="input-group">
-                                    <span class="input-group-text">
-                                        <i class="ri-search-line"></i>
-                                    </span>
-                                    <input type="text" class="form-control" id="vehicleSearch" placeholder="<?= lang('App.search') ?> VIN, <?= lang('App.vehicle_make') ?>, <?= lang('App.vehicle_model') ?>...">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table id="vehiclesTable" class="table table-hover align-middle" style="width:100%">
-                            <thead class="table-light">
-                                <tr>
-                                    <th><?= lang('App.vehicle') ?></th>
-                                    <th><?= lang('App.vin_number') ?></th>
-                                    <th><?= lang('App.vehicle_details') ?></th>
-                                    <th><?= lang('App.vehicle_year') ?></th>
-                                    <th><?= lang('App.total_services') ?></th>
-                                    <th><?= lang('App.first_service') ?></th>
-                                    <th><?= lang('App.last_service') ?></th>
-                                    <th><?= lang('App.actions') ?></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- DataTables will populate this -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+
+
 </div>
 
-<!-- Conversion Modal -->
-<div class="modal fade" id="conversionModal" tabindex="-1" aria-labelledby="conversionModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="conversionModalLabel">
-                    <i class="ri-exchange-line me-2"></i>
-                    <?= lang('App.convert_to_recon_order') ?>
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="conversionForm">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label"><?= lang('App.stock_number') ?></label>
-                            <input type="text" class="form-control" id="modalStock" readonly>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label"><?= lang('App.vehicle') ?></label>
-                            <input type="text" class="form-control" id="modalVehicle" readonly>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label"><?= lang('App.date_in_detail') ?></label>
-                            <input type="text" class="form-control" id="modalDateDetail" readonly>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label"><?= lang('App.days_in_detail') ?></label>
-                            <input type="text" class="form-control" id="modalDaysDetail" readonly>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label"><?= lang('App.select_client') ?> <span class="text-danger">*</span></label>
-                            <select class="form-select" id="modalClient" required>
-                                <option value=""><?= lang('App.select_client') ?></option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label"><?= lang('App.service') ?></label>
-                            <select class="form-select" id="modalService">
-                                <option value=""><?= lang('App.select_service') ?></option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label"><?= lang('App.service_date') ?></label>
-                        <input type="date" class="form-control" id="modalServiceDate">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label"><?= lang('App.notes') ?></label>
-                        <textarea class="form-control" id="modalNotes" rows="3" placeholder="<?= lang('App.inventory_source') ?>"></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <?= lang('App.cancel') ?>
-                </button>
-                <button type="button" class="btn btn-success" id="confirmConversionBtn">
-                    <i class="ri-check-line me-1"></i>
-                    <?= lang('App.convert_to_recon') ?>
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
+
 
 <style>
 .stats-card {
@@ -447,44 +252,20 @@
     color: #1e293b;
 }
 
-.vehicle-badge {
-    font-size: 0.75rem;
-    padding: 0.25rem 0.5rem;
-}
+
 
 .table-responsive {
     border-radius: 8px;
     overflow: hidden;
 }
 
-.vehicle-info {
-    font-weight: 600;
-    color: #2563eb;
-}
 
-.vin-number {
-    font-family: 'Courier New', monospace;
-    font-size: 0.85rem;
-    color: #64748b;
-}
 
-.service-count {
-    background: #3b82f6;
-    color: white;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 0.8rem;
-}
 
-.vehicle-actions .btn {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.8rem;
-}
+
+
+
+
 
 .search-bar {
     max-width: 400px;
@@ -1014,18 +795,18 @@ document.addEventListener('DOMContentLoaded', function() {
     function initializeTables() {
         // Check if jQuery and DataTables are available
         if (typeof window.$ === 'undefined' || typeof window.jQuery === 'undefined') {
-            console.log('⏳ Waiting for jQuery to load...');
+
             setTimeout(initializeTables, 100);
             return;
         }
         
         if (typeof window.$.fn.DataTable === 'undefined') {
-            console.log('⏳ Waiting for DataTables to load...');
+
             setTimeout(initializeTables, 100);
             return;
         }
         
-        console.log('🚗 Vehicles Content - Initializing all tables');
+
         
         // Use jQuery safely
         const $ = window.jQuery;
@@ -1038,7 +819,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 url: '<?= base_url('public/bos/get_inventory.php') ?>',
                 type: 'GET',
                 dataSrc: function(json) {
-                    console.log('Inventory data received:', json);
+
                     
                     // Handle the response structure from get_inventory.php
                     let data = json;
@@ -1048,7 +829,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     // Ensure data is an array
                     if (!Array.isArray(data)) {
-                        console.error('Expected array, got:', typeof data, data);
+
                         return [];
                     }
                     
@@ -1098,7 +879,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     calculatedDays = 0;
                                 }
                             } catch (e) {
-                                console.warn('Date parsing error:', e, 'for value:', row[0]);
+
                                 formattedDate = row[0] || '';
                                 calculatedDays = 0;
                             }
@@ -1115,16 +896,13 @@ document.addEventListener('DOMContentLoaded', function() {
                             raw_data: row
                         };
                         
-                        // Debug log for first few rows
-                        if (index < 3) {
-                            console.log(`Row ${index} mapped:`, mappedRow);
-                        }
+
                         
                         return mappedRow;
                     });
                 },
                 error: function(xhr, error, thrown) {
-                    console.error('Inventory Ajax Error:', error, thrown);
+
                     showToast('<?= lang('App.error_loading_inventory') ?>', 'error');
                 }
             },
@@ -1198,7 +976,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     render: function(data, type, row) {
                         return `<button class="btn btn-success btn-sm convert-single-btn" data-row='${JSON.stringify(row)}'>
                             <i class="ri-arrow-right-line me-1"></i>
-                            <?= lang('App.convert_to_recon') ?>
+                            <?= lang('App.move_to_recon') ?>
                         </button>`;
                     }
                 }
@@ -1224,7 +1002,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     return d;
                 },
                 error: function(xhr, error, thrown) {
-                    console.error('Inventory Orders Ajax Error:', error, thrown);
+
                     showToast('Error loading inventory orders', 'error');
                 }
             },
@@ -1302,118 +1080,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // Initialize Vehicles Table
-        window.vehiclesTable = $('#vehiclesTable').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: {
-                url: '<?= base_url('recon_orders/vehicles_content') ?>',
-            type: 'POST',
-            data: function(d) {
-                d.ajax = true;
-                console.log('Sending AJAX request with data:', d);
-                return d;
-            },
-            error: function(xhr, error, thrown) {
-                console.error('DataTable Ajax Error:', error, thrown);
-                console.error('Response:', xhr.responseText);
-                showToast('Error loading vehicles data', 'error');
-            },
-            success: function(data) {
-                console.log('DataTable Ajax Success:', data);
-            }
-        },
-        columns: [
-            {
-                data: 'vehicle_info',
-                render: function(data, type, row) {
-                    return `<div class="vehicle-info">${data}</div>`;
-                }
-            },
-            {
-                data: 'vin_number',
-                render: function(data, type, row) {
-                    return `<span class="vin-number">${data}</span>`;
-                }
-            },
-            {
-                data: null,
-                render: function(data, type, row) {
-                    return `<span class="text-muted">Not available</span>`;
-                }
-            },
-            {
-                data: 'year',
-                render: function(data, type, row) {
-                    return '<span class="text-muted">Not available</span>';
-                }
-            },
-            {
-                data: 'total_orders',
-                render: function(data, type, row) {
-                    return `<div class="text-center">
-                        <span class="service-count">${data || 0}</span>
-                    </div>`;
-                }
-            },
-            {
-                data: 'first_service',
-                render: function(data, type, row) {
-                    if (data && data !== 'N/A') {
-                        return `<div>
-                            <div class="fw-medium">${data}</div>
-                            <small class="text-muted">${row.first_order_number || ''}</small>
-                        </div>`;
-                    }
-                    return '<span class="text-muted">N/A</span>';
-                }
-            },
-            {
-                data: 'last_service',
-                render: function(data, type, row) {
-                    if (data && data !== 'N/A') {
-                        return `<div>
-                            <div class="fw-medium">${data}</div>
-                            <small class="text-muted">${row.last_order_number || ''}</small>
-                        </div>`;
-                    }
-                    return '<span class="text-muted">N/A</span>';
-                }
-            },
-            {
-                data: null,
-                orderable: false,
-                render: function(data, type, row) {
-                    return `<div class="vehicle-actions">
-                        <a href="<?= base_url('vehicles/') ?>${row.vin_number.slice(-6)}" 
-                           class="btn btn-outline-primary btn-sm" 
-                           title="<?= lang('App.view_vehicle_history') ?>">
-                            <i class="ri-eye-line"></i> <?= lang('App.view_vehicle_history') ?>
-                        </a>
-                    </div>`;
-                }
-            }
-        ],
-        order: [[5, 'desc']], // Sort by last service date
-        pageLength: 25,
-        responsive: true,
-        language: {
-            processing: '<div class="d-flex justify-content-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>',
-            emptyTable: '<div class="text-center py-4"><i class="ri-car-line display-4 text-muted"></i><h6 class="mt-2">No vehicles found</h6><p class="text-muted">Vehicles will appear here when orders are created</p></div>'
-        },
-        drawCallback: function(settings) {
-            // Re-initialize tooltips with Bootstrap 5
-            if (typeof bootstrap !== 'undefined') {
-                const tooltips = document.querySelectorAll('[title]');
-                tooltips.forEach(el => new bootstrap.Tooltip(el));
-            }
-        }
-    });
+
 
         // Event Handlers
         setupEventHandlers();
-        loadClients();
-        loadServices();
         refreshStats();
         
         // Setup widget-based filtering
@@ -1422,7 +1092,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Restore previous state
         restorePreviousState();
         
-        console.log('✅ All tables initialized successfully');
+
     }
 
     function setupEventHandlers() {
@@ -1465,10 +1135,10 @@ document.addEventListener('DOMContentLoaded', function() {
             showBulkConversionModal(selectedItems);
         });
 
-        // Single convert buttons
+        // Single convert buttons - Open main modal with inventory data
         $(document).on('click', '.convert-single-btn', function() {
             const rowData = JSON.parse($(this).attr('data-row'));
-            showConversionModal(rowData);
+            openMainModalWithInventoryData(rowData);
         });
 
         // Refresh buttons
@@ -1481,15 +1151,8 @@ document.addEventListener('DOMContentLoaded', function() {
             window.inventoryOrdersTable.ajax.reload();
         });
 
-        // Vehicle search
-    $('#vehicleSearch').on('keyup', function() {
-            window.vehiclesTable.search(this.value).draw();
-        });
 
-        // Conversion form submit
-        $('#confirmConversionBtn').on('click', function() {
-            submitConversion();
-        });
+
     }
 
     function updateConvertButtonState() {
@@ -1497,188 +1160,68 @@ document.addEventListener('DOMContentLoaded', function() {
         $('#convertSelectedBtn').prop('disabled', checkedCount === 0);
         
         if (checkedCount > 0) {
-            $('#convertSelectedBtn').html(`<i class="ri-arrow-right-line me-1"></i> <?= lang('App.convert_selected') ?> (${checkedCount})`);
+            $('#convertSelectedBtn').html(`<i class="ri-arrow-right-line me-1"></i> <?= lang('App.move_selected') ?> (${checkedCount})`);
         } else {
-            $('#convertSelectedBtn').html(`<i class="ri-arrow-right-line me-1"></i> <?= lang('App.convert_selected') ?>`);
+            $('#convertSelectedBtn').html(`<i class="ri-arrow-right-line me-1"></i> <?= lang('App.move_selected') ?>`);
         }
     }
 
-    function showConversionModal(rowData) {
-        // Populate modal with inventory data
-        $('#modalStock').val(rowData.stock_number);
-        $('#modalVehicle').val(rowData.vehicle);
-        $('#modalDateDetail').val(rowData.date_detail);
-        
-        // Handle days display with proper translation
+    function openMainModalWithInventoryData(rowData) {
+        // Create inventory notes in the requested format
         const daysText = rowData.days_detail ? 
-            (rowData.days_detail === 1 ? `${rowData.days_detail} <?= lang('App.day') ?>` : `${rowData.days_detail} <?= lang('App.days') ?>`) : 
+            (rowData.days_detail === 1 ? `${rowData.days_detail} day` : `${rowData.days_detail} days`) : 
             'N/A';
-        $('#modalDaysDetail').val(daysText);
-        
-        // Create comprehensive notes with all available data
-        $('#modalNotes').val(
-            '<?= lang('App.auto_filled_from_inventory') ?>' + '\n\n' + 
-            '<?= lang('App.date_in_detail') ?>: ' + (rowData.date_detail || 'N/A') + '\n' +
-            '<?= lang('App.days_in_detail') ?>: ' + daysText + '\n' +
-            '<?= lang('App.keys') ?>: ' + (rowData.keys || 'N/A') + '\n' +
-            '<?= lang('App.write_up_date') ?>: ' + (rowData.write_up_date || 'N/A') + '\n' +
-            '<?= lang('App.stock_number') ?>: ' + (rowData.stock_number || 'N/A') + '\n' +
-            '<?= lang('App.vehicle') ?>: ' + (rowData.vehicle || 'N/A')
-        );
-        
-        // Set today's date as default
-        const today = new Date().toISOString().split('T')[0];
-        $('#modalServiceDate').val(today);
+            
+        const inventoryNotes = `Auto-filled from inventory
 
-        // Store row data for submission
-        $('#conversionForm').data('rowData', rowData);
+Date in Detail: ${rowData.date_detail || 'N/A'}
+Days in Detail: ${daysText}
+Keys: ${rowData.keys || 'N/A'}
+Write Up Date: ${rowData.write_up_date || 'N/A'}
+Stock Number: ${rowData.stock_number || 'N/A'}
+Original Vehicle: ${rowData.vehicle || 'N/A'}`;
+
+        // Store inventory data in the main modal
+        $('#reconOrderModal').data('inventory-data', {
+            stock: rowData.stock_number || '',
+            vehicle: rowData.vehicle || '',
+            notes: inventoryNotes,
+            service_date: new Date().toISOString().split('T')[0]
+        });
         
-        // Show modal
-        const modal = new bootstrap.Modal(document.getElementById('conversionModal'));
-        modal.show();
+        // Open the main modal
+        $('#reconOrderModal').modal('show');
     }
 
     function showBulkConversionModal(selectedItems) {
-        // For now, show a simple confirmation
+        // For bulk conversion, show confirmation and then open main modal with first item data
         if (window.showConfirmDialog) {
             window.showConfirmDialog(
                 '<?= lang('App.confirm_conversion') ?>',
-                `<?= lang('App.convert_multiple_stocks') ?>? (${selectedItems.length} <?= lang('App.selected_items') ?>)`,
+                `<?= lang('App.move_multiple_stocks') ?>? (${selectedItems.length} <?= lang('App.selected_items') ?>)`,
                 '<?= lang('App.yes_convert') ?>',
                 '<?= lang('App.cancel') ?>'
             ).then((result) => {
                 if (result.isConfirmed) {
-                    processBulkConversion(selectedItems);
+                    // For bulk, open modal with first item's data as template
+                    if (selectedItems.length > 0) {
+                        openMainModalWithInventoryData(selectedItems[0]);
+                    }
                 }
             });
         } else {
-            if (confirm(`<?= lang('App.convert_multiple_stocks') ?>? (${selectedItems.length} <?= lang('App.selected_items') ?>)`)) {
-                processBulkConversion(selectedItems);
+            if (confirm(`<?= lang('App.move_multiple_stocks') ?>? (${selectedItems.length} <?= lang('App.selected_items') ?>)`)) {
+                // For bulk, open modal with first item's data as template
+                if (selectedItems.length > 0) {
+                    openMainModalWithInventoryData(selectedItems[0]);
+                }
             }
         }
     }
 
-    function processBulkConversion(selectedItems) {
-        // Show loading state
-        $('#convertSelectedBtn').prop('disabled', true).html('<i class="spinner-border spinner-border-sm me-1"></i> <?= lang('App.converting_to_recon') ?>');
 
-        // Process each item
-        const promises = selectedItems.map(item => convertSingleItem(item));
-        
-        Promise.all(promises).then(results => {
-            const successful = results.filter(r => r.success).length;
-            const failed = results.length - successful;
-            
-            if (successful > 0) {
-                showToast(`${successful} <?= lang('App.converted_successfully') ?>`, 'success');
-                window.inventoryTable.ajax.reload();
-                window.inventoryOrdersTable.ajax.reload();
-                
-                // Clear selections
-                $('.inventory-checkbox').prop('checked', false);
-                $('#selectAllInventory').prop('checked', false);
-            }
-            
-            if (failed > 0) {
-                showToast(`${failed} <?= lang('App.conversion_failed') ?>`, 'error');
-            }
-        }).finally(() => {
-            updateConvertButtonState();
-        });
-    }
 
-    function submitConversion() {
-        const formData = {
-            client_id: $('#modalClient').val(),
-            service_id: $('#modalService').val(),
-            service_date: $('#modalServiceDate').val(),
-            notes: $('#modalNotes').val(),
-            inventory_data: $('#conversionForm').data('rowData')
-        };
 
-        if (!formData.client_id) {
-            showToast('<?= lang('App.client_required') ?>', 'warning');
-            return;
-        }
-
-        $('#confirmConversionBtn').prop('disabled', true).html('<i class="spinner-border spinner-border-sm me-1"></i> <?= lang('App.converting_to_recon') ?>');
-
-        $.ajax({
-            url: '<?= base_url('recon_orders/convert_from_inventory') ?>',
-            type: 'POST',
-            data: formData,
-            success: function(response) {
-                if (response.success) {
-                    showToast('<?= lang('App.converted_successfully') ?>', 'success');
-                    bootstrap.Modal.getInstance(document.getElementById('conversionModal')).hide();
-                    window.inventoryTable.ajax.reload();
-                    window.inventoryOrdersTable.ajax.reload();
-                } else {
-                    showToast(response.message || '<?= lang('App.conversion_failed') ?>', 'error');
-                }
-            },
-            error: function() {
-                showToast('<?= lang('App.conversion_failed') ?>', 'error');
-            },
-            complete: function() {
-                $('#confirmConversionBtn').prop('disabled', false).html('<i class="ri-check-line me-1"></i> <?= lang('App.convert_to_recon') ?>');
-            }
-        });
-    }
-
-    function convertSingleItem(item) {
-        return new Promise((resolve) => {
-            $.ajax({
-                url: '<?= base_url('recon_orders/convert_from_inventory') ?>',
-                type: 'POST',
-                data: {
-                    inventory_data: item,
-                    auto_convert: true
-                },
-                success: function(response) {
-                    resolve({ success: response.success, item: item });
-                },
-                error: function() {
-                    resolve({ success: false, item: item });
-                }
-            });
-        });
-    }
-
-    function loadClients() {
-        $.get('<?= base_url('recon_orders/getClients') ?>', function(data) {
-            const select = $('#modalClient');
-            select.empty().append('<option value=""><?= lang('App.select_client') ?></option>');
-            
-            if (data.clients && Array.isArray(data.clients)) {
-                data.clients.forEach(client => {
-                    select.append(`<option value="${client.id}">${client.name || client.client_name}</option>`);
-                });
-            }
-        }).fail(function() {
-            console.warn('Failed to load clients');
-        });
-    }
-
-    function loadServices() {
-        $.get('<?= base_url('recon_orders/getActiveServices') ?>', function(data) {
-            const select = $('#modalService');
-            select.empty().append('<option value=""><?= lang('App.select_service') ?></option>');
-            
-            if (data.success && data.data && Array.isArray(data.data)) {
-                data.data.forEach(service => {
-                    select.append(`<option value="${service.id}">${service.service_name || service.name}</option>`);
-                });
-            } else if (Array.isArray(data)) {
-                // Fallback for direct array response
-                data.forEach(service => {
-                    select.append(`<option value="${service.id}">${service.service_name || service.name}</option>`);
-                });
-            }
-        }).fail(function() {
-            console.warn('Failed to load services');
-        });
-    }
 
     function updateAvgDaysWidget(avgDays, totalItems, daysData) {
         const $ = window.jQuery;
@@ -1822,7 +1365,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 $('#popularMakesCount').text(data.stats.popular_makes ? data.stats.popular_makes.length : 0);
             }
         }).fail(function() {
-            console.warn('Failed to refresh vehicle stats');
+
         });
     }
 
@@ -1833,14 +1376,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Widget click handlers
         $('.filter-widget').on('click', function() {
             const filter = $(this).data('filter');
-            console.log('🎯 Widget clicked with filter:', filter);
-            console.log('🎯 Current inventory table:', window.inventoryTable);
             
-            // Debug: Show current table data
-            if (window.inventoryTable) {
-                const tableData = window.inventoryTable.data().toArray();
-                console.log('🎯 Current table data (first 3 rows):', tableData.slice(0, 3));
-            }
             
             applyWidgetFilter(filter, $(this));
         });
@@ -1862,8 +1398,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function applyWidgetFilter(filter, $widget) {
         const $ = window.jQuery;
         
-        console.log('🚀 applyWidgetFilter called with filter:', filter);
-        console.log('🚀 Widget element:', $widget);
+
         
         // Remove active class from all widgets
         $('.filter-widget').removeClass('active');
@@ -1873,10 +1408,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Store current filter
         window.currentDayFilter = filter;
-        console.log('🚀 Stored currentDayFilter:', window.currentDayFilter);
+
         
         // Apply the filter
-        console.log('🚀 About to call applyDayRangeFilter with:', filter);
         applyDayRangeFilter(filter);
         
         // Save state to localStorage
@@ -1888,7 +1422,7 @@ document.addEventListener('DOMContentLoaded', function() {
                           filter === '2-5' ? '<?= lang('App.moderate_2_5_days') ?>' :
                           filter === '6+' ? '<?= lang('App.aged_6_plus_days') ?>' : filter;
         
-        console.log('🚀 Showing toast with filter name:', filterName);
+
         showToast(`<?= lang('App.filters_applied') ?>: ${filterName}`, 'info');
     }
     
@@ -1926,16 +1460,14 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function applyDayRangeFilter(range) {
         if (!window.inventoryTable) {
-            console.warn('Inventory table not initialized yet');
+
             return;
         }
         
-        console.log('Applying day range filter:', range);
+
         
         // IMPORTANT: Clear ALL custom searches first
-        console.log('Custom searches before clear:', $.fn.dataTable.ext.search.length);
         $.fn.dataTable.ext.search = [];
-        console.log('Custom searches after clear:', $.fn.dataTable.ext.search.length);
         
         if (range && range !== '') {
             // Add named custom search function
@@ -1957,7 +1489,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 const daysNum = parseInt(days);
                 
                 // Use the captured range variable directly
-                console.log(`🔍 Filtering row ${dataIndex}: days=${daysNum}, range="${range}"`);
                 
                 let result = false;
                 switch(range) {
@@ -1975,27 +1506,19 @@ document.addEventListener('DOMContentLoaded', function() {
                         break;
                 }
                 
-                console.log(`🔍 Result for row ${dataIndex}: ${result}`);
+
                 return result;
             };
             dayRangeFilterFn.name = 'dayRangeFilter';
             $.fn.dataTable.ext.search.push(dayRangeFilterFn);
             
-            console.log('✅ Added new filter function for range:', range);
-            console.log('✅ Total custom searches now:', $.fn.dataTable.ext.search.length);
+
         }
         
         // Redraw table
-        console.log('🎨 About to redraw table...');
         window.inventoryTable.draw();
         
-        console.log('✅ Filter applied, table redrawn');
         
-        // Debug: Show how many rows are visible after filter
-        setTimeout(() => {
-            const info = window.inventoryTable.page.info();
-            console.log(`📊 Table info after filter: ${info.recordsDisplay} of ${info.recordsTotal} entries shown`);
-        }, 100);
     }
 
     // Function to initialize localStorage for vehicles tab
@@ -2023,7 +1546,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
             } catch (e) {
-                console.warn('Error loading vehicles state:', e);
+
             }
             return null;
         };
@@ -2041,21 +1564,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setInterval(refreshStats, 30000);
 });
 
-// Global function to refresh vehicles data
-function refreshVehiclesData() {
-    console.log('🔄 Refreshing vehicles data...');
-    
-    // Check if vehiclesTable is defined
-    if (typeof window.vehiclesTable !== 'undefined' && window.vehiclesTable) {
-        window.vehiclesTable.ajax.reload(function() {
-            console.log('✅ Vehicles table refreshed');
-            showToast('<?= lang('App.inventory_refreshed') ?>', 'success');
-        }, false);
-    } else {
-        console.warn('⚠️ Vehicles table not initialized');
-        showToast('Unable to refresh: table not initialized', 'error');
-    }
-}
+
 
 function showToast(message, type = 'success') {
     // Try to use global showToast first
@@ -2076,8 +1585,7 @@ function showToast(message, type = 'success') {
         return;
     }
     
-    // Final fallback to console and alert
-    console.log(`${type.toUpperCase()}: ${message}`);
+    // Final fallback to alert
     if (type === 'error') {
         alert(message);
     }

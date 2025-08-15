@@ -2329,6 +2329,13 @@ return [
     'convert_selected' => 'Convert Selected',
     'converting_to_recon' => 'Converting to Recon...',
     'converted_successfully' => 'Converted successfully',
+    
+    // Move to Recon translations
+    'move_to_recon' => 'Move to Recon',
+    'move_to_recon_order' => 'Move to Recon Order',
+    'move_selected' => 'Move Selected',
+    'moving_to_recon' => 'Moving to Recon...',
+    'move_multiple_stocks' => 'Move multiple stocks to orders',
     'conversion_failed' => 'Conversion failed',
     'select_items_to_convert' => 'Select items to convert',
     'confirm_conversion' => 'Confirm Conversion',

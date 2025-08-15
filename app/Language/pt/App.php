@@ -1789,4 +1789,24 @@ return [
     'no_deleted_orders' => 'Nenhuma Ordem Eliminada',
     'no_deleted_orders_desc' => 'Excelente! Não há ordens eliminadas para mostrar.',
     'yes_restore' => 'Sim, Restaurar',
+    
+    // Convert to Recon translations
+    'convert_to_recon' => 'Converter para Recon',
+    'convert_to_recon_order' => 'Converter para Ordem de Recon',
+    'convert_selected' => 'Converter Selecionados',
+    'converting_to_recon' => 'Convertendo para Recon...',
+    'converted_successfully' => 'Convertido com sucesso',
+    'conversion_failed' => 'Falha na conversão',
+    'select_items_to_convert' => 'Selecione itens para converter',
+    'confirm_conversion' => 'Confirmar Conversão',
+    'convert_stock_to_recon' => 'Converter este estoque para uma ordem de recon?',
+    'yes_convert' => 'Sim, Converter',
+    'convert_multiple_stocks' => 'Converter múltiplos estoques para ordens',
+    
+    // Move to Recon translations
+    'move_to_recon' => 'Mover para Recon',
+    'move_to_recon_order' => 'Mover para Ordem de Recon',
+    'move_selected' => 'Mover Selecionados',
+    'moving_to_recon' => 'Movendo para Recon...',
+    'move_multiple_stocks' => 'Mover múltiplos estoques para ordens',
 ];

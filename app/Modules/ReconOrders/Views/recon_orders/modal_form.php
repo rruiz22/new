@@ -3,39 +3,125 @@
         max-width: 700px;
     }
 
+    .modal-content {
+        border-radius: 0.5rem;
+        border: 1px solid #dee2e6;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+
+    .modal-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+        border-radius: 0.5rem 0.5rem 0 0;
+    }
+
+    .modal-body {
+        background-color: #fff;
+        padding: 1.5rem;
+    }
+
+    .modal-footer {
+        background-color: #f8f9fa;
+        border-top: 1px solid #dee2e6;
+        border-radius: 0 0 0.5rem 0.5rem;
+    }
+
     .form-label {
-        font-weight: 500;
-        font-size: 0.875rem;
+        font-weight: 600;
+        font-size: 0.9rem;
         margin-bottom: 0.5rem;
+        color: #333;
     }
 
     .form-control,
     .form-select {
-        font-size: 0.875rem;
-        padding: 0.5rem 0.75rem;
-        min-height: 38px;
-        border: 1px solid #ced4da;
+        font-size: 0.9rem;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
         border-radius: 0.375rem;
         background-color: #fff;
+        transition: border-color 0.15s ease-in-out;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .form-select {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 16px 12px;
+        padding-right: 2.5rem;
+        cursor: pointer;
     }
 
     .form-select:focus,
     .form-control:focus {
-        border-color: #86b7fe;
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        border-color: #0066cc;
+        box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.1);
         outline: 0;
     }
 
-    .form-select:hover {
-        border-color: #86b7fe;
+    .form-select:hover,
+    .form-control:hover {
+        border-color: #0066cc;
     }
 
     .form-section {
         margin-bottom: 1.5rem;
+        padding: 0;
+        background: transparent;
     }
 
     .form-section:last-child {
         margin-bottom: 0;
+    }
+
+    .text-danger {
+        color: #dc3545 !important;
+    }
+
+    .text-muted {
+        color: #6c757d !important;
+        font-size: 0.85rem;
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 100px;
+        font-family: inherit;
+        line-height: 1.5;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: all 0.15s ease-in-out;
+    }
+
+    .btn-primary {
+        background-color: #0066cc;
+        border-color: #0066cc;
+        color: #fff;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        color: #fff;
+    }
+
+    .btn-secondary:hover {
+        background-color: #5a6268;
+        border-color: #5a6268;
     }
 
     @media (max-width: 768px) {
@@ -45,24 +131,24 @@
         }
     }
 
-    /* VIN Decoding Styles */
+    /* VIN Decoding Styles - Simplified */
     .vin-input-container {
         position: relative;
     }
 
     .vin-status {
         display: block;
-        font-size: 0.75rem;
+        font-size: 0.8rem;
         margin-top: 0.25rem;
         min-height: 1rem;
     }
 
     .vin-status-loading {
-        color: #6c757d;
+        color: #666;
     }
 
     .vin-status-success {
-        color: #198754;
+        color: #28a745;
     }
 
     .vin-status-error {
@@ -70,123 +156,33 @@
     }
 
     .vin-status-warning {
-        color: #fd7e14;
+        color: #ffc107;
     }
 
     .vin-status-info {
-        color: #0dcaf0;
+        color: #17a2b8;
     }
 
     .vin-decoding {
-        border-color: #0dcaf0 !important;
-        box-shadow: 0 0 0 0.2rem rgba(13, 202, 240, 0.25) !important;
-        background-color: #e3f2fd !important;
-        animation: vinDecodingPulse 1.5s ease-in-out infinite;
+        border-color: #17a2b8 !important;
+        background-color: #f8f9fa !important;
     }
 
     .vin-success {
-        border-color: #198754 !important;
-        box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25) !important;
+        border-color: #28a745 !important;
     }
 
     .vin-error {
         border-color: #dc3545 !important;
-        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
     }
 
     .vin-warning {
-        border-color: #fd7e14 !important;
-        box-shadow: 0 0 0 0.2rem rgba(253, 126, 20, 0.25) !important;
+        border-color: #ffc107 !important;
     }
 
     .vin-decoded {
-        background-color: #d1e7dd !important;
-        border-color: #198754 !important;
-        animation: vinDecodeSuccess 0.5s ease-out;
-    }
-
-    @keyframes vinDecodingPulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.7; }
-    }
-
-    @keyframes vinDecodeSuccess {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.02); }
-        100% { transform: scale(1); }
-    }
-
-    /* VIN Toast Notification Styles */
-    .vin-toast {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 10000;
-        max-width: 350px;
-        border-radius: 8px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-        opacity: 0;
-        transform: translateX(100%);
-        transition: all 0.3s ease;
-        overflow: hidden;
-    }
-
-    .vin-toast.vin-toast-show {
-        opacity: 1;
-        transform: translateX(0);
-    }
-
-    .vin-toast-content {
-        display: flex;
-        align-items: center;
-        padding: 12px 16px;
-        color: white;
-        font-size: 14px;
-        line-height: 1.4;
-    }
-
-    .vin-toast-error {
-        background-color: #dc3545;
-    }
-
-    .vin-toast-warning {
-        background-color: #fd7e14;
-    }
-
-    .vin-toast-info {
-        background-color: #0dcaf0;
-    }
-
-    .vin-toast-icon {
-        margin-right: 12px;
-        font-size: 18px;
-        opacity: 0.9;
-    }
-
-    .vin-toast-message {
-        flex: 1;
-        font-weight: 500;
-    }
-
-    .vin-toast-close {
-        background: none;
-        border: none;
-        color: white;
-        font-size: 16px;
-        cursor: pointer;
-        opacity: 0.7;
-        transition: opacity 0.2s;
-        padding: 0;
-        margin-left: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 20px;
-        height: 20px;
-    }
-
-    .vin-toast-close:hover {
-        opacity: 1;
+        background-color: #f8f9fa !important;
+        border-color: #28a745 !important;
     }
 </style>
 
@@ -232,10 +228,10 @@
             </div>
             <div class="col-md-4">
                 <div class="mb-3">
-                    <label for="vin_number" class="form-label"><?= lang('App.vin') ?> <span class="text-danger">*</span></label>
+                    <label for="vin_number" class="form-label"><?= lang('App.vin') ?></label>
                     <div class="vin-input-container">
                         <input type="text" class="form-control" id="vin_number" name="vin_number" 
-                               placeholder="<?= lang('App.enter_vin_placeholder') ?>" maxlength="17" required>
+                               placeholder="<?= lang('App.enter_vin_placeholder') ?>" maxlength="17">
                         <small id="form-vin-status" class="vin-status"></small>
                     </div>
                     <small class="text-muted"><?= lang('App.vin_help_text') ?></small>
@@ -283,6 +279,15 @@
                     </select>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Notes Section -->
+    <div class="form-section">
+        <div class="mb-3">
+            <label for="notes" class="form-label"><?= lang('App.notes') ?></label>
+            <textarea class="form-control" id="notes" name="notes" rows="4" 
+                      placeholder="<?= lang('App.enter_notes') ?>"></textarea>
         </div>
     </div>
 
@@ -728,36 +733,13 @@
         }
 
         function showFormVINToast(type, message) {
-            const existingToast = document.querySelector('.vin-toast');
-            if (existingToast) {
-                existingToast.remove();
+            // Use simple alert for VIN messages
+            if (type === 'error' || type === 'warning') {
+                alert(message);
+            } else {
+                // For info messages, show in status instead
+                showFormVINStatus('info', message);
             }
-
-            const toast = document.createElement('div');
-            toast.className = `vin-toast vin-toast-${type}`;
-            toast.innerHTML = `
-                <div class="vin-toast-content">
-                    <div class="vin-toast-icon">
-                        ${type === 'error' ? '⚠️' : type === 'warning' ? '⚠️' : 'ℹ️'}
-                    </div>
-                    <div class="vin-toast-message">${message}</div>
-                    <button class="vin-toast-close" onclick="this.parentElement.parentElement.remove()">
-                        ×
-                    </button>
-                </div>
-            `;
-
-            document.body.appendChild(toast);
-
-            setTimeout(() => {
-                if (toast.parentNode) {
-                    toast.remove();
-                }
-            }, 5000);
-
-            setTimeout(() => {
-                toast.classList.add('vin-toast-show');
-            }, 100);
         }
 
         // Load services when client changes
@@ -815,10 +797,9 @@
                 const clientId = document.getElementById('client_id').value;
                 const serviceId = document.getElementById('service_id').value;
                 const stock = document.getElementById('stock').value;
-                const vinNumber = document.getElementById('vin_number').value;
                 const vehicle = document.getElementById('vehicle').value;
                 
-                if (!clientId || !serviceId || !stock || !vinNumber || !vehicle) {
+                if (!clientId || !serviceId || !stock || !vehicle) {
                     showToast('error', '<?= lang('App.fill_required_fields') ?>');
                     return;
                 }
@@ -895,6 +876,42 @@
                 alert(message);
             }
         }
+        
+        // Check if modal has inventory data and pre-populate fields
+        function checkAndPopulateInventoryData() {
+            const modal = document.getElementById('reconOrderModal');
+            if (modal) {
+                const inventoryData = $(modal).data('inventory-data');
+                if (inventoryData) {
+                    console.log('🔄 Pre-populating form with inventory data:', inventoryData);
+                    
+                    // Pre-populate fields
+                    if (inventoryData.stock && document.getElementById('stock')) {
+                        document.getElementById('stock').value = inventoryData.stock;
+                    }
+                    
+                    if (inventoryData.vehicle && document.getElementById('vehicle')) {
+                        document.getElementById('vehicle').value = inventoryData.vehicle;
+                    }
+                    
+                    if (inventoryData.service_date && document.getElementById('service_date')) {
+                        document.getElementById('service_date').value = inventoryData.service_date;
+                    }
+                    
+                    if (inventoryData.notes && document.getElementById('notes')) {
+                        document.getElementById('notes').value = inventoryData.notes;
+                    }
+                    
+                    // Clear the inventory data after use
+                    $(modal).removeData('inventory-data');
+                    
+                    console.log('✅ Form pre-populated with inventory data');
+                }
+            }
+        }
+        
+        // Call the function to check for inventory data
+        checkAndPopulateInventoryData();
         
     }, 100); // End setTimeout
 })(); // IIFE - Execute immediately

@@ -292,7 +292,7 @@ if (typeof $ === 'undefined') {
 }
 
 function isValidTab(tab) {
-    var validTabs = ['dashboard', 'today', 'all-orders', 'deleted', 'services'];
+    var validTabs = ['dashboard', 'today', 'all-orders', 'deleted', 'services', 'vehicles'];
     return validTabs.includes(tab);
 }
 
@@ -392,7 +392,8 @@ waitForJQuery(function() {
                 'today': 'Today\'s Orders',
                 'all-orders': 'All Orders',
                 'deleted': '<?= lang('App.deleted') ?>',
-                'services': 'Services'
+                'services': 'Services',
+                'vehicles': 'Vehicles'
             };
             
             document.title = 'Recon Orders - ' + (tabNames[target] || tabNames['dashboard']);

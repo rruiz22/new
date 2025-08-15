@@ -1853,6 +1853,13 @@ return [
     'convert_selected' => 'Convertir Seleccionados',
     'converting_to_recon' => 'Convirtiendo a Recon...',
     'converted_successfully' => 'Convertido exitosamente',
+    
+    // Move to Recon translations
+    'move_to_recon' => 'Mover a Recon',
+    'move_to_recon_order' => 'Mover a Orden de Recon',
+    'move_selected' => 'Mover Seleccionados',
+    'moving_to_recon' => 'Moviendo a Recon...',
+    'move_multiple_stocks' => 'Mover múltiples stocks a órdenes',
     'conversion_failed' => 'Error en la conversión',
     'select_items_to_convert' => 'Seleccione elementos para convertir',
     'confirm_conversion' => 'Confirmar Conversión',
