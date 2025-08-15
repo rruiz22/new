@@ -4,6 +4,187 @@
     #reconOrderModal .modal-dialog {
         max-width: 900px;
     }
+
+    /* VIN Scanner Styles - Velzon Theme Compatible */
+    .scanner-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.75);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .scanner-modal-content {
+        background: var(--bs-body-bg, #ffffff);
+        border-radius: var(--bs-border-radius-lg, 0.75rem);
+        width: 90%;
+        max-width: 500px;
+        max-height: 90vh;
+        overflow: hidden;
+        box-shadow: var(--bs-box-shadow-lg, 0 1rem 3rem rgba(0, 0, 0, 0.175));
+        border: 1px solid var(--bs-border-color, #dee2e6);
+    }
+
+    .scanner-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.25rem;
+        background: var(--bs-light, #f8f9fa);
+        color: var(--bs-body-color, #212529);
+        border-bottom: 1px solid var(--bs-border-color, #dee2e6);
+    }
+
+    .scanner-header h5 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--bs-heading-color, #495057);
+    }
+
+    .scanner-controls {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .scanner-body {
+        position: relative;
+        padding: 1.25rem;
+        text-align: center;
+        background: var(--bs-body-bg, #ffffff);
+    }
+
+    .scanner-target {
+        width: 100%;
+        height: 300px;
+        background: var(--bs-gray-900, #212529);
+        border-radius: var(--bs-border-radius, 0.375rem);
+        overflow: hidden;
+        position: relative;
+        margin-bottom: 1rem;
+        border: 2px dashed var(--bs-border-color, #dee2e6);
+    }
+
+    .scanner-target canvas,
+    .scanner-target video {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover;
+        border-radius: calc(var(--bs-border-radius, 0.375rem) - 2px);
+    }
+
+    .scanner-instructions {
+        color: var(--bs-secondary, #6c757d);
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.75rem;
+        background: var(--bs-light, #f8f9fa);
+        border-radius: var(--bs-border-radius, 0.375rem);
+        border: 1px solid var(--bs-border-color-translucent, rgba(0, 0, 0, 0.075));
+    }
+
+    /* VIN Status Styles */
+    .vin-status {
+        display: block;
+        margin-top: 0.25rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .vin-status-loading {
+        color: var(--bs-primary, #0d6efd);
+    }
+
+    .vin-status-success {
+        color: var(--bs-success, #198754);
+    }
+
+    .vin-status-error {
+        color: var(--bs-danger, #dc3545);
+    }
+
+    .vin-status-warning {
+        color: var(--bs-warning, #fd7e14);
+    }
+
+    .vin-status-info {
+        color: var(--bs-info, #0dcaf0);
+    }
+
+    /* VIN Input States */
+    .vin-decoding {
+        border-color: var(--bs-primary, #0d6efd) !important;
+        box-shadow: 0 0 0 0.2rem var(--bs-primary-bg-subtle, rgba(13, 110, 253, 0.25)) !important;
+    }
+
+    .vin-success {
+        border-color: var(--bs-success, #198754) !important;
+        box-shadow: 0 0 0 0.2rem var(--bs-success-bg-subtle, rgba(25, 135, 84, 0.25)) !important;
+    }
+
+    .vin-error {
+        border-color: var(--bs-danger, #dc3545) !important;
+        box-shadow: 0 0 0 0.2rem var(--bs-danger-bg-subtle, rgba(220, 53, 69, 0.25)) !important;
+    }
+
+    .vin-warning {
+        border-color: var(--bs-warning, #fd7e14) !important;
+        box-shadow: 0 0 0 0.2rem var(--bs-warning-bg-subtle, rgba(253, 126, 20, 0.25)) !important;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .scanner-modal-content {
+            width: 95%;
+            margin: 1rem;
+        }
+        
+        .scanner-target {
+            height: 250px;
+        }
+
+        .scanner-header {
+            padding: 0.75rem 1rem;
+        }
+
+        .scanner-body {
+            padding: 1rem;
+        }
+    }
+
+    /* Dark mode support */
+    [data-bs-theme="dark"] .scanner-modal-content {
+        background: var(--bs-dark, #212529);
+        border-color: var(--bs-border-color, #495057);
+    }
+
+    [data-bs-theme="dark"] .scanner-header {
+        background: var(--bs-gray-800, #343a40);
+        color: var(--bs-light, #f8f9fa);
+        border-bottom-color: var(--bs-border-color, #495057);
+    }
+
+    [data-bs-theme="dark"] .scanner-header h5 {
+        color: var(--bs-light, #f8f9fa);
+    }
+
+    [data-bs-theme="dark"] .scanner-body {
+        background: var(--bs-dark, #212529);
+    }
+
+    [data-bs-theme="dark"] .scanner-instructions {
+        background: var(--bs-gray-800, #343a40);
+        color: var(--bs-light, #f8f9fa);
+        border-color: var(--bs-border-color, #495057);
+    }
 </style>
 
 <form id="reconOrderForm" action="<?= base_url('recon_orders/store') ?>" method="post">
@@ -56,8 +237,14 @@
                            title="Enter complete 17-character VIN for automatic vehicle detection"></i>
                     </label>
                     <div class="vin-input-container">
-                        <input type="text" class="form-control" id="vin_number" name="vin_number" 
-                               placeholder="<?= lang('App.enter_vin_placeholder') ?>" maxlength="17">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="vin_number" name="vin_number" 
+                                   placeholder="<?= lang('App.enter_vin_placeholder') ?>" maxlength="17">
+                            <button class="btn btn-outline-primary" type="button" id="scanVinBtn" 
+                                    title="<?= lang('App.scan_vin_barcode') ?>" style="display: none;">
+                                <i class="ri-qr-scan-line me-1"></i><span class="scan-btn-text"><?= lang('App.scan') ?></span>
+                            </button>
+                        </div>
                         <small id="form-vin-status" class="vin-status"></small>
                     </div>
                 </div>
@@ -129,6 +316,33 @@
     <button type="submit" form="reconOrderForm" class="btn btn-primary" id="createOrderBtn">
         <?= lang('App.create_order') ?>
     </button>
+</div>
+
+<!-- VIN Scanner Modal -->
+<div id="vinScannerModal" class="scanner-modal" style="display: none;">
+    <div class="scanner-modal-content">
+        <div class="scanner-header">
+            <h5 id="scanner-title" class="mb-0">
+                <i id="scanner-icon" class="ri-qr-scan-line me-2"></i>
+                <?= lang('App.scan_vin_barcode') ?>
+            </h5>
+            <div class="scanner-controls">
+                <button type="button" id="modeSwitchBtn" class="btn btn-sm btn-outline-secondary me-2" 
+                        title="<?= lang('App.switch_to_qr_scanning') ?>">
+                    <i class="ri-qr-scan-2-line"></i> QR
+                </button>
+                <button type="button" id="closeScannerBtn" class="btn btn-sm btn-outline-secondary">
+                    <i class="ri-close-line"></i>
+                </button>
+            </div>
+        </div>
+        <div class="scanner-body">
+            <div id="scanner-target" class="scanner-target"></div>
+            <div class="scanner-instructions">
+                <i class="ri-qr-code-line me-2"></i><?= lang('App.point_camera_to_vin_barcode') ?>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -983,4 +1197,610 @@ window.populateReconOrderForm = function(data) {
     
     console.log('✅ Form populated successfully with native HTML elements');
 };
+
+// VIN Barcode Scanner Implementation for ReconOrders
+window.ReconVinBarcodeScanner = (function() {
+    let isScanning = false;
+    let scannerModal = null;
+    let currentMode = 'barcode'; // 'barcode' or 'qr'
+    let qrScanner = null;
+    
+    // Check if device is mobile/tablet
+    function isMobileDevice() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+               (navigator.maxTouchPoints && navigator.maxTouchPoints > 2 && /MacIntel/.test(navigator.platform));
+    }
+    
+    // Check camera permission status
+    function checkCameraPermission() {
+        if (!navigator.permissions) {
+            return Promise.resolve('prompt');
+        }
+        
+        return navigator.permissions.query({ name: 'camera' })
+            .then(permissionStatus => permissionStatus.state)
+            .catch(() => 'prompt');
+    }
+    
+    // Reset scan button to original state
+    function resetScanButton() {
+        const scanBtn = document.getElementById('scanVinBtn');
+        if (scanBtn) {
+            scanBtn.disabled = false;
+            scanBtn.innerHTML = '<i class="ri-qr-scan-line me-1"></i><span class="scan-btn-text"><?= lang('App.scan') ?></span>';
+        }
+    }
+    
+    // Initialize mobile detection and show scan button if mobile
+    function initMobileDetection() {
+        console.log('📱 Checking device capabilities...');
+        
+        // Check if device has camera capability
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            console.log('📱 Camera not supported on this device');
+            return;
+        }
+        
+        if (isMobileDevice()) {
+            console.log('📱 Mobile device detected, showing scan button');
+            const scanBtn = document.getElementById('scanVinBtn');
+            if (scanBtn) {
+                scanBtn.style.display = 'block';
+                scanBtn.addEventListener('click', startScanner);
+            }
+        } else {
+            // For desktop, still show but with different behavior
+            console.log('🖥️ Desktop device detected, showing scan button for webcam use');
+            const scanBtn = document.getElementById('scanVinBtn');
+            if (scanBtn) {
+                scanBtn.style.display = 'block';
+                scanBtn.addEventListener('click', startScanner);
+            }
+        }
+    }
+    
+    // Show error message
+    function showError(message) {
+        if (typeof window.showToast === 'function') {
+            window.showToast(message, 'error');
+        } else if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'error',
+                title: '<?= lang('App.scanner_error') ?>',
+                text: message,
+                timer: 3000,
+                showConfirmButton: false
+            });
+        } else {
+            alert('<?= lang('App.scanner_error') ?>: ' + message);
+        }
+    }
+    
+    // Start the VIN scanner
+    function startScanner() {
+        console.log('📷 Starting VIN scanner...');
+        
+        const scanBtn = document.getElementById('scanVinBtn');
+        if (scanBtn) {
+            scanBtn.disabled = true;
+            scanBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span><?= lang('App.starting_scanner') ?>';
+        }
+        
+        // Check camera permission first
+        checkCameraPermission().then(permission => {
+            if (permission === 'denied') {
+                resetScanButton();
+                showError('<?= lang('App.camera_permission_denied') ?>');
+                return;
+            }
+            
+            // Create scanner modal if it doesn't exist
+            if (!scannerModal) {
+                scannerModal = document.getElementById('vinScannerModal');
+            }
+            
+            if (!scannerModal) {
+                resetScanButton();
+                showError('<?= lang('App.scanner_interface_not_found') ?>');
+                return;
+            }
+            
+            // Show scanner modal
+            scannerModal.style.display = 'flex';
+            isScanning = true;
+            
+            // Set up close button
+            const closeBtn = document.getElementById('closeScannerBtn');
+            if (closeBtn) {
+                closeBtn.onclick = stopScanner;
+            }
+            
+            // Set up mode switch button
+            const modeSwitchBtn = document.getElementById('modeSwitchBtn');
+            if (modeSwitchBtn) {
+                modeSwitchBtn.onclick = switchScanningMode;
+            }
+            
+            // Check if QuaggaJS loading failed
+            if (window.QuaggaLoadFailed) {
+                console.error('📷 QuaggaJS loading failed - all CDN sources failed');
+                resetScanButton();
+                showError('<?= lang('App.barcode_scanner_library_failed') ?>');
+                stopScanner();
+                return;
+            }
+            
+            // Initialize Quagga with better configuration
+            if (typeof window.Quagga === 'undefined' && !window.QuaggaLoaded) {
+                console.log('📷 Quagga not loaded yet, waiting...');
+                // Wait for Quagga to load (up to 5 seconds)
+                let attempts = 0;
+                const maxAttempts = 50; // 5 seconds with 100ms intervals
+                
+                const checkQuagga = setInterval(() => {
+                    attempts++;
+                    console.log('📷 Checking for Quagga... attempt', attempts);
+                    
+                    if (window.QuaggaLoadFailed) {
+                        console.error('📷 QuaggaJS loading failed during wait');
+                        clearInterval(checkQuagga);
+                        resetScanButton();
+                        showError('<?= lang('App.barcode_scanner_library_failed') ?>');
+                        stopScanner();
+                        return;
+                    }
+                    
+                    if (typeof window.Quagga !== 'undefined' || window.QuaggaLoaded) {
+                        console.log('📷 Quagga loaded after waiting');
+                        clearInterval(checkQuagga);
+                        initializeQuagga();
+                        return;
+                    }
+                    
+                    if (attempts >= maxAttempts) {
+                        console.error('📷 Quagga failed to load after 5 seconds');
+                        clearInterval(checkQuagga);
+                        resetScanButton();
+                        showError('<?= lang('App.scanner_library_failed_to_load') ?>');
+                        stopScanner();
+                    }
+                }, 100);
+                
+                return;
+            }
+            
+            console.log('📷 Quagga already loaded, initializing...');
+            initializeQuagga();
+        });
+    }
+    
+    // Switch between scanning modes
+    function switchScanningMode() {
+        console.log('🔄 Switching scanning mode from:', currentMode);
+        
+        // Stop current mode
+        stopCurrentMode();
+        
+        // Switch mode
+        currentMode = currentMode === 'barcode' ? 'qr' : 'barcode';
+        
+        // Update UI
+        const modeSwitchBtn = document.getElementById('modeSwitchBtn');
+        const scannerIcon = document.getElementById('scanner-icon');
+        const scannerTitle = document.getElementById('scanner-title');
+        const instructions = document.querySelector('.scanner-instructions');
+        
+        switch (currentMode) {
+            case 'qr':
+                if (modeSwitchBtn) {
+                    modeSwitchBtn.innerHTML = '<i class="ri-qr-scan-line"></i> Barcode';
+                    modeSwitchBtn.title = '<?= lang('App.switch_to_barcode_scanning') ?>';
+                }
+                if (scannerIcon) scannerIcon.className = 'ri-qr-scan-2-line me-2';
+                if (scannerTitle) scannerTitle.innerHTML = '<i class="ri-qr-scan-2-line me-2"></i><?= lang('App.scan_qr_code') ?>';
+                if (instructions) {
+                    instructions.innerHTML = '<i class="ri-qr-code-line me-2"></i><?= lang('App.point_camera_to_qr_code') ?>';
+                }
+                initializeQRScanner();
+                break;
+                
+            case 'barcode':
+            default:
+                if (modeSwitchBtn) {
+                    modeSwitchBtn.innerHTML = '<i class="ri-qr-scan-2-line"></i> QR';
+                    modeSwitchBtn.title = '<?= lang('App.switch_to_qr_scanning') ?>';
+                }
+                if (scannerIcon) scannerIcon.className = 'ri-qr-scan-line me-2';
+                if (scannerTitle) scannerTitle.innerHTML = '<i class="ri-qr-scan-line me-2"></i><?= lang('App.scan_vin_barcode') ?>';
+                if (instructions) {
+                    instructions.innerHTML = '<i class="ri-qr-code-line me-2"></i><?= lang('App.point_camera_to_vin_barcode') ?>';
+                }
+                initializeQuagga();
+                break;
+        }
+    }
+    
+    // Stop current scanning mode
+    function stopCurrentMode() {
+        // Stop barcode scanner
+        if (typeof window.Quagga !== 'undefined') {
+            window.Quagga.stop();
+            window.Quagga.offDetected();
+            window.Quagga.offProcessed();
+        }
+        
+        // Stop QR scanner
+        if (qrScanner && qrScanner.stream) {
+            qrScanner.stream.getTracks().forEach(track => track.stop());
+            qrScanner = null;
+        }
+        
+        // Clear scanner target
+        const scannerTarget = document.querySelector('#scanner-target');
+        if (scannerTarget) {
+            scannerTarget.innerHTML = '';
+        }
+    }
+    
+    // Initialize QR Scanner using jsQR
+    function initializeQRScanner() {
+        console.log('📱 Initializing jsQR Scanner...');
+        
+        const scannerTarget = document.querySelector('#scanner-target');
+        if (!scannerTarget) return;
+        
+        // Create video element for QR scanning
+        const video = document.createElement('video');
+        video.setAttribute('playsinline', '');
+        video.setAttribute('autoplay', '');
+        video.setAttribute('muted', '');
+        video.style.width = '100%';
+        video.style.height = '100%';
+        video.style.objectFit = 'cover';
+        
+        // Create canvas for QR processing
+        const canvas = document.createElement('canvas');
+        canvas.style.display = 'none';
+        const ctx = canvas.getContext('2d');
+        
+        scannerTarget.innerHTML = '';
+        scannerTarget.appendChild(video);
+        scannerTarget.appendChild(canvas);
+        
+        // Get camera stream
+        navigator.mediaDevices.getUserMedia({
+            video: {
+                facingMode: { ideal: "environment" },
+                width: { ideal: 1280, min: 640 },
+                height: { ideal: 720, min: 480 }
+            }
+        })
+        .then(function(stream) {
+            video.srcObject = stream;
+            video.play();
+            
+            // Store stream reference for cleanup
+            qrScanner = { stream: stream, video: video };
+            
+            // Start QR processing
+            startQRProcessing(video, canvas, ctx);
+        })
+        .catch(function(err) {
+            console.error('📱 QR camera access failed:', err);
+            showError('<?= lang('App.failed_camera_access_qr') ?>: ' + err.message);
+            stopScanner();
+        });
+    }
+    
+    // Process QR codes using jsQR
+    function startQRProcessing(video, canvas, ctx) {
+        let isProcessingQR = false;
+        
+        function processFrame() {
+            if (!isScanning || currentMode !== 'qr') return;
+            
+            if (video.readyState === video.HAVE_ENOUGH_DATA && !isProcessingQR) {
+                isProcessingQR = true;
+                
+                canvas.height = video.videoHeight;
+                canvas.width = video.videoWidth;
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                
+                // Use jsQR if available, otherwise try basic processing
+                if (typeof jsQR !== 'undefined') {
+                    const qrCode = jsQR(imageData.data, imageData.width, imageData.height);
+                    
+                    if (qrCode && qrCode.data) {
+                        console.log('📱 QR Code detected:', qrCode.data);
+                        processQRData(qrCode.data);
+                        return;
+                    }
+                } else {
+                    // Fallback: try to extract VIN from any text in QR
+                    console.log('📱 jsQR not available, using fallback processing');
+                }
+                
+                isProcessingQR = false;
+            }
+            
+            if (isScanning && currentMode === 'qr') {
+                requestAnimationFrame(processFrame);
+            }
+        }
+        
+        processFrame();
+    }
+    
+    // Process QR code data to extract VIN
+    function processQRData(qrData) {
+        console.log('📱 Processing QR data:', qrData);
+        
+        let vinCandidate = null;
+        
+        // Direct VIN check
+        if (isValidVin(qrData)) {
+            vinCandidate = qrData;
+        } else {
+            // Try to extract VIN from structured data (JSON, etc.)
+            try {
+                const jsonData = JSON.parse(qrData);
+                if (jsonData.vin && isValidVin(jsonData.vin)) {
+                    vinCandidate = jsonData.vin.toUpperCase();
+                } else if (jsonData.VIN && isValidVin(jsonData.VIN)) {
+                    vinCandidate = jsonData.VIN.toUpperCase();
+                }
+            } catch (e) {
+                // Not JSON, try regex search
+                const vinPattern = /[A-HJ-NPR-Z0-9]{10,20}/gi;
+                const matches = qrData.match(vinPattern);
+                
+                if (matches && matches.length > 0) {
+                    for (let match of matches) {
+                        if (isValidVin(match)) {
+                            vinCandidate = match;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        
+        if (vinCandidate) {
+            const vinInput = document.getElementById('vin_number');
+            if (vinInput) {
+                vinInput.value = vinCandidate.toUpperCase();
+                const event = new Event('input', { bubbles: true });
+                vinInput.dispatchEvent(event);
+            }
+            
+            if (window.showToast) {
+                window.showToast('<?= lang('App.vin_extracted_from_qr') ?>: ' + vinCandidate, 'success');
+            } else if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'VIN Found!',
+                    text: '<?= lang('App.vin_extracted_from_qr') ?>: ' + vinCandidate,
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            }
+            
+            stopScanner();
+        } else {
+            console.log('📱 <?= lang('App.no_valid_vin_found_in_qr') ?>');
+        }
+    }
+    
+    // Initialize Quagga barcode scanner
+    function initializeQuagga() {
+        console.log('📷 Initializing QuaggaJS...');
+        
+        if (typeof window.Quagga === 'undefined') {
+            console.error('📷 Quagga still undefined at initialization');
+            resetScanButton();
+            showError('<?= lang('App.scanner_not_ready') ?>');
+            stopScanner();
+            return;
+        }
+        
+        window.Quagga.init({
+            inputStream: {
+                name: "Live",
+                type: "LiveStream",
+                target: document.querySelector('#scanner-target'),
+                constraints: {
+                    width: 640,
+                    height: 480,
+                    facingMode: "environment"
+                }
+            },
+            decoder: {
+                readers: [
+                    "code_128_reader",
+                    "code_39_reader",
+                    "ean_reader"
+                ]
+            },
+            locate: true
+        }, function(err) {
+            if (err) {
+                console.error('📷 QuaggaJS initialization error:', err);
+                resetScanButton();
+                showError('<?= lang('App.camera_initialization_failed') ?>: ' + err.message);
+                stopScanner();
+                return;
+            }
+            
+            window.Quagga.start();
+        });
+        
+        window.Quagga.onDetected(function(result) {
+            const code = result.codeResult.code;
+            console.log('📷 Barcode detected:', code, 'Format:', result.codeResult.format);
+            
+            // Validate VIN format
+            if (isValidVin(code)) {
+                const vinInput = document.getElementById('vin_number');
+                if (vinInput) {
+                    vinInput.value = code.toUpperCase();
+                    const event = new Event('input', { bubbles: true });
+                    vinInput.dispatchEvent(event);
+                }
+                
+                if (window.showToast) {
+                    window.showToast('<?= lang('App.vin_scanned_successfully') ?>: ' + code, 'success');
+                } else if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'VIN Scanned!',
+                        text: '<?= lang('App.vin_scanned_successfully') ?>: ' + code,
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }
+                
+                stopScanner();
+            } else {
+                console.log('📷 Code does not match VIN format, continuing scan...', code);
+            }
+        });
+    }
+    
+    // Stop the VIN scanner
+    function stopScanner() {
+        if (!isScanning) return;
+        
+        console.log('📷 Stopping VIN scanner...');
+        isScanning = false;
+        
+        // Stop current mode
+        stopCurrentMode();
+        
+        // Reset mode to barcode
+        currentMode = 'barcode';
+        
+        if (scannerModal) {
+            scannerModal.style.display = 'none';
+        }
+        
+        // Reset UI elements
+        const modeSwitchBtn = document.getElementById('modeSwitchBtn');
+        const scannerIcon = document.getElementById('scanner-icon');
+        const scannerTitle = document.getElementById('scanner-title');
+        const instructions = document.querySelector('.scanner-instructions');
+        
+        if (modeSwitchBtn) {
+            modeSwitchBtn.innerHTML = '<i class="ri-qr-scan-2-line"></i> QR';
+            modeSwitchBtn.title = '<?= lang('App.switch_to_qr_scanning') ?>';
+        }
+        if (scannerIcon) scannerIcon.className = 'ri-qr-scan-line me-2';
+        if (scannerTitle) scannerTitle.innerHTML = '<i class="ri-qr-scan-line me-2"></i><?= lang('App.scan_vin_barcode') ?>';
+        if (instructions) {
+            instructions.innerHTML = '<i class="ri-qr-code-line me-2"></i><?= lang('App.point_camera_to_vin_barcode') ?>';
+        }
+        
+        // Reset scan button
+        resetScanButton();
+    }
+    
+    // Validate VIN format
+    function isValidVin(vin) {
+        if (!vin || typeof vin !== 'string') return false;
+        
+        // Remove spaces and convert to uppercase
+        vin = vin.replace(/\s/g, '').toUpperCase();
+        
+        // For testing: accept any code with 10+ characters that looks like VIN
+        if (vin.length >= 10 && vin.length <= 20) {
+            // Must be alphanumeric
+            if (/^[A-Z0-9]+$/.test(vin)) {
+                return true;
+            }
+        }
+        
+        // VIN must be exactly 17 characters
+        if (vin.length !== 17) {
+            return false;
+        }
+        
+        // VIN should not contain I, O, Q
+        if (/[IOQ]/.test(vin)) {
+            return false;
+        }
+        
+        // VIN should be alphanumeric
+        if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    // Public API
+    return {
+        init: initMobileDetection,
+        start: startScanner,
+        stop: stopScanner,
+        isScanning: () => isScanning
+    };
+})();
+
+// Load QuaggaJS library with multiple fallbacks
+(function loadQuaggaJS() {
+    const cdnSources = [
+        'https://unpkg.com/quagga@0.12.1/dist/quagga.min.js',
+        'https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js'
+    ];
+    
+    let currentIndex = 0;
+    
+    function tryLoad() {
+        if (currentIndex >= cdnSources.length) {
+            console.error('📷 All QuaggaJS CDN sources failed');
+            window.QuaggaLoadFailed = true;
+            return;
+        }
+        
+        const script = document.createElement('script');
+        script.src = cdnSources[currentIndex];
+        
+        script.onload = function() {
+            console.log('📷 QuaggaJS loaded from:', cdnSources[currentIndex]);
+            window.QuaggaLoaded = true;
+        };
+        
+        script.onerror = function() {
+            console.warn('📷 Failed to load QuaggaJS from:', cdnSources[currentIndex]);
+            currentIndex++;
+            tryLoad();
+        };
+        
+        document.head.appendChild(script);
+    }
+    
+    tryLoad();
+})();
+
+// Load jsQR for QR code support
+(function loadJsQR() {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js';
+    script.onload = function() {
+        console.log('📱 jsQR loaded successfully');
+    };
+    script.onerror = function() {
+        console.warn('📱 Failed to load jsQR - QR scanning will have limited functionality');
+    };
+    document.head.appendChild(script);
+})();
+
+// Initialize the scanner when the modal loads
+setTimeout(function() {
+    if (window.ReconVinBarcodeScanner) {
+        window.ReconVinBarcodeScanner.init();
+    }
+}, 500);
 </script> 
