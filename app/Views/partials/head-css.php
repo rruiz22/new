@@ -37,9 +37,7 @@
 <link href="<?= base_url('assets/css/app.min.css') ?>" rel="stylesheet" type="text/css" />
 <!-- Flatpickr CSS -->
 <link href="<?= base_url('assets/libs/flatpickr/flatpickr.min.css') ?>" rel="stylesheet" type="text/css" />
-<!-- DataTables CSS -->
-<link href="<?= base_url('assets/libs/datatables/dataTables.bootstrap5.min.css') ?>" rel="stylesheet" type="text/css" />
-<link href="<?= base_url('assets/libs/datatables/responsive.bootstrap5.min.css') ?>" rel="stylesheet" type="text/css" />
+<!-- DataTables CSS - Moved to datatables-scripts.php to avoid duplication -->
 
 <!-- Choices.js CSS -->
 <link href="<?= base_url('assets/libs/choices.js/public/assets/styles/choices.min.css') ?>" rel="stylesheet" type="text/css" />

@@ -1600,23 +1600,7 @@ class ReconOrdersController extends BaseController
 
 
 
-    public function getActiveServices()
-    {
-        try {
-            $userType = session()->get('user_type') ?? 'client';
-            $services = $this->reconServiceModel->getActiveServices(null, $userType);
-            return $this->response->setJSON([
-                'success' => true,
-                'data' => $services
-            ]);
-        } catch (\Exception $e) {
-            log_message('error', 'Recon getActiveServices - Error: ' . $e->getMessage());
-            return $this->response->setJSON([
-                'success' => false,
-                'data' => []
-            ]);
-        }
-    }
+    // Removed getActiveServices() - use ReconServicesController::getActiveServices() instead
 
     /**
      * Save order services (many-to-many relationship)
@@ -1681,17 +1665,12 @@ class ReconOrdersController extends BaseController
                 }
             }
 
-            // Get usage statistics
-            $stats = $this->getServiceStats($id);
-
-            // Get recent orders using this service
-            $recentOrders = $this->getRecentOrdersForService($id);
-
+            // Note: Service statistics and recent orders functionality moved to ReconServicesController
             $data = [
                 'title' => $service['name'],
                 'service' => $service,
-                'stats' => $stats,
-                'recentOrders' => $recentOrders
+                'stats' => [], // TODO: Get from ReconServicesController::getServiceStats()
+                'recentOrders' => [] // TODO: Get from ReconServicesController if needed
             ];
 
             return view('Modules\ReconOrders\Views\recon_orders\services_view', $data);
@@ -1726,214 +1705,19 @@ class ReconOrdersController extends BaseController
         }
     }
 
-    /**
-     * Store new service
-     */
-    public function servicesStore()
-    {
-        try {
-            $data = $this->request->getPost();
-            
-            // Convert checkbox values
-            $data['is_active'] = isset($data['is_active']) ? 1 : 0;
-            $data['show_in_form'] = isset($data['show_in_form']) ? 1 : 0;
-            
-            // Set client_id to null if empty
-            if (empty($data['client_id'])) {
-                $data['client_id'] = null;
-            }
+    // Removed servicesStore() - use ReconServicesController::store() instead
 
-            if ($this->reconServiceModel->save($data)) {
-                return $this->response->setJSON(['success' => true, 'message' => 'Service created successfully']);
-            } else {
-                return $this->response->setJSON(['success' => false, 'message' => 'Failed to create service']);
-            }
+    // Removed servicesUpdate() - use ReconServicesController::update() instead
 
-        } catch (\Exception $e) {
-            log_message('error', 'Service store error: ' . $e->getMessage());
-            return $this->response->setJSON(['success' => false, 'message' => 'Error creating service']);
-        }
-    }
+    // Removed servicesDelete() - use ReconServicesController::delete() instead
 
-    /**
-     * Update service
-     */
-    public function servicesUpdate($id = null)
-    {
-        if (!$id) {
-            return $this->response->setJSON(['success' => false, 'message' => 'Service ID required']);
-        }
+    // Removed servicesToggleStatus() - use ReconServicesController::toggleStatus() instead
 
-        try {
-            $data = $this->request->getPost();
-            
-            // Convert checkbox values
-            $data['is_active'] = isset($data['is_active']) ? 1 : 0;
-            $data['show_in_form'] = isset($data['show_in_form']) ? 1 : 0;
-            
-            // Set client_id to null if empty
-            if (empty($data['client_id'])) {
-                $data['client_id'] = null;
-            }
+    // Removed servicesToggleVisibility() - use ReconServicesController::toggleVisibilityType() instead
 
-            if ($this->reconServiceModel->update($id, $data)) {
-                return $this->response->setJSON(['success' => true, 'message' => 'Service updated successfully']);
-            } else {
-                return $this->response->setJSON(['success' => false, 'message' => 'Failed to update service']);
-            }
+    // Removed getServiceStats() - use ReconServicesController::getServiceStats() instead
 
-        } catch (\Exception $e) {
-            log_message('error', 'Service update error: ' . $e->getMessage());
-            return $this->response->setJSON(['success' => false, 'message' => 'Error updating service']);
-        }
-    }
-
-    /**
-     * Delete service
-     */
-    public function servicesDelete($id = null)
-    {
-        if (!$id) {
-            return $this->response->setJSON(['success' => false, 'message' => 'Service ID required']);
-        }
-
-        try {
-            if ($this->reconServiceModel->delete($id)) {
-                return $this->response->setJSON(['success' => true, 'message' => 'Service deleted successfully']);
-            } else {
-                return $this->response->setJSON(['success' => false, 'message' => 'Failed to delete service']);
-            }
-
-        } catch (\Exception $e) {
-            log_message('error', 'Service delete error: ' . $e->getMessage());
-            return $this->response->setJSON(['success' => false, 'message' => 'Error deleting service']);
-        }
-    }
-
-    /**
-     * Toggle service status
-     */
-    public function servicesToggleStatus($id = null)
-    {
-        if (!$id) {
-            return $this->response->setJSON(['success' => false, 'message' => 'Service ID required']);
-        }
-
-        try {
-            $newStatus = $this->request->getPost('is_active');
-            
-            if ($this->reconServiceModel->update($id, ['is_active' => $newStatus])) {
-                return $this->response->setJSON(['success' => true, 'message' => 'Service status updated successfully']);
-            } else {
-                return $this->response->setJSON(['success' => false, 'message' => 'Failed to update service status']);
-            }
-
-        } catch (\Exception $e) {
-            log_message('error', 'Service toggle status error: ' . $e->getMessage());
-            return $this->response->setJSON(['success' => false, 'message' => 'Error updating service status']);
-        }
-    }
-
-    /**
-     * Toggle service visibility
-     */
-    public function servicesToggleVisibility($id = null)
-    {
-        if (!$id) {
-            return $this->response->setJSON(['success' => false, 'message' => 'Service ID required']);
-        }
-
-        try {
-            $newVisibility = $this->request->getPost('show_in_form');
-            
-            if ($this->reconServiceModel->update($id, ['show_in_form' => $newVisibility])) {
-                return $this->response->setJSON(['success' => true, 'message' => 'Service visibility updated successfully']);
-            } else {
-                return $this->response->setJSON(['success' => false, 'message' => 'Failed to update service visibility']);
-            }
-
-        } catch (\Exception $e) {
-            log_message('error', 'Service toggle visibility error: ' . $e->getMessage());
-            return $this->response->setJSON(['success' => false, 'message' => 'Error updating service visibility']);
-        }
-    }
-
-    /**
-     * Get service usage statistics
-     */
-    private function getServiceStats($serviceId)
-    {
-        $db = \Config\Database::connect();
-        
-        $stats = [
-            'total_orders' => 0,
-            'completed_orders' => 0,
-            'total_revenue' => 0
-        ];
-
-        try {
-            if ($db->tableExists('recon_orders')) {
-                // Get total orders using this service
-                $totalOrders = $db->table('recon_orders')
-                    ->where('service_id', $serviceId)
-                    ->where('deleted_at IS NULL')
-                    ->countAllResults();
-                
-                $stats['total_orders'] = $totalOrders;
-
-                // Get completed orders
-                $completedOrders = $db->table('recon_orders')
-                    ->where('service_id', $serviceId)
-                    ->where('status', 'completed')
-                    ->where('deleted_at IS NULL')
-                    ->countAllResults();
-                
-                $stats['completed_orders'] = $completedOrders;
-
-                // Calculate total revenue (if there's a price field)
-                $service = $this->reconServiceModel->find($serviceId);
-                if ($service && isset($service['price'])) {
-                    $stats['total_revenue'] = $completedOrders * $service['price'];
-                }
-            }
-        } catch (\Exception $e) {
-            log_message('error', 'Error getting service stats: ' . $e->getMessage());
-        }
-
-        return $stats;
-    }
-
-    /**
-     * Get recent orders for a service
-     */
-    private function getRecentOrdersForService($serviceId, $limit = 10)
-    {
-        $db = \Config\Database::connect();
-        $orders = [];
-
-        try {
-            if ($db->tableExists('recon_orders') && $db->tableExists('clients')) {
-                $orders = $db->table('recon_orders')
-                    ->select('recon_orders.id, recon_orders.stock, recon_orders.vehicle, recon_orders.status, recon_orders.created_at, clients.name as client_name')
-                    ->join('clients', 'clients.id = recon_orders.client_id', 'left')
-                    ->where('recon_orders.service_id', $serviceId)
-                    ->where('recon_orders.deleted_at IS NULL')
-                    ->orderBy('recon_orders.created_at', 'DESC')
-                    ->limit($limit)
-                    ->get()
-                    ->getResultArray();
-
-                // Add order number for each order
-                foreach ($orders as &$order) {
-                    $order['order_number'] = 'RO-' . str_pad($order['id'], 5, '0', STR_PAD_LEFT);
-                }
-            }
-        } catch (\Exception $e) {
-            log_message('error', 'Error getting recent orders for service: ' . $e->getMessage());
-        }
-
-        return $orders;
-    }
+    // Removed getRecentOrdersForService() - functionality should be in ReconServicesController if needed
 
     // Helper method to get status color
     private function getStatusColor($status)

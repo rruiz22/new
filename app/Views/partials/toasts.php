@@ -26,7 +26,7 @@ function showPendingToasts() {
     <?php if (session()->getFlashdata('toast_message')): ?>
         const toastType = "<?= session()->getFlashdata('toast_type') ?: 'info' ?>";
         const toastMessage = `<?= addslashes(session()->getFlashdata('toast_message')) ?>`;
-        console.log('Toast encontrado:', toastMessage, 'Tipo:', toastType);
+        // Toast encontrado
         
         if (typeof window.showToast === 'function') {
             window.showToast(toastMessage, toastType);
@@ -39,7 +39,7 @@ function showPendingToasts() {
     
     <?php if (session()->getFlashdata('message')): ?>
         const successMessage = `<?= addslashes(session()->getFlashdata('message')) ?>`;
-        console.log('Mensaje de éxito encontrado:', successMessage);
+        // Mensaje de éxito encontrado
         
         if (typeof window.showSuccessToast === 'function') {
             window.showSuccessToast(successMessage);
@@ -51,7 +51,7 @@ function showPendingToasts() {
 
     <?php if (session()->getFlashdata('error')): ?>
         const errorMessage = `<?= addslashes(session()->getFlashdata('error')) ?>`;
-        console.log('Mensaje de error encontrado:', errorMessage);
+        // Mensaje de error encontrado
         
         if (typeof window.showErrorToast === 'function') {
             window.showErrorToast(errorMessage);
@@ -63,7 +63,7 @@ function showPendingToasts() {
     
     <?php if (session()->getFlashdata('warning')): ?>
         const warningMessage = `<?= addslashes(session()->getFlashdata('warning')) ?>`;
-        console.log('Mensaje de advertencia encontrado:', warningMessage);
+        // Mensaje de advertencia encontrado
         
         if (typeof window.showWarningToast === 'function') {
             window.showWarningToast(warningMessage);
@@ -75,7 +75,7 @@ function showPendingToasts() {
     
     <?php if (session()->getFlashdata('info')): ?>
         const infoMessage = `<?= addslashes(session()->getFlashdata('info')) ?>`;
-        console.log('Mensaje de información encontrado:', infoMessage);
+        // Mensaje de información encontrado
         
         if (typeof window.showInfoToast === 'function') {
             window.showInfoToast(infoMessage);

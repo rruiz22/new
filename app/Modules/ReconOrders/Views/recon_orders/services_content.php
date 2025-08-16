@@ -298,7 +298,7 @@ waitForjQueryServices(function() {
     // Define functions first
     function initializeServicesTable() {
         try {
-            console.log('Initializing Services Table...');
+            // console.log('Initializing Services Table...');
             
             if (typeof $ === 'undefined') {
                 console.error('jQuery is not loaded');
@@ -307,7 +307,7 @@ waitForjQueryServices(function() {
 
             // Check if DataTable already exists and destroy it
             if ($.fn.DataTable.isDataTable('#servicesTable')) {
-                console.log('Services Table already exists, destroying...');
+                // console.log('Services Table already exists, destroying...');
                 $('#servicesTable').DataTable().destroy();
             }
 
@@ -419,7 +419,7 @@ waitForjQueryServices(function() {
                 }
             });
 
-            console.log('Services Table initialized successfully');
+            // console.log('Services Table initialized successfully');
             
         } catch (error) {
             console.error('Services Table initialization error:', error);
@@ -478,7 +478,7 @@ waitForjQueryServices(function() {
         
         // Check if clients are already loaded
         if ($('#servicesClientFilter option').length > 1) {
-            console.log('Clients already loaded, skipping...');
+            // console.log('Clients already loaded, skipping...');
             return;
         }
         
@@ -563,7 +563,7 @@ waitForjQueryServices(function() {
                     if (typeof window.showToast === 'function') {
                         window.showToast(response.message || 'Service saved successfully', 'success');
                     } else {
-                        console.log('Service saved successfully');
+                        // console.log('Service saved successfully');
                     }
                     $('#serviceModal').modal('hide');
                     servicesTable.ajax.reload();
@@ -595,12 +595,12 @@ waitForjQueryServices(function() {
     
     // Make functions globally available with reinitialize protection
     window.initializeServicesTable = function() {
-        console.log('Global initializeServicesTable called');
+        // console.log('Global initializeServicesTable called');
         if (!window.servicesTableInitialized) {
             initializeServicesTable();
             window.servicesTableInitialized = true;
         } else {
-            console.log('Services table already initialized, skipping reinitialize...');
+            // console.log('Services table already initialized, skipping reinitialize...');
         }
     };
     
@@ -608,7 +608,7 @@ waitForjQueryServices(function() {
     
     // Add a force reinitialize function for debugging
     window.forceReinitializeServicesTable = function() {
-        console.log('Force reinitializing services table...');
+        // console.log('Force reinitializing services table...');
         window.servicesTableInitialized = false;
         if ($.fn.DataTable.isDataTable('#servicesTable')) {
             $('#servicesTable').DataTable().destroy();
@@ -619,12 +619,12 @@ waitForjQueryServices(function() {
     
     // Initialize everything after functions are defined (only if not already initialized)
     if (!window.servicesTableInitialized) {
-        console.log('First-time services initialization...');
+        // console.log('First-time services initialization...');
         initializeServicesTable();
         loadClients();
         window.servicesTableInitialized = true;
     } else {
-        console.log('Services already initialized, skipping...');
+        // console.log('Services already initialized, skipping...');
     }
     });
 
@@ -715,7 +715,7 @@ function performServiceDelete(serviceId) {
                 if (typeof window.showToast === 'function') {
                     window.showToast('Service deleted successfully', 'success');
                 } else {
-                    console.log('Service deleted successfully');
+                    // console.log('Service deleted successfully');
                 }
                 // Refresh the services table
                 if (typeof refreshAllReconOrdersData === 'function') {
@@ -739,39 +739,6 @@ function performServiceDelete(serviceId) {
     });
 }
 
-// Define showToast function if not available or ensure it works properly
-if (typeof window.showToast === 'undefined') {
-    window.showToast = function(message, type) {
-        console.log('Local showToast called:', type, message);
-        console.log('Swal available:', typeof Swal !== 'undefined');
-        
-        if (typeof Swal === 'undefined') {
-            console.error('SweetAlert2 (Swal) is not loaded!');
-            // Fallback to alert
-            alert(message);
-            return;
-        }
-        
-        // Simple toast notification using SweetAlert2
-        const icon = type === 'success' ? 'success' : type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'info';
-        
-        try {
-            Swal.fire({
-                icon: icon,
-                title: message,
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true
-            });
-        } catch (error) {
-            console.error('Error showing toast:', error);
-            alert(message); // Fallback
-        }
-    };
-} else {
-    console.log('Global showToast already available, using that one');
-}
+// showToast function removed - using global definition from index.php
 }); // Close waitForjQueryServices
 </script> 

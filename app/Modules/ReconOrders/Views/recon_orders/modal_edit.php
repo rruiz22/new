@@ -329,16 +329,16 @@ const editModalVinTranslations = {
 
 // VIN Decoding Functions for Edit Modal
 function setupEditVINDecoding() {
-    console.log('📝 Setting up Edit VIN decoding...');
+    // console.log('📝 Setting up Edit VIN decoding...');
     const vinInput = document.getElementById('edit_vin_number');
     if (!vinInput) {
         console.error('❌ VIN input not found: edit_vin_number');
         return;
     }
-    console.log('✅ VIN input found, attaching event listener');
+    // console.log('✅ VIN input found, attaching event listener');
 
     vinInput.addEventListener('input', function(e) {
-        console.log('🔤 VIN input event triggered:', e.target.value);
+        // console.log('🔤 VIN input event triggered:', e.target.value);
         const vin = e.target.value.toUpperCase().trim();
         e.target.value = vin;
 
@@ -352,7 +352,7 @@ function setupEditVINDecoding() {
         }
 
         if (vin.length === 17) {
-            console.log('🔍 17-character VIN detected, starting decoding:', vin);
+            // console.log('🔍 17-character VIN detected, starting decoding:', vin);
             showEditVINStatus('loading', editModalVinTranslations.vin_loading);
             decodeEditVIN(vin);
         } else if (vin.length >= 10 && vin.length < 17) {
@@ -371,9 +371,9 @@ function setupEditVINDecoding() {
 }
 
 function decodeEditVIN(vin) {
-    console.log('🚀 decodeEditVIN called with VIN:', vin);
+    // console.log('🚀 decodeEditVIN called with VIN:', vin);
     const validationResult = isValidEditVIN(vin);
-    console.log('✅ VIN validation result:', validationResult);
+    // console.log('✅ VIN validation result:', validationResult);
     if (!validationResult.isValid) {
         if (validationResult.errorType === 'suspicious' || validationResult.errorType === 'checkdigit') {
             showEditVINToast('error', validationResult.message);
@@ -386,7 +386,7 @@ function decodeEditVIN(vin) {
     showEditVINStatus('loading', editModalVinTranslations.vin_loading);
 
     const nhtsa_url = `https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues/${vin}?format=json`;
-    console.log('🌐 Making NHTSA API call to:', nhtsa_url);
+    // console.log('🌐 Making NHTSA API call to:', nhtsa_url);
 
     fetch(nhtsa_url, {
         method: 'GET',
@@ -399,12 +399,12 @@ function decodeEditVIN(vin) {
         return response.json();
     })
     .then(data => {
-        console.log('📊 NHTSA API response received:', data);
+        // console.log('📊 NHTSA API response received:', data);
         if (data && data.Results && data.Results.length > 0) {
             const vehicleData = data.Results[0];
-            console.log('🚗 Vehicle data from API:', vehicleData);
+            // console.log('🚗 Vehicle data from API:', vehicleData);
             const vehicleString = buildEditVehicleString(vehicleData);
-            console.log('🏷️ Built vehicle string:', vehicleString);
+            // console.log('🏷️ Built vehicle string:', vehicleString);
 
             if (vehicleString && vehicleString.trim() !== '') {
                 const vehicleInput = document.getElementById('edit_vehicle');
@@ -762,11 +762,11 @@ function showEditVINToast(type, message) {
 
 // Execute immediately when modal loads (not DOMContentLoaded since modal loads dynamically)
 (function() {
-    console.log('🔧 Edit Modal JavaScript executing...');
+    // console.log('🔧 Edit Modal JavaScript executing...');
     
     // Add small delay to ensure DOM elements are fully loaded
     setTimeout(function() {
-        console.log('🔧 Initializing edit modal elements after delay...');
+        // console.log('🔧 Initializing edit modal elements after delay...');
         const form = document.getElementById('reconOrderEditForm');
         const clientSelect = document.getElementById('edit_client_id');
         const serviceSelect = document.getElementById('edit_service_id');
@@ -774,8 +774,8 @@ function showEditVINToast(type, message) {
         const submitBtn = document.getElementById('updateOrderBtn');
         
         // Log service select initialization
-        console.log('🔍 Service select found with', serviceSelect ? serviceSelect.options.length : 0, 'options');
-        console.log('🔍 Client ID:', '<?= $order['client_id'] ?>', 'Service ID:', '<?= $order['service_id'] ?>');
+        // console.log('🔍 Service select found with', serviceSelect ? serviceSelect.options.length : 0, 'options');
+        // console.log('🔍 Client ID:', '<?= $order['client_id'] ?>', 'Service ID:', '<?= $order['service_id'] ?>');
     
     // Load services when client changes
     if (clientSelect) {
@@ -792,10 +792,10 @@ function showEditVINToast(type, message) {
     }
     
     // VIN decoding functionality
-    console.log('🔍 Looking for VIN input with ID: edit_vin_number');
-    console.log('🔍 VIN input found:', vinInput);
+    // console.log('🔍 Looking for VIN input with ID: edit_vin_number');
+    // console.log('🔍 VIN input found:', vinInput);
     if (vinInput) {
-        console.log('🔧 Initializing VIN decoding for edit modal');
+        // console.log('🔧 Initializing VIN decoding for edit modal');
         setupEditVINDecoding();
     } else {
         console.error('❌ VIN input not found in edit modal during initialization');
@@ -839,16 +839,16 @@ function showEditVINToast(type, message) {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    console.log('✅ Order update successful, starting post-update actions');
+                    // console.log('✅ Order update successful, starting post-update actions');
                     showToast(data.message || '<?= lang('App.order_updated_successfully') ?>', 'success');
                     
                     // Close modal and refresh data - check both possible modal IDs
                     let modal = document.getElementById('editReconOrderModal') || document.getElementById('reconOrderModal');
-                    console.log('🔍 Modal search result:', modal ? modal.id : 'No modal found');
+                    // console.log('🔍 Modal search result:', modal ? modal.id : 'No modal found');
                     if (modal && typeof bootstrap !== 'undefined') {
                         const bsModal = bootstrap.Modal.getInstance(modal);
                         if (bsModal) {
-                            console.log('🔒 Closing modal:', modal.id);
+                            // console.log('🔒 Closing modal:', modal.id);
                             bsModal.hide();
                         } else {
                             console.error('❌ Bootstrap modal instance not found for:', modal.id);
@@ -858,23 +858,23 @@ function showEditVINToast(type, message) {
                     }
                     
                     // Refresh page data - prefer index.php refresh function over page reload
-                    console.log('⏰ Setting timeout for data refresh...');
+                    // console.log('⏰ Setting timeout for data refresh...');
                     setTimeout(() => {
-                        console.log('🔄 Timeout triggered, checking refresh functions...');
-                        console.log('📊 refreshAllReconOrdersData available:', typeof refreshAllReconOrdersData);
-                        console.log('📊 refreshReconOrderViewData available:', typeof refreshReconOrderViewData);
+                        // console.log('🔄 Timeout triggered, checking refresh functions...');
+                        // console.log('📊 refreshAllReconOrdersData available:', typeof refreshAllReconOrdersData);
+                        // console.log('📊 refreshReconOrderViewData available:', typeof refreshReconOrderViewData);
                         
                         if (typeof refreshAllReconOrdersData === 'function') {
                             // Use index.php refresh function - refreshes all tables without page reload
-                            console.log('🔄 Refreshing ReconOrders tables after updating order');
+                            // console.log('🔄 Refreshing ReconOrders tables after updating order');
                             refreshAllReconOrdersData({ showToast: false }); // Don't show toast since we already showed success
                         } else if (typeof refreshReconOrderViewData === 'function') {
                             // Fallback to view.php refresh function
-                            console.log('🔄 Using view.php refresh function');
+                            // console.log('🔄 Using view.php refresh function');
                             refreshReconOrderViewData();
                         } else {
                             // Last resort - full page reload
-                            console.log('⚠️ No refresh function available, reloading page');
+                            // console.log('⚠️ No refresh function available, reloading page');
                             window.location.reload();
                         }
                     }, 500);
@@ -951,15 +951,7 @@ function showEditVINToast(type, message) {
         .catch(error => console.error('Error loading services:', error));
     }
     
-    // Simple toast function
-    function showToast(message, type) {
-        if (typeof window.showToast === 'function') {
-            window.showToast(message, type);
-        } else {
-            // Fallback
-            alert(message);
-        }
-    }
+    // Using global showToast function from index.php
     }, 100); // End setTimeout
 })(); // IIFE - Execute immediately
 </script> 

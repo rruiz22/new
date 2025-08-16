@@ -9,6 +9,13 @@
 <li class="breadcrumb-item active"><?= $title ?? 'Edit Recon Order' ?></li>
 <?= $this->endSection() ?>
 
+<?= $this->section('styles') ?>
+<!-- DataTables CSS only -->
+<link href="<?= base_url('assets/libs/datatables/dataTables.bootstrap5.min.css') ?>" rel="stylesheet" type="text/css" />
+<link href="<?= base_url('assets/libs/datatables/responsive.bootstrap5.min.css') ?>" rel="stylesheet" type="text/css" />
+<link href="<?= base_url('assets/libs/datatables/buttons.bootstrap5.min.css') ?>" rel="stylesheet" type="text/css" />
+<?= $this->endSection() ?>
+
 <?= $this->section('content') ?>
 
 <!-- Page Header -->
@@ -332,20 +339,10 @@ function loadServicesForClient(clientId) {
     });
 }
 
-function showToast(type, message) {
-    // Simple toast notification using SweetAlert2
-    const icon = type === 'success' ? 'success' : type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'info';
-    
-    Swal.fire({
-        icon: icon,
-        title: message,
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true
-    });
-}
+// showToast function removed - using global definition from index.php
 </script>
+
+<!-- Include DataTables styles and scripts after jQuery is loaded -->
+<?= $this->include('partials/datatables-scripts') ?>
 
 <?= $this->endSection() ?> 

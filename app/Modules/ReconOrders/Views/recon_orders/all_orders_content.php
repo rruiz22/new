@@ -159,7 +159,7 @@
 <script>
 function initializeAllOrdersTable() {
     try {
-        console.log('Initializing All Orders Table...');
+        // console.log('Initializing All Orders Table...');
         
         if (typeof $ === 'undefined') {
             console.error('jQuery is not loaded');
@@ -452,7 +452,7 @@ function initializeAllOrdersTable() {
             $(this).css('cursor', 'pointer');
         });
 
-        console.log('All Orders Table initialized successfully');
+        // console.log('All Orders Table initialized successfully');
     } catch (error) {
         console.error('Error initializing All Orders Table:', error);
     }
@@ -468,18 +468,7 @@ function hexToRgba(hex, alpha) {
         : 'rgba(0, 123, 255, ' + alpha + ')'; // fallback to bootstrap primary
 }
 
-// Use global editReconOrder function from index.php
-function editReconOrder(orderId) {
-    if (typeof window.editReconOrder === 'function') {
-        // Use the global function from index.php that handles modal correctly
-        console.log('🔄 Using global editReconOrder function for order:', orderId);
-        window.editReconOrder(orderId);
-    } else {
-        // Fallback - should not happen in normal operations
-        console.warn('⚠️ Global editReconOrder not found, redirecting to edit page');
-        window.location.href = '<?= base_url('recon_orders/edit/') ?>' + orderId;
-    }
-}
+// editReconOrder function removed - using global definition from index.php
 
 function deleteReconOrder(orderId) {
     if (!orderId) {
@@ -533,7 +522,7 @@ function performDeleteOrder(orderId) {
                     try {
                         refreshAllReconOrdersData();
                     } catch (e) {
-                        console.log('Error refreshing all recon orders data:', e);
+                        // console.log('Error refreshing all recon orders data:', e);
                     }
                 }
             } else {
@@ -547,19 +536,6 @@ function performDeleteOrder(orderId) {
     });
 }
 
-function showToast(type, message) {
-    // Simple toast notification using SweetAlert2
-    const icon = type === 'success' ? 'success' : type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'info';
-    
-    Swal.fire({
-        icon: icon,
-        title: message,
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true
-    });
-}
+// showToast function removed - using global definition from index.php
 
 </script> 

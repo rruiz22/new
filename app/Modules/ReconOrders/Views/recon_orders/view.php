@@ -10,6 +10,11 @@
 <?= $this->endSection() ?>
 
 <?= $this->section('styles') ?>
+<!-- DataTables CSS only -->
+<link href="<?= base_url('assets/libs/datatables/dataTables.bootstrap5.min.css') ?>" rel="stylesheet" type="text/css" />
+<link href="<?= base_url('assets/libs/datatables/responsive.bootstrap5.min.css') ?>" rel="stylesheet" type="text/css" />
+<link href="<?= base_url('assets/libs/datatables/buttons.bootstrap5.min.css') ?>" rel="stylesheet" type="text/css" />
+
 <style>
 /* Enhanced Topbar Styling */
 .order-top-bar {
@@ -1777,8 +1782,8 @@ const reconOrderId = orderId;
 
 // Initialize the page
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🎯 ReconOrders View Page - DOMContentLoaded');
-    console.log('Order ID:', orderId);
+    // console.log('🎯 ReconOrders View Page - DOMContentLoaded');
+    // console.log('Order ID:', orderId);
 
     // Initialize Feather Icons
     if (typeof feather !== 'undefined') {
@@ -1796,9 +1801,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // 3. Initialize Internal Notes System for staff and admin users only
     <?php if (auth()->user() && (auth()->user()->user_type === 'staff' || auth()->user()->user_type === 'admin')): ?>
     if (typeof InternalNotesSystem !== 'undefined') {
-        console.log('DOMContentLoaded: Initializing Internal Notes System for ReconOrders');
+        // console.log('DOMContentLoaded: Initializing Internal Notes System for ReconOrders');
         window.internalNotesSystem = new InternalNotesSystem(orderId);
-        console.log('✅ Internal Notes System initialized successfully for ReconOrders');
+        // console.log('✅ Internal Notes System initialized successfully for ReconOrders');
     } else {
         console.error('❌ InternalNotesSystem class not found');
     }
@@ -1817,7 +1822,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 6. Initialize comments form and mentions
     initializeCommentsForm();
 
-    console.log('✅ ReconOrders View Page initialized successfully');
+    // console.log('✅ ReconOrders View Page initialized successfully');
 });
 
 // ========================================
@@ -1873,7 +1878,7 @@ function showQRModal() {
 }
 
 function generateQRCode(orderId) {
-    console.log('🎯 Generating QR Code for recon order:', orderId);
+    // console.log('🎯 Generating QR Code for recon order:', orderId);
     
     fetch(`<?= base_url('recon_orders/generateQRCode/') ?>${orderId}`, {
         method: 'POST',
@@ -2050,10 +2055,7 @@ function deleteOrder(orderId) {
 // ORDER ACTION FUNCTIONS
 // ========================================
 
-function editReconOrder(orderId) {
-    // Redirect to edit page
-    window.location.href = '<?= base_url('recon_orders/edit/') ?>' + orderId;
-}
+// editReconOrder function removed - using global definition from index.php
 
 function downloadReconPDF(orderId) {
     // Open PDF download in new tab
@@ -2076,7 +2078,7 @@ let mentionStartPos = -1;
 let selectedSuggestionIndex = -1;
 
 function initializeCommentsForm() {
-    console.log('Initializing comments form and mentions...');
+    // console.log('Initializing comments form and mentions...');
     
     // Load users for mentions
     loadMentionUsers();
@@ -2114,7 +2116,7 @@ function initializeCommentsForm() {
         }
     });
     
-    console.log('Comments form initialized successfully');
+    // console.log('Comments form initialized successfully');
 }
 
 function loadMentionUsers() {
@@ -2129,7 +2131,7 @@ function loadMentionUsers() {
     .then(data => {
         if (data.success && data.data) {
             mentionUsers = data.data;
-            console.log('Loaded mention users:', mentionUsers.length);
+            // console.log('Loaded mention users:', mentionUsers.length);
         } else {
             console.error('Failed to load mention users:', data.message);
         }
@@ -2371,7 +2373,7 @@ let commentsState = {
 function loadComments(page = 1, append = false) {
     // Prevent multiple simultaneous loads
     if (commentsState.isLoading) {
-        console.log('Comments already loading, skipping request');
+        // console.log('Comments already loading, skipping request');
         return;
     }
 
@@ -2385,12 +2387,7 @@ function loadComments(page = 1, append = false) {
 
     commentsState.isLoading = true;
 
-    console.log('Loading comments:', {
-        page: page,
-        append: append,
-        orderId: reconOrderId,
-        currentState: commentsState
-    });
+    // Loading comments with parameters: page, append, orderId, currentState
 
     fetch(`<?= base_url('recon_orders/getComments/') ?>${reconOrderId}?page=${page}`, {
         method: 'GET',
@@ -2421,7 +2418,7 @@ function loadComments(page = 1, append = false) {
         });
     })
     .then(data => {
-        console.log('Comments response:', data);
+        // console.log('Comments response:', data);
 
         if (data.success && data.comments !== undefined) {
             // Update pagination state
@@ -2431,20 +2428,20 @@ function loadComments(page = 1, append = false) {
 
             // Process new comments
             const newComments = data.comments || [];
-            console.log(`Received ${newComments.length} comments for page ${page}`);
+            // console.log(`Received ${newComments.length} comments for page ${page}`);
 
             if (append) {
                 // For append mode, only add truly new comments
                 const existingIds = new Set(commentsState.loadedComments.map(c => c.id));
                 const uniqueNewComments = newComments.filter(c => !existingIds.has(c.id));
                 
-                console.log(`Adding ${uniqueNewComments.length} new comments to existing ${commentsState.loadedComments.length}`);
+                // console.log(`Adding ${uniqueNewComments.length} new comments to existing ${commentsState.loadedComments.length}`);
 
                 if (uniqueNewComments.length > 0) {
                     commentsState.loadedComments.push(...uniqueNewComments);
                     displayComments(uniqueNewComments, true);
                 } else {
-                    console.log('No new comments to add');
+                    // console.log('No new comments to add');
                 }
             } else {
                 // Fresh load - replace all comments
@@ -2513,10 +2510,10 @@ function displayComments(comments, append = false) {
         
         // Only add comments that don't already exist
         const newComments = comments.filter(comment => !existingIds.has(comment.id));
-        console.log('Appending new comments:', newComments.length, 'out of', comments.length, 'total');
+        // console.log('Appending new comments:', newComments.length, 'out of', comments.length, 'total');
         
         if (newComments.length === 0) {
-            console.log('No new comments to append - all comments already exist');
+            // console.log('No new comments to append - all comments already exist');
             return;
         }
         
@@ -2526,7 +2523,7 @@ function displayComments(comments, append = false) {
         });
     } else {
         // Fresh load - display all comments
-        console.log('Fresh load - displaying', comments.length, 'comments');
+        // console.log('Fresh load - displaying', comments.length, 'comments');
         comments.forEach(comment => {
             const commentHtml = createCommentHtml(comment);
             container.append(commentHtml);
@@ -2954,7 +2951,7 @@ function loadRecentActivity(reset = true) {
     }
     
     if (activitiesPagination.loading) {
-        console.log('Activities already loading, skipping request');
+        // console.log('Activities already loading, skipping request');
         return;
     }
     
@@ -2990,7 +2987,7 @@ function loadRecentActivity(reset = true) {
         });
     })
     .then(data => {
-        console.log('Activities response:', data);
+        // console.log('Activities response:', data);
         
         if (data.success && data.activities) {
             if (reset) {
@@ -3283,7 +3280,7 @@ function initializeActivitiesScroll() {
         return;
     }
     
-    console.log('Initializing infinite scroll for activities');
+    // console.log('Initializing infinite scroll for activities');
     
     let scrollTimeout;
     let lastScrollTop = 0;
@@ -3308,17 +3305,10 @@ function initializeActivitiesScroll() {
             const clientHeight = activityContainer.clientHeight;
             const nearBottom = scrollTop + clientHeight >= scrollHeight - 100;
             
-            console.log('Activity scroll check:', {
-                scrollTop,
-                scrollHeight,
-                clientHeight,
-                nearBottom,
-                hasMore: activitiesPagination.hasMore,
-                loading: activitiesPagination.loading
-            });
+            // Activity scroll check: scrollTop, scrollHeight, clientHeight, nearBottom, hasMore, loading
             
             if (nearBottom && activitiesPagination.hasMore && !activitiesPagination.loading) {
-                console.log('Loading more activities via infinite scroll');
+                // Loading more activities via infinite scroll
                 loadMoreActivity();
             }
         }, 200);
@@ -3331,7 +3321,7 @@ function initializeActivitiesScroll() {
 function autoRefreshActivities() {
     // Only refresh if we're on the first page and not currently loading
     if (activitiesPagination.currentPage === 1 && !activitiesPagination.loading) {
-        console.log('Auto-refreshing activities');
+        // console.log('Auto-refreshing activities');
         loadRecentActivity(true);
     }
 }
@@ -3406,20 +3396,7 @@ function showError(message) {
     showToast('error', message);
 }
 
-function showToast(type, message) {
-    // Simple toast notification using SweetAlert2
-    const icon = type === 'success' ? 'success' : type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'info';
-    
-    Swal.fire({
-        icon: icon,
-        title: message,
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true
-    });
-}
+// showToast function removed - using global definition from index.php
 
 // ========================================
 // COMMENT ACTIONS AND REPLIES SYSTEM
@@ -3490,8 +3467,16 @@ function getUserAvatarUrl(user, size = 32) {
     const colorIndex = (user.id || 1) % colors.length;
     const backgroundColor = colors[colorIndex];
     
-    // Use UI Avatars service with consistent styling
-    return `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&size=${size}&background=${backgroundColor}&color=ffffff&bold=true&format=png`;
+    // Generate local avatar using CSS/SVG instead of external service
+    // TODO: Replace with local avatar generation
+    // For now, return a data URI placeholder
+    return `data:image/svg+xml;base64,${btoa(`
+        <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
+            <rect width="100%" height="100%" fill="#${backgroundColor}"/>
+            <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="${size/3}" 
+                  fill="white" text-anchor="middle" dy="0.35em" font-weight="bold">${initials}</text>
+        </svg>
+    `)}`;
 }
 
 function getCurrentOrderId() {
@@ -3725,7 +3710,7 @@ window.submitReply = function(commentId) {
 
 // Edit comment function
 window.editComment = function(commentId, currentText) {
-    console.log('Edit comment:', commentId, 'Current text:', currentText);
+    // console.log('Edit comment:', commentId, 'Current text:', currentText);
     
     const commentItem = $(`.comment-item[data-comment-id="${commentId}"]`);
     const contentDiv = commentItem.find('.comment-content');
@@ -3770,7 +3755,7 @@ window.saveComment = function(commentId) {
     formData.append('comment', newText);
 
     const updateUrl = `<?= base_url('recon_orders/updateComment/') ?>${commentId}`;
-    console.log('Updating comment with URL:', updateUrl);
+    // console.log('Updating comment with URL:', updateUrl);
 
     fetch(updateUrl, {
         method: 'POST',
@@ -3781,14 +3766,14 @@ window.saveComment = function(commentId) {
         credentials: 'same-origin'
     })
     .then(response => {
-        console.log('Update response status:', response.status);
+        // console.log('Update response status:', response.status);
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
         return response.json();
     })
     .then(data => {
-        console.log('Update response data:', data);
+        // console.log('Update response data:', data);
         if (data.success) {
             // Update the comment in the UI
             const commentItem = $(`.comment-item[data-comment-id="${commentId}"]`);
@@ -3874,7 +3859,7 @@ window.saveReply = function(replyId) {
     formData.append('comment', newText);
 
     const updateUrl = `<?= base_url('recon_orders/updateComment/') ?>${replyId}`;
-    console.log('Updating reply with URL:', updateUrl);
+    // console.log('Updating reply with URL:', updateUrl);
 
     fetch(updateUrl, {
         method: 'POST',
@@ -3885,14 +3870,14 @@ window.saveReply = function(replyId) {
         credentials: 'same-origin'
     })
     .then(response => {
-        console.log('Update reply response status:', response.status);
+        // console.log('Update reply response status:', response.status);
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
         return response.json();
     })
     .then(data => {
-        console.log('Update reply response data:', data);
+        // console.log('Update reply response data:', data);
         if (data.success) {
             // Update the reply in the UI
             const replyItem = $(`.comment-reply[data-comment-id="${replyId}"]`);
@@ -3942,7 +3927,7 @@ window.deleteComment = function(commentId) {
     }).then((result) => {
         if (result.isConfirmed) {
             const deleteUrl = `<?= base_url('recon_orders/deleteComment/') ?>${commentId}`;
-            console.log('Deleting comment with URL:', deleteUrl);
+            // console.log('Deleting comment with URL:', deleteUrl);
 
             fetch(deleteUrl, {
                 method: 'POST',
@@ -3952,14 +3937,14 @@ window.deleteComment = function(commentId) {
                 credentials: 'same-origin'
             })
             .then(response => {
-                console.log('Delete response status:', response.status);
+                // console.log('Delete response status:', response.status);
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
                 return response.json();
             })
             .then(data => {
-                console.log('Delete response data:', data);
+                // console.log('Delete response data:', data);
                 if (data.success) {
                     // Remove comment from UI with animation
                     const commentItem = $(`.comment-item[data-comment-id="${commentId}"], .comment-reply[data-comment-id="${commentId}"]`);
@@ -4046,7 +4031,7 @@ class InternalNotesSystem {
             return window.internalNotesInstance;
         }
         
-        console.log('🔧 Creating new Internal Notes instance for ReconOrder:', orderId);
+        // console.log('🔧 Creating new Internal Notes instance for ReconOrder:', orderId);
         this.orderId = orderId;
         this.currentUser = null;
         this.staffUsers = [];
@@ -4069,7 +4054,7 @@ class InternalNotesSystem {
         window.internalNotesInstance = this;
         window.internalNotesInitialized = orderId;
         
-        console.log('✅ Internal Notes System initialized for ReconOrder:', orderId);
+        // console.log('✅ Internal Notes System initialized for ReconOrder:', orderId);
         this.init();
     }
     
@@ -4137,7 +4122,7 @@ class InternalNotesSystem {
         e.stopPropagation();
         
         if (this.submittingNote) {
-            console.log('Already submitting, skipping duplicate submission');
+            // console.log('Already submitting, skipping duplicate submission');
             return;
         }
         
@@ -4182,7 +4167,7 @@ class InternalNotesSystem {
             const result = await response.json();
             
             if (result.success) {
-                console.log('Note added successfully, reloading notes');
+                // console.log('Note added successfully, reloading notes');
                 this.showAlert('Note added successfully', 'success');
                 this.clearNoteForm();
                 
@@ -4341,7 +4326,7 @@ class InternalNotesSystem {
             <div class="note-item" data-note-id="${note.id}">
                 <div class="note-header">
                     <div class="note-author">
-                        <img src="${note.avatar_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(note.first_name + ' ' + note.last_name) + '&size=32&background=007bff&color=ffffff'}" 
+                        <img src="${note.avatar_url || generateUserAvatar({first_name: note.first_name, last_name: note.last_name, id: note.user_id || 1}, 32)}" 
                              alt="${note.first_name} ${note.last_name}" 
                              class="note-avatar">
                         <div class="note-author-info">
@@ -4429,7 +4414,7 @@ class InternalNotesSystem {
     
     async editNote(noteId) {
         // Implementation for editing notes
-        console.log('Edit note:', noteId);
+        // console.log('Edit note:', noteId);
     }
     
     async deleteNote(noteId) {
@@ -4488,7 +4473,7 @@ class InternalNotesSystem {
         const match = beforeCursor.match(/@(\w*)$/);
         
         if (match) {
-            console.log('Mention detected:', match[1]);
+            // console.log('Mention detected:', match[1]);
             // Could implement mention suggestions here
         }
     }
@@ -4499,12 +4484,12 @@ class InternalNotesSystem {
     
     loadMentions() {
         // Load mentions for current user
-        console.log('Loading mentions...');
+        // console.log('Loading mentions...');
     }
     
     loadTeamActivity() {
         // Load team activity
-        console.log('Loading team activity...');
+        // console.log('Loading team activity...');
     }
     
     displayNotesError() {
@@ -4535,7 +4520,7 @@ class InternalNotesSystem {
                 timer: 3000
             });
         } else {
-            console.log(`${type.toUpperCase()}: ${message}`);
+            // console.log(`${type.toUpperCase()}: ${message}`);
             // Fallback to browser alert
             alert(message);
         }
@@ -4546,7 +4531,7 @@ class InternalNotesSystem {
             return;
         }
         
-        console.log('Notes: Destroying Internal Notes System instance');
+        // console.log('Notes: Destroying Internal Notes System instance');
         this.isDestroyed = true;
         this.submittingNote = false;
         this.loadingNotes = false;
@@ -4557,7 +4542,7 @@ class InternalNotesSystem {
             window.internalNotesInitialized = null;
         }
         
-        console.log('Notes: Internal Notes System destroyed');
+        // console.log('Notes: Internal Notes System destroyed');
     }
 }
 
@@ -4651,4 +4636,8 @@ window.regenerateQR = function(orderId) {
     });
 };
 </script>
+
+<!-- Include DataTables styles and scripts after jQuery is loaded -->
+<?= $this->include('partials/datatables-scripts') ?>
+
 <?= $this->endSection() ?> 

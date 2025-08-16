@@ -767,22 +767,6 @@ $(document).ready(function() {
     });
 });
 
-// Define showToast function if not available
-if (typeof window.showToast === 'undefined') {
-    window.showToast = function(message, type) {
-        // Simple toast notification using SweetAlert2
-        const icon = type === 'success' ? 'success' : type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'info';
-        
-        Swal.fire({
-            icon: icon,
-            title: message,
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true
-        });
-    };
-}
+// showToast function removed - using global definition from index.php
 </script>
 <?= $this->endSection() ?> 

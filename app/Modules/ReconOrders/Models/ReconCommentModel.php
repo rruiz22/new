@@ -2,9 +2,9 @@
 
 namespace Modules\ReconOrders\Models;
 
-use CodeIgniter\Model;
+use Modules\ReconOrders\Models\BaseAttachmentModel;
 
-class ReconCommentModel extends Model
+class ReconCommentModel extends BaseAttachmentModel
 {
     protected $table = 'recon_comments';
     protected $primaryKey = 'id';

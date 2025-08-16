@@ -443,7 +443,7 @@
 <script>
 function initializeTodayTable() {
     try {
-        console.log('Initializing Today Table...');
+        // console.log('Initializing Today Table...');
         
         if (typeof $ === 'undefined') {
             console.error('jQuery is not loaded for Today Table');
@@ -729,14 +729,14 @@ function initializeTodayTable() {
             $(this).css('cursor', 'pointer');
         });
 
-        console.log('Today Table initialized successfully');
+        // console.log('Today Table initialized successfully');
         
         // Also initialize quick form if it hasn't been initialized yet
         if (typeof initializeQuickForm === 'function') {
             try {
                 initializeQuickForm();
             } catch (e) {
-                console.log('Quick form already initialized or error:', e);
+                // console.log('Quick form already initialized or error:', e);
             }
         }
     } catch (error) {
@@ -764,11 +764,11 @@ function initializeQuickForm() {
     
     // Check if form is already initialized
     if ($('#quickOrderForm').data('initialized')) {
-        console.log('Quick form already initialized, skipping...');
+        // console.log('Quick form already initialized, skipping...');
         return;
     }
     
-    console.log('Initializing quick form...');
+    // console.log('Initializing quick form...');
     
     // Mark as initialized
     $('#quickOrderForm').data('initialized', true);
@@ -783,7 +783,7 @@ function initializeQuickForm() {
         
         // Check if form is already being submitted
         if ($(this).data('submitting')) {
-            console.log('Form already being submitted, preventing duplicate');
+            // console.log('Form already being submitted, preventing duplicate');
             return false;
         }
         
@@ -841,7 +841,7 @@ function initializeQuickForm() {
                     // Refresh all tables using the comprehensive refresh function
                     if (typeof refreshAllReconOrdersData === 'function') {
                         try {
-                            console.log('🔄 Refreshing all tables after quick form submission');
+                            // console.log('🔄 Refreshing all tables after quick form submission');
                             refreshAllReconOrdersData({ 
                                 showToast: false, // Don't show refresh toast since we already showed success
                                 showProgress: true // Show visual progress indicator
@@ -873,9 +873,9 @@ function initializeQuickForm() {
             error: function(xhr) {
                 let errorMessage = '<?= lang('App.error_saving_order') ?>';
                 
-                console.log('AJAX Error:', xhr);
-                console.log('Status:', xhr.status);
-                console.log('Response:', xhr.responseText);
+                // console.log('AJAX Error:', xhr);
+                // console.log('Status:', xhr.status);
+                // console.log('Response:', xhr.responseText);
                 
                 if (xhr.responseJSON && xhr.responseJSON.message) {
                     errorMessage = xhr.responseJSON.message;
@@ -1092,42 +1092,9 @@ function clearQuickForm() {
     loadServicesForClient('');
 }
 
-// Global toast function (if not already defined)
-function showToast(message, type) {
-    // Prevent duplicate toasts
-    if (window.lastToastMessage === message && window.lastToastTime && (Date.now() - window.lastToastTime) < 2000) {
-        return;
-    }
-    
-    window.lastToastMessage = message;
-    window.lastToastTime = Date.now();
-    
-    // Simple toast notification using SweetAlert2
-    const icon = type === 'success' ? 'success' : type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'info';
-    
-    Swal.fire({
-        icon: icon,
-        title: message,
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true
-    });
-}
+// showToast function removed - using global definition from index.php
 
-// Use global editReconOrder function from index.php
-function editReconOrder(orderId) {
-    if (typeof window.editReconOrder === 'function') {
-        // Use the global function from index.php that handles modal correctly
-        console.log('🔄 Using global editReconOrder function for order:', orderId);
-        window.editReconOrder(orderId);
-    } else {
-        // Fallback - should not happen in normal operations
-        console.warn('⚠️ Global editReconOrder not found, redirecting to edit page');
-        window.location.href = '<?= base_url('recon_orders/edit/') ?>' + orderId;
-    }
-}
+// editReconOrder function removed - using global definition from index.php
 
 function deleteReconOrder(orderId) {
     if (!orderId) {
@@ -1181,7 +1148,7 @@ function performDeleteOrder(orderId) {
                     try {
                         refreshAllReconOrdersData();
                     } catch (e) {
-                        console.log('Error refreshing all recon orders data:', e);
+                        // console.log('Error refreshing all recon orders data:', e);
                     }
                 }
             } else {

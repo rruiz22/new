@@ -14,6 +14,11 @@ Recon Orders
 <?= $this->endSection() ?>
 
 <?= $this->section('styles') ?>
+<!-- DataTables CSS only -->
+<link href="<?= base_url('assets/libs/datatables/dataTables.bootstrap5.min.css') ?>" rel="stylesheet" type="text/css" />
+<link href="<?= base_url('assets/libs/datatables/responsive.bootstrap5.min.css') ?>" rel="stylesheet" type="text/css" />
+<link href="<?= base_url('assets/libs/datatables/buttons.bootstrap5.min.css') ?>" rel="stylesheet" type="text/css" />
+
 <!-- Custom styles for ReconOrders module -->
 <style>
 .nav-tabs-custom .nav-link {
@@ -237,13 +242,13 @@ Recon Orders
                         <?= $this->include('Modules\ReconOrders\Views\recon_orders/services_content') ?>
                     </div>
 
-                    <div class="tab-pane" id="vehicles" role="tabpanel">
-                        <?= $this->include('Modules\ReconOrders\Views\recon_orders/vehicles_content') ?>
-                    </div>
-
+                   
+                    
                     <div class="tab-pane" id="deleted" role="tabpanel">
                         <?= $this->include('Modules\ReconOrders\Views\recon_orders/deleted_content') ?>
                     </div>
+
+ 
                 </div>
             </div>
         </div>
@@ -288,7 +293,7 @@ if (typeof $ === 'undefined') {
     console.error('❌ jQuery is not loaded! ReconOrders will not function properly.');
     alert('jQuery is required for ReconOrders to function properly. Please refresh the page.');
 } else {
-    console.log('✅ jQuery is available');
+    // jQuery is available
 }
 
 function isValidTab(tab) {
@@ -309,7 +314,7 @@ function waitForJQuery(callback) {
 
 waitForJQuery(function() {
     $(document).ready(function() {
-        console.log('🚀 Starting ReconOrders initialization...');
+        // Starting ReconOrders initialization
         
         // Check if there's a saved active tab first
         var activeTab = localStorage.getItem('recon_orders_active_tab');
@@ -317,14 +322,14 @@ waitForJQuery(function() {
         
         // Log the restored tab
         if (activeTab && isValidTab(activeTab)) {
-            console.log('💾 Restored active tab from localStorage:', activeTab);
+            // Restored active tab from localStorage
         } else {
-            console.log('🎯 Using default tab (no valid saved tab):', initialTab);
+            // Using default tab (no valid saved tab)
         }
         
         // Set active tab if not dashboard
         if (initialTab !== 'dashboard') {
-            console.log('🔄 Activating tab:', initialTab);
+            // Activating tab
             // Remove active from all tabs and tab panes
             $('.nav-link').removeClass('active');
             $('.tab-pane').removeClass('active show');
@@ -336,7 +341,7 @@ waitForJQuery(function() {
         
         // Initialize all tables
         setTimeout(function() {
-            console.log('🔄 Initializing all tables...');
+            // Initializing all tables
             
             // Initialize based on active tab and all tables for proper functionality
             try {
@@ -364,20 +369,34 @@ waitForJQuery(function() {
                     console.warn('⚠️ initializeServicesTable function not found');
                 }
                 
-                // Don't initialize deleted table on page load - wait for tab activation
+                // Initialize deleted table only when tab is visible
+                if (initialTab === 'deleted') {
+                    // Deleted tab is active on load, initializing table
+                    // Wait for tab to be fully visible
+                    setTimeout(() => {
+                        if (typeof window.initializeDeletedOrdersTable === 'function') {
+                            window.initializeDeletedOrdersTable();
+                        } else {
+                            console.warn('⚠️ initializeDeletedOrdersTable function not found');
+                        }
+                    }, 200);
+                }
                 
-                // Initialize deleted table only when tab is activated
+                // Initialize deleted table when tab is activated
                 $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
                     const target = $(e.target).attr("href");
                     if (target === '#deleted') {
-                        console.log('🔧 Deleted tab activated, initializing table...');
-                        if (typeof window.initializeDeletedOrdersTable === 'function') {
-                            window.initializeDeletedOrdersTable();
-                        }
+                        // Deleted tab activated, initializing table
+                        // Wait for tab transition to complete
+                        setTimeout(() => {
+                            if (typeof window.initializeDeletedOrdersTable === 'function') {
+                                window.initializeDeletedOrdersTable();
+                            }
+                        }, 100);
                     }
                 });
                 
-                console.log('✅ All tables initialized');
+                // All tables initialized
             } catch (error) {
                 console.error('❌ Error initializing tables:', error);
             }
@@ -387,11 +406,8 @@ waitForJQuery(function() {
         $('#reconOrderTabs a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
             var target = $(e.target).attr('href').substring(1); // Remove the '#'
             
-            console.log('🔄 Tab switched to:', target);
-            
-            // Save active tab
+            // Tab switched, save active tab
             localStorage.setItem('recon_orders_active_tab', target);
-            console.log('💾 Saved active tab to localStorage:', target);
             
             // Update page title
             var tabNames = {
@@ -472,16 +488,12 @@ waitForJQuery(function() {
         }
         
         // Add debug info to console
-        console.log('✅ ReconOrders module loaded successfully!');
-        console.log('🔧 Debug commands available:');
-        console.log('   - getCurrentTab() - Get current active tab');
-        console.log('   - switchToTab(tabName) - Switch to specific tab');
-        console.log('   - clearReconOrdersData() - Clear all saved data');
+        // ReconOrders module loaded successfully
     });
 });
 </script>
 
-<?= $this->include('Modules\ReconOrders\Views\recon_orders/partials/swal-handler') ?>
+<!-- SweetAlert2 handler removed to prevent conflicts -->
 
 <script>
 // Global ReconOrders Action Functions
@@ -559,7 +571,7 @@ function performDeleteOrder(id) {
             if (response.success) {
                 showToast(response.message || 'Recon order deleted successfully', 'success');
                 refreshAllReconOrdersData();
-                console.log('✅ Order deleted and all data refreshed');
+                // Order deleted and all data refreshed
             } else {
                 showToast(response.message || 'Failed to delete recon order', 'error');
             }
@@ -577,10 +589,7 @@ window.refreshAllReconOrdersData = function(options = {}) {
     var showProgress = options.showProgress || false;
     var progressToast = null;
     
-    console.log('🔄 Starting ReconOrders data refresh...');
-    console.log('🔍 jQuery available:', typeof $);
-    console.log('🔍 DataTable available:', typeof $.fn.DataTable);
-    console.log('🔍 Active tab:', document.querySelector('.nav-tabs .nav-link.active')?.getAttribute('href'));
+    // Starting ReconOrders data refresh
     
     // Show progress indicator if requested
     if (showProgress && typeof window.showToast === 'function') {
@@ -604,12 +613,12 @@ window.refreshAllReconOrdersData = function(options = {}) {
     
     tableSelectors.forEach(function(selector) {
         var table = document.querySelector(selector);
-        console.log('🔍 Checking table:', selector, 'Found:', !!table, 'IsDataTable:', table && $.fn.DataTable && $.fn.DataTable.isDataTable(table));
+        // Checking table
         if (table && $.fn.DataTable && $.fn.DataTable.isDataTable(table)) {
             totalTables++;
             $(table).DataTable().ajax.reload(function() {
                 refreshedCount++;
-                console.log('✅ Refreshed DataTable:', selector, `(${refreshedCount}/${totalTables})`);
+                // Refreshed DataTable
                 
                 // If all tables are refreshed, hide progress and show completion
                 if (refreshedCount === totalTables) {
@@ -619,7 +628,7 @@ window.refreshAllReconOrdersData = function(options = {}) {
                     if (showToast && typeof window.showToast === 'function') {
                         window.showToast(`✅ ${totalTables} tables refreshed successfully!`, 'success');
                     }
-                    console.log('✅ All ReconOrders tables refresh completed');
+                    // All ReconOrders tables refresh completed
                 }
             }, false);
         } else if (table) {
@@ -634,40 +643,74 @@ window.refreshAllReconOrdersData = function(options = {}) {
         if (progressToast && typeof progressToast.close === 'function') {
             progressToast.close();
         }
-        console.log('ℹ️ No DataTables found to refresh');
+        // No DataTables found to refresh
     }
     
-    console.log(`🔄 Started refresh for ${totalTables} tables`);
+    // Started refresh for tables
 };
 
 // Manual refresh function for buttons
 window.manualRefreshReconOrders = function() {
-    console.log('🔄 Manual refresh requested');
+    // Manual refresh requested
     refreshAllReconOrdersData({ showToast: true });
 };
 
-// Global toast function - This will be overridden by swal-handler.php
+// Global toast function - Centralized and clean
 window.showToast = function(message, type) {
-    console.log('🍞 Index.php showToast called with:', { message, type });
-    
-    // Simple toast notification using SweetAlert2
-    const icon = type === 'success' ? 'success' : type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'info';
-    
-    if (typeof Swal === 'undefined') {
-        console.error('❌ SweetAlert2 not available in index.php');
-        alert(`${type}: ${message}`);
-        return;
+    // Validate parameters
+    if (!message || typeof message !== 'string') {
+        console.error('❌ Invalid message parameter:', message);
+        message = 'Unknown message';
     }
     
-    Swal.fire({
-        icon: icon,
-        title: message,
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true
-    });
+    if (!type || typeof type !== 'string') {
+        type = 'info';
+    }
+    
+    const icon = type === 'success' ? 'success' : type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'info';
+    
+    if (typeof Swal !== 'undefined') {
+        try {
+            Swal.fire({
+                icon: icon,
+                title: message,
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer);
+                    toast.addEventListener('mouseleave', Swal.resumeTimer);
+                }
+            });
+        } catch (error) {
+            console.error('❌ Error showing toast:', error);
+            alert(`${type.toUpperCase()}: ${message}`);
+        }
+    } else {
+        console.error('❌ SweetAlert2 not available in index.php');
+        alert(`${type.toUpperCase()}: ${message}`);
+    }
+};
+
+// Global confirmation dialog
+window.showConfirmDialog = function(title, text, confirmText = 'Yes', cancelText = 'Cancel') {
+    if (typeof Swal !== 'undefined') {
+        return Swal.fire({
+            title: title,
+            text: text,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: confirmText,
+            cancelButtonText: cancelText,
+            reverseButtons: true
+        });
+    } else {
+        return Promise.resolve({ isConfirmed: confirm(text) });
+    }
 };
 
 // Global filters system
@@ -809,7 +852,7 @@ window.reconOrdersTabManager = {
     setActiveTab: function(tabName) {
         if (isValidTab(tabName)) {
             localStorage.setItem('recon_orders_active_tab', tabName);
-            console.log('💾 Tab saved to localStorage:', tabName);
+            // Tab saved to localStorage
             return true;
         } else {
             console.warn('⚠️ Invalid tab name:', tabName);
@@ -820,7 +863,7 @@ window.reconOrdersTabManager = {
     // Reset to default tab
     resetToDefault: function() {
         localStorage.removeItem('recon_orders_active_tab');
-        console.log('🔄 Reset to default tab (dashboard)');
+        // Reset to default tab (dashboard)
         setTimeout(function() {
             window.location.reload();
         }, 100);
@@ -853,7 +896,7 @@ window.reconOrdersTabManager = {
         localStorage.removeItem('reconOrdersGlobalDateFromFilter');
         localStorage.removeItem('reconOrdersGlobalDateToFilter');
         
-        console.log('🧹 All ReconOrders localStorage data cleared');
+        // All ReconOrders localStorage data cleared
         
         // Optionally reload the page
         if (confirm('All saved preferences cleared. Reload page to reset to defaults?')) {
@@ -875,6 +918,9 @@ window.clearReconOrdersData = function() {
     return window.reconOrdersTabManager.clearAllData();
 };
 
-
 </script>
+
+<!-- Include DataTables styles and scripts after jQuery is loaded -->
+<?= $this->include('partials/datatables-scripts') ?>
+
 <?= $this->endSection() ?> 

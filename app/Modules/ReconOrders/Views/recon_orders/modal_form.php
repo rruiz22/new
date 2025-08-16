@@ -348,11 +348,11 @@
 <script>
 // Execute immediately when modal loads (not DOMContentLoaded since modal loads dynamically)
 (function() {
-    console.log('🔧 Form Modal JavaScript executing...');
+    // Form Modal JavaScript executing
     
     // Add small delay to ensure DOM elements are fully loaded
     setTimeout(function() {
-        console.log('🔧 Initializing form modal elements after delay...');
+        // Initializing form modal elements after delay
         
         // Check if there's inventory data or if fields are already set to inventory before resetting
         const modal = document.getElementById('reconOrderModal');
@@ -369,17 +369,17 @@
             // Only reset if no inventory data AND not already set to inventory - this is a manual order
             if (fromInventoryField) {
                 fromInventoryField.value = '0';
-                console.log('🔄 Reset from_inventory to: 0 (manual order)');
+                // Reset from_inventory to: 0 (manual order)
             }
             if (sourceTypeField) {
                 sourceTypeField.value = 'manual';
-                console.log('🔄 Reset source_type to: manual (manual order)');
+                // Reset source_type to: manual (manual order)
             }
         } else {
             if (hasInventoryData) {
-                console.log('📦 Inventory data detected, skipping reset');
+                // Inventory data detected, skipping reset
             } else if (alreadySetToInventory) {
-                console.log('📦 Fields already set to inventory values, skipping reset');
+                // Fields already set to inventory values, skipping reset
             }
         }
         
@@ -407,15 +407,15 @@
 
         // VIN Decoding Functions - Local scope
         function setupFormVINDecoding() {
-            console.log('📝 Setting up Form VIN decoding...');
+            // Setting up Form VIN decoding
             if (!vinInput) {
-                console.error('❌ VIN input not found: vin_number');
+                console.error('VIN input not found: vin_number');
                 return;
             }
-            console.log('✅ VIN input found, attaching event listener');
+            // VIN input found, attaching event listener
 
             vinInput.addEventListener('input', function(e) {
-                console.log('🔤 VIN input event triggered:', e.target.value);
+                // VIN input event triggered
                 const vin = e.target.value.toUpperCase().trim();
                 e.target.value = vin;
 
@@ -429,7 +429,7 @@
                 }
 
                 if (vin.length === 17) {
-                    console.log('🔍 17-character VIN detected, starting decoding:', vin);
+                    // 17-character VIN detected, starting decoding
                     showFormVINStatus('loading', formModalVinTranslations.vin_loading);
                     decodeFormVIN(vin);
                 } else if (vin.length >= 10 && vin.length < 17) {
@@ -448,9 +448,9 @@
         }
 
         function decodeFormVIN(vin) {
-            console.log('🚀 decodeFormVIN called with VIN:', vin);
+            // decodeFormVIN called with VIN
             const validationResult = isValidFormVIN(vin);
-            console.log('✅ VIN validation result:', validationResult);
+            // VIN validation result
             if (!validationResult.isValid) {
                 if (validationResult.errorType === 'suspicious' || validationResult.errorType === 'checkdigit') {
                     showFormVINToast('error', validationResult.message);
@@ -463,7 +463,7 @@
             showFormVINStatus('loading', formModalVinTranslations.vin_loading);
 
             const nhtsa_url = `https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues/${vin}?format=json`;
-            console.log('🌐 Making NHTSA API call to:', nhtsa_url);
+            // Making NHTSA API call to NHTSA
 
             fetch(nhtsa_url, {
                 method: 'GET',
@@ -860,8 +860,7 @@
             console.log('🔧 Initializing VIN decoding for form modal');
             setupFormVINDecoding();
         } else {
-            console.error('❌ VIN input not found in form modal during initialization');
-            console.error('❌ Available elements:', document.querySelectorAll('input[type="text"]'));
+            console.error('VIN input not found in form modal during initialization');
         }
         
         // Handle form submission
@@ -1055,15 +1054,7 @@
             });
         }
         
-        // Simple toast function
-        function showToast(message, type) {
-            if (typeof window.showToast === 'function') {
-                window.showToast(message, type);
-            } else {
-                // Fallback
-                alert(message);
-            }
-        }
+        // Using global showToast function from index.php
         
         // Check if modal has inventory data and pre-populate fields
         function checkAndPopulateInventoryData() {
@@ -1323,7 +1314,7 @@ window.ReconVinBarcodeScanner = (function() {
             
             // Check if QuaggaJS loading failed
             if (window.QuaggaLoadFailed) {
-                console.error('📷 QuaggaJS loading failed - all CDN sources failed');
+                console.error('QuaggaJS loading failed - all CDN sources failed');
                 resetScanButton();
                 showError('<?= lang('App.barcode_scanner_library_failed') ?>');
                 stopScanner();
@@ -1342,7 +1333,7 @@ window.ReconVinBarcodeScanner = (function() {
                     console.log('📷 Checking for Quagga... attempt', attempts);
                     
                     if (window.QuaggaLoadFailed) {
-                        console.error('📷 QuaggaJS loading failed during wait');
+                        console.error('QuaggaJS loading failed during wait');
                         clearInterval(checkQuagga);
                         resetScanButton();
                         showError('<?= lang('App.barcode_scanner_library_failed') ?>');
@@ -1358,7 +1349,7 @@ window.ReconVinBarcodeScanner = (function() {
                     }
                     
                     if (attempts >= maxAttempts) {
-                        console.error('📷 Quagga failed to load after 5 seconds');
+                        console.error('Quagga failed to load after 5 seconds');
                         clearInterval(checkQuagga);
                         resetScanButton();
                         showError('<?= lang('App.scanner_library_failed_to_load') ?>');
@@ -1486,7 +1477,7 @@ window.ReconVinBarcodeScanner = (function() {
             startQRProcessing(video, canvas, ctx);
         })
         .catch(function(err) {
-            console.error('📱 QR camera access failed:', err);
+            console.error('QR camera access failed:', err);
             showError('<?= lang('App.failed_camera_access_qr') ?>: ' + err.message);
             stopScanner();
         });
@@ -1598,7 +1589,7 @@ window.ReconVinBarcodeScanner = (function() {
         console.log('📷 Initializing QuaggaJS...');
         
         if (typeof window.Quagga === 'undefined') {
-            console.error('📷 Quagga still undefined at initialization');
+            console.error('Quagga still undefined at initialization');
             resetScanButton();
             showError('<?= lang('App.scanner_not_ready') ?>');
             stopScanner();
@@ -1626,7 +1617,7 @@ window.ReconVinBarcodeScanner = (function() {
             locate: true
         }, function(err) {
             if (err) {
-                console.error('📷 QuaggaJS initialization error:', err);
+                console.error('QuaggaJS initialization error:', err);
                 resetScanButton();
                 showError('<?= lang('App.camera_initialization_failed') ?>: ' + err.message);
                 stopScanner();
@@ -1747,33 +1738,45 @@ window.ReconVinBarcodeScanner = (function() {
     };
 })();
 
-// Load QuaggaJS library with multiple fallbacks
+// QuaggaJS library loading - LOCAL VERSION REQUIRED
+// CDN loading disabled for security and local-only requirements
 (function loadQuaggaJS() {
-    const cdnSources = [
-        'https://unpkg.com/quagga@0.12.1/dist/quagga.min.js',
-        'https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js',
-        'https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js'
+    // Check if QuaggaJS is available locally
+    if (typeof window.Quagga !== 'undefined') {
+        console.log('QuaggaJS already loaded locally');
+        return;
+    }
+    
+    // Try to load local version
+    const localSources = [
+        '<?= base_url('assets/libs/quagga/quagga.min.js') ?>',
+        '<?= base_url('assets/js/libs/quagga.min.js') ?>'
     ];
     
     let currentIndex = 0;
     
     function tryLoad() {
-        if (currentIndex >= cdnSources.length) {
-            console.error('📷 All QuaggaJS CDN sources failed');
+        if (currentIndex >= localSources.length) {
+            console.error('All local QuaggaJS sources failed - barcode scanner disabled');
             window.QuaggaLoadFailed = true;
+            // Hide scan button if QuaggaJS is not available
+            const scanBtn = document.getElementById('scanVinBtn');
+            if (scanBtn) {
+                scanBtn.style.display = 'none';
+            }
             return;
         }
         
         const script = document.createElement('script');
-        script.src = cdnSources[currentIndex];
+        script.src = localSources[currentIndex];
         
         script.onload = function() {
-            console.log('📷 QuaggaJS loaded from:', cdnSources[currentIndex]);
+            console.log('QuaggaJS loaded from local source:', localSources[currentIndex]);
             window.QuaggaLoaded = true;
         };
         
         script.onerror = function() {
-            console.warn('📷 Failed to load QuaggaJS from:', cdnSources[currentIndex]);
+            console.warn('Failed to load QuaggaJS from local source:', localSources[currentIndex]);
             currentIndex++;
             tryLoad();
         };
@@ -1784,17 +1787,42 @@ window.ReconVinBarcodeScanner = (function() {
     tryLoad();
 })();
 
-// Load jsQR for QR code support
+// Load jsQR for QR code support - LOCAL VERSION REQUIRED
 (function loadJsQR() {
-    const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js';
-    script.onload = function() {
-        console.log('📱 jsQR loaded successfully');
-    };
-    script.onerror = function() {
-        console.warn('📱 Failed to load jsQR - QR scanning will have limited functionality');
-    };
-    document.head.appendChild(script);
+    // Check if jsQR is available locally
+    if (typeof window.jsQR !== 'undefined') {
+        console.log('jsQR already loaded locally');
+        return;
+    }
+    
+    // Try to load local version
+    const localJsQRSources = [
+        '<?= base_url('assets/libs/jsqr/jsQR.min.js') ?>',
+        '<?= base_url('assets/js/libs/jsQR.min.js') ?>'
+    ];
+    
+    let currentJsQRIndex = 0;
+    
+    function tryLoadJsQR() {
+        if (currentJsQRIndex >= localJsQRSources.length) {
+            console.warn('All local jsQR sources failed - QR scanning disabled');
+            return;
+        }
+        
+        const script = document.createElement('script');
+        script.src = localJsQRSources[currentJsQRIndex];
+        script.onload = function() {
+            console.log('jsQR loaded from local source:', localJsQRSources[currentJsQRIndex]);
+        };
+        script.onerror = function() {
+            console.warn('Failed to load jsQR from local source:', localJsQRSources[currentJsQRIndex]);
+            currentJsQRIndex++;
+            tryLoadJsQR();
+        };
+        document.head.appendChild(script);
+    }
+    
+    tryLoadJsQR();
 })();
 
 // Initialize the scanner when the modal loads

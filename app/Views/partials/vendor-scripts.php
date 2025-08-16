@@ -37,58 +37,49 @@
 <script>
     // Global library availability verification
     function verifyGlobalLibraries() {
-        console.log('🔍 Verifying global libraries...');
+        // Verifying global libraries
         
         // Verify jQuery
         if (typeof $ !== 'undefined' && typeof jQuery !== 'undefined') {
-            console.log('✅ jQuery is available globally');
+            // jQuery is available globally
             window.jQueryAvailable = true;
         } else {
-            console.error('❌ jQuery is NOT available globally');
+            console.error('jQuery is NOT available globally');
             window.jQueryAvailable = false;
         }
         
         // Verify SweetAlert2
         if (typeof Swal !== 'undefined') {
-            console.log('✅ SweetAlert2 is available globally');
+            // SweetAlert2 is available globally
             window.sweetAlert2Available = true;
             
             // Test SweetAlert2 functionality
             try {
-                // Set global SweetAlert2 defaults
-                Swal.mixin({
-                    customClass: {
-                        confirmButton: 'btn btn-primary me-2',
-                        cancelButton: 'btn btn-secondary'
-                    },
-                    buttonsStyling: false,
-                    allowOutsideClick: false,
-                    allowEscapeKey: true
-                });
-                console.log('✅ SweetAlert2 configured with global defaults');
+                // Basic SweetAlert2 configuration - avoid conflicts with notifications-system.js
+                // SweetAlert2 configured with basic defaults
             } catch (error) {
-                console.warn('⚠️ Error configuring SweetAlert2:', error);
+                console.warn('Error configuring SweetAlert2:', error);
             }
         } else {
-            console.error('❌ SweetAlert2 is NOT available globally');
+            console.error('SweetAlert2 is NOT available globally');
             window.sweetAlert2Available = false;
         }
         
         // Verify Toastify
         if (typeof Toastify !== 'undefined') {
-            console.log('✅ Toastify is available globally');
+            // Toastify is available globally
             window.toastifyAvailable = true;
         } else {
-            console.warn('⚠️ Toastify is not available globally');
+            console.warn('Toastify is not available globally');
             window.toastifyAvailable = false;
         }
         
         // Verify Choices.js
         if (typeof Choices !== 'undefined') {
-            console.log('✅ Choices.js is available globally');
+            // Choices.js is available globally
             window.choicesJSAvailable = true;
         } else {
-            console.warn('⚠️ Choices.js is not available globally');
+            console.warn('Choices.js is not available globally');
             window.choicesJSAvailable = false;
         }
         
@@ -99,8 +90,8 @@
         if (window.toastifyAvailable) availableLibraries.push('Toastify');
         if (window.choicesJSAvailable) availableLibraries.push('Choices.js');
         
-        console.log(`✅ Global libraries available: ${availableLibraries.join(', ')}`);
-        console.log('🎯 All global libraries verified and ready for use!');
+        // Global libraries available
+        // All global libraries verified and ready for use
         
         return {
             jquery: window.jQueryAvailable,
@@ -172,11 +163,11 @@
     
     // Initialize Choices.js for elements with data-choices attribute
     function initializeChoicesJS() {
-        console.log('🎯 Initializing global Choices.js...');
+        // Initializing global Choices.js
         
         // Check if Choices.js is available using global verification
         if (!window.choicesJSAvailable) {
-            console.warn('⚠️ Choices.js not available globally - initialization skipped');
+            console.warn('Choices.js not available globally - initialization skipped');
             return false;
         }
         
@@ -221,10 +212,10 @@
                     window.choicesInstances[element.id] = choicesInstance;
                 }
                 
-                console.log(`✅ Initialized Choices.js for #${element.id || element.className}`);
+                // Initialized Choices.js
                 
             } catch (error) {
-                console.error(`❌ Error initializing Choices.js for element:`, element, error);
+                console.error('Error initializing Choices.js for element:', element, error);
             }
         });
         
@@ -258,9 +249,9 @@
                         window.choicesInstances[element.id] = choicesInstance;
                     }
                     
-                    console.log(`✅ Re-initialized Choices.js for #${element.id || element.className}`);
+                    // Re-initialized Choices.js
                 } catch (error) {
-                    console.error(`❌ Error re-initializing Choices.js:`, error);
+                    console.error('Error re-initializing Choices.js:', error);
                 }
             }
         });
@@ -328,12 +319,12 @@
             document.body.classList.add('loaded');
             
             // Final confirmation message
-            console.log('🚀 System ready! All global libraries initialized and available:');
-            console.log('   • jQuery: ' + (window.jQueryAvailable ? '✅' : '❌'));
-            console.log('   • SweetAlert2: ' + (window.sweetAlert2Available ? '✅' : '❌'));
-            console.log('   • Toastify: ' + (window.toastifyAvailable ? '✅' : '❌'));
-            console.log('   • Choices.js: ' + (window.choicesJSAvailable ? '✅' : '❌'));
-            console.log('🎯 Global helper functions available: showAlert(), showSuccess(), showError(), showWarning(), showInfo(), showConfirmation()');
+            // System ready! All global libraries initialized and available
+            // jQuery available: ' + window.jQueryAvailable
+            // SweetAlert2 available: ' + window.sweetAlert2Available
+            // Toastify available: ' + window.toastifyAvailable
+            // Choices.js available: ' + window.choicesJSAvailable
+            // Global helper functions available: showAlert(), showSuccess(), showError(), showWarning(), showInfo(), showConfirmation()
         }, 300);
     });
 </script>
