@@ -2004,4 +2004,6 @@ return [
     'no_valid_vin_found_in_qr' => 'No se encontró un VIN válido en el código QR',
     'failed_camera_access_qr' => 'Falló el acceso a la cámara para escaneo QR',
     'close_scanner' => 'Cerrar Escáner',
+
+    'monitor_and_track_all_vehicles' => 'Monitoriza y rastrea todos los vehículos en tu Concesionario con datos en tiempo real y análisis exhaustivos',
 ];

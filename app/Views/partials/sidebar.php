@@ -120,9 +120,23 @@
 
                 <!-- Recon Orders -->
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="<?= base_url('recon_orders') ?>">
+                    <a class="nav-link menu-link" href="#sidebarReconOrders" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarReconOrders">
                         <i data-feather="search" class="icon-dual"></i> <span>Recon Orders</span>
                     </a>
+                    <div class="collapse menu-dropdown" id="sidebarReconOrders">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a href="<?= base_url('recon_orders') ?>" class="nav-link">
+                                    <i data-feather="list" class="icon-dual-sm"></i> <span>Orders Dashboard</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= base_url('recon_orders/tracking') ?>" class="nav-link">
+                                    <i data-feather="map-pin" class="icon-dual-sm"></i> <span>Vehicle Tracking</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
 
                 <!-- Vehicles Registry -->

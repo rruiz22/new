@@ -1,3 +1,4 @@
+
 <?php
 // Start session before any HTML output
 session_start();
@@ -114,6 +115,7 @@ if (!function_exists('base_url')) {
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -168,7 +170,7 @@ if (!function_exists('base_url')) {
             box-sizing: border-box;
         }
 
-        body {
+        body2 {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
             color: var(--text-primary);
@@ -180,7 +182,7 @@ if (!function_exists('base_url')) {
             letter-spacing: -0.01em;
         }
 
-                 .container {
+                 .containera {
              max-width: 1440px;
              margin: 0 auto;
              padding: 1.5rem;

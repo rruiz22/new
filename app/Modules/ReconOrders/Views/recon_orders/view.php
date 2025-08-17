@@ -10,10 +10,8 @@
 <?= $this->endSection() ?>
 
 <?= $this->section('styles') ?>
-<!-- DataTables CSS only -->
-<link href="<?= base_url('assets/libs/datatables/dataTables.bootstrap5.min.css') ?>" rel="stylesheet" type="text/css" />
-<link href="<?= base_url('assets/libs/datatables/responsive.bootstrap5.min.css') ?>" rel="stylesheet" type="text/css" />
-<link href="<?= base_url('assets/libs/datatables/buttons.bootstrap5.min.css') ?>" rel="stylesheet" type="text/css" />
+<!-- DataTables CSS -->
+<?= $this->include('partials/datatables-styles') ?>
 
 <style>
 /* Enhanced Topbar Styling */
@@ -4636,8 +4634,5 @@ window.regenerateQR = function(orderId) {
     });
 };
 </script>
-
-<!-- Include DataTables styles and scripts after jQuery is loaded -->
-<?= $this->include('partials/datatables-scripts') ?>
 
 <?= $this->endSection() ?> 

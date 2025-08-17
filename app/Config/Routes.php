@@ -557,9 +557,25 @@ $routes->group('api/location', function($routes) {
     $routes->get('test-email-csv', 'VehicleLocationController::testEmailWithCSV');
 });
 
+
+
+
+// Vehicle Tracking route
+$routes->get('tracking', function() {
+    return view('tracking');
+});
 // Load module routes via events
 // The module routes are loaded through their respective Events.php files
 // Each module has its own Events.php file that loads its routes dynamically
+
+// Recon Orders module routes (load manually for now)
+$reconOrdersRoutes = APPPATH . 'Modules/ReconOrders/Config/Routes.php';
+if (file_exists($reconOrdersRoutes)) {
+    $routesLoader = include $reconOrdersRoutes;
+    if (is_callable($routesLoader)) {
+        $routesLoader($routes);
+    }
+}
 
 // Public Pages module routes (load manually for now)
 $publicPagesRoutes = APPPATH . 'Modules/PublicPages/Config/Routes.php';

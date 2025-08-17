@@ -1814,4 +1814,5 @@ return [
     'duplicate_stock_detected' => 'Número de estoque duplicado detectado!',
     'duplicates_found' => 'Estoques duplicados encontrados',
     'multiple_duplicates_found' => 'Múltiplos estoques duplicados encontrados',
+    'monitor_and_track_all_vehicles' => 'Monitora e rastreia todos os veículos em sua Concessionária com dados em tempo real e análises detalhadas',
 ];

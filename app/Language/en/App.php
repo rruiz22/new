@@ -252,7 +252,7 @@ return [
     'of' => 'of',
     'first' => 'First',
     'last' => 'Last',
-    
+    'monitor_and_track_all_vehicles' => 'Monitor and track all vehicles in your Dealership with real-time data and comprehensive analytics',
     // Todo App
     'todos' => 'Todo List',
     'todo' => 'Todo',

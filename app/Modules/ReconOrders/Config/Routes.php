@@ -136,5 +136,7 @@ return function (RouteCollection $routes) {
         $routes->post('convert_from_inventory', 'ReconOrdersController::convert_from_inventory');
         $routes->get('get_order_info_by_stock', 'ReconOrdersController::get_order_info_by_stock');
         $routes->post('get_order_info_by_stock', 'ReconOrdersController::get_order_info_by_stock');
+        
+        
     }); 
 }; 
