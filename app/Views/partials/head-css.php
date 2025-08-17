@@ -37,7 +37,7 @@
 <link href="<?= base_url('assets/css/app.min.css') ?>" rel="stylesheet" type="text/css" />
 <!-- Flatpickr CSS -->
 <link href="<?= base_url('assets/libs/flatpickr/flatpickr.min.css') ?>" rel="stylesheet" type="text/css" />
-<!-- DataTables CSS - Moved to datatables-scripts.php to avoid duplication -->
+<!-- DataTables CSS - Now loaded via datatables-styles.php to avoid duplication -->
 
 <!-- Choices.js CSS -->
 <link href="<?= base_url('assets/libs/choices.js/public/assets/styles/choices.min.css') ?>" rel="stylesheet" type="text/css" />

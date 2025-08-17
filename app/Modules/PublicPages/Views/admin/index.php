@@ -9,8 +9,8 @@
 <?= $this->endSection() ?>
 
 <?= $this->section('styles') ?>
-<link href="<?= base_url('assets/libs/datatables/dataTables.bootstrap5.min.css') ?>" rel="stylesheet" type="text/css" />
-<link href="<?= base_url('assets/libs/datatables/responsive.bootstrap5.min.css') ?>" rel="stylesheet" type="text/css" />
+<!-- DataTables CSS -->
+<?= $this->include('partials/datatables-styles') ?>
 <style>
 .status-badge {
     font-size: 0.75rem;

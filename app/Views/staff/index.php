@@ -76,8 +76,7 @@
 <?= $this->endSection() ?>
 
 <?= $this->section('scripts') ?>
-<!-- DataTables -->
-<?= $this->include('partials/datatables-scripts') ?>
+<!-- DataTables scripts already loaded globally in default.php -->
 
 <script>
 $(document).ready(function() {
