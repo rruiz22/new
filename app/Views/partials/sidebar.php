@@ -114,7 +114,7 @@
                 <!-- Car Wash Orders -->
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="<?= base_url('car_wash') ?>">
-                        <i data-feather="truck" class="icon-dual"></i> <span><?= lang('App.car_wash_orders') ?></span>
+                        <i data-feather="sun" class="icon-dual"></i> <span><?= lang('App.car_wash_orders') ?></span>
                     </a>
                 </li>
 
@@ -130,13 +130,15 @@
                                     <i data-feather="list" class="icon-dual-sm"></i> <span>Orders Dashboard</span>
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a href="<?= base_url('recon_orders/tracking') ?>" class="nav-link">
-                                    <i data-feather="map-pin" class="icon-dual-sm"></i> <span>Vehicle Tracking</span>
-                                </a>
-                            </li>
+                            
                         </ul>
                     </div>
+                </li>
+                <!-- Vehicles Registry -->
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="<?= base_url('tracking') ?>">
+                        <i data-feather="map-pin" class="icon-dual"></i> <span><?= lang('App.tracking') ?></span>
+                    </a>
                 </li>
 
                 <!-- Vehicles Registry -->
