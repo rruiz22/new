@@ -67,7 +67,7 @@
 
                     <!-- Page Content -->
                     <div class="page-body">
-                        <?= $page['content'] ?>
+                        <?php echo $page['content']; ?>
                     </div>
 
                     <!-- Page Actions -->

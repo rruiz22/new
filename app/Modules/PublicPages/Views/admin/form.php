@@ -100,6 +100,70 @@
 .version-item:last-child {
     border-bottom: none;
 }
+
+.editor-tabs {
+    border-bottom: 1px solid #dee2e6;
+    margin-bottom: 0 !important;
+}
+
+.editor-tabs .btn {
+    border-radius: 0;
+    border: none;
+    border-bottom: 2px solid transparent;
+    background: none;
+    margin-right: 0.5rem;
+}
+
+.editor-tabs .btn.active {
+    color: #0d6efd;
+    border-bottom-color: #0d6efd;
+    background: none;
+}
+
+.editor-tabs .btn:hover {
+    background: #f8f9fa;
+}
+
+#codeEditor {
+    font-family: 'Courier New', Consolas, monospace;
+    font-size: 14px;
+    line-height: 1.4;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+}
+
+.editor-container {
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Evitar conflictos con otros scripts */
+.ql-editor {
+    min-height: 200px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.ql-editor p:empty:not(:only-child) {
+    display: none;
+}
+
+.ql-editor p:empty::before {
+    content: "";
+}
+
+/* Ocultar elementos vacíos en el editor de código */
+#codeEditor:placeholder-shown {
+    color: #6c757d;
+}
+
+#codeEditor:focus {
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
 </style>
 <?= $this->endSection() ?>
 
@@ -144,9 +208,25 @@
                 <div class="form-section">
                     <h5><i class="bx bx-text"></i> Contenido</h5>
                     
+                    <!-- Editor Mode Tabs -->
+                    <div class="editor-tabs mb-3">
+                        <button type="button" class="btn btn-outline-primary active" id="visualTab" onclick="switchEditorMode('visual')">
+                            <i class="bx bx-edit"></i> Visual
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" id="codeTab" onclick="switchEditorMode('code')">
+                            <i class="bx bx-code"></i> Código
+                        </button>
+                    </div>
+                    
                     <div class="mb-3">
+                        <!-- Visual Editor (Quill) -->
                         <div id="editor" class="editor-container"></div>
-                        <textarea name="content" id="content" style="display:none;"><?= esc($page['content'] ?? '') ?></textarea>
+                        
+                        <!-- Code Editor (Textarea) -->
+                        <textarea name="content" id="content" class="form-control font-monospace" rows="15" style="display:none;"><?= esc($page['content'] ?? '') ?></textarea>
+                        
+                        <!-- HTML Code Editor (Hidden by default) -->
+                        <textarea id="codeEditor" class="form-control font-monospace" rows="15" style="display:none;" placeholder="Escribe tu código HTML aquí..."></textarea>
                     </div>
                 </div>
 
@@ -221,11 +301,15 @@
                         <div class="mb-3">
                             <label for="template" class="form-label">Plantilla</label>
                             <select class="form-select" id="template" name="template" required>
-                                <option value="default" <?= ($page['template'] ?? 'default') === 'default' ? 'selected' : '' ?>>Por Defecto</option>
-                                <option value="minimal" <?= ($page['template'] ?? 'default') === 'minimal' ? 'selected' : '' ?>>Minimalista</option>
+                                <option value="default" <?= ($page['template'] ?? 'default') === 'default' ? 'selected' : '' ?>>Por Defecto (Con Bootstrap)</option>
+                                <option value="minimal" <?= ($page['template'] ?? 'default') === 'minimal' ? 'selected' : '' ?>>HTML Puro (Sin CSS)</option>
                                 <option value="full-width" <?= ($page['template'] ?? 'default') === 'full-width' ? 'selected' : '' ?>>Ancho Completo</option>
                                 <option value="blog" <?= ($page['template'] ?? 'default') === 'blog' ? 'selected' : '' ?>>Blog</option>
                             </select>
+                            <small class="form-text text-muted">
+                                <strong>HTML Puro:</strong> Solo HTML sin CSS frameworks, ideal para contenido limpio<br>
+                                <strong>Por Defecto:</strong> Con Bootstrap y estilos completos
+                            </small>
                         </div>
 
                         <div class="mb-3">
@@ -380,33 +464,102 @@
 
 <script>
 // Initialize Quill Editor
-const quill = new Quill('#editor', {
-    theme: 'snow',
-    modules: {
-        toolbar: [
-            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-            ['bold', 'italic', 'underline', 'strike'],
-            [{ 'color': [] }, { 'background': [] }],
-            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-            [{ 'indent': '-1'}, { 'indent': '+1' }],
-            [{ 'align': [] }],
-            ['link', 'image', 'video'],
-            ['blockquote', 'code-block'],
-            ['clean']
-        ]
-    }
-});
+let quill;
 
-// Set initial content
-const initialContent = document.getElementById('content').value;
-if (initialContent) {
-    quill.root.innerHTML = initialContent;
+// Función para inicializar Quill de forma segura
+function initializeQuill() {
+    try {
+        quill = new Quill('#editor', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'indent': '-1'}, { 'indent': '+1' }],
+                    [{ 'align': [] }],
+                    ['link', 'image', 'video'],
+                    ['blockquote', 'code-block'],
+                    ['clean']
+                ]
+            }
+        });
+
+        // Set initial content de forma más robusta
+        const contentTextarea = document.getElementById('content');
+        const initialContent = contentTextarea.value.trim();
+        
+        if (initialContent && initialContent !== '<p><br></p>' && initialContent !== '') {
+            // Limpiar contenido vacío de Quill
+            const cleanContent = initialContent
+                .replace(/<p><br><\/p>/g, '')
+                .replace(/<p>\s*<\/p>/g, '')
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>')
+                .replace(/&amp;/g, '&')
+                .trim();
+            
+            if (cleanContent) {
+                quill.root.innerHTML = cleanContent;
+            }
+        } else {
+            // Si no hay contenido, limpiar el editor
+            quill.root.innerHTML = '';
+        }
+
+        console.log('✅ Quill editor initialized successfully');
+        return true;
+    } catch (error) {
+        console.error('❌ Error initializing Quill:', error);
+        return false;
+    }
 }
 
-// Update hidden textarea when content changes
-quill.on('text-change', function() {
-    document.getElementById('content').value = quill.root.innerHTML;
-});
+// Inicializar cuando el DOM esté listo
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeQuill);
+} else {
+    initializeQuill();
+}
+
+// Función para configurar los event listeners
+function setupEventListeners() {
+    if (!quill) {
+        console.warn('⚠️ Quill not initialized, retrying in 100ms...');
+        setTimeout(setupEventListeners, 100);
+        return;
+    }
+
+    // Update hidden textarea when content changes
+    quill.on('text-change', function() {
+        if (currentMode === 'visual') {
+            const html = quill.root.innerHTML;
+            // Limpiar HTML vacío
+            const cleanHtml = html === '<p><br></p>' ? '' : html;
+            document.getElementById('content').value = cleanHtml;
+        }
+    });
+
+    // Form submission handler
+    const pageForm = document.getElementById('pageForm');
+    if (pageForm) {
+        pageForm.addEventListener('submit', function(e) {
+            if (currentMode === 'visual' && quill) {
+                const html = quill.root.innerHTML;
+                const cleanHtml = html === '<p><br></p>' ? '' : html;
+                document.getElementById('content').value = cleanHtml;
+            } else if (currentMode === 'code') {
+                document.getElementById('content').value = document.getElementById('codeEditor').value;
+            }
+        });
+    }
+
+    console.log('✅ Event listeners configured successfully');
+}
+
+// Configurar event listeners después de inicializar Quill
+setTimeout(setupEventListeners, 200);
 
 // Auto-generate slug from title
 document.getElementById('title').addEventListener('input', function() {
@@ -598,12 +751,98 @@ function restoreVersion(pageId, versionNumber) {
     });
 }
 
-// Form submission
-document.getElementById('pageForm').addEventListener('submit', function(e) {
-    // Update content from Quill editor
-    document.getElementById('content').value = quill.root.innerHTML;
-});
+// Editor Mode Switching
+let currentMode = 'visual';
 
-// No additional JavaScript needed for native HTML checkboxes
+function switchEditorMode(mode) {
+    if (!quill) {
+        console.warn('⚠️ Quill not ready, cannot switch mode');
+        return;
+    }
+
+    const visualTab = document.getElementById('visualTab');
+    const codeTab = document.getElementById('codeTab');
+    const editor = document.getElementById('editor');
+    const codeEditor = document.getElementById('codeEditor');
+    const content = document.getElementById('content');
+
+    if (mode === 'visual') {
+        // Switch to Visual mode
+        currentMode = 'visual';
+        
+        // Update tab appearance
+        visualTab.classList.add('active');
+        visualTab.classList.remove('btn-outline-secondary');
+        visualTab.classList.add('btn-outline-primary');
+        codeTab.classList.remove('active');
+        codeTab.classList.remove('btn-outline-primary');
+        codeTab.classList.add('btn-outline-secondary');
+        
+        // Show Quill editor, hide code editor
+        editor.style.display = 'block';
+        codeEditor.style.display = 'none';
+        
+        // Update Quill with code content
+        const codeContent = codeEditor.value || content.value;
+        if (codeContent && codeContent.trim()) {
+            // Limpiar contenido vacío antes de cargar
+            const cleanContent = codeContent
+                .replace(/<p><br><\/p>/g, '')
+                .replace(/<p>\s*<\/p>/g, '')
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>')
+                .replace(/&amp;/g, '&')
+                .trim();
+            
+            quill.root.innerHTML = cleanContent || '';
+        } else {
+            quill.root.innerHTML = '';
+        }
+        
+    } else if (mode === 'code') {
+        // Switch to Code mode
+        currentMode = 'code';
+        
+        // Update tab appearance
+        codeTab.classList.add('active');
+        codeTab.classList.remove('btn-outline-secondary');
+        codeTab.classList.add('btn-outline-primary');
+        visualTab.classList.remove('active');
+        visualTab.classList.remove('btn-outline-primary');
+        visualTab.classList.add('btn-outline-secondary');
+        
+        // Show code editor, hide Quill
+        editor.style.display = 'none';
+        codeEditor.style.display = 'block';
+        
+        // Update code editor with Quill content
+        const quillContent = quill.root.innerHTML;
+        const cleanContent = quillContent === '<p><br></p>' ? '' : quillContent;
+        codeEditor.value = cleanContent;
+        
+        // Update hidden input
+        content.value = cleanContent;
+    }
+    
+    console.log(`✅ Switched to ${mode} mode`);
+}
+
+// Configurar event listeners adicionales después de la inicialización
+function setupAdditionalListeners() {
+    // Code editor change listener
+    const codeEditor = document.getElementById('codeEditor');
+    if (codeEditor) {
+        codeEditor.addEventListener('input', function() {
+            if (currentMode === 'code') {
+                document.getElementById('content').value = this.value;
+            }
+        });
+    }
+
+    console.log('✅ Additional listeners configured');
+}
+
+// Configurar después de un delay para asegurar que todo esté listo
+setTimeout(setupAdditionalListeners, 300);
 </script>
 <?= $this->endSection() ?>

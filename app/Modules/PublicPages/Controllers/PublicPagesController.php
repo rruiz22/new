@@ -18,6 +18,9 @@ class PublicPagesController extends BaseController
         $this->pageModel = new PublicPageModel();
         $this->fileModel = new PublicPageFileModel();
         $this->versionModel = new PublicPageVersionModel();
+        
+        // Load security helper
+        helper('Modules\PublicPages\Helpers\security');
     }
 
     /**
@@ -83,13 +86,13 @@ class PublicPagesController extends BaseController
 
         $data = [
             'title' => $this->request->getPost('title'),
-            'slug' => $this->request->getPost('slug') ?: '',
-            'content' => $this->request->getPost('content'),
-            'excerpt' => $this->request->getPost('excerpt'),
+            'slug' => $this->request->getPost('slug') ?: $this->pageModel->createSlug($this->request->getPost('title')),
+            'content' => $this->sanitizeHtmlContent($this->request->getPost('content')),
+            'excerpt' => strip_tags($this->request->getPost('excerpt')),
             'privacy_level' => $this->request->getPost('privacy_level'),
             'template' => $this->request->getPost('template'),
-            'custom_css' => $this->request->getPost('custom_css'),
-            'custom_js' => $this->request->getPost('custom_js'),
+            'custom_css' => $this->sanitizeCss($this->request->getPost('custom_css')),
+            'custom_js' => $this->sanitizeJs($this->request->getPost('custom_js')),
             'status' => $this->request->getPost('status'),
             'comments_enabled' => $this->request->getPost('comments_enabled') === 'on' ? 1 : 0,
             'social_sharing' => $this->request->getPost('social_sharing') === 'on' ? 1 : 0,
@@ -112,7 +115,17 @@ class PublicPagesController extends BaseController
             $data['published_at'] = date('Y-m-d H:i:s');
         }
 
+        // Debug: log the data being inserted
+        log_message('debug', 'PublicPages: Attempting to insert data: ' . json_encode($data));
+        
         $pageId = $this->pageModel->insert($data);
+        
+        // Debug: check for database errors
+        if (!$pageId) {
+            $errors = $this->pageModel->errors();
+            log_message('error', 'PublicPages: Insert failed with errors: ' . json_encode($errors));
+            return redirect()->back()->withInput()->with('error', 'Error al crear la página: ' . implode(', ', $errors));
+        }
 
         if ($pageId) {
             // Handle file uploads
@@ -188,13 +201,13 @@ class PublicPagesController extends BaseController
 
         $data = [
             'title' => $this->request->getPost('title'),
-            'slug' => $this->request->getPost('slug') ?: '',
-            'content' => $this->request->getPost('content'),
-            'excerpt' => $this->request->getPost('excerpt'),
+            'slug' => $this->request->getPost('slug') ?: $this->pageModel->createSlug($this->request->getPost('title')),
+            'content' => $this->sanitizeHtmlContent($this->request->getPost('content')),
+            'excerpt' => strip_tags($this->request->getPost('excerpt')),
             'privacy_level' => $this->request->getPost('privacy_level'),
             'template' => $this->request->getPost('template'),
-            'custom_css' => $this->request->getPost('custom_css'),
-            'custom_js' => $this->request->getPost('custom_js'),
+            'custom_css' => $this->sanitizeCss($this->request->getPost('custom_css')),
+            'custom_js' => $this->sanitizeJs($this->request->getPost('custom_js')),
             'status' => $this->request->getPost('status'),
             'comments_enabled' => $this->request->getPost('comments_enabled') === 'on' ? 1 : 0,
             'social_sharing' => $this->request->getPost('social_sharing') === 'on' ? 1 : 0,
@@ -326,6 +339,32 @@ class PublicPagesController extends BaseController
         $page = $this->pageModel->find($pageId);
         if (!$page || !$this->canUserEditPage($page)) {
             return $this->response->setJSON(['success' => false, 'message' => 'No tienes permisos']);
+        }
+
+        // Rate limiting for file uploads
+        $user = auth()->user();
+        $identifier = 'user_' . $user->id;
+        if (!check_rate_limit('fileUploads', $identifier)) {
+            log_security_event('rate_limit_exceeded', 'File upload rate limit exceeded', [
+                'page_id' => $pageId,
+                'user_id' => $user->id
+            ]);
+            return $this->response->setJSON(['success' => false, 'message' => 'Demasiados archivos subidos. Intenta más tarde.']);
+        }
+
+        // Validate each file
+        foreach ($files['files'] as $file) {
+            [$isValid, $reason] = validate_file_upload($file);
+            if (!$isValid) {
+                log_security_event('malicious_file_upload', 'Blocked file upload', [
+                    'reason' => $reason,
+                    'filename' => $file->getClientName(),
+                    'mime_type' => $file->getClientMimeType(),
+                    'size' => $file->getSize(),
+                    'user_id' => $user->id
+                ]);
+                return $this->response->setJSON(['success' => false, 'message' => $reason]);
+            }
         }
 
         $uploadedFiles = $this->fileModel->processUpload($files['files'], $pageId);
@@ -477,5 +516,72 @@ class PublicPagesController extends BaseController
         } else {
             return redirect()->to('/public_pages')->with('error', 'Error al duplicar la página');
         }
+    }
+
+    /**
+     * Sanitize HTML content using security helper
+     */
+    private function sanitizeHtmlContent($content)
+    {
+        if (empty($content)) {
+            return '';
+        }
+        
+        // PASO 1: Decodificar entidades HTML que el editor Quill está codificando
+        $content = html_entity_decode($content, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        
+        // PASO 2: Limpiar espaciado doble y formato del editor Quill
+        // Quill envuelve todo en <p> y agrega espacios innecesarios
+        $content = preg_replace('/<p><br><\/p>/i', '', $content); // Eliminar párrafos vacíos con <br>
+        $content = preg_replace('/<p>&nbsp;<\/p>/i', '', $content); // Eliminar párrafos con espacios
+        $content = preg_replace('/<p>\s*<\/p>/i', '', $content); // Eliminar párrafos vacíos
+        $content = preg_replace('/<p><br\s*\/?><\/p>/i', '', $content); // Eliminar párrafos con <br /> auto-cerrado
+        $content = preg_replace('/(<p><br><\/p>\s*)+/i', '', $content); // Eliminar múltiples párrafos vacíos consecutivos
+        $content = preg_replace('/&nbsp;/', ' ', $content); // Convertir &nbsp; a espacios normales
+        
+        // Si después de limpiar solo quedan espacios o está vacío, devolver cadena vacía
+        if (trim(strip_tags($content)) === '') {
+            return '';
+        }
+        
+        // PASO 3: Sanitización básica - eliminar solo elementos peligrosos
+        $dangerousTags = ['script', 'iframe', 'object', 'embed', 'form', 'input', 'textarea', 'select', 'button', 'link', 'meta'];
+        foreach ($dangerousTags as $tag) {
+            $content = preg_replace("/<\/?{$tag}[^>]*>/i", '', $content);
+        }
+        
+        // PASO 4: Eliminar atributos de eventos peligrosos
+        $content = preg_replace('/\s*on\w+\s*=\s*["\'][^"\']*["\']/i', '', $content);
+        
+        // PASO 5: Eliminar URLs maliciosas
+        $content = preg_replace('/javascript:/i', '', $content);
+        $content = preg_replace('/vbscript:/i', '', $content);
+        
+        // PASO 6: Limpiar solo espacios excesivos SIN destruir la estructura HTML
+        // Solo limpiar múltiples espacios consecutivos dentro del texto, NO los saltos de línea
+        $content = preg_replace('/[ \t]{2,}/', ' ', $content); // Solo espacios y tabs múltiples, no \n
+        
+        // NO eliminar espacios entre tags - esto destruye el formato HTML
+        // Mantener la estructura y formato del HTML
+        
+        return trim($content);
+    }
+
+    /**
+     * Sanitize CSS content using security helper
+     */
+    private function sanitizeCss($css)
+    {
+        $user = auth()->user();
+        return validate_css_content($css, $user->user_type);
+    }
+
+    /**
+     * Sanitize JavaScript content using security helper
+     */
+    private function sanitizeJs($js)
+    {
+        $user = auth()->user();
+        return validate_js_content($js, $user->user_type);
     }
 }

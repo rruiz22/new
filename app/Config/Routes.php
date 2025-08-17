@@ -24,6 +24,13 @@ $routes->get('language/translations/(:alpha)', 'LanguageController::getTranslati
 // BOS Public Route (no auth required)
 $routes->get('bos', 'BosController::index');
 
+// Public Pages Data API Routes (no auth required)
+$routes->group('api/public', function($routes) {
+    $routes->get('inventory', 'Modules\PublicPages\Controllers\PublicDataController::getInventoryData');
+    $routes->get('orders', 'Modules\PublicPages\Controllers\PublicDataController::getOrderInfo');
+    $routes->get('stats', 'Modules\PublicPages\Controllers\PublicDataController::getVehicleStats');
+});
+
 // Test routes for debugging redirect functionality
 $routes->get('test-redirect', 'TestController::testRedirect', ['filter' => 'sessionauth']);
 $routes->get('test-filter', 'TestController::testFilter', ['filter' => 'sessionauth']);

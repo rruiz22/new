@@ -64,26 +64,50 @@ class PublicPageModel extends Model
 
     // Validation
     protected $validationRules = [
-        'title' => 'required|string|max_length[255]',
-        'slug' => 'required|string|max_length[255]|is_unique[public_pages.slug,id,{id}]',
-        'content' => 'required|string',
+        'title' => 'required|string|max_length[255]|min_length[3]',
+        'slug' => 'required|string|max_length[255]|min_length[3]|is_unique[public_pages.slug,id,{id}]|alpha_dash',
+        'content' => 'required|string|min_length[10]',
+        'excerpt' => 'permit_empty|string|max_length[500]',
         'privacy_level' => 'required|in_list[public,password,users_only,roles,private]',
         'status' => 'required|in_list[draft,published,archived]',
-        'template' => 'required|string|max_length[100]',
-        'created_by' => 'required|integer'
+        'template' => 'required|string|max_length[100]|alpha_dash',
+        'custom_css' => 'permit_empty|string|max_length[10000]',
+        'custom_js' => 'permit_empty|string|max_length[10000]',
+        'created_by' => 'required|integer|greater_than[0]',
+        'updated_by' => 'permit_empty|integer|greater_than[0]'
     ];
 
     protected $validationMessages = [
         'title' => [
             'required' => 'El título es requerido',
+            'min_length' => 'El título debe tener al menos 3 caracteres',
             'max_length' => 'El título no puede exceder 255 caracteres'
         ],
         'slug' => [
             'required' => 'El slug es requerido',
-            'is_unique' => 'Este slug ya está en uso'
+            'min_length' => 'El slug debe tener al menos 3 caracteres',
+            'max_length' => 'El slug no puede exceder 255 caracteres',
+            'is_unique' => 'Este slug ya está en uso',
+            'alpha_dash' => 'El slug solo puede contener letras, números, guiones y guiones bajos'
         ],
         'content' => [
-            'required' => 'El contenido es requerido'
+            'required' => 'El contenido es requerido',
+            'min_length' => 'El contenido debe tener al menos 10 caracteres'
+        ],
+        'excerpt' => [
+            'max_length' => 'El resumen no puede exceder 500 caracteres'
+        ],
+        'privacy_level' => [
+            'required' => 'El nivel de privacidad es requerido',
+            'in_list' => 'Nivel de privacidad inválido'
+        ],
+        'status' => [
+            'required' => 'El estado es requerido',
+            'in_list' => 'Estado inválido'
+        ],
+        'template' => [
+            'required' => 'La plantilla es requerida',
+            'alpha_dash' => 'Nombre de plantilla inválido'
         ]
     ];
 

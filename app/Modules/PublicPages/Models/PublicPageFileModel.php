@@ -96,28 +96,61 @@ class PublicPageFileModel extends Model
         }
 
         $uploadedFiles = [];
+        // Allowed MIME types - strict whitelist
         $allowedTypes = [
-            'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp',
-            'application/pdf', 'application/msword', 
+            // Images
+            'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml',
+            // Documents
+            'application/pdf', 
+            'application/msword', 
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            'video/mp4', 'video/avi', 'video/mov', 'video/wmv'
+            'application/vnd.ms-excel',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'text/plain',
+            // Videos (compressed formats only)
+            'video/mp4', 'video/webm',
+            // Audio
+            'audio/mpeg', 'audio/wav', 'audio/ogg'
+        ];
+
+        // Dangerous extensions to block
+        $dangerousExtensions = [
+            'php', 'php3', 'php4', 'php5', 'phtml', 'asp', 'aspx', 'jsp', 'js', 'html', 'htm',
+            'exe', 'bat', 'cmd', 'com', 'pif', 'scr', 'vbs', 'jar', 'sh', 'py', 'pl', 'rb'
         ];
 
         foreach ($files as $file) {
             if ($file->isValid() && !$file->hasMoved()) {
+                // Get file extension
+                $extension = strtolower($file->getClientExtension());
+                
+                // Block dangerous extensions
+                if (in_array($extension, $dangerousExtensions)) {
+                    log_message('warning', "Blocked dangerous file extension: {$extension}");
+                    continue;
+                }
+
                 // Validate file type
                 if (!in_array($file->getClientMimeType(), $allowedTypes)) {
+                    log_message('warning', "Blocked file type: {$file->getClientMimeType()}");
                     continue;
                 }
 
                 // Validate file size (max 50MB)
                 if ($file->getSize() > 50 * 1024 * 1024) {
+                    log_message('warning', "File too large: {$file->getSize()} bytes");
+                    continue;
+                }
+
+                // Additional security: validate actual file content matches MIME type
+                if (!$this->validateFileContent($file->getTempName(), $file->getClientMimeType())) {
+                    log_message('warning', "File content doesn't match MIME type: {$file->getClientName()}");
                     continue;
                 }
 
                 try {
-                    // Generate unique filename
-                    $fileName = $file->getRandomName();
+                    // Generate secure filename
+                    $fileName = $this->generateSecureFileName($file->getClientExtension());
                     $file->move($uploadPath, $fileName);
 
                     $fileInfo = [
@@ -326,5 +359,78 @@ class PublicPageFileModel extends Model
         }
 
         return $result;
+    }
+
+    /**
+     * Generate secure filename
+     */
+    private function generateSecureFileName(string $extension): string
+    {
+        // Generate cryptographically secure random name
+        $randomName = bin2hex(random_bytes(16));
+        return $randomName . '.' . $extension;
+    }
+
+    /**
+     * Validate file content matches MIME type
+     */
+    private function validateFileContent(string $filePath, string $expectedMimeType): bool
+    {
+        // Use finfo to get actual MIME type
+        if (function_exists('finfo_open')) {
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $actualMimeType = finfo_file($finfo, $filePath);
+            finfo_close($finfo);
+
+            // Check if actual MIME type matches expected
+            if ($actualMimeType !== $expectedMimeType) {
+                // Allow some common variations
+                $allowedVariations = [
+                    'image/jpg' => 'image/jpeg',
+                    'image/jpeg' => 'image/jpg',
+                ];
+
+                if (isset($allowedVariations[$expectedMimeType]) && 
+                    $actualMimeType === $allowedVariations[$expectedMimeType]) {
+                    return true;
+                }
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Scan file for malicious content
+     */
+    private function scanFileContent(string $filePath): bool
+    {
+        // Basic malicious pattern detection
+        $maliciousPatterns = [
+            '/<\?php/i',
+            '/<script/i',
+            '/javascript:/i',
+            '/vbscript:/i',
+            '/onload=/i',
+            '/onerror=/i',
+            '/eval\(/i',
+            '/base64_decode/i',
+            '/shell_exec/i',
+            '/system\(/i',
+            '/exec\(/i',
+            '/passthru/i'
+        ];
+
+        $content = file_get_contents($filePath, false, null, 0, 8192); // Read first 8KB
+        
+        foreach ($maliciousPatterns as $pattern) {
+            if (preg_match($pattern, $content)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

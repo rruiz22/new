@@ -18,6 +18,9 @@ class PublicViewController extends BaseController
         $this->pageModel = new PublicPageModel();
         $this->viewModel = new PublicPageViewModel();
         $this->likeModel = new PublicPageLikeModel();
+        
+        // Load security helper
+        helper('Modules\PublicPages\Helpers\security');
     }
 
     /**
@@ -76,9 +79,12 @@ class PublicViewController extends BaseController
             }
         }
 
-        // Track view (avoid spam by checking recent views)
+        // Track view with rate limiting
         $ipAddress = $this->request->getIPAddress();
-        if (!$this->viewModel->hasViewedRecently($page['id'], $userId, $ipAddress, 5)) {
+        $identifier = $userId ? 'user_' . $userId : 'ip_' . $ipAddress;
+        
+        if (check_rate_limit('pageViews', $identifier) && 
+            !$this->viewModel->hasViewedRecently($page['id'], $userId, $ipAddress, 5)) {
             $this->pageModel->incrementViews(
                 $page['id'],
                 $userId,
@@ -129,6 +135,17 @@ class PublicViewController extends BaseController
         $user = auth()->user();
         $userId = $user ? $user->id : null;
         $ipAddress = $this->request->getIPAddress();
+        
+        // Rate limiting for likes
+        $identifier = $userId ? 'user_' . $userId : 'ip_' . $ipAddress;
+        if (!check_rate_limit('likes', $identifier)) {
+            log_security_event('rate_limit_exceeded', 'Like rate limit exceeded', [
+                'page_id' => $pageId,
+                'user_id' => $userId,
+                'ip' => $ipAddress
+            ]);
+            return $this->response->setJSON(['success' => false, 'message' => 'Demasiados intentos. Intenta más tarde.']);
+        }
 
         // Check if user can access the page
         $userRoles = $user ? [$user->user_type] : [];
