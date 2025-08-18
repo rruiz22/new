@@ -709,6 +709,18 @@ function updateCheckboxStates() {
             {
                 data: 'vehicle',
                 render: function(data, type, row) {
+                    // Para búsqueda y ordenamiento, incluir VIN en el texto
+                    if (type === 'type' || type === 'sort') {
+                        let searchText = data || 'N/A';
+                        // Buscar VIN en diferentes campos posibles
+                        let vinNumber = row.vin || row.vin_number || row.vehicle_vin || row.VIN || '';
+                        if (vinNumber && vinNumber !== 'N/A' && vinNumber.toString().trim() !== '') {
+                            searchText += ' ' + vinNumber; // Agregar VIN al texto de búsqueda
+                        }
+                        return searchText;
+                    }
+                    
+                    // Para visualización, mostrar solo el vehículo (sin VIN visible)
                     return data ? `<span class="vehicle-info">${data}</span>` : '-';
                 }
             },
@@ -967,7 +979,36 @@ function updateCheckboxStates() {
                 columns: [
                     { data: 'order_number' },
                     { data: 'stock' },
-                    { data: 'vehicle' },
+                    { 
+                        data: 'vehicle',
+                        render: function(data, type, row) {
+                            // Para búsqueda y ordenamiento, incluir VIN en el texto
+                            if (type === 'type' || type === 'sort') {
+                                let searchText = data || 'N/A';
+                                // Buscar VIN en diferentes campos posibles
+                                let vinNumber = row.vin || row.vin_number || row.vehicle_vin || row.VIN || '';
+                                if (vinNumber && vinNumber !== 'N/A' && vinNumber.toString().trim() !== '') {
+                                    searchText += ' ' + vinNumber; // Agregar VIN al texto de búsqueda
+                                }
+                                return searchText;
+                            }
+                            
+                            // Para visualización, mostrar vehículo con VIN si está disponible
+                            let html = `<div><span class="fw-medium">${data || 'N/A'}</span>`;
+                            let vinNumber = row.vin || row.vin_number || row.vehicle_vin || row.VIN || '';
+                            
+                            if (vinNumber && vinNumber !== 'N/A' && vinNumber.toString().trim() !== '') {
+                                html += `<div class="vin-number mt-1">
+                                    <small class="text-muted d-block" style="font-size: 0.7rem; font-family: monospace; letter-spacing: 0.2px; line-height: 1.2;">
+                                        <i class="ri-barcode-line me-1" style="font-size: 0.8rem;"></i>${vinNumber}
+                                    </small>
+                                </div>`;
+                            }
+                            
+                            html += `</div>`;
+                            return html;
+                        }
+                    },
                     { data: 'client_name' },
                     { data: 'service_date' },
                     { data: 'status' },
@@ -1033,7 +1074,36 @@ function updateCheckboxStates() {
                 columns: [
                     { data: 'order_number' },
                     { data: 'stock' },
-                    { data: 'vehicle' },
+                    { 
+                        data: 'vehicle',
+                        render: function(data, type, row) {
+                            // Para búsqueda y ordenamiento, incluir VIN en el texto
+                            if (type === 'type' || type === 'sort') {
+                                let searchText = data || 'N/A';
+                                // Buscar VIN en diferentes campos posibles
+                                let vinNumber = row.vin || row.vin_number || row.vehicle_vin || row.VIN || '';
+                                if (vinNumber && vinNumber !== 'N/A' && vinNumber.toString().trim() !== '') {
+                                    searchText += ' ' + vinNumber; // Agregar VIN al texto de búsqueda
+                                }
+                                return searchText;
+                            }
+                            
+                            // Para visualización, mostrar vehículo con VIN si está disponible
+                            let html = `<div><span class="fw-medium">${data || 'N/A'}</span>`;
+                            let vinNumber = row.vin || row.vin_number || row.vehicle_vin || row.VIN || '';
+                            
+                            if (vinNumber && vinNumber !== 'N/A' && vinNumber.toString().trim() !== '') {
+                                html += `<div class="vin-number mt-1">
+                                    <small class="text-muted d-block" style="font-size: 0.7rem; font-family: monospace; letter-spacing: 0.2px; line-height: 1.2;">
+                                        <i class="ri-barcode-line me-1" style="font-size: 0.8rem;"></i>${vinNumber}
+                                    </small>
+                                </div>`;
+                            }
+                            
+                            html += `</div>`;
+                            return html;
+                        }
+                    },
                     { data: 'client_name' },
                     { data: 'service_date' },
                     { data: 'status' },

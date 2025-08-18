@@ -612,10 +612,13 @@ $fullBaseUrl = $baseUrl . $appPath;
 .summary-stat.attention i { color: #dc3545; }
 .summary-stat.completed i { color: #007bff; }
 
-.service-summary-grid {
+/* Grids unificados */
+.service-summary-grid,
+.analytics-sections-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 1rem;
+    margin-bottom: 1rem;
 }
 
 .service-summary-section {
@@ -635,28 +638,30 @@ $fullBaseUrl = $baseUrl . $appPath;
 }
 
 .section-icon {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #fff;
-    font-size: 0.7rem;
+    color: white;
+    font-size: 0.875rem;
+    flex-shrink: 0;
 }
 
+/* Colores de iconos unificados con el tema */
 .section-icon.overview { background: #6f42c1; }
-.section-icon.recent { background: #28a745; }
-.section-icon.attention { background: #dc3545; }
-.section-icon.completed { background: #007bff; }
-.section-icon.analytics { background: #17a2b8; }
+.section-icon.recent { background: #10b981; }
+.section-icon.attention { background: #ef4444; }
+.section-icon.completed { background: #2563eb; }
+.section-icon.analytics { background: #06b6d4; }
 
 .section-title {
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     font-weight: 600;
     color: #495057;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.025em;
+    margin: 0;
 }
 
 .section-table {
@@ -706,16 +711,16 @@ $fullBaseUrl = $baseUrl . $appPath;
 
 .overview-metrics-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 0.75rem;
-    margin-top: 0.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 0.5rem;
+    margin-top: 0.375rem;
 }
 
 .overview-metric {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem;
+    gap: 0.5rem;
+    padding: 0.5rem;
     background: #fff;
     border-radius: 4px;
     border: 1px solid #e9ecef;
@@ -729,8 +734,8 @@ $fullBaseUrl = $baseUrl . $appPath;
 }
 
 .metric-icon {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -740,11 +745,12 @@ $fullBaseUrl = $baseUrl . $appPath;
     flex-shrink: 0;
 }
 
-.metric-icon.total { background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%); }
-.metric-icon.recent { background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%); }
-.metric-icon.moderate { background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%); }
-.metric-icon.aged { background: linear-gradient(135deg, #dc3545 0%, #bd2130 100%); }
-.metric-icon.average { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); }
+/* Colores de métricas unificados */
+.metric-icon.total { background: #6f42c1; }
+.metric-icon.recent { background: #10b981; }
+.metric-icon.moderate { background: #f59e0b; }
+.metric-icon.aged { background: #ef4444; }
+.metric-icon.average { background: #2563eb; }
 
 .metric-info {
     flex: 1;
@@ -769,17 +775,16 @@ $fullBaseUrl = $baseUrl . $appPath;
 }
 
 .metric-subtitle {
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     color: #6c757d;
     line-height: 1.1;
+    margin-top: 0.125rem;
 }
 
-/* Analytics Sections */
+/* Analytics Sections - Heredan estilos unificados */
 .analytics-sections-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 1rem;
-    margin-top: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    margin-top: 0.75rem;
 }
 
 .section-count {
@@ -795,12 +800,14 @@ $fullBaseUrl = $baseUrl . $appPath;
 }
 
 .analytics-content {
-    padding: 0.75rem 0 0 0;
+    padding: 0.5rem 0 0 0;
 }
 
 .status-chart-container,
 .years-chart-container {
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
+    max-height: 180px;
+    overflow: hidden;
 }
 
 .chart-legend {
@@ -1104,6 +1111,4 @@ $fullBaseUrl = $baseUrl . $appPath;
         padding: 1.25rem;
         margin-bottom: 2rem;
     }
-}
 </style>
-

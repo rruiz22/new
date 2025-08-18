@@ -293,18 +293,35 @@ if (!function_exists('base_url')) {
             box-shadow: var(--shadow-lg);
         }
 
+        /* Métricas del overview unificadas */
         .metric-label {
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             color: var(--text-secondary);
             font-weight: 500;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
         }
 
         .metric-value {
-            font-size: 2rem;
+            font-size: 1.75rem;
             font-weight: 700;
             color: var(--text-primary);
             margin-bottom: 0.25rem;
+            line-height: 1;
+        }
+        
+        .metric-subtitle {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            line-height: 1.2;
+            margin: 0;
+        }
+        
+        .metric-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .metric-change {
@@ -598,6 +615,492 @@ if (!function_exists('base_url')) {
             pointer-events: none;
         }
 
+        /* Status Line Chart Styles */
+        .status-line-chart {
+            width: 100%;
+            padding: 1rem;
+            background: white;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .status-line-chart svg {
+            width: 100%;
+            height: auto;
+            max-width: 100%;
+        }
+
+        /* Service Status Summary - Más compacto */
+        .status-summary-line {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            margin-top: 0.375rem;
+            padding-top: 0.375rem;
+            border-top: 1px solid var(--border-color);
+            justify-content: center;
+        }
+
+        .status-item-line {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.65rem;
+            min-width: 80px;
+            padding: 0.125rem 0.25rem;
+            background: rgba(248, 250, 252, 0.5);
+            border-radius: 8px;
+            border: 1px solid rgba(226, 232, 240, 0.5);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        
+        .status-name {
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        .status-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .status-name {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .status-value {
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-left: auto;
+        }
+
+        /* SVG Line Chart Enhancements */
+        .status-line-chart svg path {
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .status-line-chart svg circle {
+            transition: all 0.3s ease;
+        }
+
+        .status-line-chart svg circle:hover {
+            r: 8;
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.2));
+        }
+
+        .status-line-chart svg text {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        /* Years Line Chart Styles */
+        .years-line-chart {
+            width: 100%;
+            padding: 1rem;
+            background: white;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .years-line-chart svg {
+            width: 100%;
+            height: auto;
+            max-width: 100%;
+        }
+
+        /* Vehicle Years Distribution - Más compacto */
+        .years-summary-line {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            margin-top: 0.375rem;
+            padding-top: 0.375rem;
+            border-top: 1px solid var(--border-color);
+            justify-content: center;
+        }
+
+        .years-item-line {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.65rem;
+            min-width: 70px;
+            padding: 0.125rem 0.25rem;
+            background: rgba(248, 250, 252, 0.5);
+            border-radius: 8px;
+            border: 1px solid rgba(226, 232, 240, 0.5);
+        }
+
+        .years-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        
+        .years-name {
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        .years-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .years-name {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .years-value {
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-left: auto;
+        }
+
+        /* Years SVG Line Chart Enhancements */
+        .years-line-chart svg path {
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .years-line-chart svg circle {
+            transition: all 0.3s ease;
+        }
+
+        .years-line-chart svg circle:hover {
+            r: 8;
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.2));
+        }
+
+        .years-line-chart svg text {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        /* Modern Data Table Styles */
+        .modern-data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: white;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.875rem;
+        }
+
+        .modern-data-table thead {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+
+        .modern-data-table thead th {
+            padding: 1rem 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .modern-data-table thead th:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 25%;
+            height: 50%;
+            width: 1px;
+            background: var(--border-color);
+        }
+
+        .modern-data-table tbody tr {
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .modern-data-table tbody tr:hover {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .modern-data-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .modern-data-table tbody td {
+            padding: 1rem 0.75rem;
+            color: var(--text-primary);
+            vertical-align: middle;
+            border-bottom: 1px solid transparent;
+        }
+
+        .modern-data-table tbody td:first-child {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        /* Section Search Styles - Headers centrados */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-bottom: 1px solid var(--border-color);
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            text-align: center;
+            position: relative;
+        }
+        
+        /* Campos de búsqueda unificados - Posición absoluta */
+        .section-search {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .section-search input {
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            transition: all 0.2s ease;
+            font-size: 0.75rem;
+            padding: 0.375rem 0.75rem;
+            width: 180px;
+            background: white;
+        }
+        
+        .section-search input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
+            outline: none;
+        }
+        
+        .section-search input::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+        
+        /* Hide rows when filtered */
+        .modern-data-table tbody tr.filtered-hidden {
+            display: none;
+        }
+        
+        /* Estilos unificados para iconos y títulos de sección */
+        .section-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+        
+        .section-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+            letter-spacing: 0.025em;
+        }
+        
+        .section-count {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary-color);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            min-width: 24px;
+            text-align: center;
+            margin-left: auto;
+        }
+        
+        /* Botones más compactos */
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            line-height: 1.2;
+        }
+        
+        .btn-sm i {
+            font-size: 0.8rem;
+        }
+        
+        .d-flex.gap-2 {
+            gap: 0.5rem !important;
+        }
+
+        /* Tablas modernas unificadas */
+        .modern-data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: white;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: none;
+            font-size: 0.75rem;
+            margin: 0;
+        }
+
+        .modern-data-table thead {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+
+        .modern-data-table thead th {
+            padding: 0.75rem 0.5rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        /* VIN header centrado */
+        .modern-data-table thead th:nth-child(2) {
+            text-align: center;
+            min-width: 140px;
+        }
+
+        .modern-data-table tbody tr {
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .modern-data-table tbody tr:hover {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+
+        .modern-data-table tbody td {
+            padding: 0.75rem 0.5rem;
+            color: var(--text-primary);
+            vertical-align: middle;
+            font-size: 0.75rem;
+        }
+
+        /* VIN column - Más bold y completo */
+        .modern-data-table tbody td:nth-child(2) {
+            font-family: 'Courier New', monospace;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            background: rgba(248, 250, 252, 0.8);
+            border-radius: 3px;
+            padding: 0.375rem;
+            border: 1px solid rgba(226, 232, 240, 0.6);
+            letter-spacing: 0.5px;
+        }
+
+        /* Estilos unificados para todos los widgets */
+        .service-summary-section,
+        .analytics-sections-grid .service-summary-section {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+            min-height: 240px;
+        }
+
+        .service-summary-section:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        /* Override para headers específicos - Centrados */
+        .service-summary-section .section-header {
+            padding: 1rem !important;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+            border-bottom: 1px solid var(--border-color) !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 0 !important;
+            border-radius: 0 !important;
+            text-align: center;
+        }
+
+        .service-summary-section .section-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            margin: 0;
+        }
+
+        /* Contenido unificado de widgets */
+        .service-summary-section .section-table,
+        .analytics-content {
+            padding: 1rem;
+        }
+        
+        .analytics-content {
+            min-height: 160px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0.75rem;
+        }
+        
+        /* Charts containers unificados */
+        .status-chart-container,
+        .years-chart-container {
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .service-summary-section .section-table {padding: 0;
+        }
+
+        /* Status badges for days column */
+        .days-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .days-badge.urgent {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .days-badge.warning {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            color: #d97706;
+            border: 1px solid #fed7aa;
+        }
+
+        .days-badge.normal {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            color: #16a34a;
+            border: 1px solid #bbf7d0;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .top-bar-content {
@@ -647,6 +1150,44 @@ if (!function_exists('base_url')) {
 
             .inventory-table-header {
                 padding: 1rem;
+            }
+
+            .status-summary-line {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .status-item-line {
+                min-width: auto;
+                justify-content: space-between;
+            }
+
+            .years-summary-line {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .years-item-line {
+                min-width: auto;
+                justify-content: space-between;
+            }
+
+            .modern-data-table {
+                font-size: 0.8rem;
+            }
+
+            .modern-data-table thead th {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.7rem;
+            }
+
+            .modern-data-table tbody td {
+                padding: 0.75rem 0.5rem;
+            }
+
+            .modern-data-table tbody td:nth-child(2) {
+                font-size: 0.7rem;
+                padding: 0.25rem 0.5rem;
             }
 
             .inventory-table-header .d-flex {
@@ -855,69 +1396,6 @@ if (!function_exists('base_url')) {
                 </div>
             </div>
             
-            <div class="service-summary-grid">
-                <div class="service-summary-section">
-                    <div class="section-header">
-                        <i class="ri-time-line section-icon recent"></i>
-                        <span class="section-title">Recent Activity (0-1 days)</span>
-                    </div>
-                    <div class="section-table">
-                        <table class="compact-table">
-                            <thead>
-                                <tr>
-                                    <th>Stock</th>
-                                    <th>Vehicle</th>
-                                </tr>
-                            </thead>
-                            <tbody id="recentActivityTable">
-                                <tr><td colspan="2" class="text-center text-muted">Loading...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                
-                <div class="service-summary-section">
-                    <div class="section-header">
-                        <i class="ri-alert-line section-icon attention"></i>
-                        <span class="section-title">Needs Attention (6+ days)</span>
-                    </div>
-                    <div class="section-table">
-                        <table class="compact-table">
-                            <thead>
-                                <tr>
-                                    <th>Stock</th>
-                                    <th>Vehicle</th>
-                                    <th>Days</th>
-                                </tr>
-                            </thead>
-                            <tbody id="needsAttentionTable">
-                                <tr><td colspan="3" class="text-center text-muted">Loading...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                
-                <div class="service-summary-section">
-                    <div class="section-header">
-                        <i class="ri-check-line section-icon completed"></i>
-                        <span class="section-title">Recently Completed</span>
-                    </div>
-                    <div class="section-table">
-                        <table class="compact-table">
-                            <thead>
-                                <tr>
-                                    <th>Stock</th>
-                                    <th>Vehicle</th>
-                                </tr>
-                            </thead>
-                            <tbody id="completedTable">
-                                <tr><td colspan="2" class="text-center text-muted">Loading...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            
             <!-- Analytics Sections -->
             <div class="analytics-sections-grid">
                 <div class="service-summary-section">
@@ -930,18 +1408,7 @@ if (!function_exists('base_url')) {
                         <div class="status-chart-container">
                             <div id="serviceStatusChart"></div>
                         </div>
-                        <div class="chart-legend">
-                            <div class="legend-item">
-                                <span class="legend-color in-progress"></span>
-                                <span class="legend-label">In Progress</span>
-                                <span class="legend-value" id="statusInProgress">24 (96%)</span>
-                            </div>
-                            <div class="legend-item">
-                                <span class="legend-color needs-attention"></span>
-                                <span class="legend-label">Needs Attention</span>
-                                <span class="legend-value" id="statusNeedsAttention">1 (4%)</span>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
                 
@@ -955,36 +1422,86 @@ if (!function_exists('base_url')) {
                         <div class="years-chart-container">
                             <div id="vehicleYearsChart"></div>
                         </div>
-                        <div class="chart-legend">
-                            <div class="legend-item">
-                                <span class="legend-color year-old"></span>
-                                <span class="legend-label">&lt;2015</span>
-                                <span class="legend-value" id="years2015">1 (4%)</span>
-                            </div>
-                            <div class="legend-item">
-                                <span class="legend-color year-mid"></span>
-                                <span class="legend-label">2015-2019</span>
-                                <span class="legend-value" id="years2019">4 (16%)</span>
-                            </div>
-                            <div class="legend-item">
-                                <span class="legend-color year-recent"></span>
-                                <span class="legend-label">2020-2022</span>
-                                <span class="legend-value" id="years2022">6 (24%)</span>
-                            </div>
-                            <div class="legend-item">
-                                <span class="legend-color year-new"></span>
-                                <span class="legend-label">2023+</span>
-                                <span class="legend-value" id="years2023">14 (56%)</span>
-                            </div>
+
+                    </div>
+                </div>
+            </div>
+            
+            <div class="service-summary-grid">
+                <div class="service-summary-section">
+                    <div class="section-header">
+                        <i class="ri-time-line section-icon recent"></i>
+                        <span class="section-title">Recent Activity (0-1 days)</span>
+                        <div class="section-search">
+                            <input type="text" id="recentActivitySearch" class="form-control form-control-sm" placeholder="Search by stock, VIN, or vehicle...">
                         </div>
+                    </div>
+                    <div class="section-table">
+                        <table class="modern-data-table">
+                            <thead>
+                                <tr>
+                                    <th>Stock</th>
+                                    <th>VIN</th>
+                                    <th>Vehicle</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentActivityTable">
+                                <tr><td colspan="3" class="text-center text-muted">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="service-summary-section">
+                    <div class="section-header">
+                        <i class="ri-alert-line section-icon attention"></i>
+                        <span class="section-title">Needs Attention (6+ days)</span>
+                        <div class="section-search">
+                            <input type="text" id="needsAttentionSearch" class="form-control form-control-sm" placeholder="Search by stock, VIN, or vehicle...">
+                        </div>
+                    </div>
+                    <div class="section-table">
+                        <table class="modern-data-table">
+                            <thead>
+                                <tr>
+                                    <th>Stock</th>
+                                    <th>VIN</th>
+                                    <th>Vehicle</th>
+                                    <th>Days</th>
+                                </tr>
+                            </thead>
+                            <tbody id="needsAttentionTable">
+                                <tr><td colspan="4" class="text-center text-muted">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="service-summary-section">
+                    <div class="section-header">
+                        <i class="ri-check-line section-icon completed"></i>
+                        <span class="section-title">Recently Completed</span>
+                        <div class="section-search">
+                            <input type="text" id="completedSearch" class="form-control form-control-sm" placeholder="Search by stock, VIN, or vehicle...">
+                        </div>
+                    </div>
+                    <div class="section-table">
+                        <table class="modern-data-table">
+                            <thead>
+                                <tr>
+                                    <th>Stock</th>
+                                    <th>VIN</th>
+                                    <th>Vehicle</th>
+                                </tr>
+                            </thead>
+                            <tbody id="completedTable">
+                                <tr><td colspan="3" class="text-center text-muted">Loading...</td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
-
-
-
-
 
         <div class="dashboard-container mb-4">
         <div class="dashboard-body">
@@ -1530,16 +2047,27 @@ if (window.location.pathname.includes('/bos/') || window.location.pathname.inclu
         if (!tbody) return;
         
         if (recentItems.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="2" class="text-center text-muted">No recent items</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted">No recent items</td></tr>';
             return;
         }
         
-        tbody.innerHTML = recentItems.map(item => `
-            <tr>
-                <td><strong>${item.stock_number || 'N/A'}</strong></td>
-                <td>${item.vehicle || 'N/A'}</td>
-            </tr>
-        `).join('');
+        tbody.innerHTML = recentItems.map(item => {
+            const stockNumber = item.stock_number;
+            const orderInfo = window.orderInfoLookup && window.orderInfoLookup[stockNumber];
+            const vinNumber = orderInfo && orderInfo.vin_number ? orderInfo.vin_number : 'N/A';
+            const fullVinNumber = orderInfo && orderInfo.vin_number ? orderInfo.vin_number : '';
+            
+            // Crear texto de búsqueda que incluya stock, VIN completo y vehículo
+            const searchText = `${stockNumber || ''} ${fullVinNumber || ''} ${item.vehicle || ''}`.toLowerCase();
+            
+            return `
+                <tr data-search="${searchText}">
+                    <td><strong>${stockNumber || 'N/A'}</strong></td>
+                    <td>${vinNumber}</td>
+                    <td>${item.vehicle || 'N/A'}</td>
+                </tr>
+            `;
+        }).join('');
     }
     
     // Update needs attention table - Show 5 with most days (highest priority)
@@ -1565,17 +2093,33 @@ if (window.location.pathname.includes('/bos/') || window.location.pathname.inclu
         if (!tbody) return;
         
         if (needsAttention.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted">No items need attention</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No items need attention</td></tr>';
             return;
         }
         
-        tbody.innerHTML = needsAttention.map(item => `
-            <tr>
-                <td><strong>${item.stock_number || 'N/A'}</strong></td>
-                <td>${item.vehicle || 'N/A'}</td>
-                <td><span class="status-badge aged">${item.days_detail || 0} days</span></td>
-            </tr>
-        `).join('');
+        tbody.innerHTML = needsAttention.map(item => {
+            const days = parseInt(item.days_detail) || 0;
+            let badgeClass = 'normal';
+            if (days >= 15) badgeClass = 'urgent';
+            else if (days >= 10) badgeClass = 'warning';
+            
+            const stockNumber = item.stock_number;
+            const orderInfo = window.orderInfoLookup && window.orderInfoLookup[stockNumber];
+            const vinNumber = orderInfo && orderInfo.vin_number ? orderInfo.vin_number : 'N/A';
+            const fullVinNumber = orderInfo && orderInfo.vin_number ? orderInfo.vin_number : '';
+            
+            // Crear texto de búsqueda que incluya stock, VIN completo y vehículo
+            const searchText = `${stockNumber || ''} ${fullVinNumber || ''} ${item.vehicle || ''}`.toLowerCase();
+            
+            return `
+                <tr data-search="${searchText}">
+                    <td><strong>${stockNumber || 'N/A'}</strong></td>
+                    <td>${vinNumber}</td>
+                    <td>${item.vehicle || 'N/A'}</td>
+                    <td><span class="days-badge ${badgeClass}">${days} days</span></td>
+                </tr>
+            `;
+        }).join('');
     }
     
     // Update completed table - Show 5 most recently completed (highest days, assuming they were completed)
@@ -1605,16 +2149,27 @@ if (window.location.pathname.includes('/bos/') || window.location.pathname.inclu
         if (!tbody) return;
         
         if (completed.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="2" class="text-center text-muted">No completed items</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted">No completed items</td></tr>';
             return;
         }
         
-        tbody.innerHTML = completed.map(item => `
-            <tr>
-                <td><strong>${item.stock_number || 'N/A'}</strong></td>
-                <td>${item.vehicle || 'N/A'}</td>
-            </tr>
-        `).join('');
+        tbody.innerHTML = completed.map(item => {
+            const stockNumber = item.stock_number;
+            const orderInfo = window.orderInfoLookup && window.orderInfoLookup[stockNumber];
+            const vinNumber = orderInfo && orderInfo.vin_number ? orderInfo.vin_number : 'N/A';
+            const fullVinNumber = orderInfo && orderInfo.vin_number ? orderInfo.vin_number : '';
+            
+            // Crear texto de búsqueda que incluya stock, VIN completo y vehículo
+            const searchText = `${stockNumber || ''} ${fullVinNumber || ''} ${item.vehicle || ''}`.toLowerCase();
+            
+            return `
+                <tr data-search="${searchText}">
+                    <td><strong>${stockNumber || 'N/A'}</strong></td>
+                    <td>${vinNumber}</td>
+                    <td>${item.vehicle || 'N/A'}</td>
+                </tr>
+            `;
+        }).join('');
     }
     
     // Update service status chart
@@ -1640,26 +2195,37 @@ if (window.location.pathname.includes('/bos/') || window.location.pathname.inclu
             }
         });
         
+        // Calculate total from items with status (not all data)
+        const totalWithStatus = Object.values(statusGroups).reduce((sum, count) => sum + count, 0);
+        
         // Update count in metric widget and section header
         updateCounterValue('statusSummaryTotal', Object.keys(statusGroups).length);
         
-        // Update legend values
-        const total = data.length;
-        let inProgressCount = 0, needsAttentionCount = 0;
+        // Get individual status counts
+        const pendingCount = statusGroups['pending'] || 0;
+        const inProgressCount = statusGroups['in_progress'] || 0;
+        const completedCount = statusGroups['completed'] || 0;
+        const cancelledCount = statusGroups['cancelled'] || 0;
         
-        Object.entries(statusGroups).forEach(([status, count]) => {
-            if (status.toLowerCase().includes('progress')) {
-                inProgressCount = count;
-            } else if (status.toLowerCase().includes('attention') || status.toLowerCase().includes('needs')) {
-                needsAttentionCount = count;
-            }
-        });
+        // Calculate percentages based on total with status
+        const pendingPercent = totalWithStatus > 0 ? Math.round((pendingCount / totalWithStatus) * 100) : 0;
+        const inProgressPercent = totalWithStatus > 0 ? Math.round((inProgressCount / totalWithStatus) * 100) : 0;
+        const completedPercent = totalWithStatus > 0 ? Math.round((completedCount / totalWithStatus) * 100) : 0;
+        const cancelledPercent = totalWithStatus > 0 ? Math.round((cancelledCount / totalWithStatus) * 100) : 0;
         
-        const inProgressPercent = Math.round((inProgressCount / total) * 100);
-        const needsAttentionPercent = Math.round((needsAttentionCount / total) * 100);
+        // Update status elements directly
+        const inProgressElement = document.getElementById('statusInProgress');
+        if (inProgressElement) {
+            inProgressElement.textContent = `${inProgressCount} (${inProgressPercent}%)`;
+        }
         
-        updateCounterValue('statusInProgress', `${inProgressCount} (${inProgressPercent}%)`);
-        updateCounterValue('statusNeedsAttention', `${needsAttentionCount} (${needsAttentionPercent}%)`);
+        const needsAttentionElement = document.getElementById('statusNeedsAttention');
+        if (needsAttentionElement) {
+            // "Needs Attention" could be items with no status or very old items
+            const needsAttentionCount = data.length - totalWithStatus; // Items without status
+            const needsAttentionPercent = data.length > 0 ? Math.round((needsAttentionCount / data.length) * 100) : 0;
+            needsAttentionElement.textContent = `${needsAttentionCount} (${needsAttentionPercent}%)`;
+        }
         
         const chartContainer = document.getElementById('serviceStatusChart');
         if (!chartContainer) return;
@@ -1684,25 +2250,75 @@ if (window.location.pathname.includes('/bos/') || window.location.pathname.inclu
             'no_status': '#6c757d'
         };
         
+        // Define status labels for proper display
+        const statusLabels = {
+            'pending': 'Pending',
+            'in_progress': 'In Progress', 
+            'completed': 'Completed',
+            'cancelled': 'Cancelled',
+            'no_status': 'No Status'
+        };
+
+        // Create line chart for status data - Más compacto
+        const chartHeight = 70;
+        const chartWidth = 220;
+        const padding = 25;
+        
+        // Prepare data points for line chart
+        const statusOrder = ['pending', 'in_progress', 'completed', 'cancelled'];
+        const lineData = statusOrder.map((status, index) => ({
+            status: status,
+            label: statusLabels[status] || status,
+            count: statusGroups[status] || 0,
+            x: (index * (chartWidth - 2 * padding)) / (statusOrder.length - 1) + padding,
+            y: chartHeight - padding - ((statusGroups[status] || 0) / maxCount) * (chartHeight - 2 * padding),
+            color: statusColors[status] || '#6c757d'
+        }));
+
+        // Generate SVG path for the line
+        const pathData = lineData.map((point, index) => 
+            `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`
+        ).join(' ');
+
         chartContainer.innerHTML = `
-            <div class="status-chart">
-                ${chartData.map(([status, count], index) => {
-                    const percentage = Math.round((count / total) * 100);
-                    const barWidth = Math.round((count / maxCount) * 100);
-                    const color = statusColors[status] || `hsl(${index * 60}, 70%, 50%)`;
+            <div class="status-line-chart">
+                <svg width="${chartWidth}" height="${chartHeight}" viewBox="0 0 ${chartWidth} ${chartHeight}">
+                    <!-- Grid lines -->
+                    <defs>
+                        <pattern id="grid" width="50" height="20" patternUnits="userSpaceOnUse">
+                            <path d="M 50 0 L 0 0 0 20" fill="none" stroke="#f0f0f0" stroke-width="1" opacity="0.5"/>
+                        </pattern>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#grid)" />
                     
-                    return `
-                        <div class="status-bar-container">
-                            <div class="status-bar-label">${status}</div>
-                            <div class="status-bar-wrapper">
-                                <div class="status-bar" style="width: ${barWidth}%; background-color: ${color};">
-                                    <div class="status-bar-fill"></div>
-                                </div>
-                                <div class="status-bar-count">${count} (${percentage}%)</div>
+                    <!-- Main line -->
+                    <path d="${pathData}" fill="none" stroke="#17a2b8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                    
+                    <!-- Data points -->
+                    ${lineData.map(point => `
+                        <circle cx="${point.x}" cy="${point.y}" r="4" fill="${point.color}" stroke="white" stroke-width="1.5"/>
+                        <text x="${point.x}" y="${chartHeight - 6}" text-anchor="middle" font-size="8" fill="#666" font-weight="500">
+                            ${point.label}
+                        </text>
+                        <text x="${point.x}" y="${point.y - 10}" text-anchor="middle" font-size="10" fill="#333" font-weight="bold">
+                            ${point.count}
+                        </text>
+                    `).join('')}
+                </svg>
+                
+                <!-- Status summary below chart -->
+                <div class="status-summary-line">
+                    ${lineData.map(point => {
+                        const percentage = totalWithStatus > 0 ? Math.round((point.count / totalWithStatus) * 100) : 0;
+                        return `
+                            <div class="status-item-line">
+                                <div class="status-dot" style="background-color: ${point.color};"></div>
+                                <span class="status-name">${point.label}</span>
+                                <span class="status-value">${point.count} (${percentage}%)</span>
                             </div>
-                        </div>
-                    `;
-                }).join('')}
+                        `;
+                    }).join('')}
+                </div>
             </div>
         `;
     }
@@ -1752,9 +2368,14 @@ if (window.location.pathname.includes('/bos/') || window.location.pathname.inclu
         };
         
         Object.entries(yearRanges).forEach(([range, count]) => {
-            const percent = Math.round((count / total) * 100);
+            const percent = total > 0 ? Math.round((count / total) * 100) : 0;
             const elementId = range.replace('<', '').replace('-', '').replace('+', '');
-            updateCounterValue(`years${elementId}`, `${count} (${percent}%)`);
+            
+            // Update count element
+            const countElement = document.getElementById(`years${elementId}`);
+            if (countElement) {
+                countElement.textContent = `${count} (${percent}%)`;
+            }
         });
         
         // Prepare data for chart
@@ -1774,24 +2395,74 @@ if (window.location.pathname.includes('/bos/') || window.location.pathname.inclu
             return;
         }
         
-        // Create simple bar chart using CSS
+        // Create line chart for years data similar to status chart - Más compacto
+        const chartHeight = 70;
+        const chartWidth = 220;
+        const padding = 25;
         const maxCount = Math.max(...chartData.map(([, count]) => count));
         
+        // Define colors for year ranges
+        const yearColors = {
+            '<2015': '#ef4444',      // Red for older
+            '2015-2019': '#10b981',  // Green 
+            '2020-2022': '#3b82f6',  // Blue
+            '2023+': '#f59e0b',      // Yellow for newer
+            'Unknown': '#6b7280'     // Gray for unknown
+        };
+        
+        // Prepare data points for line chart
+        const yearsLineData = chartData.map(([year, count], index) => ({
+            year: year,
+            count: count,
+            x: (index * (chartWidth - 2 * padding)) / (chartData.length - 1) + padding,
+            y: chartHeight - padding - ((count / maxCount) * (chartHeight - 2 * padding)),
+            color: yearColors[year] || '#6b7280'
+        }));
+
+        // Generate SVG path for the line
+        const yearsPathData = yearsLineData.map((point, index) => 
+            `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`
+        ).join(' ');
+
         const chartHTML = `
-            <div class="years-chart">
-                ${chartData.map(([year, count], index) => {
-                    const percentage = Math.round((count / total) * 100);
-                    const barHeight = Math.max(Math.round((count / maxCount) * 100), 5); // Minimum 5% height
-                    return `
-                        <div class="year-bar-container">
-                            <div class="year-bar" style="height: ${barHeight}%;">
-                                <div class="year-bar-fill"></div>
+            <div class="years-line-chart">
+                <svg width="${chartWidth}" height="${chartHeight}" viewBox="0 0 ${chartWidth} ${chartHeight}">
+                    <!-- Grid lines -->
+                    <defs>
+                        <pattern id="yearsGrid" width="50" height="20" patternUnits="userSpaceOnUse">
+                            <path d="M 50 0 L 0 0 0 20" fill="none" stroke="#f0f0f0" stroke-width="1" opacity="0.5"/>
+                        </pattern>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#yearsGrid)" />
+                    
+                    <!-- Main line -->
+                    <path d="${yearsPathData}" fill="none" stroke="#f59e0b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                    
+                    <!-- Data points -->
+                    ${yearsLineData.map(point => `
+                        <circle cx="${point.x}" cy="${point.y}" r="4" fill="${point.color}" stroke="white" stroke-width="1.5"/>
+                        <text x="${point.x}" y="${chartHeight - 6}" text-anchor="middle" font-size="8" fill="#666" font-weight="500">
+                            ${point.year}
+                        </text>
+                        <text x="${point.x}" y="${point.y - 10}" text-anchor="middle" font-size="10" fill="#333" font-weight="bold">
+                            ${point.count}
+                        </text>
+                    `).join('')}
+                </svg>
+                
+                <!-- Years summary below chart -->
+                <div class="years-summary-line">
+                    ${yearsLineData.map(point => {
+                        const percentage = total > 0 ? Math.round((point.count / total) * 100) : 0;
+                        return `
+                            <div class="years-item-line">
+                                <div class="years-dot" style="background-color: ${point.color};"></div>
+                                <span class="years-name">${point.year}</span>
+                                <span class="years-value">${point.count} (${percentage}%)</span>
                             </div>
-                            <div class="year-label">${year}</div>
-                            <div class="year-count">${count} (${percentage}%)</div>
-                        </div>
-                    `;
-                }).join('')}
+                        `;
+                    }).join('')}
+                </div>
             </div>
         `;
         
@@ -2138,6 +2809,133 @@ if (window.location.pathname.includes('/bos/') || window.location.pathname.inclu
            }
        }
    });
+
+   // Initialize dashboard widgets using the same data source as the inventory table
+   function initializeDashboardWidgets() {
+       console.log('🚀 Initializing dashboard widgets...');
+       
+       // Initialize orderInfoLookup
+       window.orderInfoLookup = {};
+       
+       // Load order status data first
+       fetch('get_real_status.php')
+           .then(response => response.json())
+           .then(data => {
+               if (data.success && data.data) {
+                   window.orderInfoLookup = data.data;
+                   console.log('✅ Order status data loaded:', Object.keys(data.data).length, 'items');
+               } else {
+                   console.warn('⚠️ No order status data received');
+                   window.orderInfoLookup = {};
+               }
+               
+               // Use the same data source as the inventory table
+               updateDashboardFromInventoryTable();
+           })
+           .catch(error => {
+               console.error('❌ Failed to load dashboard data:', error);
+               // Try to update anyway with available data
+               updateDashboardFromInventoryTable();
+           });
+   }
+
+   // Update dashboard using data from the inventory table
+   function updateDashboardFromInventoryTable() {
+       // Wait for inventory table to be initialized
+       function waitForInventoryTable(callback, maxAttempts = 20) {
+           let attempts = 0;
+           
+           function checkTable() {
+               attempts++;
+               console.log(`🔍 Waiting for inventory table (attempt ${attempts}/${maxAttempts})`);
+               
+               if (window.inventoryTable && 
+                   typeof window.inventoryTable.data === 'function' &&
+                   window.inventoryTable.settings &&
+                   window.inventoryTable.settings().length > 0) {
+                   
+                   console.log('✅ Inventory table is ready, updating dashboard');
+                   callback();
+               } else if (attempts < maxAttempts) {
+                   setTimeout(checkTable, 500);
+               } else {
+                   console.warn('⚠️ Inventory table not ready, updating dashboard anyway');
+                   callback();
+               }
+           }
+           
+           checkTable();
+       }
+       
+       waitForInventoryTable(() => {
+           updateDashboardStats();
+       });
+   }
+
+   // Initialize search functionality for dashboard tables
+   function initializeDashboardSearch() {
+       // Search function for dashboard tables
+       function setupTableSearch(searchInputId, tableBodyId) {
+           const searchInput = document.getElementById(searchInputId);
+           const tableBody = document.getElementById(tableBodyId);
+           
+           if (!searchInput || !tableBody) return;
+           
+           searchInput.addEventListener('input', function() {
+               const searchTerm = this.value.toLowerCase().trim();
+               const rows = tableBody.querySelectorAll('tr');
+               
+               rows.forEach(row => {
+                   const searchData = row.getAttribute('data-search') || '';
+                   const shouldShow = searchTerm === '' || searchData.includes(searchTerm);
+                   
+                   if (shouldShow) {
+                       row.classList.remove('filtered-hidden');
+                   } else {
+                       row.classList.add('filtered-hidden');
+                   }
+               });
+               
+               // Show "No results" message if needed
+               const visibleRows = tableBody.querySelectorAll('tr:not(.filtered-hidden)');
+               if (visibleRows.length === 0 && searchTerm !== '') {
+                   // Add no results row if it doesn't exist
+                   let noResultsRow = tableBody.querySelector('.no-results-row');
+                   if (!noResultsRow) {
+                       noResultsRow = document.createElement('tr');
+                       noResultsRow.className = 'no-results-row';
+                       noResultsRow.innerHTML = `<td colspan="100%" class="text-center text-muted">No results found for "${searchTerm}"</td>`;
+                       tableBody.appendChild(noResultsRow);
+                   } else {
+                       noResultsRow.querySelector('td').textContent = `No results found for "${searchTerm}"`;
+                   }
+               } else {
+                   // Remove no results row if it exists
+                   const noResultsRow = tableBody.querySelector('.no-results-row');
+                   if (noResultsRow) {
+                       noResultsRow.remove();
+                   }
+               }
+           });
+       }
+       
+       // Setup search for all dashboard tables
+       setupTableSearch('recentActivitySearch', 'recentActivityTable');
+       setupTableSearch('needsAttentionSearch', 'needsAttentionTable');
+       setupTableSearch('completedSearch', 'completedTable');
+       
+       console.log('✅ Dashboard search functionality initialized');
+   }
+
+   // Initialize when page loads
+   document.addEventListener('DOMContentLoaded', function() {
+       // Small delay to ensure all elements are rendered
+       setTimeout(() => {
+           initializeDashboardWidgets();
+           initializeDashboardSearch();
+       }, 500);
+   });
+
    </script>
 
 </body>

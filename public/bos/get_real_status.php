@@ -36,6 +36,7 @@ try {
     $sql = "
         SELECT 
             ro.stock,
+            ro.vin_number,
             ro.status,
             ro.service_date,
             ro.created_at,
@@ -79,6 +80,7 @@ try {
         $stockNumber = $row['stock'];
         $statusLookup[$stockNumber] = [
             'status' => $row['display_status'],
+            'vin_number' => $row['vin_number'],
             'service_name' => $row['service_name'] ?: 'Detail Process',
             'service_color' => $row['service_color'] ?: '#007bff',
             'service_date' => $row['service_date'],
@@ -105,6 +107,7 @@ try {
             if (!isset($statusLookup[$stock])) {
                 $statusLookup[$stock] = [
                     'status' => 'no_status',
+                    'vin_number' => null,
                     'service_name' => 'No Order Found',
                     'service_color' => '#6c757d',
                     'service_date' => null,
