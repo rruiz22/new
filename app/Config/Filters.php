@@ -53,7 +53,6 @@ class Filters extends BaseFilters
         'force-reset' => ForcePasswordReset::class,
         'checklang'   => \App\Filters\LanguageFilter::class,
         'auth'        => \App\Filters\AuthFilter::class,
-        'moduleauth'  => \App\Filters\ModuleAuthFilter::class,
         'sessionauth' => \App\Filters\SessionAuthFilter::class,
     ];
 

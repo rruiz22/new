@@ -8,74 +8,108 @@ use CodeIgniter\Filters\FilterInterface;
 
 class SessionAuthFilter implements FilterInterface
 {
+    /**
+     * URLs that should not be saved as intended URLs
+     */
+    private array $excludedPaths = [
+        '/login', '/register', '/logout', '/auth/'
+    ];
+
+    /**
+     * Session regeneration interval (in seconds)
+     */
+    private int $regenerationInterval = 1800; // 30 minutes
+
     public function before(RequestInterface $request, $arguments = null)
     {
-        log_message('info', 'SessionAuthFilter: BEFORE method called for URL: ' . current_url());
-        
-        // Verificar si el usuario está autenticado usando Shield
-        $isLoggedIn = auth()->loggedIn();
-        log_message('info', 'SessionAuthFilter: User logged in status: ' . ($isLoggedIn ? 'YES' : 'NO'));
-        
-        if (!$isLoggedIn) {
-            // Si es una petición AJAX, devolver JSON
-            if ($request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest') {
-                log_message('info', 'SessionAuthFilter: Returning JSON response for AJAX request');
-                return service('response')
-                    ->setStatusCode(401)
-                    ->setJSON([
-                        'success' => false,
-                        'message' => 'Session expired. Please login again.',
-                        'redirect' => base_url('login')
-                    ]);
-            }
-            
-            // Guardar la URL original que se intentó acceder (excepto rutas de auth)
-            $currentUrl = current_url();
-            $loginUrl = base_url('login');
-            $registerUrl = base_url('register');
-            
-            log_message('info', 'SessionAuthFilter: User not logged in, current URL: ' . $currentUrl);
-            
-            // No guardar URLs de autenticación como intended URL
-            if ($currentUrl !== $loginUrl && $currentUrl !== $registerUrl && 
-                !str_contains($currentUrl, '/auth/') && !str_contains($currentUrl, '/logout')) {
-                session()->set('intended_url', $currentUrl);
-                log_message('info', 'SessionAuthFilter: Saved intended URL: ' . $currentUrl);
-                
-                // Mensaje más amigable cuando se redirige por intentar acceder a una página protegida
-                session()->setFlashdata('message', 'Please log in to access that page. You will be redirected after login.');
-            } else {
-                log_message('info', 'SessionAuthFilter: Not saving intended URL (auth page): ' . $currentUrl);
-                // Mensaje estándar para expiración de sesión
-                session()->setFlashdata('error', 'Your session has expired. Please login again.');
-            }
-            
-            // Para peticiones normales, redirigir al login
-            log_message('info', 'SessionAuthFilter: Redirecting to login');
-            return redirect()->to('login');
+        // Check if user is authenticated using Shield
+        if (!auth()->loggedIn()) {
+            return $this->handleUnauthenticated($request);
         }
         
-        log_message('info', 'SessionAuthFilter: User is logged in, allowing access');
+        // User is authenticated - handle session security
+        $this->handleSessionSecurity();
         
-        // Regenerar la sesión periódicamente para mayor seguridad
-        $lastActivity = session()->get('last_activity');
-        $currentTime = time();
-        
-        if (!$lastActivity || ($currentTime - $lastActivity) > 1800) { // 30 minutos
-            session()->regenerate();
-            session()->set('last_activity', $currentTime);
-            log_message('info', 'SessionAuthFilter: Session regenerated');
-        }
-        
-        return null; // Continuar con la petición
+        return null; // Continue with request
     }
 
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
-        // Actualizar la última actividad
-        session()->set('last_activity', time());
-        log_message('info', 'SessionAuthFilter: AFTER method called, updated last_activity');
+        // Update last activity timestamp
+        if (auth()->loggedIn()) {
+            session()->set('last_activity', time());
+        }
         
         return null;
+    }
+
+    /**
+     * Handle unauthenticated user requests
+     */
+    private function handleUnauthenticated(RequestInterface $request)
+    {
+        // Handle AJAX requests
+        if ($request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest') {
+            return service('response')
+                ->setStatusCode(401)
+                ->setJSON([
+                    'success' => false,
+                    'message' => 'Session expired. Please login again.',
+                    'redirect' => base_url('login')
+                ]);
+        }
+        
+        // Save intended URL for redirect after login
+        $this->saveIntendedUrl();
+        
+        // Redirect to login
+        return redirect()->to('login');
+    }
+
+    /**
+     * Save the current URL as intended URL if appropriate
+     */
+    private function saveIntendedUrl(): void
+    {
+        $currentUrl = current_url();
+        
+        // Check if current URL should be saved
+        if ($this->shouldSaveUrl($currentUrl)) {
+            session()->set('intended_url', $currentUrl);
+            session()->setFlashdata('message', 'Please log in to access that page. You will be redirected after login.');
+        } else {
+            session()->setFlashdata('info', 'Please log in to continue.');
+        }
+    }
+
+    /**
+     * Check if URL should be saved as intended URL
+     */
+    private function shouldSaveUrl(string $url): bool
+    {
+        $path = parse_url($url, PHP_URL_PATH);
+        
+        foreach ($this->excludedPaths as $excludedPath) {
+            if (str_contains($path, $excludedPath)) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
+    /**
+     * Handle session security measures
+     */
+    private function handleSessionSecurity(): void
+    {
+        $lastActivity = session()->get('last_activity');
+        $currentTime = time();
+        
+        // Regenerate session periodically for security
+        if (!$lastActivity || ($currentTime - $lastActivity) > $this->regenerationInterval) {
+            session()->regenerate();
+            session()->set('last_activity', $currentTime);
+        }
     }
 }

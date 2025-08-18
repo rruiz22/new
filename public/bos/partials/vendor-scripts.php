@@ -21,6 +21,9 @@ $fullBaseUrl = $baseUrl . $appPath;
 <!-- SweetAlert2 -->
 <script src="<?= $fullBaseUrl ?>/assets/libs/sweetalert2/sweetalert2.min.js"></script>
 
+<!-- ApexCharts -->
+<script src="<?= $fullBaseUrl ?>/assets/libs/apexcharts/apexcharts.min.js"></script>
+
 <!-- App JS -->
 <script src="<?= $fullBaseUrl ?>/assets/js/app.js"></script>
 

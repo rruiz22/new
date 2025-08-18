@@ -1,4 +1,3 @@
-
 <?php
 // Start session before any HTML output
 session_start();
@@ -67,10 +66,10 @@ if (!function_exists('lang')) {
             'App.vehicle' => 'Vehicle',
             'App.status' => 'Status',
             'App.actions' => 'Actions',
-            'App.total_stock_items' => 'Total Stock Items',
-            'App.recent_items' => 'Recent Items',
-            'App.moderate_items' => 'Moderate Items',
-            'App.aged_items' => 'Aged Items',
+            'App.total_stock_items' => 'Total Incomplete',
+            'App.recent_items' => 'Recent',
+            'App.moderate_items' => 'Moderate',
+            'App.aged_items' => 'Aged',
             'App.avg_in_this_step' => 'Avg in this Step',
             'App.clear_filters' => 'Clear Filters',
             'App.order_number' => 'Order Number',
@@ -128,882 +127,76 @@ if (!function_exists('base_url')) {
     
     <?php include 'partials/head-css.php'; ?>
 
+    <!-- Enhanced component-specific styles with modern design -->
     <style>
         :root {
             --primary-color: #2563eb;
-            --primary-color-rgb: 37, 99, 235;
-            --primary-hover: #1d4ed8;
-            --primary-light: #dbeafe;
-            --secondary-color: #64748b;
-            --secondary-light: #f1f5f9;
-            --accent-color: #06b6d4;
-            --light-gray: #f8fafc;
+            --primary-light: #3b82f6;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --info-color: #06b6d4;
+            --dark-color: #1f2937;
+            --light-color: #f8fafc;
             --border-color: #e2e8f0;
             --text-primary: #1e293b;
             --text-secondary: #64748b;
-            --text-muted: #94a3b8;
-            --success-color: #10b981;
-            --success-light: #d1fae5;
-            --warning-color: #f59e0b;
-            --warning-light: #fef3c7;
-            --danger-color: #ef4444;
-            --danger-light: #fee2e2;
-            --white: #ffffff;
-            --background: #f8fafc;
-            --surface: #ffffff;
-            --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
-            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
-            --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
-            --radius-sm: 6px;
-            --radius-md: 8px;
-            --radius-lg: 12px;
-            --radius-xl: 16px;
-            --radius-2xl: 20px;
-            --neumorphism-light: 8px 8px 16px #d1d9e6, -8px -8px 16px #ffffff;
-            --neumorphism-light-hover: 12px 12px 20px #d1d9e6, -12px -12px 20px #ffffff;
-            --neumorphism-inset: inset 3px 3px 6px #d1d9e6, inset -3px -3px 6px #ffffff;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
         }
 
-        * {
-            box-sizing: border-box;
-        }
-
-        body2 {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        body {
             background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             color: var(--text-primary);
             line-height: 1.6;
-            font-size: 14px;
-            margin: 0;
-            min-height: 100vh;
-            font-weight: 400;
-            letter-spacing: -0.01em;
         }
 
-                 .containera {
-             max-width: 1440px;
-             margin: 0 auto;
-             padding: 1.5rem;
-             position: relative;
-         }
-
-                 .page-header {
-             text-align: center;
-             margin-bottom: 2rem;
-             padding: 2rem;
-             background: var(--surface);
-             border-radius: var(--radius-2xl);
-             box-shadow: var(--shadow-lg);
-             position: relative;
-             overflow: hidden;
-         }
-
-         .page-header::before {
-             content: '';
-             position: absolute;
-             top: 0;
-             left: 0;
-             right: 0;
-             height: 4px;
-             background: linear-gradient(90deg, var(--primary-color) 0%, var(--accent-color) 100%);
-         }
-
-         .page-title {
-             font-size: 2.25rem;
-             font-weight: 800;
-             color: var(--primary-color);
-             margin: 0;
-             text-shadow: none;
-             line-height: 1.1;
-             letter-spacing: -0.02em;
-             display: flex;
-             align-items: center;
-             justify-content: center;
-             gap: 0.75rem;
-         }
-
-         .page-subtitle {
-             font-size: 1rem;
-             color: var(--text-secondary);
-             margin-top: 0.5rem;
-             font-weight: 500;
-             line-height: 1.4;
-             opacity: 0.8;
-         }
-
-                 /* Stats Container - Modern Grid Layout */
-         .stats-container {
-             display: grid;
-             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-             gap: 1.5rem;
-             margin-bottom: 2rem;
-         }
-
-        .stat-widget {
-            background: var(--surface);
-            border-radius: var(--radius-xl);
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow-md);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow: hidden;
-            position: relative;
-        }
-
-        .stat-widget::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--primary-color) 0%, var(--accent-color) 100%);
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
-        }
-
-        .stat-widget:hover {
-            box-shadow: var(--shadow-lg);
-            transform: translateY(-4px);
-            border-color: var(--primary-light);
-        }
-
-        .stat-widget:hover::before {
-            transform: scaleX(1);
-        }
-
-                 .widget-header {
-             display: flex;
-             align-items: center;
-             justify-content: center;
-             gap: 0.5rem;
-             padding: 1rem 1.5rem 0.75rem;
-             background: transparent;
-             color: var(--text-secondary);
-             font-weight: 600;
-             font-size: 0.875rem;
-             letter-spacing: 0.025em;
-             text-transform: uppercase;
-         }
-
-         .widget-icon {
-             width: 18px;
-             height: 18px;
-             opacity: 0.7;
-         }
-
-         .widget-title {
-             font-size: 0.875rem;
-             font-weight: 600;
-         }
-
-         .widget-content {
-             padding: 0.75rem 1.5rem 1.5rem;
-             text-align: center;
-             display: flex;
-             flex-direction: column;
-             justify-content: center;
-             align-items: center;
-             min-height: 100px;
-         }
-
-                 .stat-value {
-             font-size: 2.5rem;
-             font-weight: 800;
-             color: var(--primary-color);
-             line-height: 1;
-             margin: 0.25rem 0;
-             letter-spacing: -0.02em;
-         }
-
-         .stat-unit {
-             font-size: 0.875rem;
-             color: var(--text-muted);
-             font-weight: 500;
-             margin-top: 0.25rem;
-         }
-
-         .stat-subtitle {
-             font-size: 0.875rem;
-             color: var(--text-secondary);
-             text-align: center;
-             margin: 0.5rem 0;
-             line-height: 1.3;
-             font-weight: 500;
-         }
-
-                 .stat-trend {
-             display: flex;
-             align-items: center;
-             justify-content: center;
-             gap: 0.375rem;
-             padding: 0.5rem 1rem;
-             background: var(--primary-light);
-             border-radius: var(--radius-lg);
-             font-size: 0.75rem;
-             font-weight: 600;
-             color: var(--primary-color);
-             margin-top: 0.75rem;
-             border: 1px solid rgba(var(--primary-color-rgb), 0.1);
-         }
-
-         .trend-icon {
-             width: 14px;
-             height: 14px;
-         }
-
-        .stat-status {
-            display: inline-block;
-            font-size: 0.875rem;
-            font-weight: 600;
-            padding: 0.5rem 1rem;
-            border-radius: var(--radius-lg);
-            background: var(--secondary-light);
-            margin-top: 0.75rem;
-            border: 1px solid var(--border-color);
-        }
-
-                 /* Chart Widget - Modern Design */
-         .chart-widget .widget-content {
-             padding: 0.75rem 1.5rem 1.5rem;
-             justify-content: center;
-             min-height: 140px;
-         }
-
-                 .distribution-bars {
-             display: flex;
-             flex-direction: column;
-             gap: 1rem;
-             margin-top: 0.75rem;
-             width: 100%;
-             padding: 0;
-         }
-
-         .bar-item {
-             display: flex;
-             flex-direction: column;
-             gap: 0.5rem;
-         }
-
-        .bar-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-                 .bar-label {
-             font-size: 0.875rem;
-             font-weight: 600;
-             color: var(--text-primary);
-         }
-
-         .bar-value {
-             font-size: 0.875rem;
-             font-weight: 700;
-             color: var(--primary-color);
-             background: var(--primary-light);
-             padding: 0.25rem 0.5rem;
-             border-radius: var(--radius-sm);
-         }
-
-         .bar-container {
-             height: 8px;
-             background: var(--light-gray);
-             border-radius: var(--radius-sm);
-             overflow: hidden;
-             box-shadow: var(--shadow-xs);
-         }
-
-        .bar {
-            height: 100%;
-            border-radius: var(--radius-sm);
-            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-        }
-
-        .bar::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
-            animation: shimmer 2s infinite;
-        }
-
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-
-        .bar-excellent {
-            background: linear-gradient(90deg, #10b981 0%, #059669 100%);
-        }
-
-        .bar-good {
-            background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
-        }
-
-        .bar-warning {
-            background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
-        }
-
-
-
-        .stat-status.excellent {
-            background: var(--success-light);
-            color: var(--success-color);
-            border-color: rgba(16, 185, 129, 0.2);
-        }
-
-        .stat-status.good {
-            background: var(--primary-light);
-            color: var(--primary-color);
-            border-color: rgba(37, 99, 235, 0.2);
-        }
-
-        .stat-status.warning {
-            background: var(--warning-light);
-            color: var(--warning-color);
-            border-color: rgba(245, 158, 11, 0.2);
-        }
-
-        .stat-status.critical {
-            background: var(--danger-light);
-            color: var(--danger-color);
-            border-color: rgba(239, 68, 68, 0.2);
-        }
-
-        .stat-value.updating {
-            animation: valueUpdate 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes valueUpdate {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.8; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-                 /* Modern Controls */
-         .controls {
-             display: flex;
-             justify-content: space-between;
-             align-items: center;
-             margin-bottom: 2rem;
-             gap: 1rem;
-             flex-wrap: wrap;
-         }
-
-                 .btn {
-             padding: 0.75rem 1.5rem;
-             border-radius: var(--radius-lg);
-             font-weight: 600;
-             font-size: 0.875rem;
-             border: none;
-             cursor: pointer;
-             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-             display: inline-flex;
-             align-items: center;
-             gap: 0.5rem;
-             position: relative;
-             text-decoration: none;
-             letter-spacing: 0.025em;
-             min-height: 44px;
-         }
-
-        .btn:focus {
-            outline: 2px solid var(--primary-color);
-            outline-offset: 2px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
-            color: white;
-            box-shadow: var(--shadow-md);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-            background: linear-gradient(135deg, var(--primary-hover) 0%, var(--primary-color) 100%);
-        }
-
-        .btn-outline-secondary {
-            background: var(--surface);
-            color: var(--text-secondary);
-            border: 2px solid var(--border-color);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .btn-outline-secondary:hover {
-            background: var(--light-gray);
-            border-color: var(--primary-color);
-            color: var(--primary-color);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-
-
-
-
-
-
-        .avg-status.excellent {
-            background: var(--success-color);
-            color: white;
-            box-shadow: 3px 3px 6px #babecc, -3px -3px 6px #ffffff;
-        }
-
-        .avg-status.good {
-            background: #22c55e;
-            color: white;
-            box-shadow: 3px 3px 6px #babecc, -3px -3px 6px #ffffff;
-        }
-
-        .avg-status.warning {
-            background: var(--warning-color);
-            color: white;
-            box-shadow: 3px 3px 6px #babecc, -3px -3px 6px #ffffff;
-        }
-
-        .avg-status.critical {
-            background: var(--danger-color);
-            color: white;
-            box-shadow: 3px 3px 6px #babecc, -3px -3px 6px #ffffff;
-        }
-
-        /* Animation for when average updates */
-        .avg-value.updating {
-            animation: pulse 0.6s ease-in-out;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        .error {
-            background: linear-gradient(135deg, var(--danger-light) 0%, #fef2f2 100%);
-            border: 1px solid var(--danger-color);
-            color: var(--danger-color);
-            padding: 1rem 1.5rem;
-            border-radius: var(--radius-lg);
-            margin-bottom: 1.5rem;
-            display: none;
-            font-weight: 500;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .error.show {
-            display: block;
-            animation: slideInDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes slideInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-                 /* Modern Table Container */
-         .table-container {
-             background: var(--surface);
-             border-radius: var(--radius-2xl);
-             box-shadow: var(--shadow-lg);
-             overflow: hidden;
-             padding: 2rem;
-             border: 1px solid var(--border-color);
-             position: relative;
-         }
-
-         .table-container::before {
-             content: '';
-             position: absolute;
-             top: 0;
-             left: 0;
-             right: 0;
-             height: 4px;
-             background: linear-gradient(90deg, var(--primary-color) 0%, var(--accent-color) 100%);
-         }
-
-         .table-header {
-             text-align: center;
-             margin-bottom: 2rem;
-             padding-bottom: 1.5rem;
-             border-bottom: 2px solid var(--border-color);
-             position: relative;
-         }
-
-         .table-title {
-             font-size: 1.5rem;
-             font-weight: 700;
-             color: var(--primary-color);
-             margin: 0;
-             display: flex;
-             align-items: center;
-             justify-content: center;
-             gap: 0.75rem;
-             line-height: 1.2;
-             letter-spacing: -0.01em;
-         }
-
-         .table-icon {
-             width: 1.5rem;
-             height: 1.5rem;
-             color: var(--primary-color);
-         }
-
-         .table-subtitle {
-             font-size: 1rem;
-             color: var(--text-secondary);
-             margin: 0.75rem 0 0 0;
-             font-weight: 500;
-             line-height: 1.4;
-             opacity: 0.8;
-         }
-
-        .table-wrapper {
-            margin: 0 -1rem;
-            border-radius: var(--radius-xl);
-            overflow: hidden;
-            border: 0px solid ;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            position: relative;
-            background: var(--surface);
-        }
-
-        /* Modern scrollbar styling */
-        .table-wrapper::-webkit-scrollbar {
-            height: 6px;
-        }
-
-        .table-wrapper::-webkit-scrollbar-track {
-            background: var(--light-gray);
-            border-radius: 3px;
-        }
-
-        .table-wrapper::-webkit-scrollbar-thumb {
-            background: var(--primary-color);
-            border-radius: 3px;
-        }
-
-        .table-wrapper::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-hover);
-        }
-
-         /* Modern table header styles */
-         .table thead th {
-             background: linear-gradient(135deg, var(--light-gray) 0%, #ffffff 100%);
-             border-bottom: 2px solid var(--border-color);
-             font-weight: 700;
-             font-size: 0.875rem;
-             text-align: center !important;
-             vertical-align: middle !important;
-             color: var(--text-primary);
-             padding: 1rem 0.75rem;
-             line-height: 1.3;
-             letter-spacing: 0.025em;
-             text-transform: uppercase;
-             font-size: 0.75rem;
-         }
-
-         /* Modern table body styles */
-         .table tbody td {
-             text-align: center !important;
-             vertical-align: middle !important;
-             padding: 1rem 0.75rem !important;
-             line-height: 1.5;
-             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-             border-bottom: 1px solid var(--border-color);
-         }
-
-         /* Left align first column for better readability */
-         .table thead th:first-child,
-         .table tbody td:first-child {
-             text-align: left !important;
-         }
-
-         /* Modern table row hover effects */
-         .table tbody tr {
-             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-         }
-
-         .table tbody tr:hover {
-             background: linear-gradient(135deg, rgba(37, 99, 235, 0.03) 0%, rgba(6, 182, 212, 0.03) 100%) !important;
-             transform: translateY(-1px);
-             box-shadow: var(--shadow-md);
-         }
-
-         /* Row number styling */
-         .row-number {
-             font-weight: 700;
-             color: var(--primary-color);
-             font-size: 0.875rem;
-         }
-
-         /* Combined vehicle and stock styling */
-         .vehicle-stock-container {
-             display: flex;
-             flex-direction: column;
-             align-items: center;
-             gap: 0.5rem;
-         }
-
-         /* Date with days badge styling */
-         .date-with-badge {
-             display: flex;
-             flex-direction: column;
-             align-items: center;
-             gap: 0.25rem;
-             font-size: 0.875rem;
-         }
-
-         /* Notes tooltip styling */
-         .notes-short {
-             position: relative;
-             cursor: help;
-             max-width: 200px;
-             white-space: nowrap;
-             overflow: hidden;
-             text-overflow: ellipsis;
-             display: inline-block;
-             font-size: 0.875rem;
-         }
-
-         .notes-short[title]:hover::after {
-             content: attr(title);
-             position: absolute;
-             bottom: 100%;
-             left: 50%;
-             transform: translateX(-50%);
-             background: #333;
-             color: white;
-             padding: 0.5rem;
-             border-radius: 4px;
-             font-size: 0.8rem;
-             white-space: normal;
-             width: 300px;
-             z-index: 1000;
-             box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-             margin-bottom: 5px;
-         }
-
-         .notes-short[title]:hover::before {
-             content: '';
-             position: absolute;
-             bottom: 100%;
-             left: 50%;
-             transform: translateX(-50%);
-             border: 5px solid transparent;
-             border-top-color: #333;
-             margin-bottom: -5px;
-             z-index: 1000;
-         }
-
-        
-
-         /* Modern badge styling */
-         .badge {
-             font-size: 0.75em;
-             font-weight: 700;
-             padding: 0.5em 0.75em;
-             border-radius: var(--radius-lg);
-             text-align: center;
-             display: inline-block;
-             line-height: 1;
-             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-             letter-spacing: 0.025em;
-             text-transform: uppercase;
-             font-size: 0.6875rem;
-         }
-
-        .badge:hover {
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-sm);
-        }
-
-        /* Modern badge colors */
-        .badge.bg-success {
-            background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%) !important;
-            color: white;
-            box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
-        }
-
-        .badge.bg-warning {
-            background: linear-gradient(135deg, var(--warning-color) 0%, #d97706 100%) !important;
-            color: white;
-            box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
-        }
-
-        .badge.bg-danger {
-            background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%) !important;
-            color: white;
-            box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
-        }
-
-                 /* Modern stock number styling */
-         .stock-number {
-             font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Consolas', monospace;
-             background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
-             color: white;
-             padding: 0.5em 0.75em;
-             border-radius: var(--radius-lg);
-             font-size: 0.75em;
-             font-weight: 700;
-             letter-spacing: 0.5px;
-             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-             line-height: 1;
-             display: inline-block;
-             text-transform: uppercase;
-             box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
-         }
-
-        .stock-number:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(37, 99, 235, 0.4);
-        }
-
-                 /* Modern vehicle styling */
-         .vehicle-info {
-             font-weight: 600;
-             color: var(--text-primary);
-             font-size: 0.875rem;
-             line-height: 1.3;
-         }
-
-        /* Modern notes preview styling */
-        .notes-preview {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            line-height: 1.5;
-            cursor: default;
-            font-style: italic;
-            padding: 0.5rem 0.75rem;
-            border-radius: var(--radius-md);
-            background: var(--light-gray);
-            border: 1px solid var(--border-color);
-        }
-
-        .notes-preview.has-content {
-            cursor: help;
-            background: var(--secondary-light);
-            border-color: var(--secondary-color);
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .notes-preview.has-content:hover {
-            background: var(--primary-light);
-            border-color: var(--primary-color);
-            color: var(--primary-color);
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-sm);
-        }
-
-        /* Row number styling */
-        .row-number-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 32px;
-            height: 32px;
-            background: var(--text-muted);
-            color: white;
-            border-radius: 50%;
-            font-size: 1.5rem;
-            font-weight: 700;
-            box-shadow: 3px 3px 6px #babecc, -3px -3px 6px #ffffff;
-            transition: all 0.2s ease;
-        }
-
-        .row-number-badge:hover {
-            transform: translateY(-1px);
-            box-shadow: 4px 4px 8px #babecc, -4px -4px 8px #ffffff;
-        }
-
-        /* Loading spinner animation */
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Status loading animation */
-        .ri-loader-4-line {
-            display: inline-block;
-            animation: spin 1s linear infinite;
-        }
-
-        /* Top Bar for authenticated users - Modern Design */
+        /* Top Bar Enhancements */
         .top-bar {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
-            color: white;
-            padding: 1rem 0;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
             box-shadow: var(--shadow-lg);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
             position: sticky;
             top: 0;
             z-index: 1000;
-            display: none;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .top-bar.show {
-            display: block;
-            animation: slideDown 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes slideDown {
-            from {
-                transform: translateY(-100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
         }
 
         .top-bar-content {
-            max-width: 1440px;
-            margin: 0 auto;
-            padding: 0 2rem;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
         .top-bar-left {
             display: flex;
             align-items: center;
-            gap: 1.5rem;
+            gap: 2rem;
         }
 
         .top-bar-logo {
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            color: white;
             font-weight: 700;
-            font-size: 1.25rem;
-            letter-spacing: -0.01em;
+            font-size: 1.125rem;
         }
 
         .top-bar-breadcrumb {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            opacity: 0.8;
+            color: rgba(255, 255, 255, 0.8);
             font-size: 0.875rem;
-            font-weight: 500;
         }
 
         .top-bar-right {
@@ -1015,32 +208,25 @@ if (!function_exists('base_url')) {
         .user-info {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            padding: 0.75rem 1.25rem;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: var(--radius-lg);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
+            gap: 0.75rem;
+            color: white;
         }
 
         .user-avatar {
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: var(--surface);
+            background: rgba(255, 255, 255, 0.2);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 700;
-            color: var(--primary-color);
-            font-size: 1rem;
-            box-shadow: var(--shadow-md);
+            font-weight: 600;
+            border: 2px solid rgba(255, 255, 255, 0.3);
         }
 
         .user-details {
             display: flex;
             flex-direction: column;
-            gap: 0.125rem;
         }
 
         .user-name {
@@ -1051,1269 +237,481 @@ if (!function_exists('base_url')) {
         .user-role {
             font-size: 0.75rem;
             opacity: 0.8;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 500;
-        }
-
-        .top-bar-actions {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
         }
 
         .top-bar-btn {
-            padding: 0.75rem 1.25rem;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            text-decoration: none;
-            border-radius: var(--radius-lg);
-            font-size: 0.875rem;
-            font-weight: 600;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            backdrop-filter: blur(10px);
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            text-decoration: none;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
         }
 
         .top-bar-btn:hover {
             background: rgba(255, 255, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.3);
             color: white;
-            text-decoration: none;
+            transform: translateY(-1px);
+        }
+
+        /* Enhanced Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: var(--radius-lg);
+                 padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+        }
+
+        .metric-card:hover {
             transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .metric-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .metric-change {
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-sm);
+        }
+
+        .metric-change.positive {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+        }
+
+        .metric-change.neutral {
+            background: rgba(100, 116, 139, 0.1);
+            color: var(--text-secondary);
+        }
+
+        .metric-change.negative {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+        }
+
+        /* Enhanced Cards */
+        .minimal-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .minimal-card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .minimal-card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+
+        .minimal-card-icon {
+            color: var(--primary-color);
+            font-size: 1.25rem;
+        }
+
+        .minimal-card-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .minimal-card-body {
+            padding: 1.5rem;
+        }
+
+        /* Enhanced Tables */
+        .service-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .service-table thead th {
+            background: var(--light-color);
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 0.875rem;
+            padding: 1rem 0.75rem;
+            text-align: left;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .service-table tbody td {
+            padding: 0.875rem 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.875rem;
+        }
+
+        .service-table tbody tr:hover {
+            background: rgba(37, 99, 235, 0.02);
+        }
+
+        /* Enhanced Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .status-badge.recent {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .status-badge.moderate {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning-color);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        .status-badge.aged {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .status-badge.completed {
+            background: rgba(6, 182, 212, 0.1);
+            color: var(--info-color);
+            border: 1px solid rgba(6, 182, 212, 0.2);
+        }
+
+        /* Enhanced Filter Widgets */
+        .filter-widget {
+            background: white;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.25rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .filter-widget::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary-color);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .filter-widget:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .filter-widget:hover::before {
+            transform: scaleX(1);
+        }
+
+        .filter-widget.active {
+            border-color: var(--primary-color);
+            background: rgba(37, 99, 235, 0.02);
+        }
+
+        .filter-widget.active::before {
+            transform: scaleX(1);
+        }
+
+        /* Enhanced Buttons */
+        .btn {
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:hover {
             box-shadow: var(--shadow-md);
         }
 
-        /* Debug info styling */
-        .debug-info {
-            background: var(--surface);
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-outline-primary {
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            background: transparent;
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-outline-secondary {
+            border: 2px solid var(--text-secondary);
+            color: var(--text-secondary);
+            background: transparent;
+        }
+
+        .btn-outline-secondary:hover {
+            background: var(--text-secondary);
+            color: white;
+        }
+
+        /* Enhanced Page Title */
+        .page-title-box h4 {
             color: var(--text-primary);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #syncIndicator {
+            background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Enhanced Inventory Table */
+        .inventory-table-card {
+            margin-bottom: 2rem;
+        }
+
+        .inventory-table-header {
             padding: 1.5rem;
-            margin: 1.5rem 0;
-            border-radius: var(--radius-xl);
-            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Consolas', monospace;
-            font-size: 0.8125rem;
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow-md);
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+
+        .table-hover tbody tr:hover {
+            background: rgba(37, 99, 235, 0.02);
+        }
+
+        .table thead th {
+            background: var(--light-color);
+            border-bottom: 2px solid var(--border-color);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Debug Info Enhancement */
+        .debug-info {
+            background: var(--dark-color);
+            color: white;
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            margin: 1rem 0;
             display: none;
         }
 
         .debug-info.show {
             display: block;
-            animation: fadeIn 0.3s ease;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .debug-info h4 {
+            color: #fbbf24;
+            margin-bottom: 0.5rem;
         }
 
         .debug-info pre {
-            margin: 0;
-            white-space: pre-wrap;
-            line-height: 1.5;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: var(--radius-sm);
+            overflow-x: auto;
+            font-size: 0.875rem;
         }
 
-                 /* Desktop enhancements */
-         @media (min-width: 1024px) {
-             .container {
-                 padding: 2rem;
-             }
-             
-             .page-header {
-                 padding: 2.5rem;
-                 margin-bottom: 2.5rem;
-             }
-
-             .table-wrapper {
-                 margin: 0 -1.5rem;
-             }
-             
-             .page-title {
-                 font-size: 2.75rem;
-             }
-
-             .stat-value {
-                 font-size: 3rem;
-             }
-
-             .widget-content {
-                 padding: 1rem 1.5rem 1.5rem;
-                 min-height: 120px;
-             }
-             
-             .table thead th {
-                 font-size: 0.875rem;
-                 padding: 1.25rem 1rem;
-             }
-             
-             .table tbody td {
-                 padding: 1.25rem 1rem !important;
-             }
-             
-             .badge {
-                 font-size: 0.75em;
-                 padding: 0.5em 0.75em;
-             }
-             
-             .stock-number {
-                 font-size: 0.75em;
-                 padding: 0.5em 0.75em;
-             }
-             
-             .vehicle-info {
-                 font-size: 0.875rem;
-             }
-
-             .stats-container {
-                 grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-                 gap: 2rem;
-             }
-         }
-
-                 /* Responsive design - Tablet */
-         @media (max-width: 768px) {
-             .container {
-                 padding: 1rem;
-                 margin: 0.5rem;
-             }
-
-             .table-wrapper {
-                 margin: 0 -0.75rem;
-             }
-
-             .page-title {
-                 font-size: 2rem;
-             }
-
-             .page-header {
-                 padding: 1.5rem;
-                 margin-bottom: 1.5rem;
-             }
-
-             .stats-container {
-                 grid-template-columns: repeat(2, 1fr);
-                 gap: 1rem;
-                 margin-bottom: 1.5rem;
-             }
-             
-             .stat-widget .widget-content {
-                 padding: 0.75rem 1rem 1rem;
-                 min-height: 80px;
-             }
-             
-             .stat-value {
-                 font-size: 2rem;
-             }
-
-             .controls {
-                 margin-bottom: 1.5rem;
-             }
-             
-             .distribution-bars {
-                 gap: 0.75rem;
-                 padding: 0;
-             }
-             
-             .bar-container {
-                 height: 6px;
-             }
-             
-             /* Table responsive improvements */
-             .table-container {
-                 padding: 1.5rem;
-                 margin: 0 -0.25rem;
-             }
-             
-             .table {
-                 font-size: 0.8125rem;
-                 min-width: 700px;
-             }
-             
-             .table thead th {
-                 padding: 0.875rem 0.5rem;
-                 font-size: 0.75rem;
-             }
-             
-             .table tbody td {
-                 padding: 0.875rem 0.5rem !important;
-             }
-             
-             .badge {
-                 font-size: 0.6875em;
-                 padding: 0.375em 0.625em;
-             }
-             
-             .stock-number {
-                 font-size: 0.6875em;
-                 padding: 0.375em 0.625em;
-             }
-             
-             .vehicle-info {
-                 font-size: 0.8125rem;
-             }
-             
-             .date-with-badge {
-                 font-size: 0.8125rem;
-             }
-             
-             /* Horizontal scroll indicator */
-             .table-wrapper::after {
-                 content: "← Scroll to see more →";
-                 display: block;
-                 text-align: center;
-                 padding: 0.75rem;
-                 font-size: 0.75rem;
-                 color: var(--text-muted);
-                 background: var(--light-gray);
-                 font-style: italic;
-                 font-weight: 500;
-             }
-         }
-
-                 /* Mobile responsive design */
-         @media (max-width: 480px) {
-             .table-wrapper {
-                 margin: 0 -0.5rem;
-             }
-
-             .page-title {
-                 font-size: 1.75rem;
-             }
-
-             .page-header {
-                 padding: 1rem;
-                 margin-bottom: 1rem;
-             }
-
-             .stats-container {
-                 grid-template-columns: 1fr;
-                 gap: 1rem;
-                 margin-bottom: 1rem;
-             }
-
-             .stat-widget .widget-content {
-                 padding: 0.75rem 1rem 1rem;
-                 min-height: 70px;
-             }
-
-             .stat-value {
-                 font-size: 1.75rem;
-             }
-             
-             .table-container {
-                 padding: 1rem;
-                 margin: 0;
-             }
-             
-             .table {
-                 font-size: 0.75rem;
-                 min-width: 580px;
-             }
-             
-             .table thead th {
-                 padding: 0.75rem 0.375rem;
-                 font-size: 0.6875rem;
-             }
-             
-             .table tbody td {
-                 padding: 0.75rem 0.375rem !important;
-             }
-             
-             .badge {
-                 font-size: 0.625em;
-                 padding: 0.25em 0.5em;
-                 min-width: 24px;
-             }
-             
-             .stock-number {
-                 font-size: 0.625em;
-                 padding: 0.25em 0.5em;
-             }
-             
-             .vehicle-info {
-                 font-size: 0.75rem;
-             }
-
-             .date-with-badge {
-                 font-size: 0.8125rem;
-             }
-
-             .notes-short {
-                 max-width: 140px;
-                 font-size: 0.8125rem;
-             }
-
-             .row-number {
-                 font-size: 0.8125rem;
-             }
-
-             .top-bar-content {
-                 padding: 0 1rem;
-                 flex-direction: column;
-                 gap: 1rem;
-             }
-
-             .top-bar-left {
-                 flex-direction: column;
-                 gap: 0.5rem;
-                 text-align: center;
-             }
-
-             .user-info {
-                 padding: 0.5rem 1rem;
-             }
-
-             .user-avatar {
-                 width: 32px;
-                 height: 32px;
-             }
-         }
-
-        /* Enhanced animations and interactions */
-        .fade-in {
-            animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        /* Staff Only Sections */
+        .staff-only {
+            opacity: 0.5;
+            pointer-events: none;
         }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .top-bar-content {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
             }
-            to {
-                opacity: 1;
-                transform: translateY(0);
+
+            .top-bar-left,
+            .top-bar-right {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .metric-card {
+                padding: 1rem;
+            }
+
+            .metric-value {
+                font-size: 1.5rem;
+            }
+
+            .minimal-card-header {
+                padding: 1rem;
+            }
+
+            .minimal-card-body {
+                padding: 1rem;
+            }
+
+            .service-table thead th,
+            .service-table tbody td {
+                padding: 0.5rem;
+                font-size: 0.8rem;
             }
         }
 
-        /* Loading states */
+        @media (max-width: 480px) {
+            .filter-widget {
+                padding: 1rem;
+            }
+
+            .inventory-table-header {
+                padding: 1rem;
+            }
+
+            .inventory-table-header .d-flex {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .d-flex.gap-2 {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            .btn-sm {
+                font-size: 0.75rem;
+                padding: 0.375rem 0.75rem;
+            }
+        }
+
+        /* Loading States */
         .loading-shimmer {
-            background: linear-gradient(90deg, var(--light-gray) 25%, var(--border-color) 50%, var(--light-gray) 75%);
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
             background-size: 200% 100%;
             animation: shimmer 1.5s infinite;
         }
 
-        /* Focus management for accessibility */
-        .btn:focus-visible,
-        .top-bar-btn:focus-visible {
-            outline: 2px solid var(--accent-color);
-            outline-offset: 2px;
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
         }
 
-        /* Enhanced table loading state */
-        .table-loading {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .table-loading::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
-            animation: loading-sweep 1.5s infinite;
-        }
-
-        @keyframes loading-sweep {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-
-        /* Smooth transitions for all interactive elements */
-        * {
-            transition-property: background-color, border-color, color, box-shadow, transform;
-            transition-duration: 0.2s;
-            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* Print styles */
-        @media print {
-            .top-bar,
-            .controls,
-            .btn {
-                display: none !important;
-            }
-            
-            .container {
-                max-width: none;
-                padding: 0;
-            }
-            
-            .table-container {
-                box-shadow: none;
-                border: 1px solid #000;
-            }
-        }
-
-        /* Staff-only elements */
-        .staff-only {
-            display: none !important;
-        }
-
-        /* Modern Container Styles */
-        .dashboard-container {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.1);
-            border: none;
-            overflow: hidden;
-        }
-
-        .dashboard-header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: none;
+        /* Enhanced Container */
+        .container-fluid {
+            max-width: 1400px;
+            margin: 0 auto;
             padding: 2rem;
         }
 
-        .dashboard-title {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 0.5rem;
-        }
-
-        .dashboard-subtitle {
-            color: #6b7280;
-            font-size: 1rem;
-            font-weight: 500;
-            margin: 0;
+        .dashboard-container {
+            background: transparent;
         }
 
         .dashboard-body {
-            background: #ffffff;
-            padding: 2rem;
-        }
-
-        /* Enhanced Card Styles */
-        .modern-card {
-            background: #ffffff;
-            border-radius: 16px;
-            border: none;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow: hidden;
-        }
-
-        .modern-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-        }
-
-        .modern-card-header {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border: none;
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .modern-card-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #1e293b;
-            margin: 0;
-            display: flex;
-            align-items: center;
-        }
-
-        .modern-card-title i {
-            margin-right: 0.75rem;
-            font-size: 1.3rem;
-        }
-
-        .modern-card-subtitle {
-            color: #64748b;
-            font-size: 0.875rem;
-            margin: 0.25rem 0 0 0;
-            font-weight: 500;
-        }
-
-        .modern-card-body {
-            padding: 2rem;
-        }
-
-        /* Staff Container Styles */
-        .staff-container {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(245, 158, 11, 0.1);
-            border: none;
-            overflow: hidden;
-        }
-
-        .staff-header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: none;
-            padding: 2rem;
-        }
-
-        .staff-title {
-            font-size: 1.75rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.5rem;
-        }
-
-        /* Mini Average Days Widget */
-        .avg-days-mini-widget {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 0.5rem 0.75rem;
-            color: #1e293b;
-            text-align: center;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .avg-days-mini-widget:hover {
-            background: #f1f5f9;
-            border-color: #cbd5e1;
-            transform: translateY(-1px);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-        }
-
-        .avg-days-value {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.25rem;
-        }
-
-        .avg-number {
-            font-size: 1.5rem;
-            font-weight: 700;
-            line-height: 1;
-        }
-
-        .avg-label {
-            font-size: 0.7rem;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            opacity: 0.9;
-        }
-
-        /* Table improvements */
-        #inventoryTable th {
-            vertical-align: middle;
-            border-bottom: 2px solid #e5e7eb;
-            font-weight: 600;
-            color: #374151;
-            background-color: #f9fafb !important;
-        }
-
-        #inventoryTable td {
-            vertical-align: middle;
-            padding: 0.75rem 0.5rem;
-        }
-
-        .form-check {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0;
-        }
-
-        .form-check-input {
-            margin: 0;
-        }
-
-        /* Actions column visibility controlled by JavaScript based on authentication */
-
-        /* Styles from vehicles_content.php */
-        .stats-card {
-            transition: all 0.3s ease;
-            border: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            background: #ffffff;
-        }
-
-        .stats-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
-
-        .stats-mini {
-            display: flex;
-            align-items: center;
-            padding: 1rem;
-            background: #f8fafc;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            border: 2px solid transparent;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stats-mini:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-            border-color: #3b82f6;
-            background-color: #f8fafc;
-        }
-
-        .stats-mini.active {
-            border-color: #3b82f6;
-            background-color: #eff6ff;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
-        .stats-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.2rem;
-            margin-right: 0.75rem;
-            transition: all 0.3s ease;
-            flex-shrink: 0;
-        }
-
-        .stats-content h6 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #1e293b;
-        }
-
-        .filter-widget .filter-indicator {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            color: #6b7280;
-            font-size: 0.8rem;
-        }
-
-        .filter-widget:hover .filter-indicator,
-        .filter-widget.active .filter-indicator {
-            opacity: 1;
-        }
-
-        .filter-widget.active .filter-indicator {
-            color: #3b82f6;
-        }
-
-        .filter-active {
-            background-color: #eff6ff !important;
-            border-left: 4px solid #3b82f6 !important;
-        }
-
-        .filter-widget:focus {
-            outline: 2px solid #3b82f6;
-            outline-offset: 2px;
-        }
-
-        /* Average Days Widget - Medium */
-        .avg-days-widget-medium {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-            height: 120px;
-        }
-
-        .avg-days-widget-medium:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            border-color: #cbd5e1;
-        }
-
-        .widget-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-
-        .widget-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            color: #ffffff;
-            transition: all 0.3s ease;
-            flex-shrink: 0;
-        }
-
-        .widget-title {
-            flex: 1;
-        }
-
-        .widget-label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: #1e293b;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 2px;
-        }
-
-        .widget-range {
-            font-size: 0.75rem;
-            color: #64748b;
-            font-weight: 500;
-        }
-
-        .progress-section {
-            margin-bottom: 12px;
-        }
-
-        .progress-bar-container {
-            position: relative;
-        }
-
-        .progress-bar-track {
-            height: 8px;
-            background: #f1f5f9;
-            border-radius: 4px;
-            position: relative;
-            overflow: visible;
-            margin-bottom: 8px;
-        }
-
-        .progress-bar-fill {
-            height: 100%;
-            border-radius: 4px;
-            transition: all 0.8s ease;
-            width: 0%;
-        }
-
-        .progress-indicator {
-            position: absolute;
-            top: -8px;
-            transform: translateX(-50%);
-            transition: left 0.8s ease;
-            left: 0%;
-        }
-
-        .indicator-value {
-            background: #1e293b;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            white-space: nowrap;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .indicator-arrow {
-            width: 0;
-            height: 0;
-            border-left: 4px solid transparent;
-            border-right: 4px solid transparent;
-            border-top: 4px solid #1e293b;
-            margin: 0 auto;
-        }
-
-        .progress-labels {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.6875rem;
-            color: #64748b;
-            font-weight: 500;
-        }
-
-        .widget-status {
-            font-size: 0.75rem;
-            color: #64748b;
-            font-weight: 500;
-            text-align: center;
-        }
-
-        /* Dynamic colors for widgets */
-        .widget-icon.excellent,
-        .progress-bar-fill.excellent {
-            background: linear-gradient(135deg, #10b981, #059669);
-        }
-
-        .widget-icon.good,
-        .progress-bar-fill.good {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-        }
-
-        .widget-icon.poor,
-        .progress-bar-fill.poor {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-        }
-
-        .widget-icon.neutral,
-        .progress-bar-fill.neutral {
-            background: linear-gradient(135deg, #6b7280, #4b5563);
-        }
-
-        /* Days badge styling */
-        .days-badge {
-            font-size: 0.75rem;
-            padding: 0.3rem 0.6rem;
-            border-radius: 12px;
-            font-weight: 600;
-            text-transform: lowercase;
-        }
-
-        /* Duplicate Stock Alert Styling */
-        .duplicate-alert,
-        [id^="duplicate-icon-"] {
-            animation: pulse-warning 2s infinite;
-            filter: drop-shadow(0 0 2px rgba(245, 158, 11, 0.5));
-            position: relative;
-            z-index: 10;
-        }
-
-        .duplicate-alert:hover,
-        [id^="duplicate-icon-"]:hover {
-            transform: scale(1.1);
-            transition: transform 0.2s ease;
-        }
-
-        @keyframes pulse-warning {
-            0% { opacity: 1; }
-            50% { opacity: 0.6; }
-            100% { opacity: 1; }
-        }
-
-        /* Custom tooltip for duplicate alerts */
-        .duplicate-alert::after {
-            content: attr(title);
-            position: absolute;
-            bottom: 130%;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.9);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            white-space: nowrap;
-            z-index: 1050;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
-            pointer-events: none;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            min-width: max-content;
-        }
-
-        .duplicate-alert::before {
-            content: '';
-            position: absolute;
-            bottom: 120%;
-            left: 50%;
-            transform: translateX(-50%);
-            border: 6px solid transparent;
-            border-top-color: rgba(0, 0, 0, 0.9);
-            z-index: 1050;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-
-        .duplicate-alert:hover::after,
-        .duplicate-alert:hover::before {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .duplicate-alert:hover::after {
-            transform: translateX(-50%) translateY(-2px);
-        }
-
-        /* Duplicate stock row highlighting */
-        .inventory-row.has-duplicate {
-            background-color: #fef3cd !important;
-            border-left: 3px solid #ffc107 !important;
-        }
-
-        .inventory-row.has-duplicate:hover {
-            background-color: #fff3cd !important;
-        }
-
-        /* Center align table headers */
-        #inventoryTable thead th,
-        #inventoryOrdersTable thead th,
-        #allOrdersTable thead th {
-            text-align: center !important;
-            vertical-align: middle !important;
-        }
-
-        /* Center align specific columns content */
-        #inventoryTable tbody td:nth-child(2), /* Date in Detail */
-        #inventoryTable tbody td:nth-child(3), /* Day in This Step */
-        #inventoryTable tbody td:nth-child(4), /* Keys */
-        #inventoryTable tbody td:nth-child(5), /* Stock Number */
-        #inventoryTable tbody td:nth-child(8), /* Status */
-        #inventoryTable tbody td:nth-child(9)  /* Actions */
-        {
-            text-align: center !important;
-            vertical-align: middle !important;
-        }
-
-        /* Hidden loading indicator */
-        .dataTables_processing {
-            display: none !important;
-        }
-
-        /* Alternative: Very discrete loading in table header */
-        .dataTables_wrapper .dataTables_processing {
-            position: absolute !important;
-            top: -2px !important;
-            right: 5px !important;
-            left: auto !important;
-            width: auto !important;
-            height: auto !important;
-            margin: 0 !important;
-            padding: 2px 6px !important;
-            background: transparent !important;
-            border: none !important;
-            border-radius: 0 !important;
-            box-shadow: none !important;
-            font-size: 0.6rem !important;
-            color: rgba(108, 117, 125, 0.5) !important;
-            z-index: 1001 !important;
-            opacity: 0.3 !important;
-        }
-
-        .inventory-row.selected {
-            background-color: #eff6ff !important;
-        }
-
-        .conversion-badge {
-            background: #e0f2fe;
-            color: #0277bd;
-            font-size: 0.7rem;
-            padding: 0.2rem 0.4rem;
-            border-radius: 4px;
-        }
-
-        /* Status column styling - more compact */
-        .status-service-info,
-        [id^="status-info-"] {
-            min-height: 35px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2px 4px;
-        }
-
-        /* Stock column styling */
-        [id^="stock-"] {
-            min-height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        /* Enhanced stock number styling - text only */
-        .stock-number-enhanced {
-            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Consolas', monospace;
-            color: var(--primary-color);
-            font-size: 1.25em;
-            font-weight: 900;
-            letter-spacing: 1.5px;
-            line-height: 1;
-            display: inline-block;
-            text-transform: uppercase;
-            text-shadow: 0 1px 2px rgba(37, 99, 235, 0.2);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .stock-number-enhanced:hover {
-            color: var(--primary-hover);
-            text-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
-            transform: scale(1.05);
-        }
-
-        /* Enhanced date styling */
-        .date-enhanced {
-            font-size: 1.1em;
-            font-weight: 600;
-            color: var(--text-primary);
-            letter-spacing: 0.5px;
-        }
-
-        /* Status-based row background colors */
-        .status-pending {
-            background-color: rgba(245, 158, 11, 0.08) !important;
-            border-left: 4px solid #f59e0b !important;
-        }
-
-        .status-pending:hover {
-            background-color: rgba(245, 158, 11, 0.12) !important;
-        }
-
-        .status-in-progress {
-            background-color: rgba(59, 130, 246, 0.08) !important;
-            border-left: 4px solid #3b82f6 !important;
-        }
-
-        .status-in-progress:hover {
-            background-color: rgba(59, 130, 246, 0.12) !important;
-        }
-
-        .status-completed {
-            background-color: rgba(16, 185, 129, 0.08) !important;
-            border-left: 4px solid #10b981 !important;
-        }
-
-        .status-completed:hover {
-            background-color: rgba(16, 185, 129, 0.12) !important;
-        }
-
-        .status-cancelled {
-            background-color: rgba(239, 68, 68, 0.08) !important;
-            border-left: 4px solid #ef4444 !important;
-        }
-
-        .status-cancelled:hover {
-            background-color: rgba(239, 68, 68, 0.12) !important;
-        }
-
-        .status-no-status {
-            background-color: rgba(107, 114, 128, 0.05) !important;
-            border-left: 4px solid #6b7280 !important;
-        }
-
-        .status-no-status:hover {
-            background-color: rgba(107, 114, 128, 0.08) !important;
-        }
-
-        /* Ensure status rows have smooth transitions */
-        #inventoryTable tbody tr {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        }
-
-        /* Mobile responsive table - Horizontal scroll with minimal padding */
-        @media (max-width: 768px) {
-            /* Reduce container padding to minimum */
-            .container {
-                padding: 0.25rem !important;
-            }
-            
-            /* Reduce card padding */
-            .modern-card {
-                margin: 0.25rem;
-                border-radius: 8px;
-            }
-            
-            .modern-card-body {
-                padding: 0.5rem !important;
-            }
-            
-            /* Table wrapper for horizontal scroll */
-            .table-responsive {
-                margin: 0 -0.5rem;
-                padding: 0;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-                border-radius: 8px;
-            }
-            
-            /* Enable horizontal scroll for table */
-            #inventoryTable {
-                min-width: 800px; /* Ensure table is wide enough to scroll */
-                font-size: 0.75rem;
-                margin: 0;
-            }
-            
-            /* Keep table structure intact for horizontal scroll */
-            #inventoryTable thead th {
-                padding: 0.5rem 0.25rem !important;
-                font-size: 0.7rem;
-                white-space: nowrap;
-                min-width: 80px;
-            }
-            
-            #inventoryTable tbody td {
-                padding: 0.5rem 0.25rem !important;
-                font-size: 0.75rem;
-                white-space: nowrap;
-                vertical-align: middle;
-            }
-            
-            /* Stock number column wider */
-            #inventoryTable th:nth-child(5),
-            #inventoryTable td:nth-child(5) {
-                min-width: 100px;
-            }
-            
-            /* Vehicle column wider */
-            #inventoryTable th:nth-child(6),
-            #inventoryTable td:nth-child(6) {
-                min-width: 120px;
-                white-space: normal;
-                line-height: 1.2;
-            }
-            
-            /* Notes column */
-            #inventoryTable th:nth-child(7),
-            #inventoryTable td:nth-child(7) {
-                min-width: 100px;
-                max-width: 150px;
-                white-space: normal;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-            
-            /* Status column */
-            #inventoryTable th:nth-child(8),
-            #inventoryTable td:nth-child(8) {
-                min-width: 100px;
-            }
-            
-            /* Adjust badges for mobile */
-            #inventoryTable .badge {
-                font-size: 0.6rem;
-                padding: 0.25rem 0.5rem;
-            }
-            
-            /* Stock number styling for mobile */
-            .stock-number-enhanced {
-                font-size: 1rem !important;
-            }
-            
-            /* Date styling for mobile */
-            .date-enhanced {
-                font-size: 0.9rem !important;
-            }
-            
-            /* Days badge styling */
-            .days-badge {
-                font-size: 0.6rem;
-                padding: 0.2rem 0.4rem;
-            }
-            
-            /* Horizontal scroll indicator */
-            .table-responsive::after {
-                content: "← Desliza para ver más →";
-                display: block;
-                text-align: center;
-                padding: 0.5rem;
-                font-size: 0.7rem;
-                color: #6b7280;
-                background: #f8fafc;
-                font-style: italic;
-                border-top: 1px solid #e5e7eb;
-            }
-            
-            /* Hide scroll indicator when not needed */
-            .table-responsive:not(.scrollable)::after {
-                display: none;
-            }
-        }
-        
-        /* Tablet responsive adjustments */
-        @media (min-width: 769px) and (max-width: 1024px) {
-            #inventoryTable {
-                font-size: 0.85rem;
-            }
-            
-            #inventoryTable th,
-            #inventoryTable td {
-                padding: 0.75rem 0.5rem !important;
-            }
-            
-            /* Adjust badge sizes for tablet */
-            #inventoryTable .badge {
-                font-size: 0.7rem;
-                padding: 0.3rem 0.6rem;
-            }
-        }
-
-        /* Filter button styles */
-        #hideCompletedBtn {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        #hideCompletedBtn.btn-secondary {
-            background-color: #6c757d;
-            border-color: #6c757d;
-            color: white;
-        }
-
-        #hideCompletedBtn.btn-secondary:hover {
-            background-color: #5a6268;
-            border-color: #545b62;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
-        }
-
-        /* Mobile adjustments for filter controls */
-        @media (max-width: 768px) {
-            .modern-card-header .d-flex.gap-2 {
-                flex-direction: column;
-                gap: 0.5rem !important;
-            }
-            
-            .modern-card-header .btn {
-                font-size: 0.875rem;
-                padding: 0.5rem 1rem;
-            }
-            
-            /* Stack buttons vertically on mobile */
-            .modern-card-header .col-auto {
-                margin-top: 1rem;
-            }
-        }
-
-        /* Improved mobile card styling */
-        @media (max-width: 768px) {
-            #inventoryTable tbody tr {
-                margin-bottom: 1.5rem;
-                padding: 1.25rem;
-                border-radius: 16px;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            }
-            
-            /* Enhanced mobile labels */
-            #inventoryTable tbody td::before {
-                font-weight: 700;
-                color: #475569;
-                font-size: 0.75rem;
-                width: 38%;
-                padding-right: 0.75rem;
-            }
-            
-            /* Mobile status styling */
-            #inventoryTable tbody td:nth-child(8) {
-                padding-top: 0.75rem !important;
-                padding-bottom: 0.75rem !important;
-            }
-            
-            /* Mobile stock number enhancement */
-            #inventoryTable tbody td:nth-child(5) .stock-number-enhanced {
-                font-size: 1.1em;
-                font-weight: 800;
-            }
+            background: transparent;
         }
     </style>
+    
 </head>
 
 <body>
-    <!-- Top Bar for authenticated users -->
+    <!-- Page Loading Overlay -->
+    <div id="pageLoadingOverlay" class="page-loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+            <div class="loading-text">
+                <h5 class="mb-2">Loading Inventory Data</h5>
+                <p class="text-muted mb-0">Please wait while we load the latest inventory information...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced top bar with better visual hierarchy -->
     <div id="topBar" class="top-bar">
         <div class="top-bar-content">
             <div class="top-bar-left">
@@ -2328,18 +726,9 @@ if (!function_exists('base_url')) {
                 </div>
             </div>
             <div class="top-bar-right">
-                <div class="user-info">
-                    <div class="user-avatar" id="userAvatar">U</div>
-                    <div class="user-details">
-                        <div class="user-name" id="userName">User</div>
-                        <div class="user-role" id="userRole">Staff</div>
-                    </div>
-                </div>
+                
                 <div class="top-bar-actions">
-                    <a href="../../" class="top-bar-btn">
-                        <i data-feather="arrow-left" style="width: 16px; height: 16px;"></i>
-                        Back to App
-                    </a>
+                   
                     <button id="debugToggle" class="top-bar-btn" style="display: none;">
                         <i data-feather="code" style="width: 16px; height: 16px;"></i>
                         Debug
@@ -2356,113 +745,333 @@ if (!function_exists('base_url')) {
     </div>
 
     <!-- Inventory Management Content -->
-
-    <div class="container">
-        <div class="dashboard-container mb-4">
-        <div class="dashboard-header">
-            <div class="row align-items-center">
-                <div class="col">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <div>
-                            <h4 class="dashboard-title">
+    <div class="container-fluid">
+        
+        <!-- Dashboard Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <h4 class="mb-sm-0">
                                 <i class="ri-dashboard-3-line me-2"></i>
                                 Inventory Management Dashboard
                                 <span id="syncIndicator" class="badge bg-success ms-2" style="font-size: 0.75rem; font-weight: 500;">
                                     <i class="ri-wifi-line me-1"></i>Live Sync
                                 </span>
                             </h4>
-                            <p class="dashboard-subtitle">
-                                 • Auto-refresh every 30s
-                                <br>
-                                <span id="lastRefreshInfo" style="font-size: 0.7rem; opacity: 0.7;">
-                                    Last refresh: Loading...
-                                </span>
-                            </p>
+                    
         </div>
+                    </div>
+                </div>
+
+        
+
+        <!-- Complete Dashboard Container -->
+        <div class="service-summary-container">
+            <div class="service-summary-header">
+                <h5 class="service-summary-title">
+                    <i class="ri-dashboard-line me-2"></i>Dashboard Overview
+                </h5>
+                <div class="service-summary-stats">
+                    <span class="summary-stat inventory">
+                        <i class="ri-car-line"></i>
+                        <span id="dashTotalItems">25</span> Total
+                    </span>
+                    <span class="summary-stat recent">
+                        <i class="ri-time-line"></i>
+                        <span id="recentActivityCount">0</span> Recent
+                    </span>
+                    <span class="summary-stat attention">
+                        <i class="ri-alert-line"></i>
+                        <span id="needsAttentionCount">0</span> Attention
+                    </span>
+                    <span class="summary-stat completed">
+                        <i class="ri-check-line"></i>
+                        <span id="completedCount">0</span> Completed
+                    </span>
+                </div>
+            </div>
+            
+            <!-- Inventory Overview Section -->
+            <div class="inventory-overview-section">
+                <div class="section-header">
+                    <i class="ri-dashboard-line section-icon overview"></i>
+                    <span class="section-title">Inventory Overview</span>
+                </div>
+                <div class="overview-metrics-grid">
+                    <div class="overview-metric">
+                        <div class="metric-icon total">
+                            <i class="ri-car-line"></i>
+                        </div>
+                        <div class="metric-info">
+                            <div class="metric-label">Total Inventory</div>
+                            <div class="metric-value" id="dashTotalItems">25</div>
+                            <div class="metric-subtitle">All vehicles in system</div>
+                        </div>
+                    </div>
+                    
+                    <div class="overview-metric">
+                        <div class="metric-icon recent">
+                            <i class="ri-time-line"></i>
+                        </div>
+                        <div class="metric-info">
+                            <div class="metric-label">Recent Items</div>
+                            <div class="metric-value" id="dashRecentItems">0</div>
+                            <div class="metric-subtitle">0-1 days • Just arrived</div>
+                        </div>
+                    </div>
+                    
+                    <div class="overview-metric">
+                        <div class="metric-icon moderate">
+                            <i class="ri-hourglass-line"></i>
+                        </div>
+                        <div class="metric-info">
+                            <div class="metric-label">Moderate Items</div>
+                            <div class="metric-value" id="dashModerateItems">24</div>
+                            <div class="metric-subtitle">2-5 days • In progress</div>
+                        </div>
+                    </div>
+                    
+                    <div class="overview-metric">
+                        <div class="metric-icon aged">
+                            <i class="ri-alert-line"></i>
+                        </div>
+                        <div class="metric-info">
+                            <div class="metric-label">Aged Items</div>
+                            <div class="metric-value" id="dashAgedItems">1</div>
+                            <div class="metric-subtitle">6+ days • Needs attention</div>
+                        </div>
+                    </div>
+                    
+                    <div class="overview-metric">
+                        <div class="metric-icon average">
+                            <i class="ri-calendar-check-line"></i>
+                        </div>
+                        <div class="metric-info">
+                            <div class="metric-label">Average Days</div>
+                            <div class="metric-value" id="dashAvgDays">4</div>
+                            <div class="metric-subtitle">Processing time</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="service-summary-grid">
+                <div class="service-summary-section">
+                    <div class="section-header">
+                        <i class="ri-time-line section-icon recent"></i>
+                        <span class="section-title">Recent Activity (0-1 days)</span>
+                    </div>
+                    <div class="section-table">
+                        <table class="compact-table">
+                            <thead>
+                                <tr>
+                                    <th>Stock</th>
+                                    <th>Vehicle</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentActivityTable">
+                                <tr><td colspan="2" class="text-center text-muted">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="service-summary-section">
+                    <div class="section-header">
+                        <i class="ri-alert-line section-icon attention"></i>
+                        <span class="section-title">Needs Attention (6+ days)</span>
+                    </div>
+                    <div class="section-table">
+                        <table class="compact-table">
+                            <thead>
+                                <tr>
+                                    <th>Stock</th>
+                                    <th>Vehicle</th>
+                                    <th>Days</th>
+                                </tr>
+                            </thead>
+                            <tbody id="needsAttentionTable">
+                                <tr><td colspan="3" class="text-center text-muted">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="service-summary-section">
+                    <div class="section-header">
+                        <i class="ri-check-line section-icon completed"></i>
+                        <span class="section-title">Recently Completed</span>
+                    </div>
+                    <div class="section-table">
+                        <table class="compact-table">
+                            <thead>
+                                <tr>
+                                    <th>Stock</th>
+                                    <th>Vehicle</th>
+                                </tr>
+                            </thead>
+                            <tbody id="completedTable">
+                                <tr><td colspan="2" class="text-center text-muted">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Analytics Sections -->
+            <div class="analytics-sections-grid">
+                <div class="service-summary-section">
+                    <div class="section-header">
+                        <i class="ri-settings-line section-icon analytics"></i>
+                        <span class="section-title">Service Status Summary</span>
+                        <span class="section-count" id="statusSummaryTotal">2</span>
+                    </div>
+                    <div class="analytics-content">
+                        <div class="status-chart-container">
+                            <div id="serviceStatusChart"></div>
+                        </div>
+                        <div class="chart-legend">
+                            <div class="legend-item">
+                                <span class="legend-color in-progress"></span>
+                                <span class="legend-label">In Progress</span>
+                                <span class="legend-value" id="statusInProgress">24 (96%)</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color needs-attention"></span>
+                                <span class="legend-label">Needs Attention</span>
+                                <span class="legend-value" id="statusNeedsAttention">1 (4%)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="service-summary-section">
+                    <div class="section-header">
+                        <i class="ri-calendar-line section-icon analytics"></i>
+                        <span class="section-title">Vehicle Years Distribution</span>
+                        <span class="section-count" id="vehicleYearsTotal">4</span>
+                    </div>
+                    <div class="analytics-content">
+                        <div class="years-chart-container">
+                            <div id="vehicleYearsChart"></div>
+                        </div>
+                        <div class="chart-legend">
+                            <div class="legend-item">
+                                <span class="legend-color year-old"></span>
+                                <span class="legend-label">&lt;2015</span>
+                                <span class="legend-value" id="years2015">1 (4%)</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color year-mid"></span>
+                                <span class="legend-label">2015-2019</span>
+                                <span class="legend-value" id="years2019">4 (16%)</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color year-recent"></span>
+                                <span class="legend-label">2020-2022</span>
+                                <span class="legend-value" id="years2022">6 (24%)</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color year-new"></span>
+                                <span class="legend-label">2023+</span>
+                                <span class="legend-value" id="years2023">14 (56%)</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="dashboard-body">
-            
 
-    <!-- Filter Widgets Row -->
+
+
+
+
+        <div class="dashboard-container mb-4">
+        <div class="dashboard-body">
+
+    <!-- Inventory Statistics Card -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="modern-card">
-                <div class="modern-card-header">
-                    <div class="d-flex align-items-center justify-content-between">
+            <div class="minimal-card inventory-stats-section">
+                <div class="d-flex align-items-center justify-content-between mb-3">
                         <div>
-                            <h5 class="modern-card-title">
-                                <i class="ri-bar-chart-line"></i>
+                        <h5 class="mb-1">
+                            <i class="ri-bar-chart-line me-2"></i>
                                 <?= lang('App.inventory_stats') ?>
                             </h5>
-                            <p class="modern-card-subtitle"><?= lang('App.click_to_filter') ?></p>
+                        <p class="text-muted mb-0"><?= lang('App.click_to_filter') ?></p>
                 </div>
-                        <div class="avg-days-mini-widget">
-                            <div class="avg-days-value" id="avgDaysCompact">
-                                <span class="avg-number" id="avgDaysNumber">0</span>
-                                <span class="avg-label">Avg Days</span>
+                    <div class="text-end">
+                        <div class="text-muted small">Average Processing</div>
+                        <div class="h4 mb-0" id="avgDaysNumber">0 days</div>
+                    </div>
+                </div>
+                
+                <!-- Interactive Filter Widgets -->
+                <div class="row g-3">
+                    <div class="col-md-3 col-sm-6">
+                        <div class="filter-widget" data-filter="" role="button" tabindex="0">
+                            <div class="d-flex align-items-center">
+                                <div class="me-3">
+                                    <i class="ri-car-line text-primary" style="font-size: 1.5rem;"></i>
+            </div>
+                                <div class="flex-grow-1">
+                                    <div class="h5 mb-0" id="totalInventoryItems">0</div>
+                                    <div class="text-muted small"><?= lang('App.total_stock_items') ?></div>
+                </div>
+                                <div class="ms-2">
+                                    <i class="ri-eye-line text-muted"></i>
                     </div>
                 </div>
             </div>
                 </div>
-                <div class="modern-card-body">
-                    <!-- Inventory Stats - Interactive Filter Widgets -->
-                    <div class="row mb-3">
-                        <div class="col-md-3">
-                            <div class="stats-mini filter-widget" data-filter="" role="button" tabindex="0">
-                                <div class="stats-icon bg-primary">
-                                    <i class="ri-car-line"></i>
-                    </div>
-                                <div class="stats-content">
-                                    <h6 class="mb-0" id="totalInventoryItems">0</h6>
-                                    <small class="text-muted"><?= lang('App.total_stock_items') ?></small>
-                </div>
-                                <div class="filter-indicator">
-                                    <i class="ri-eye-line"></i>
-            </div>
-                </div>
+                    
+                    <div class="col-md-3 col-sm-6">
+                        <div class="filter-widget" data-filter="0-1" role="button" tabindex="0">
+                            <div class="d-flex align-items-center">
+                                <div class="me-3">
+                                    <i class="ri-calendar-check-line text-success" style="font-size: 1.5rem;"></i>
                             </div>
-                        <div class="col-md-3">
-                            <div class="stats-mini filter-widget" data-filter="0-1" role="button" tabindex="0">
-                                <div class="stats-icon bg-success" id="recentItemsIcon">
-                                    <i class="ri-calendar-check-line"></i>
+                                <div class="flex-grow-1">
+                                    <div class="h5 mb-0" id="recentItems">0</div>
+                                    <div class="text-muted small"><?= lang('App.recent_items') ?></div>
                             </div>
-                                <div class="stats-content">
-                                    <h6 class="mb-0" id="recentItems">0</h6>
-                                    <small class="text-muted"><?= lang('App.recent_items') ?></small>
+                                <div class="ms-2">
+                                    <i class="ri-filter-line text-muted"></i>
                         </div>
-                                <div class="filter-indicator">
-                                    <i class="ri-filter-line"></i>
                             </div>
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="stats-mini filter-widget" data-filter="2-5" role="button" tabindex="0">
-                                <div class="stats-icon bg-warning" id="moderateItemsIcon">
-                                    <i class="ri-calendar-line"></i>
+                    
+                    <div class="col-md-3 col-sm-6">
+                        <div class="filter-widget" data-filter="2-5" role="button" tabindex="0">
+                            <div class="d-flex align-items-center">
+                                <div class="me-3">
+                                    <i class="ri-calendar-line text-warning" style="font-size: 1.5rem;"></i>
                             </div>
-                                <div class="stats-content">
-                                    <h6 class="mb-0" id="moderateItems">0</h6>
-                                    <small class="text-muted"><?= lang('App.moderate_items') ?></small>
+                                <div class="flex-grow-1">
+                                    <div class="h5 mb-0" id="moderateItems">0</div>
+                                    <div class="text-muted small"><?= lang('App.moderate_items') ?></div>
                             </div>
-                                <div class="filter-indicator">
-                                    <i class="ri-filter-line"></i>
+                                <div class="ms-2">
+                                    <i class="ri-filter-line text-muted"></i>
                         </div>
                     </div>
                 </div>
-                        <div class="col-md-3">
-                            <div class="stats-mini filter-widget" data-filter="6+" role="button" tabindex="0">
-                                <div class="stats-icon bg-danger" id="agedItemsIcon">
-                                    <i class="ri-calendar-close-line"></i>
             </div>
-                                <div class="stats-content">
-                                    <h6 class="mb-0" id="agedItems">0</h6>
-                                    <small class="text-muted"><?= lang('App.aged_items') ?></small>
+                    
+                    <div class="col-md-3 col-sm-6">
+                        <div class="filter-widget" data-filter="6+" role="button" tabindex="0">
+                            <div class="d-flex align-items-center">
+                                <div class="me-3">
+                                    <i class="ri-calendar-close-line text-danger" style="font-size: 1.5rem;"></i>
                 </div>
-                                <div class="filter-indicator">
-                                    <i class="ri-filter-line"></i>
+                                <div class="flex-grow-1">
+                                    <div class="h5 mb-0" id="agedItems">0</div>
+                                    <div class="text-muted small"><?= lang('App.aged_items') ?></div>
+                                </div>
+                                <div class="ms-2">
+                                    <i class="ri-filter-line text-muted"></i>
                                 </div>
                             </div>
                         </div>
@@ -2472,42 +1081,37 @@ if (!function_exists('base_url')) {
             </div>
         </div>
 
-
-    <!-- Inventory Table Row -->
+    <!-- Main Inventory Table Card -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="modern-card">
-                <div class="modern-card-header">
-                    <div class="row align-items-center">
-                        <div class="col">
-                            <h5 class="modern-card-title">
-                                <i class="ri-table-line"></i>
+            <div class="minimal-card inventory-table-card">
+                <div class="inventory-table-header">
+                    <div class="d-flex align-items-center justify-content-between w-100">
+                        <div>
+                            <h5 class="mb-1">
+                                <i class="ri-table-line me-2"></i>
                                 <?= lang('App.inventory_table') ?>
                             </h5>
-                            <p class="modern-card-subtitle"><?= lang('App.detailed_inventory_view') ?></p>
+                            <p class="text-muted mb-0 small"><?= lang('App.detailed_inventory_view') ?></p>
                 </div>
-                <div class="col-auto">
-                    <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-success <?php echo $staffOnlyClass; ?>" id="convertSelectedBtn" disabled <?php echo $staffOnlyStyle; ?>>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <button type="button" class="btn btn-success btn-sm <?php echo $staffOnlyClass; ?>" id="convertSelectedBtn" disabled <?php echo $staffOnlyStyle; ?>>
                             <i class="ri-arrow-right-line me-1"></i>
                             <?= lang('App.move_selected') ?>
                         </button>
-                        <button type="button" class="btn btn-outline-secondary" id="hideCompletedBtn">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" id="hideCompletedBtn">
                             <i class="ri-eye-off-line me-1"></i>
                             Hide Completed
                         </button>
-                        <button type="button" class="btn btn-outline-primary" id="refreshInventoryBtn">
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="refreshInventoryBtn">
                             <i class="ri-refresh-line me-1"></i>
                             <?= lang('App.refresh_inventory') ?>
                         </button>
                     </div>
         </div>
-
             </div>
-                            </div>
-                <div class="modern-card-body">
                     <div class="table-responsive">
-                        <table id="inventoryTable" class="table table-hover align-middle" style="width:100%">
+                    <table id="inventoryTable" class="table table-hover align-middle mb-0" style="width:100%">
                             <thead class="table-light">
                                 <tr>
                                     <th width="40" class="text-center <?php echo $staffOnlyClass; ?>" <?php echo $staffOnlyStyle; ?>>
@@ -2530,53 +1134,36 @@ if (!function_exists('base_url')) {
                             </tbody>
                         </table>
                             </div>
-                            </div>
                         </div>
                             </div>
                             </div>
         
-                        </div>
-                    </div>
-
-    <!-- Staff Management Container - Staff Only -->
-    <div class="staff-container mb-4 <?php echo $staffOnlyClass; ?>" <?php echo $staffOnlyStyle; ?>>
-        <div class="staff-header">
-            <div class="row align-items-center">
-                <div class="col">
-                    <h4 class="staff-title">
+    <!-- Staff Management Tools - Staff Only -->
+    <div class="<?php echo $staffOnlyClass; ?>" <?php echo $staffOnlyStyle; ?>>
+        <div class="mb-4">
+            <h4 class="mb-2">
                         <i class="ri-admin-line me-2"></i>
                         Staff Management Tools
                     </h4>
-                    <p class="dashboard-subtitle">Advanced tools for staff members only</p>
+            <p class="text-muted">Advanced tools for staff members only</p>
     </div>
-            </div>
-        </div>
-        <div class="dashboard-body">
             
             <!-- Orders from Inventory Section - Staff Only -->
-    <div class="row mb-4 <?php echo $staffOnlyClass; ?>" <?php echo $staffOnlyStyle; ?>>
+        <div class="row mb-4">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <div class="row align-items-center">
-                        <div class="col">
-                            <h5 class="card-title mb-0">
-                                <i class="ri-file-list-3-line me-2"></i>
-                                <?= lang('App.orders_from_inventory') ?>
-                            </h5>
-                            <p class="text-muted small mb-0"><?= lang('App.created_from_inventory') ?></p>
-                </div>
-                        <div class="col-auto">
-                            <button type="button" class="btn btn-outline-primary" id="refreshInventoryOrdersBtn">
+                <div class="minimal-card">
+                    <div class="minimal-card-header">
+                        <i class="ri-file-list-3-line minimal-card-icon"></i>
+                        <h6 class="minimal-card-title"><?= lang('App.orders_from_inventory') ?></h6>
+                        <div class="ms-auto">
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="refreshInventoryOrdersBtn">
                                 <i class="ri-refresh-line me-1"></i>
                                 <?= lang('App.refresh') ?>
                             </button>
                         </div>
                     </div>
-                </div>
-                <div class="card-body">
                     <div class="table-responsive">
-                        <table id="inventoryOrdersTable" class="table table-hover align-middle" style="width:100%">
+                        <table id="inventoryOrdersTable" class="table table-hover align-middle mb-0" style="width:100%">
                             <thead class="table-light">
                                 <tr>
                                     <th><?= lang('App.order_number') ?></th>
@@ -2594,35 +1181,26 @@ if (!function_exists('base_url')) {
                             </tbody>
                         </table>
                     </div>
-                    </div>
                 </div>
             </div>
         </div>
 
     <!-- All Orders Section - Staff Only -->
-    <div class="row mb-4 <?php echo $staffOnlyClass; ?>" <?php echo $staffOnlyStyle; ?>>
+        <div class="row mb-4">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <div class="row align-items-center">
-                        <div class="col">
-                            <h5 class="card-title mb-0">
-                                <i class="ri-list-check-3 me-2"></i>
-                                All Orders
-                            </h5>
-                            <p class="text-muted small mb-0">All orders with source indicators</p>
-                        </div>
-                        <div class="col-auto">
-                            <button type="button" class="btn btn-outline-primary" id="refreshAllOrdersBtn">
+                <div class="minimal-card">
+                    <div class="minimal-card-header">
+                        <i class="ri-list-check-3 minimal-card-icon"></i>
+                        <h6 class="minimal-card-title">All Orders</h6>
+                        <div class="ms-auto">
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="refreshAllOrdersBtn">
                                 <i class="ri-refresh-line me-1"></i>
                 Refresh
             </button>
                         </div>
                     </div>
-                </div>
-                <div class="card-body">
                     <div class="table-responsive">
-                        <table id="allOrdersTable" class="table table-hover align-middle" style="width:100%">
+                        <table id="allOrdersTable" class="table table-hover align-middle mb-0" style="width:100%">
                             <thead class="table-light">
                                 <tr>
                                     <th>Order #</th>
@@ -2643,29 +1221,718 @@ if (!function_exists('base_url')) {
                 </div>
             </div>
         </div>
-        </div>
-
-        </div>
     </div>
 
     </div>
 
    <script>
-// Pass authentication status to JavaScript
+// Pass authentication status to JavaScript - CRITICAL for session handling
 window.isAuthenticated = <?php echo $isAuthenticated ? 'true' : 'false'; ?>;
 window.userType = '<?php echo $userType; ?>';
+window.authCheckCompleted = true; // Mark as completed immediately for public pages
+
+// Additional safety check for public BOS pages
+if (window.location.pathname.includes('/bos/') || window.location.pathname.includes('public/bos/')) {
+    console.log('🌐 BOS public page detected - session handling disabled');
+    window.isAuthenticated = false; // Force to false for public pages
+    window.authCheckCompleted = true;
+}
 </script>
 
     <?php include 'partials/vendor-scripts.php'; ?>
-    
-
 
    <!-- Include the vehicles inventory JavaScript -->
    <script src="js/vehicles-inventory.js"></script>
+    
+    <!-- Dashboard JavaScript -->
+    <script>
+    // Dashboard functionality
+    
+    // Loading overlay functions (global)
+    window.showPageLoading = function() {
+        const overlay = document.getElementById('pageLoadingOverlay');
+        if (overlay) {
+            overlay.classList.remove('hidden');
+        }
+    };
+    
+    window.hidePageLoading = function() {
+        const overlay = document.getElementById('pageLoadingOverlay');
+        if (overlay) {
+            overlay.classList.add('hidden');
+            // Remove from DOM after animation
+            setTimeout(() => {
+                if (overlay.classList.contains('hidden')) {
+                    overlay.style.display = 'none';
+                }
+            }, 300);
+        }
+    };
+    
+    // Update loading text (global)
+    window.updateLoadingText = function(title, description) {
+        const titleElement = document.querySelector('.loading-text h5');
+        const descElement = document.querySelector('.loading-text p');
+        if (titleElement) titleElement.textContent = title;
+        if (descElement) descElement.textContent = description;
+    };
+    
+    // Wait for inventory data to be loaded
+    function initializeDashboard() {
+        // Prevent multiple dashboard initializations
+        if (window.dashboardInitializing) {
+            console.log('🔄 Dashboard already initializing, skipping...');
+            return;
+        }
+        
+        window.dashboardInitializing = true;
+        console.log('🚀 Starting dashboard initialization...');
+        
+        // Wait for inventory table to be ready
+        function waitForInventoryData(callback, maxAttempts = 40) {
+            let attempts = 0;
+            
+            function checkInventoryData() {
+                attempts++;
+                
+                console.log(`🔍 Checking inventory data (attempt ${attempts}/${maxAttempts})`);
+                
+                // Detailed check of table state for dashboard
+                const dashboardTableState = {
+                    tableExists: !!window.inventoryTable,
+                    hasDataMethod: window.inventoryTable && typeof window.inventoryTable.data === 'function',
+                    hasSettings: window.inventoryTable && window.inventoryTable.settings,
+                    settingsLength: window.inventoryTable && window.inventoryTable.settings ? window.inventoryTable.settings().length : 0,
+                    isInitComplete: false
+                };
+                
+                if (dashboardTableState.hasSettings && dashboardTableState.settingsLength > 0) {
+                    dashboardTableState.isInitComplete = window.inventoryTable.settings()[0]._bInitComplete === true;
+                }
+                
+                console.log('🔍 Dashboard table check:', dashboardTableState);
+                
+                // Check if table exists and is properly initialized
+                if (dashboardTableState.tableExists && 
+                    dashboardTableState.hasDataMethod && 
+                    dashboardTableState.hasSettings &&
+                    dashboardTableState.settingsLength > 0 &&
+                    dashboardTableState.isInitComplete) {
+                    
+                    // Additional check that data is actually loaded
+                    try {
+                        const data = window.inventoryTable.data().toArray();
+                        console.log(`📊 Found ${data.length} inventory items`);
+                        if (data.length > 0) {
+                            console.log('✅ Inventory data ready, initializing dashboard');
+                            try {
+                                callback();
+                            } catch (e) {
+                                console.error('❌ Error in dashboard callback:', e);
+                                window.dashboardInitializing = false;
+                                hidePageLoading();
+                            }
+                            return;
+                        } else {
+                            console.log('⏳ Table initialized but no data yet...');
+                        }
+                    } catch (e) {
+                        console.log('⚠️ Error checking table data:', e.message);
+                    }
+                } else {
+                    console.log('⏳ Table not ready yet...');
+                }
+                
+                if (attempts < maxAttempts) {
+                    setTimeout(checkInventoryData, 500); // Check more frequently
+                } else {
+                    console.warn('⚠️ Inventory data not ready after maximum attempts, initializing dashboard anyway');
+                    try {
+                        callback();
+                    } catch (e) {
+                        console.error('❌ Error in dashboard callback:', e);
+                        window.dashboardInitializing = false;
+                        hidePageLoading();
+                    }
+                }
+            }
+            
+            checkInventoryData();
+        }
+        
+        waitForInventoryData(() => {
+            window.dashboardInitialized = true;
+            window.dashboardInitializing = false; // Mark as complete
+            updateDashboardStats();
+            
+            // Hide loading overlay once everything is ready
+            hidePageLoading();
+            
+            console.log('✅ Dashboard initialization completed successfully');
+            
+            // Update dashboard every time inventory is refreshed
+            if (window.inventoryTable && typeof window.inventoryTable.on === 'function') {
+                window.inventoryTable.on('draw', function() {
+                    setTimeout(updateDashboardStats, 500);
+                });
+            }
+        });
+    }
+    
+    // Update dashboard statistics
+    function updateDashboardStats() {
+        let data = [];
+        
+        if (window.inventoryTable && window.inventoryTable.data && typeof window.inventoryTable.data === 'function') {
+            data = window.inventoryTable.data().toArray();
+        }
+        
+        if (data.length === 0) {
+            return;
+        }
+        
+        const stats = calculateInventoryStats(data);
+        
+        // Update dashboard widgets
+        updateCounterValue('dashTotalItems', stats.total);
+        updateCounterValue('dashRecentItems', stats.recent);
+        updateCounterValue('dashModerateItems', stats.moderate);
+        updateCounterValue('dashAgedItems', stats.aged);
+        updateCounterValue('dashAvgDays', stats.avgDays);
+        
+        // Update avg days in statistics section
+        const avgDaysElement = document.getElementById('avgDaysNumber');
+        if (avgDaysElement) {
+            avgDaysElement.textContent = `${stats.avgDays} days`;
+        }
+        
+        // Update service tables
+        updateServiceTables(data, stats);
+    }
+    
+    // Calculate statistics from inventory data
+    function calculateInventoryStats(data) {
+        let total = data.length;
+        let recent = 0;
+        let moderate = 0;
+        let aged = 0;
+        let active = 0;
+        let completed = 0;
+        let totalDays = 0;
+        let validDaysCount = 0;
+        
+        data.forEach(row => {
+            const days = parseInt(row.days_detail) || 0;
+            
+            if (days >= 0) {
+                totalDays += days;
+                validDaysCount++;
+            }
+            
+            // Categorize by age
+            if (days <= 1) {
+                recent++;
+            } else if (days >= 2 && days <= 5) {
+                moderate++;
+            } else if (days >= 6) {
+                aged++;
+            }
+            
+            // Check status (this would need to be connected to the status system)
+            // For now, we'll use a simple heuristic
+            if (days < 10) {
+                active++;
+            } else {
+                completed++;
+            }
+        });
+        
+        const avgDays = validDaysCount > 0 ? Math.round(totalDays / validDaysCount) : 0;
+        
+        return {
+            total,
+            recent,
+            moderate,
+            aged,
+            active,
+            completed,
+            avgDays,
+            distribution: {
+                recent: recent,
+                moderate: moderate,
+                aged: aged
+            }
+        };
+    }
+    
+    // Update counter values with animation
+    function updateCounterValue(elementId, value) {
+        const element = document.getElementById(elementId);
+        if (!element) return;
+        
+        const currentValue = parseInt(element.textContent) || 0;
+        
+        if (currentValue !== value) {
+            // Simple counter animation
+            const increment = value > currentValue ? 1 : -1;
+            const step = Math.abs(value - currentValue) / 10;
+            let current = currentValue;
+            
+            const timer = setInterval(() => {
+                current += increment * Math.max(1, Math.floor(step));
+                
+                if ((increment > 0 && current >= value) || (increment < 0 && current <= value)) {
+                    current = value;
+                    clearInterval(timer);
+                }
+                
+                element.textContent = Math.round(current);
+            }, 50);
+        }
+    }
+    
+    // Update service tables with filtered data
+    function updateServiceTables(data, stats) {
+        updateRecentActivityTable(data);
+        updateNeedsAttentionTable(data);
+        updateCompletedTable(data);
+        updateServiceStatusChart(data);
+        updateVehicleYearsChart(data);
+    }
+    
+    // Update recent activity table - Show 5 most recent (lowest days)
+    function updateRecentActivityTable(data) {
+        const recentItems = data
+            .filter(item => {
+                const days = parseInt(item.days_detail) || 0;
+                return days <= 1;
+            })
+            .sort((a, b) => {
+                // Sort by days ascending (most recent first)
+                const daysA = parseInt(a.days_detail) || 0;
+                const daysB = parseInt(b.days_detail) || 0;
+                return daysA - daysB;
+            })
+            .slice(0, 5);
+        
+        // Update count in summary stats
+        updateCounterValue('recentActivityCount', data.filter(item => {
+            const days = parseInt(item.days_detail) || 0;
+            return days <= 1;
+        }).length);
+        
+        const tbody = document.getElementById('recentActivityTable');
+        if (!tbody) return;
+        
+        if (recentItems.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="2" class="text-center text-muted">No recent items</td></tr>';
+            return;
+        }
+        
+        tbody.innerHTML = recentItems.map(item => `
+            <tr>
+                <td><strong>${item.stock_number || 'N/A'}</strong></td>
+                <td>${item.vehicle || 'N/A'}</td>
+            </tr>
+        `).join('');
+    }
+    
+    // Update needs attention table - Show 5 with most days (highest priority)
+    function updateNeedsAttentionTable(data) {
+        const allNeedsAttention = data.filter(item => {
+            const days = parseInt(item.days_detail) || 0;
+            return days >= 6;
+        });
+        
+        const needsAttention = allNeedsAttention
+            .sort((a, b) => {
+                // Sort by days descending (most urgent first)
+                const daysA = parseInt(a.days_detail) || 0;
+                const daysB = parseInt(b.days_detail) || 0;
+                return daysB - daysA;
+            })
+            .slice(0, 5);
+        
+        // Update count in summary stats (total count, not just top 5)
+        updateCounterValue('needsAttentionCount', allNeedsAttention.length);
+        
+        const tbody = document.getElementById('needsAttentionTable');
+        if (!tbody) return;
+        
+        if (needsAttention.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted">No items need attention</td></tr>';
+            return;
+        }
+        
+        tbody.innerHTML = needsAttention.map(item => `
+            <tr>
+                <td><strong>${item.stock_number || 'N/A'}</strong></td>
+                <td>${item.vehicle || 'N/A'}</td>
+                <td><span class="status-badge aged">${item.days_detail || 0} days</span></td>
+            </tr>
+        `).join('');
+    }
+    
+    // Update completed table - Show 5 most recently completed (highest days, assuming they were completed)
+    function updateCompletedTable(data) {
+        // For demo purposes, we'll show items that have been processed for a while
+        const allCompleted = data.filter(item => {
+            const days = parseInt(item.days_detail) || 0;
+            return days >= 10; // Assume items over 10 days are completed
+        });
+        
+        const completed = allCompleted
+            .sort((a, b) => {
+                // Sort by days descending (most recently completed first)
+                const daysA = parseInt(a.days_detail) || 0;
+                const daysB = parseInt(b.days_detail) || 0;
+                return daysB - daysA;
+            })
+            .slice(0, 5);
+        
+        // Update count in summary stats (total count, not just top 5)
+        updateCounterValue('completedCount', allCompleted.length);
+        
+        const tbody = document.getElementById('completedTable');
+        if (!tbody) return;
+        
+        if (completed.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="2" class="text-center text-muted">No completed items</td></tr>';
+            return;
+        }
+        
+        tbody.innerHTML = completed.map(item => `
+            <tr>
+                <td><strong>${item.stock_number || 'N/A'}</strong></td>
+                <td>${item.vehicle || 'N/A'}</td>
+            </tr>
+        `).join('');
+    }
+    
+    // Update service status chart
+    function updateServiceStatusChart(data) {
+        // Group by actual status values instead of days
+        const statusGroups = {};
+        
+        data.forEach(item => {
+            // Use the actual status from the data, or default based on days
+            let status = 'Unknown';
+            if (item.status && typeof item.status === 'string') {
+                status = item.status.trim();
+            } else if (item.inventory_status && typeof item.inventory_status === 'string') {
+                status = item.inventory_status.trim();
+            } else {
+                // Fallback to days-based grouping if no status available
+                const days = parseInt(item.days_detail) || 0;
+                if (days <= 1) status = 'Initial Processing';
+                else if (days <= 5) status = 'In Progress';
+                else status = 'Needs Attention';
+            }
+            
+            statusGroups[status] = (statusGroups[status] || 0) + 1;
+        });
+        
+        // Update count in metric widget and section header
+        updateCounterValue('statusSummaryTotal', Object.keys(statusGroups).length);
+        
+        // Update legend values
+        const total = data.length;
+        let inProgressCount = 0, needsAttentionCount = 0;
+        
+        Object.entries(statusGroups).forEach(([status, count]) => {
+            if (status.toLowerCase().includes('progress')) {
+                inProgressCount = count;
+            } else if (status.toLowerCase().includes('attention') || status.toLowerCase().includes('needs')) {
+                needsAttentionCount = count;
+            }
+        });
+        
+        const inProgressPercent = Math.round((inProgressCount / total) * 100);
+        const needsAttentionPercent = Math.round((needsAttentionCount / total) * 100);
+        
+        updateCounterValue('statusInProgress', `${inProgressCount} (${inProgressPercent}%)`);
+        updateCounterValue('statusNeedsAttention', `${needsAttentionCount} (${needsAttentionPercent}%)`);
+        
+        const chartContainer = document.getElementById('serviceStatusChart');
+        if (!chartContainer) return;
+        
+        const chartData = Object.entries(statusGroups)
+            .sort(([,a], [,b]) => b - a); // Sort by count descending
+        
+        if (chartData.length === 0) {
+            chartContainer.innerHTML = '<div class="text-center text-muted py-4">No status data</div>';
+            return;
+        }
+        
+        // Create horizontal bar chart using CSS
+        const maxCount = Math.max(...chartData.map(([, count]) => count));
+        
+        // Define colors for different statuses
+        const statusColors = {
+            'Initial Processing': '#17a2b8',
+            'In Progress': '#ffc107', 
+            'Needs Attention': '#dc3545',
+            'Completed': '#28a745',
+            'Unknown': '#6c757d'
+        };
+        
+        chartContainer.innerHTML = `
+            <div class="status-chart">
+                ${chartData.map(([status, count], index) => {
+                    const percentage = Math.round((count / total) * 100);
+                    const barWidth = Math.round((count / maxCount) * 100);
+                    const color = statusColors[status] || `hsl(${index * 60}, 70%, 50%)`;
+                    
+                    return `
+                        <div class="status-bar-container">
+                            <div class="status-bar-label">${status}</div>
+                            <div class="status-bar-wrapper">
+                                <div class="status-bar" style="width: ${barWidth}%; background-color: ${color};">
+                                    <div class="status-bar-fill"></div>
+                                </div>
+                                <div class="status-bar-count">${count} (${percentage}%)</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+    }
+    
+    // Update vehicle years chart
+    function updateVehicleYearsChart(data) {
+        const vehicleYears = {};
+        const currentYear = new Date().getFullYear();
+        
+        data.forEach((item, index) => {
+            if (item.vehicle) {
+                // Extract year from vehicle string (look for 4-digit number)
+                const yearMatch = item.vehicle.match(/\b(19|20)\d{2}\b/);
+                let year = yearMatch ? parseInt(yearMatch[0]) : null;
+                
+                // If no year found in vehicle string, try other fields or use a default range
+                if (!year) {
+                    // You can add logic here to extract year from other fields if available
+                    year = 'Unknown';
+                } else {
+                    // Group years into ranges for better visualization
+                    if (year >= currentYear - 2) {
+                        year = `${currentYear-2}+`;
+                    } else if (year >= currentYear - 5) {
+                        year = `${currentYear-5}-${currentYear-3}`;
+                    } else if (year >= currentYear - 10) {
+                        year = `${currentYear-10}-${currentYear-6}`;
+                    } else {
+                        year = `<${currentYear-10}`;
+                    }
+                }
+                
+                vehicleYears[year] = (vehicleYears[year] || 0) + 1;
+            }
+        });
+        
+        // Update count in metric widget (number of different year ranges)
+        updateCounterValue('vehicleYearsTotal', Object.keys(vehicleYears).length);
+        
+        // Update legend values
+        const total = data.length;
+        const yearRanges = {
+            '<2015': vehicleYears[`<${currentYear-10}`] || 0,
+            '2015-2019': vehicleYears[`${currentYear-10}-${currentYear-6}`] || 0,
+            '2020-2022': vehicleYears[`${currentYear-5}-${currentYear-3}`] || 0,
+            '2023+': vehicleYears[`${currentYear-2}+`] || 0
+        };
+        
+        Object.entries(yearRanges).forEach(([range, count]) => {
+            const percent = Math.round((count / total) * 100);
+            const elementId = range.replace('<', '').replace('-', '').replace('+', '');
+            updateCounterValue(`years${elementId}`, `${count} (${percent}%)`);
+        });
+        
+        // Prepare data for chart
+        const chartData = Object.entries(vehicleYears)
+            .sort(([a], [b]) => {
+                // Custom sort to put year ranges in logical order
+                if (a === 'Unknown') return 1;
+                if (b === 'Unknown') return -1;
+                return a.localeCompare(b);
+            });
+        
+        const chartContainer = document.getElementById('vehicleYearsChart');
+        if (!chartContainer) return;
+        
+        if (chartData.length === 0) {
+            chartContainer.innerHTML = '<div class="text-center text-muted py-4">No vehicle data</div>';
+            return;
+        }
+        
+        // Create simple bar chart using CSS
+        const maxCount = Math.max(...chartData.map(([, count]) => count));
+        
+        const chartHTML = `
+            <div class="years-chart">
+                ${chartData.map(([year, count], index) => {
+                    const percentage = Math.round((count / total) * 100);
+                    const barHeight = Math.max(Math.round((count / maxCount) * 100), 5); // Minimum 5% height
+                    return `
+                        <div class="year-bar-container">
+                            <div class="year-bar" style="height: ${barHeight}%;">
+                                <div class="year-bar-fill"></div>
+                            </div>
+                            <div class="year-label">${year}</div>
+                            <div class="year-count">${count} (${percentage}%)</div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+        
+        chartContainer.innerHTML = chartHTML;
+    }
+
+    
+    // Initialize dashboard when DOM is ready
+    document.addEventListener('DOMContentLoaded', function() {
+        // Show loading overlay immediately
+        showPageLoading();
+        updateLoadingText('Initializing System', 'Setting up authentication and components...');
+        
+        // Listen for tables ready event (prevent multiple initializations)
+        let dashboardInitStarted = false;
+        window.addEventListener('tablesReady', function() {
+            if (dashboardInitStarted) {
+                console.log('🔄 Dashboard initialization already started, skipping...');
+                return;
+            }
+            
+            dashboardInitStarted = true;
+            console.log('🎯 Tables ready event received, initializing dashboard');
+            updateLoadingText('Loading Inventory Data', 'Fetching latest inventory information...');
+            setTimeout(initializeDashboard, 500);
+        });
+        
+        // Additional check - if no table initialization happens, force it
+        setTimeout(() => {
+            if (!window.inventoryTable && !window.tableInitializing) {
+                console.warn('🚨 No table found after 5 seconds, forcing initialization...');
+                if (window.initializeTables && typeof window.initializeTables === 'function') {
+                    window.initializeTables();
+                }
+            }
+        }, 5000);
+        
+        // Update loading text when auth is complete
+        setTimeout(() => {
+            if (window.authCheckCompleted) {
+                updateLoadingText('Loading Tables', 'Initializing data tables and components...');
+            }
+        }, 1000);
+        
+        // Fallback in case event doesn't fire
+        setTimeout(() => {
+            if (!window.dashboardInitialized) {
+                console.log('🔄 Fallback dashboard initialization');
+                updateLoadingText('Finalizing Setup', 'Completing initialization process...');
+                initializeDashboard();
+            }
+        }, 10000);
+        
+        // Emergency fallback to hide loading
+        setTimeout(() => {
+            if (!window.dashboardInitialized) {
+                console.warn('⚠️ Emergency fallback - hiding loading overlay');
+                hidePageLoading();
+            }
+        }, 15000);
+        
+        // Mobile responsive and completed filter functionality
+        // Add authenticated class to body for mobile styling
+        if (window.isAuthenticated) {
+            document.body.classList.add('authenticated');
+        }
+        
+        // Wait for DataTables to be ready
+        function waitForDataTables(callback, maxAttempts = 20) {
+            let attempts = 0;
+            
+            function checkDataTables() {
+                attempts++;
+                
+                console.log(`🔍 Checking for DataTables (attempt ${attempts}/${maxAttempts})`);
+                
+                if (window.inventoryTable && window.inventoryTable.data && window.inventoryTable.data().length > 0) {
+                    console.log('✅ DataTables ready, initializing mobile features');
+                    callback();
+                } else if (attempts < maxAttempts) {
+                    setTimeout(checkDataTables, 100);
+                } else {
+                    console.warn('⚠️ DataTables not ready after maximum attempts, proceeding anyway');
+                    callback();
+                }
+            }
+            
+            checkDataTables();
+        }
+        
+        // Initialize mobile features after DataTables is ready
+        waitForDataTables(function() {
+            // Initialize mobile column visibility
+            if (window.updateTableColumnsVisibility) {
+                window.updateTableColumnsVisibility();
+            }
+            
+            // Set up hide completed functionality
+            const hideCompletedBtn = document.getElementById('hideCompletedBtn');
+            if (hideCompletedBtn) {
+                console.log('✅ Hide Completed button found, setting up event listener');
+                hideCompletedBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const isHidden = this.classList.contains('active');
+                    
+                    if (isHidden) {
+                        // Show all rows
+                        this.classList.remove('active');
+                        this.innerHTML = '<i data-feather="eye-off" style="width: 16px; height: 16px;"></i> Hide Completed';
+                        
+                        if (window.inventoryTable) {
+                            window.inventoryTable.rows().every(function() {
+                                $(this.node()).show();
+                            });
+                        }
+                    } else {
+                        // Hide completed rows
+                        this.classList.add('active');
+                        this.innerHTML = '<i data-feather="eye" style="width: 16px; height: 16px;"></i> Show All';
+                        
+                        if (window.inventoryTable) {
+                            window.inventoryTable.rows().every(function() {
+                                const data = this.data();
+                                const statusCell = $(this.node()).find('td').eq(8); // Status column
+                                const statusText = statusCell.text().toLowerCase();
+                                
+                                if (statusText.includes('completed') || statusText.includes('done') || statusText.includes('finished')) {
+                                    $(this.node()).hide();
+                                }
+                            });
+                        }
+                    }
+                    
+                    // Re-initialize feather icons
+                    if (typeof feather !== 'undefined') {
+                        feather.replace();
+                    }
+                });
+            } else {
+                console.warn('⚠️ Hide Completed button not found');
+            }
+        });
+    });
+    </script>
    
    <script>
-   // Mobile responsive and completed filter functionality
-   document.addEventListener('DOMContentLoaded', function() {
+   // Legacy authentication check for backward compatibility - CONSOLIDATED
+   (async function() {
        // Add authenticated class to body for mobile styling
        if (window.isAuthenticated) {
            document.body.classList.add('authenticated');
@@ -2768,34 +2035,12 @@ window.userType = '<?php echo $userType; ?>';
                checkStatus();
            }
            
-           // Debug function to test filter manually
            // Make filter functions globally accessible
            window.applyCompletedFilter = function() {
                if (hideCompleted) {
                    console.log('🔄 Reapplying completed filter after status update');
                    waitForStatusLoaded(() => {
                        filterCompletedItems();
-                   });
-               }
-           };
-           
-           window.testCompletedFilter = function() {
-               console.log('🧪 Testing completed filter manually');
-               console.log('Current hideCompleted state:', hideCompleted);
-               console.log('DataTables search functions count:', $.fn.dataTable.ext.search.length);
-               
-               if (window.inventoryTable) {
-                   const info = window.inventoryTable.page.info();
-                   console.log('Table info:', info);
-                   
-                   // Check DOM status elements
-                   const statusElements = document.querySelectorAll('.status-service-info');
-                   console.log(`Found ${statusElements.length} status elements:`);
-                   
-                   statusElements.forEach((element, index) => {
-                       if (index < 5) { // Show first 5
-                           console.log(`Status ${index}:`, element.textContent.trim());
-                       }
                    });
                }
            };
@@ -2883,133 +2128,10 @@ window.userType = '<?php echo $userType; ?>';
                const newLength = $.fn.dataTable.ext.search.length;
                console.log(`🧹 Cleared filters: ${originalLength} → ${newLength}`);
            }
-           
-           // Mobile responsive enhancements - Horizontal scroll detection
-           function setupMobileScrollIndicator() {
-               const tableWrapper = document.querySelector('.table-responsive');
-               const table = document.getElementById('inventoryTable');
-               
-               if (tableWrapper && table && window.innerWidth <= 768) {
-                   // Check if horizontal scroll is needed
-                   const isScrollable = table.scrollWidth > tableWrapper.clientWidth;
-                   
-                   if (isScrollable) {
-                       tableWrapper.classList.add('scrollable');
-                   } else {
-                       tableWrapper.classList.remove('scrollable');
-                   }
-               }
-           }
-           
-           // Setup mobile enhancements
-           setTimeout(setupMobileScrollIndicator, 1000);
-           
-           // Re-run on window resize
-           let resizeTimeout;
-           window.addEventListener('resize', function() {
-               clearTimeout(resizeTimeout);
-               resizeTimeout = setTimeout(setupMobileScrollIndicator, 250);
-           });
        }
    });
-   </script>
-   
-   <script>
-   // Legacy authentication check for backward compatibility
-   document.addEventListener('DOMContentLoaded', async function() {
-       try {
-           // Check authentication via existing auth system
-           const response = await fetch('./check_auth.php', {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    cache: 'no-cache'
-                });
-            
-            if (response.ok) {
-                const result = await response.json();
-               window.isAuthenticated = result.authenticated || false;
-               window.userInfo = result.user || null;
-                
-                console.log('🔐 Authentication result:', {
-                   authenticated: window.isAuthenticated,
-                   method: result.method || 'Unknown'
-               });
-               
-               // Mark auth check as completed
-               window.authCheckCompleted = true;
-                
-                // Update UI based on authentication
-               updateAuthenticationUI();
-               
-               // Update top bar if authenticated
-               const topBar = document.getElementById('topBar');
-               if (topBar && window.isAuthenticated) {
-                   topBar.classList.add('show');
-                   
-                   // Update user info if available
-                   if (window.userInfo) {
-                       const userName = document.getElementById('userName');
-                       const userRole = document.getElementById('userRole');
-                       const userAvatar = document.getElementById('userAvatar');
-                       
-                       if (userName && window.userInfo.username) {
-                           userName.textContent = window.userInfo.username;
-                       }
-                       
-                       if (userRole && window.userInfo.groups && window.userInfo.groups.length > 0) {
-                           userRole.textContent = window.userInfo.groups[0];
-                       }
-                       
-                       if (userAvatar && window.userInfo.username) {
-                           userAvatar.textContent = window.userInfo.username.charAt(0).toUpperCase();
-                       }
-            }
-        }
-        
-        // Show debug toggle if in debug mode
-               const debugMode = new URLSearchParams(window.location.search).get('debug') === 'true';
-        const debugToggle = document.getElementById('debugToggle');
-               if (debugToggle && debugMode) {
-            debugToggle.style.display = 'flex';
-            debugToggle.addEventListener('click', () => {
-                const debugInfo = document.getElementById('debugInfo');
-                if (debugInfo) {
-                    debugInfo.classList.toggle('show');
-                           
-                           // Show debug info
-        const debugContent = document.getElementById('debugContent');
-        if (debugContent) {
-            const debugData = {
-                timestamp: new Date().toISOString(),
-                                   authenticated: window.isAuthenticated,
-                                   user_info: window.userInfo,
-                                   auth_response: result,
-                current_url: window.location.href,
-                user_agent: navigator.userAgent
-            };
-            
-            debugContent.textContent = JSON.stringify(debugData, null, 2);
-                }
-            }
-        });
-               }
-        } else {
-               console.warn('❌ Authentication check failed:', response.status, response.statusText);
-               window.isAuthenticated = false;
-               window.authCheckCompleted = true;
-               updateAuthenticationUI();
-           }
-    } catch (error) {
-           console.error('❌ Network error checking authentication:', error);
-           window.isAuthenticated = false;
-           window.authCheckCompleted = true;
-           updateAuthenticationUI();
-    }
-});
    </script>
 
 </body>
 </html>
+
