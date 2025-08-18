@@ -47,11 +47,11 @@ try {
                 ELSE ro.status 
             END as display_status,
             CASE 
-                WHEN ro.status = 'pending' THEN 'Initial Processing'
-                WHEN ro.status = 'in_progress' THEN 'Detail in Progress'
-                WHEN ro.status = 'completed' THEN 'Completed'
-                WHEN ro.status = 'cancelled' THEN 'Cancelled'
-                ELSE 'No Status Yet'
+                WHEN ro.status = 'pending' THEN 'pending'
+                WHEN ro.status = 'in_progress' THEN 'in_progress'
+                WHEN ro.status = 'completed' THEN 'completed'
+                WHEN ro.status = 'cancelled' THEN 'cancelled'
+                ELSE 'no_status'
             END as status_description
         FROM recon_orders ro
         LEFT JOIN recon_services rs ON ro.service_id = rs.id
@@ -108,7 +108,7 @@ try {
                     'service_name' => 'No Order Found',
                     'service_color' => '#6c757d',
                     'service_date' => null,
-                    'status_description' => 'No Status Yet',
+                    'status_description' => 'no_status',
                     'created_at' => null,
                     'updated_at' => null,
                     'real_data' => true

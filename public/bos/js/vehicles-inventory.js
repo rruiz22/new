@@ -461,104 +461,22 @@ function loadOrderInfoForInventory() {
                 console.log('✅ Real status data loaded:', Object.keys(response.data).length, 'items');
                 updateInventoryStatusColumns();
             } else {
-                console.log('⚠️ No real status data received');
-                loadOrderInfoFallback();
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error('❌ Failed to load real status data:', status, error);
-            console.log('🔄 Trying fallback endpoint...');
-            loadOrderInfoFallback();
-        }
-    });
-}
-
-// Fallback function to try the original endpoint
-function loadOrderInfoFallback() {
-    const $ = window.jQuery;
-    
-    console.log('🔄 Trying fallback endpoint for order info...');
-    
-    $.ajax({
-        url: '../recon_orders/get_order_info_by_stock',
-        type: 'POST',
-        data: { ajax: true },
-        dataType: 'json',
-        timeout: 10000,
-        success: function(response) {
-            console.log('📦 Fallback response:', response);
-            
-            if (response.success && response.data) {
-                window.orderInfoLookup = response.data;
-                console.log('✅ Fallback data loaded:', Object.keys(response.data).length, 'items');
+                console.log('⚠️ No status data received from database');
+                window.orderInfoLookup = {};
                 updateInventoryStatusColumns();
-            } else {
-                console.log('⚠️ Fallback also failed, generating smart status data');
-                generateFallbackStatusData();
             }
         },
         error: function(xhr, status, error) {
-            console.log('❌ Fallback also failed, generating smart status data');
-            generateFallbackStatusData();
+            console.error('❌ Failed to load status data:', status, error);
+            window.orderInfoLookup = {};
+            updateInventoryStatusColumns();
         }
     });
 }
 
-// Generate realistic status data based on inventory age
-function generateFallbackStatusData() {
-    console.log('📊 Generating fallback status data based on inventory age...');
-    
-    if (!window.inventoryTable) {
-        console.warn('⚠️ Inventory table not available for fallback data');
-        updateInventoryStatusColumns();
-        return;
-    }
-    
-    // Get current table data
-    const tableData = window.inventoryTable.data().toArray();
-    window.orderInfoLookup = {};
-    
-    tableData.forEach(row => {
-        if (row.stock_number && row.days_detail) {
-            const days = parseInt(row.days_detail) || 0;
-            const stockNumber = row.stock_number.toString().trim();
-            
-            // Generate realistic status based on days in inventory
-            let status = 'pending';
-            let service_name = 'Detail Process';
-            let service_color = '#007bff';
-            
-            if (days === 0) {
-                status = 'pending';
-                service_name = 'Initial Processing';
-                service_color = '#ffc107';
-            } else if (days >= 1 && days <= 2) {
-                status = 'in_progress';
-                service_name = 'Detail in Progress';
-                service_color = '#17a2b8';
-            } else if (days >= 3 && days <= 5) {
-                status = 'in_progress';
-                service_name = 'Quality Check';
-                service_color = '#fd7e14';
-            } else if (days >= 6) {
-                // Some older items might be completed
-                status = Math.random() > 0.7 ? 'completed' : 'in_progress';
-                service_name = status === 'completed' ? 'Ready for Delivery' : 'Final Touches';
-                service_color = status === 'completed' ? '#28a745' : '#dc3545';
-            }
-            
-            window.orderInfoLookup[stockNumber] = {
-                status: status,
-                service_name: service_name,
-                service_color: service_color,
-                generated: true // Mark as generated data
-            };
-        }
-    });
-    
-    console.log('✅ Generated fallback data for', Object.keys(window.orderInfoLookup).length, 'items');
-    updateInventoryStatusColumns();
-}
+// Removed fallback function - only use real database data
+
+// Removed fallback status generation - only use real database data
 
 // ====================================
 // STATISTICS AND UI UPDATES
@@ -890,7 +808,7 @@ function updateCheckboxStates() {
                 }
             },
             columns: columns,
-            order: [[window.isAuthenticated ? 2 : 1, 'desc']], // Adjust order column based on auth
+            order: [[window.isAuthenticated ? 2 : 1, 'asc']], // Adjust order column based on auth (ascending - least days first)
             pageLength: 25,
             lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
             responsive: true,

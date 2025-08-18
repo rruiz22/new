@@ -1505,7 +1505,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
             ],
-            order: [[2, 'desc']], // Sort by days in this step (descending - most days first)
+            order: [[2, 'asc']], // Sort by days in this step (ascending - least days first)
             pageLength: 25,
             lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
             responsive: true,
@@ -1679,7 +1679,8 @@ document.addEventListener('DOMContentLoaded', function() {
                             'pending': 'Pending',
                             'in_progress': 'In Progress',
                             'completed': 'Completed',
-                            'cancelled': 'Cancelled'
+                            'cancelled': 'Cancelled',
+                            'no_status': 'No Status Yet'
                         };
                         const color = statusColors[data] || 'secondary';
                         const label = statusLabels[data] || data;
@@ -1870,7 +1871,8 @@ document.addEventListener('DOMContentLoaded', function() {
                             'pending': 'Pending',
                             'in_progress': 'In Progress',
                             'completed': 'Completed',
-                            'cancelled': 'Cancelled'
+                            'cancelled': 'Cancelled',
+                            'no_status': 'No Status Yet'
                         };
                         const color = statusColors[data] || 'secondary';
                         const label = statusLabels[data] || data;
@@ -2890,17 +2892,19 @@ Original Vehicle: ${rowData.vehicle || 'N/A'}`;
                     'pending': 'warning',
                     'in_progress': 'info', 
                     'completed': 'success',
-                    'cancelled': 'danger'
+                    'cancelled': 'danger',
+                    'no_status': 'secondary'
                 };
                 const statusLabels = {
                     'pending': 'Pending',
                     'in_progress': 'In Progress',
                     'completed': 'Completed',
-                    'cancelled': 'Cancelled'
+                    'cancelled': 'Cancelled',
+                    'no_status': 'No Status Yet'
                 };
                 const statusColor = statusColors[orderInfo.status] || 'secondary';
                 const statusLabel = statusLabels[orderInfo.status] || orderInfo.status;
-                html += `<span class="badge bg-${statusColor} px-2 py-1 fw-bold text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px;">${statusLabel}</span>`;
+                html += `<span class="badge bg-${statusColor} px-2 py-1 fw-bold" style="font-size: 0.65rem; letter-spacing: 0.5px;">${statusLabel}</span>`;
                 
                 // Service info below - smaller and muted
                 if (orderInfo.service_name) {

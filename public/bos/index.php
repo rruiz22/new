@@ -1438,12 +1438,17 @@ if (window.location.pathname.includes('/bos/') || window.location.pathname.inclu
                 aged++;
             }
             
-            // Check status (this would need to be connected to the status system)
-            // For now, we'll use a simple heuristic
-            if (days < 10) {
-                active++;
+            // Check actual status from database - no heuristics
+            if (row.stock_number && window.orderInfoLookup && window.orderInfoLookup[row.stock_number]) {
+                const orderInfo = window.orderInfoLookup[row.stock_number];
+                if (orderInfo.status === 'completed') {
+                    completed++;
+                } else {
+                    active++;
+                }
             } else {
-                completed++;
+                // No status data available, consider as active
+                active++;
             }
         });
         
@@ -1575,10 +1580,13 @@ if (window.location.pathname.includes('/bos/') || window.location.pathname.inclu
     
     // Update completed table - Show 5 most recently completed (highest days, assuming they were completed)
     function updateCompletedTable(data) {
-        // For demo purposes, we'll show items that have been processed for a while
+                    // Only show items that have actual 'completed' status from database
         const allCompleted = data.filter(item => {
-            const days = parseInt(item.days_detail) || 0;
-            return days >= 10; // Assume items over 10 days are completed
+            if (item.stock_number && window.orderInfoLookup && window.orderInfoLookup[item.stock_number]) {
+                const orderInfo = window.orderInfoLookup[item.stock_number];
+                return orderInfo.status === 'completed';
+            }
+            return false; // No status data, not completed
         });
         
         const completed = allCompleted
@@ -1611,25 +1619,25 @@ if (window.location.pathname.includes('/bos/') || window.location.pathname.inclu
     
     // Update service status chart
     function updateServiceStatusChart(data) {
-        // Group by actual status values instead of days
+        // Group by actual status values only - no fallbacks
         const statusGroups = {};
         
         data.forEach(item => {
-            // Use the actual status from the data, or default based on days
-            let status = 'Unknown';
-            if (item.status && typeof item.status === 'string') {
-                status = item.status.trim();
-            } else if (item.inventory_status && typeof item.inventory_status === 'string') {
-                status = item.inventory_status.trim();
-            } else {
-                // Fallback to days-based grouping if no status available
-                const days = parseInt(item.days_detail) || 0;
-                if (days <= 1) status = 'Initial Processing';
-                else if (days <= 5) status = 'In Progress';
-                else status = 'Needs Attention';
+            // Only use actual status from database - no fallbacks
+            let status = null;
+            
+            // Check if we have real status data from the database
+            if (item.stock_number && window.orderInfoLookup && window.orderInfoLookup[item.stock_number]) {
+                const orderInfo = window.orderInfoLookup[item.stock_number];
+                if (orderInfo.status && typeof orderInfo.status === 'string') {
+                    status = orderInfo.status.trim();
+                }
             }
             
-            statusGroups[status] = (statusGroups[status] || 0) + 1;
+            // Only count items that have real status data
+            if (status) {
+                statusGroups[status] = (statusGroups[status] || 0) + 1;
+            }
         });
         
         // Update count in metric widget and section header
@@ -1669,11 +1677,11 @@ if (window.location.pathname.includes('/bos/') || window.location.pathname.inclu
         
         // Define colors for different statuses
         const statusColors = {
-            'Initial Processing': '#17a2b8',
-            'In Progress': '#ffc107', 
-            'Needs Attention': '#dc3545',
-            'Completed': '#28a745',
-            'Unknown': '#6c757d'
+            'pending': '#ffc107',
+            'in_progress': '#17a2b8', 
+            'completed': '#28a745',
+            'cancelled': '#dc3545',
+            'no_status': '#6c757d'
         };
         
         chartContainer.innerHTML = `
