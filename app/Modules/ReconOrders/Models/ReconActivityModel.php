@@ -160,7 +160,6 @@ class ReconActivityModel extends Model
             'Recon order created',
             null,
             null,
-            null,
             ['action' => 'created']
         );
     }
@@ -174,7 +173,6 @@ class ReconActivityModel extends Model
             'Recon order updated',
             null,
             null,
-            null,
             ['action' => 'updated']
         );
     }
@@ -186,7 +184,6 @@ class ReconActivityModel extends Model
             $userId,
             'order_deleted',
             'Recon order deleted',
-            null,
             null,
             null,
             ['action' => 'deleted']

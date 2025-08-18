@@ -163,6 +163,72 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+/* Quick Form VIN Validation Styles */
+.quick-vin-status {
+    display: block;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+    min-height: 1rem;
+    transition: all 0.2s ease;
+}
+
+.quick-vin-status-loading {
+    color: #6c757d;
+}
+
+.quick-vin-status-success {
+    color: #198754;
+}
+
+.quick-vin-status-error {
+    color: #dc3545;
+}
+
+.quick-vin-status-warning {
+    color: #fd7e14;
+}
+
+.quick-vin-status-info {
+    color: #0dcaf0;
+}
+
+.quick-vin-input.vin-success {
+    border-color: #198754 !important;
+    box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25) !important;
+}
+
+.quick-vin-input.vin-error {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
+
+.quick-vin-input.vin-warning {
+    border-color: #fd7e14 !important;
+    box-shadow: 0 0 0 0.2rem rgba(253, 126, 20, 0.25) !important;
+}
+
+/* Vehicle field decoded styling */
+.quick-form-input.vin-decoded {
+    transition: all 0.3s ease !important;
+}
+
+.quick-form-input.vin-decoded:focus {
+    box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25) !important;
+}
+
+/* Loading animation for VIN status */
+.quick-vin-status-loading::after {
+    content: '';
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-left: 5px;
+    border: 2px solid #6c757d;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s ease-in-out infinite;
+}
 </style>
 
 <!-- Quick Order Form -->
@@ -206,10 +272,11 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label class="quick-form-label"><?= lang('App.vin') ?></label>
-                                <input type="text" class="form-control quick-form-input" id="quick_vin" name="vin_number" placeholder="<?= lang('App.enter_vin_placeholder') ?>" maxlength="17" required>
+                                <input type="text" class="form-control quick-form-input quick-vin-input" id="quick_vin" name="vin_number" placeholder="<?= lang('App.enter_vin_placeholder') ?>" maxlength="17" required>
                                 <div class="invalid-feedback">
                                     <?= lang('App.vin_required') ?>
                                 </div>
+                                <small id="quick_vin_status" class="quick-vin-status"></small>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -927,17 +994,49 @@ function initializeQuickForm() {
         loadServicesForClient(clientId);
     });
     
-    // VIN validation
+    // VIN validation with comprehensive checks
     $('#quick_vin').on('input', function() {
-        const vin = $(this).val().toUpperCase();
+        const vin = $(this).val().toUpperCase().trim();
         $(this).val(vin);
         
-        if (vin.length > 0 && vin.length < 17) {
-            $(this).addClass('is-invalid');
+        clearQuickVINStatus();
+        
+        // Remove non-alphanumeric characters
+        const validVin = vin.replace(/[^A-Z0-9]/g, '');
+        if (validVin !== vin) {
+            $(this).val(validVin);
+            showQuickVINStatus('warning', 'VIN can only contain letters and numbers');
+            return;
+        }
+        
+        if (vin.length === 17) {
+            // Full VIN validation and decoding
+            const validationResult = isValidQuickVIN(vin);
+            if (validationResult.isValid) {
+                showQuickVINStatus('loading', 'Decoding VIN...');
+                $(this).removeClass('is-invalid').addClass('is-valid');
+                decodeQuickVIN(vin);
+            } else {
+                showQuickVINStatus('error', validationResult.message);
+                $(this).removeClass('is-valid').addClass('is-invalid');
+                clearQuickVehicleField();
+            }
+        } else if (vin.length >= 10 && vin.length < 17) {
+            showQuickVINStatus('loading', 'Decoding partial VIN...');
+            $(this).removeClass('is-valid is-invalid');
+            decodeQuickPartialVIN(vin);
+        } else if (vin.length > 0 && vin.length < 10) {
+            showQuickVINStatus('info', `${vin.length}/17 characters`);
+            $(this).removeClass('is-valid is-invalid');
+            clearQuickVehicleField();
+        } else if (vin.length > 17) {
+            $(this).val(vin.substring(0, 17));
+            showQuickVINStatus('error', 'VIN cannot exceed 17 characters');
         } else {
-            $(this).removeClass('is-invalid');
-                 }
-     });
+            $(this).removeClass('is-valid is-invalid');
+            clearQuickVehicleField();
+        }
+    });
      
      // Reset validation messages when user starts typing in any field
      $('#quickOrderForm input, #quickOrderForm select').on('input change', function() {
@@ -1058,6 +1157,408 @@ function loadServicesForClient(clientId) {
     });
 }
 
+// Quick Form VIN Decoding Functions
+function decodeQuickVIN(vin) {
+    const validationResult = isValidQuickVIN(vin);
+    if (!validationResult.isValid) {
+        showQuickVINStatus('error', validationResult.message);
+        return;
+    }
+
+    showQuickVINStatus('loading', 'Decoding VIN...');
+
+    const nhtsa_url = `https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues/${vin}?format=json`;
+
+    fetch(nhtsa_url, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`NHTSA API Error: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data && data.Results && data.Results.length > 0) {
+            const vehicleData = data.Results[0];
+            const vehicleString = buildQuickVehicleString(vehicleData);
+
+            if (vehicleString && vehicleString.trim() !== '') {
+                const vehicleInput = $('#quick_vehicle');
+                if (vehicleInput.length) {
+                    vehicleInput.val(vehicleString);
+                    vehicleInput.addClass('vin-decoded');
+                    vehicleInput.css({
+                        'background-color': '#d1e7dd',
+                        'border-color': '#198754'
+                    });
+
+                    showQuickVINStatus('success', 'VIN decoded successfully');
+
+                    setTimeout(() => {
+                        clearQuickVINStatus();
+                        vehicleInput.css({
+                            'background-color': '',
+                            'border-color': ''
+                        });
+                    }, 2000);
+                }
+            } else {
+                showQuickVINStatus('warning', 'Valid VIN but no vehicle information available');
+            }
+        } else {
+            showQuickVINStatus('warning', 'VIN decoded but no data found');
+        }
+    })
+    .catch(error => {
+        console.error('NHTSA API error:', error);
+
+        try {
+            const basicInfo = decodeQuickVINBasic(vin);
+
+            if (basicInfo.year || basicInfo.make) {
+                const vehicleParts = [];
+                if (basicInfo.year) vehicleParts.push(basicInfo.year);
+                if (basicInfo.make) vehicleParts.push(basicInfo.make);
+
+                const vehicleString = vehicleParts.join(' ');
+                const vehicleInput = $('#quick_vehicle');
+                
+                if (vehicleInput.length) {
+                    vehicleInput.val(vehicleString);
+                    vehicleInput.addClass('vin-decoded');
+                    vehicleInput.css({
+                        'background-color': '#fff3cd',
+                        'border-color': '#fd7e14'
+                    });
+
+                    showQuickVINStatus('warning', 'Basic VIN decoding (offline mode)');
+
+                    setTimeout(() => {
+                        clearQuickVINStatus();
+                        vehicleInput.css({
+                            'background-color': '',
+                            'border-color': ''
+                        });
+                    }, 2000);
+                }
+            } else {
+                showQuickVINStatus('error', 'Unable to decode VIN');
+            }
+        } catch (fallbackError) {
+            showQuickVINStatus('error', 'VIN decoding failed');
+        }
+    });
+}
+
+function decodeQuickPartialVIN(vin) {
+    try {
+        const basicInfo = decodeQuickVINBasic(vin);
+        
+        if (basicInfo.year || basicInfo.make) {
+            const vehicleParts = [];
+            if (basicInfo.year) vehicleParts.push(basicInfo.year);
+            if (basicInfo.make) vehicleParts.push(basicInfo.make);
+            vehicleParts.push('(Partial)');
+
+            const vehicleString = vehicleParts.join(' ');
+            const vehicleInput = $('#quick_vehicle');
+            
+            if (vehicleInput.length) {
+                vehicleInput.val(vehicleString);
+                vehicleInput.addClass('vin-decoded');
+                vehicleInput.css({
+                    'background-color': '#fff3cd',
+                    'border-color': '#fd7e14'
+                });
+                
+                showQuickVINStatus('warning', `Partial decode (${vin.length}/17 characters)`);
+                
+                setTimeout(() => {
+                    clearQuickVINStatus();
+                    vehicleInput.css({
+                        'background-color': '',
+                        'border-color': ''
+                    });
+                }, 3000);
+            }
+        } else {
+            showQuickVINStatus('info', `${vin.length}/17 characters`);
+            clearQuickVehicleField();
+        }
+    } catch (error) {
+        showQuickVINStatus('info', `${vin.length}/17 characters`);
+        clearQuickVehicleField();
+    }
+}
+
+function buildQuickVehicleString(nhtsa_data) {
+    const parts = [];
+
+    if (nhtsa_data.ModelYear && nhtsa_data.ModelYear !== '') {
+        parts.push(nhtsa_data.ModelYear);
+    }
+
+    if (nhtsa_data.Make && nhtsa_data.Make !== '') {
+        parts.push(nhtsa_data.Make.toUpperCase());
+    }
+
+    if (nhtsa_data.Model && nhtsa_data.Model !== '') {
+        parts.push(nhtsa_data.Model.toUpperCase());
+    }
+
+    if (nhtsa_data.Series && nhtsa_data.Series !== '') {
+        parts.push(`(${nhtsa_data.Series})`);
+    } else if (nhtsa_data.Trim && nhtsa_data.Trim !== '') {
+        parts.push(`(${nhtsa_data.Trim})`);
+    }
+
+    if (nhtsa_data.EngineNumberOfCylinders && nhtsa_data.EngineNumberOfCylinders !== '') {
+        parts.push(`(${nhtsa_data.EngineNumberOfCylinders} cyl)`);
+    }
+
+    return parts.join(' ').trim();
+}
+
+function decodeQuickVINBasic(vin) {
+    const vinInfo = { year: null, make: null, model: null, trim: null };
+
+    try {
+        const yearCode = vin.charAt(9);
+        vinInfo.year = decodeQuickYearFromVIN(yearCode);
+
+        const wmi = vin.substring(0, 3);
+        vinInfo.make = decodeQuickMakeFromWMI(wmi);
+    } catch (error) {
+        console.error('Basic VIN decoding error:', error);
+    }
+
+    return vinInfo;
+}
+
+function decodeQuickYearFromVIN(yearCode) {
+    const yearCodes = {
+        'A': 1980, 'B': 1981, 'C': 1982, 'D': 1983, 'E': 1984, 'F': 1985, 'G': 1986, 'H': 1987,
+        'J': 1988, 'K': 1989, 'L': 1990, 'M': 1991, 'N': 1992, 'P': 1993, 'R': 1994, 'S': 1995,
+        'T': 1996, 'V': 1997, 'W': 1998, 'X': 1999, 'Y': 2000, '1': 2001, '2': 2002, '3': 2003,
+        '4': 2004, '5': 2005, '6': 2006, '7': 2007, '8': 2008, '9': 2009, 'A': 2010, 'B': 2011,
+        'C': 2012, 'D': 2013, 'E': 2014, 'F': 2015, 'G': 2016, 'H': 2017, 'J': 2018, 'K': 2019,
+        'L': 2020, 'M': 2021, 'N': 2022, 'P': 2023, 'R': 2024, 'S': 2025, 'T': 2026, 'V': 2027,
+        'W': 2028, 'X': 2029, 'Y': 2030
+    };
+
+    return yearCodes[yearCode] || null;
+}
+
+function decodeQuickMakeFromWMI(wmi) {
+    const wmiMakes = {
+        // North American manufacturers
+        '1G1': 'CHEVROLET', '1G6': 'CADILLAC', '1GM': 'PONTIAC', '1GC': 'CHEVROLET',
+        '1GT': 'GMC', '1G4': 'BUICK', '1G3': 'OLDSMOBILE', '1GK': 'GMC',
+        '1FA': 'FORD', '1FB': 'FORD', '1FC': 'FORD', '1FD': 'FORD', '1FE': 'FORD',
+        '1FF': 'FORD', '1FG': 'FORD', '1FH': 'FORD', '1FJ': 'FORD', '1FK': 'FORD',
+        '1FL': 'FORD', '1FM': 'FORD', '1FN': 'FORD', '1FP': 'FORD', '1FR': 'FORD',
+        '1FS': 'FORD', '1FT': 'FORD', '1FU': 'FORD', '1FV': 'FORD', '1FW': 'FORD',
+        '1FX': 'FORD', '1FY': 'FORD', '1FZ': 'FORD',
+        '1HD': 'HARLEY DAVIDSON', '1HG': 'HONDA', '1HT': 'INTERNATIONAL',
+        '1J4': 'JEEP', '1J8': 'JEEP', '1JC': 'JEEP',
+        '1L1': 'LINCOLN', '1LN': 'LINCOLN', '1ME': 'MERCURY', '1MH': 'MERCURY',
+        '1N4': 'NISSAN', '1N6': 'NISSAN', '1NP': 'NISSAN', '1NX': 'NISSAN',
+        '1P3': 'PLYMOUTH', '1P4': 'PLYMOUTH', '1P7': 'PLYMOUTH', '1P8': 'PLYMOUTH',
+        '1R9': 'GEO', '1VW': 'VOLKSWAGEN', '1YV': 'MAZDA',
+        '2A4': 'CHRYSLER', '2A8': 'CHRYSLER', '2B3': 'DODGE', '2B4': 'DODGE', '2B7': 'DODGE',
+        '2C3': 'CHRYSLER', '2C4': 'CHRYSLER', '2C8': 'CHRYSLER',
+        '2D3': 'DODGE', '2D4': 'DODGE', '2D8': 'DODGE',
+        '2FA': 'FORD', '2FB': 'FORD', '2FC': 'FORD', '2FD': 'FORD', '2FE': 'FORD',
+        '2G1': 'CHEVROLET', '2G2': 'PONTIAC', '2G3': 'OLDSMOBILE', '2G4': 'BUICK',
+        '2HG': 'HONDA', '2HJ': 'HONDA', '2HK': 'HONDA', '2HM': 'HYUNDAI',
+        '2M': 'MERCURY', '2P3': 'PLYMOUTH', '2P4': 'PLYMOUTH', '2P7': 'PLYMOUTH',
+        '2T1': 'TOYOTA', '2T2': 'TOYOTA', '2T3': 'TOYOTA',
+        '3C3': 'CHRYSLER', '3C4': 'CHRYSLER', '3C6': 'CHRYSLER', '3C8': 'CHRYSLER',
+        '3D3': 'DODGE', '3D4': 'DODGE', '3D6': 'DODGE', '3D7': 'DODGE',
+        '3FA': 'FORD', '3G': 'GENERAL MOTORS',
+        '3N1': 'NISSAN', '3N6': 'NISSAN', '3N8': 'NISSAN',
+        '3P3': 'PLYMOUTH', '3VW': 'VOLKSWAGEN',
+        '4F2': 'MAZDA', '4F4': 'MAZDA', '4M2': 'MERCURY', '4S3': 'SUBARU', '4S4': 'SUBARU',
+        '4T1': 'TOYOTA', '4T3': 'TOYOTA', '4US': 'BMW',
+        '5F': 'HONDA', '5J6': 'HONDA', '5L': 'LINCOLN', '5N1': 'NISSAN', '5NP': 'HYUNDAI',
+        '5S3': 'SUBARU', '5T': 'TOYOTA', '5Y2': 'HYUNDAI',
+        // European manufacturers
+        'WBA': 'BMW', 'WBS': 'BMW', 'WBX': 'BMW', 'WDB': 'MERCEDES-BENZ', 'WDC': 'MERCEDES-BENZ',
+        'WDD': 'MERCEDES-BENZ', 'WDF': 'MERCEDES-BENZ', 'WMW': 'MINI', 'WAU': 'AUDI',
+        'WVW': 'VOLKSWAGEN', 'WV1': 'VOLKSWAGEN', 'WV2': 'VOLKSWAGEN',
+        'WP0': 'PORSCHE', 'WP1': 'PORSCHE', 'ZAM': 'MASERATI', 'ZAR': 'ALFA ROMEO',
+        'ZFA': 'FIAT', 'ZFF': 'FERRARI', 'ZLA': 'LANCIA', 'ZHW': 'LAMBORGHINI',
+        // Japanese manufacturers  
+        'JA3': 'MITSUBISHI', 'JA4': 'MITSUBISHI', 'JF1': 'SUBARU', 'JF2': 'SUBARU',
+        'JHG': 'HONDA', 'JH4': 'ACURA', 'JM1': 'MAZDA', 'JM3': 'MAZDA', 'JM6': 'MAZDA',
+        'JMZ': 'MAZDA', 'JN1': 'NISSAN', 'JN6': 'NISSAN', 'JN8': 'NISSAN',
+        'JT2': 'TOYOTA', 'JT3': 'TOYOTA', 'JT4': 'TOYOTA', 'JT6': 'TOYOTA', 'JT8': 'TOYOTA',
+        'JTD': 'TOYOTA', 'JTE': 'TOYOTA', 'JTF': 'TOYOTA', 'JTG': 'TOYOTA', 'JTH': 'TOYOTA',
+        'JTJ': 'TOYOTA', 'JTK': 'TOYOTA', 'JTL': 'TOYOTA', 'JTM': 'TOYOTA', 'JTN': 'TOYOTA',
+        // Korean manufacturers
+        'KM8': 'HYUNDAI', 'KMF': 'HYUNDAI', 'KMH': 'HYUNDAI', 'KMJ': 'HYUNDAI',
+        'KNA': 'KIA', 'KNB': 'KIA', 'KNC': 'KIA', 'KND': 'KIA', 'KNE': 'KIA',
+        'KNF': 'KIA', 'KNG': 'KIA', 'KNH': 'KIA', 'KNJ': 'KIA', 'KNK': 'KIA',
+        'KNL': 'KIA', 'KNM': 'KIA', 'KNN': 'KIA', 'KNP': 'KIA', 'KNR': 'KIA',
+        'KNS': 'KIA', 'KNT': 'KIA', 'KNU': 'KIA', 'KNV': 'KIA', 'KNW': 'KIA',
+        'KNX': 'KIA', 'KNY': 'KIA', 'KNZ': 'KIA'
+    };
+
+    // Try exact match first
+    if (wmiMakes[wmi]) {
+        return wmiMakes[wmi];
+    }
+
+    // Try first two characters
+    const wmi2 = wmi.substring(0, 2);
+    for (const key in wmiMakes) {
+        if (key.startsWith(wmi2)) {
+            return wmiMakes[key];
+        }
+    }
+
+    return null;
+}
+
+function clearQuickVehicleField() {
+    const vehicleInput = $('#quick_vehicle');
+    if (vehicleInput.length && vehicleInput.hasClass('vin-decoded')) {
+        vehicleInput.val('');
+        vehicleInput.removeClass('vin-decoded');
+        vehicleInput.css({
+            'background-color': '',
+            'border-color': ''
+        });
+    }
+}
+
+// Quick Form VIN Validation Functions
+function isValidQuickVIN(vin) {
+    if (vin.length !== 17) {
+        return { isValid: false, errorType: 'format', message: 'VIN must be exactly 17 characters' };
+    }
+    
+    if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) {
+        return { isValid: false, errorType: 'format', message: 'Invalid VIN format. VIN cannot contain I, O, or Q' };
+    }
+
+    const suspiciousResult = checkQuickSuspiciousPatterns(vin);
+    if (!suspiciousResult.isValid) {
+        return suspiciousResult;
+    }
+
+    const checkDigitResult = validateQuickCheckDigit(vin);
+    if (!checkDigitResult.isValid) {
+        return checkDigitResult;
+    }
+
+    return { isValid: true };
+}
+
+function checkQuickSuspiciousPatterns(vin) {
+    // Check for 4 consecutive identical characters
+    for (let i = 0; i <= vin.length - 4; i++) {
+        if (vin[i] === vin[i+1] && vin[i] === vin[i+2] && vin[i] === vin[i+3]) {
+            return { 
+                isValid: false, 
+                errorType: 'suspicious', 
+                message: 'VIN contains suspicious patterns (4+ identical consecutive characters)' 
+            };
+        }
+    }
+
+    // Check for too many repeated characters
+    const charCount = {};
+    for (const char of vin) {
+        charCount[char] = (charCount[char] || 0) + 1;
+        if (charCount[char] > 4) {
+            return { 
+                isValid: false, 
+                errorType: 'suspicious', 
+                message: 'VIN contains too many repeated characters' 
+            };
+        }
+    }
+
+    return { isValid: true };
+}
+
+function validateQuickCheckDigit(vin) {
+    const weights = [8, 7, 6, 5, 4, 3, 2, 10, 0, 9, 8, 7, 6, 5, 4, 3, 2];
+    const values = {
+        'A': 1, 'B': 2, 'C': 3, 'D': 4, 'E': 5, 'F': 6, 'G': 7, 'H': 8,
+        'J': 1, 'K': 2, 'L': 3, 'M': 4, 'N': 5, 'P': 7, 'R': 9,
+        'S': 2, 'T': 3, 'U': 4, 'V': 5, 'W': 6, 'X': 7, 'Y': 8, 'Z': 9,
+        '0': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9
+    };
+
+    let sum = 0;
+    for (let i = 0; i < 17; i++) {
+        if (i === 8) continue; // Skip check digit position
+        const char = vin[i];
+        const value = values[char];
+        if (value === undefined) {
+            return { 
+                isValid: false, 
+                errorType: 'format', 
+                message: 'Invalid character in VIN' 
+            };
+        }
+        sum += value * weights[i];
+    }
+
+    const checkDigit = sum % 11;
+    const expectedCheckDigit = checkDigit === 10 ? 'X' : checkDigit.toString();
+    const actualCheckDigit = vin[8];
+
+    if (actualCheckDigit !== expectedCheckDigit) {
+        return { 
+            isValid: false, 
+            errorType: 'checkdigit', 
+            message: 'Invalid VIN check digit' 
+        };
+    }
+
+    return { isValid: true };
+}
+
+function showQuickVINStatus(type, message) {
+    const statusElement = $('#quick_vin_status');
+    const vinInput = $('#quick_vin');
+    
+    if (statusElement.length && message) {
+        statusElement.text(message)
+                   .removeClass('quick-vin-status-loading quick-vin-status-success quick-vin-status-error quick-vin-status-warning quick-vin-status-info')
+                   .addClass(`quick-vin-status-${type}`);
+        
+        // Update input styling
+        vinInput.removeClass('vin-success vin-error vin-warning');
+        if (type === 'success') {
+            vinInput.addClass('vin-success');
+        } else if (type === 'error') {
+            vinInput.addClass('vin-error');
+        } else if (type === 'warning') {
+            vinInput.addClass('vin-warning');
+        }
+    }
+}
+
+function clearQuickVINStatus() {
+    const statusElement = $('#quick_vin_status');
+    const vinInput = $('#quick_vin');
+    
+    if (statusElement.length) {
+        statusElement.text('')
+                   .removeClass('quick-vin-status-loading quick-vin-status-success quick-vin-status-error quick-vin-status-warning quick-vin-status-info');
+    }
+    
+    if (vinInput.length) {
+        vinInput.removeClass('vin-success vin-error vin-warning');
+    }
+}
+
 function clearQuickForm() {
     // Check if jQuery is available
     if (typeof $ === 'undefined') {
@@ -1073,6 +1574,10 @@ function clearQuickForm() {
     $('#quickOrderForm .is-valid').removeClass('is-valid');
     $('#quickOrderForm .invalid-feedback').hide();
     $('#quickOrderForm .valid-feedback').hide();
+    
+    // Clear VIN status and vehicle field
+    clearQuickVINStatus();
+    clearQuickVehicleField();
     
     // Reset form submission state
     $('#quickOrderForm').data('submitting', false);

@@ -94,11 +94,21 @@ class ReconOrdersController extends BaseController
         }
 
         $userType = session()->get('user_type') ?? 'client';
+        
+        // Load services for the specific client of this order
+        $services = [];
+        if (!empty($order['client_id'])) {
+            $services = $this->reconServiceModel->getActiveServices($order['client_id'], $userType);
+        } else {
+            // Fallback to all services if no client is set
+            $services = $this->reconServiceModel->getActiveServices(null, $userType);
+        }
+        
         $data = [
             'title' => 'Edit Recon Order ' . $order['order_number'],
             'order' => $order,
             'clients' => $this->clientModel->where('status', 'active')->orderBy('name', 'ASC')->findAll(),
-            'services' => $this->reconServiceModel->getActiveServices(null, $userType)
+            'services' => $services
         ];
 
         return view('Modules\ReconOrders\Views\recon_orders\edit', $data);
@@ -242,102 +252,131 @@ class ReconOrdersController extends BaseController
 
     public function update($id = null)
     {
-        if (!$id) {
+        try {
+            if (!$id) {
+                if ($this->request->isAJAX()) {
+                    return $this->response->setJSON([
+                        'success' => false,
+                        'message' => 'Order ID is required'
+                    ]);
+                }
+                return redirect()->back()->with('error', 'Order ID is required');
+            }
+
+            $order = $this->reconOrderModel->find($id);
+            if (!$order) {
+                if ($this->request->isAJAX()) {
+                    return $this->response->setJSON([
+                        'success' => false,
+                        'message' => 'Order not found'
+                    ]);
+                }
+                return redirect()->back()->with('error', 'Order not found');
+            }
+
+            $formData = $this->request->getPost();
+            
+            // Validate required fields
+            if (empty($formData['client_id']) || empty($formData['vehicle'])) {
+                if ($this->request->isAJAX()) {
+                    return $this->response->setJSON([
+                        'success' => false,
+                        'message' => 'Client and Vehicle are required fields'
+                    ]);
+                }
+                return redirect()->back()->withInput()->with('error', 'Client and Vehicle are required fields');
+            }
+
+            // Get user ID from authentication
+            $userId = auth()->user()->id ?? session()->get('user_id') ?? 1;
+
+            $updateData = [
+                'client_id' => $formData['client_id'],
+                'stock' => trim(strtoupper($formData['stock'] ?? '')),
+                'vin_number' => trim(strtoupper($formData['vin_number'] ?? '')),
+                'vehicle' => trim($formData['vehicle']),
+                'service_id' => $formData['service_id'] ?? null,
+                'service_date' => !empty($formData['service_date']) ? $formData['service_date'] : null,
+                'pictures' => isset($formData['pictures']) ? 1 : 0,
+                'status' => $formData['status'] ?? $order['status'],
+                'notes' => trim($formData['notes'] ?? ''),
+                'updated_by' => $userId
+            ];
+
+            // Log changes (only if table exists)
+            try {
+                $db = \Config\Database::connect();
+                if ($db->tableExists('recon_activity') && isset($this->reconActivityModel) && method_exists($this->reconActivityModel, 'logFieldChange')) {
+                    foreach ($updateData as $field => $newValue) {
+                        if (isset($order[$field]) && $order[$field] != $newValue && $field !== 'updated_by') {
+                            $fieldLabels = [
+                                'client_id' => 'Client',
+                                'stock' => 'Stock',
+                                'vin_number' => 'VIN Number',
+                                'vehicle' => 'Vehicle',
+                                'service_id' => 'Service',
+                                'pictures' => 'Pictures',
+                                'status' => 'Status',
+                                'notes' => 'Notes'
+                            ];
+                            
+                            $this->reconActivityModel->logFieldChange(
+                                $id, 
+                                $userId, 
+                                $field, 
+                                $order[$field], 
+                                $newValue, 
+                                $fieldLabels[$field]
+                            );
+                        }
+                    }
+                }
+            } catch (\Exception $e) {
+                log_message('error', 'Error logging field changes: ' . $e->getMessage());
+                // Continue with update even if logging fails
+            }
+
+            if ($this->reconOrderModel->update($id, $updateData)) {
+                // Log order update (only if table exists)
+                try {
+                    $db = \Config\Database::connect();
+                    if ($db->tableExists('recon_activity') && isset($this->reconActivityModel) && method_exists($this->reconActivityModel, 'logOrderUpdated')) {
+                        $this->reconActivityModel->logOrderUpdated($id, $userId);
+                    }
+                } catch (\Exception $e) {
+                    log_message('error', 'Error logging order update: ' . $e->getMessage());
+                    // Continue even if logging fails
+                }
+
+                if ($this->request->isAJAX()) {
+                    return $this->response->setJSON([
+                        'success' => true,
+                        'message' => 'Recon order updated successfully'
+                    ]);
+                } else {
+                    return redirect()->to(base_url('recon_orders'))->with('success', 'Recon order updated successfully');
+                }
+            } else {
+                if ($this->request->isAJAX()) {
+                    return $this->response->setJSON([
+                        'success' => false,
+                        'message' => 'Failed to update recon order',
+                        'errors' => $this->reconOrderModel->errors()
+                    ]);
+                } else {
+                    return redirect()->back()->withInput()->with('error', 'Failed to update recon order');
+                }
+            }
+        } catch (\Exception $e) {
+            log_message('error', 'Recon Order Update Error: ' . $e->getMessage() . ' - Trace: ' . $e->getTraceAsString());
+            
             if ($this->request->isAJAX()) {
                 return $this->response->setJSON([
                     'success' => false,
-                    'message' => 'Order ID is required'
-                ]);
-            }
-            return redirect()->back()->with('error', 'Order ID is required');
-        }
-
-        $order = $this->reconOrderModel->find($id);
-        if (!$order) {
-            if ($this->request->isAJAX()) {
-                return $this->response->setJSON([
-                    'success' => false,
-                    'message' => 'Order not found'
-                ]);
-            }
-            return redirect()->back()->with('error', 'Order not found');
-        }
-
-        $formData = $this->request->getPost();
-        
-        // Validate required fields
-        if (empty($formData['client_id']) || empty($formData['vehicle'])) {
-            if ($this->request->isAJAX()) {
-                return $this->response->setJSON([
-                    'success' => false,
-                    'message' => 'Client and Vehicle are required fields'
-                ]);
-            }
-            return redirect()->back()->withInput()->with('error', 'Client and Vehicle are required fields');
-        }
-
-        // Get user ID from authentication
-        $userId = auth()->user()->id ?? session()->get('user_id') ?? 1;
-
-        $updateData = [
-            'client_id' => $formData['client_id'],
-            'stock' => trim(strtoupper($formData['stock'] ?? '')),
-            'vin_number' => trim(strtoupper($formData['vin_number'] ?? '')),
-            'vehicle' => trim($formData['vehicle']),
-            'service_id' => $formData['service_id'] ?? null,
-            'service_date' => !empty($formData['service_date']) ? $formData['service_date'] : null,
-            'pictures' => isset($formData['pictures']) ? 1 : 0,
-            'status' => $formData['status'] ?? $order['status'],
-            'notes' => trim($formData['notes'] ?? ''),
-            'updated_by' => $userId
-        ];
-
-        // Log changes
-        foreach ($updateData as $field => $newValue) {
-            if (isset($order[$field]) && $order[$field] != $newValue && $field !== 'updated_by') {
-                $fieldLabels = [
-                    'client_id' => 'Client',
-                    'stock' => 'Stock',
-                    'vin_number' => 'VIN Number',
-                    'vehicle' => 'Vehicle',
-                    'service_id' => 'Service',
-                    'pictures' => 'Pictures',
-                    'status' => 'Status',
-                    'notes' => 'Notes'
-                ];
-                
-                $this->reconActivityModel->logFieldChange(
-                    $id, 
-                    $userId, 
-                    $field, 
-                    $order[$field], 
-                    $newValue, 
-                    $fieldLabels[$field]
-                );
-            }
-        }
-
-        if ($this->reconOrderModel->update($id, $updateData)) {
-            // Log order update
-            $this->reconActivityModel->logOrderUpdated($id, $userId);
-
-            if ($this->request->isAJAX()) {
-                return $this->response->setJSON([
-                    'success' => true,
-                    'message' => 'Recon order updated successfully'
+                    'message' => 'Error updating recon order: ' . $e->getMessage()
                 ]);
             } else {
-                return redirect()->to(base_url('recon_orders'))->with('success', 'Recon order updated successfully');
-            }
-        } else {
-            if ($this->request->isAJAX()) {
-                return $this->response->setJSON([
-                    'success' => false,
-                    'message' => 'Failed to update recon order',
-                    'errors' => $this->reconOrderModel->errors()
-                ]);
-            } else {
-                return redirect()->back()->withInput()->with('error', 'Failed to update recon order');
+                return redirect()->back()->withInput()->with('error', 'Error updating recon order');
             }
         }
     }

@@ -240,7 +240,9 @@ Recon Orders
                         <?= $this->include('Modules\ReconOrders\Views\recon_orders/services_content') ?>
                     </div>
 
-                   
+                    <div class="tab-pane" id="vehicles" role="tabpanel">
+                        <?= $this->include('Modules\ReconOrders\Views\recon_orders/vehicles_content') ?>
+                    </div>
                     
                     <div class="tab-pane" id="deleted" role="tabpanel">
                         <?= $this->include('Modules\ReconOrders\Views\recon_orders/deleted_content') ?>

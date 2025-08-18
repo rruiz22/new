@@ -230,110 +230,142 @@
 </div>
 
 <script>
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', function() {
+    // Load services for the current client on page load
+    const currentClientId = document.getElementById('client_id').value;
+    if (currentClientId) {
+        loadServicesForClient(currentClientId);
+    }
+    
     // VIN validation
-    $('#vin_number').on('input', function() {
-        const vin = $(this).val().toUpperCase();
-        $(this).val(vin);
-        
-        if (vin.length > 0 && vin.length < 17) {
-            $(this).addClass('is-invalid');
-        } else {
-            $(this).removeClass('is-invalid');
-        }
-    });
+    const vinInput = document.getElementById('vin_number');
+    if (vinInput) {
+        vinInput.addEventListener('input', function() {
+            const vin = this.value.toUpperCase();
+            this.value = vin;
+            
+            if (vin.length > 0 && vin.length < 17) {
+                this.classList.add('is-invalid');
+            } else {
+                this.classList.remove('is-invalid');
+            }
+        });
+    }
     
     // Form submission
-    $('#editReconOrderForm').on('submit', function(e) {
-        e.preventDefault();
-        
-        if (!this.checkValidity()) {
-            e.stopPropagation();
-            $(this).addClass('was-validated');
-            return;
-        }
-        
-                 var formData = {
-             client_id: $('#client_id').val(),
-             service_id: $('#service_id').val(),
-             service_date: $('#service_date').val(),
-             stock: $('#stock').val(),
-             vin_number: $('#vin_number').val(),
-             vehicle: $('#vehicle').val(),
-             status: $('#status').val(),
-             pictures: $('#pictures').is(':checked') ? 1 : 0,
-             notes: $('#notes').val()
-         };
-         
-         const submitBtn = $('#updateBtn');
-         const originalText = submitBtn.html();
-         
-         submitBtn.html('<i class="ri-loader-2-line me-1"></i>Updating...').prop('disabled', true);
-         
-         $.ajax({
-             url: $(this).attr('action'),
-             type: 'POST',
-             data: formData,
-             success: function(response) {
-                 if (response.success) {
-                     showToast('success', response.message || 'Order updated successfully');
-                     // Redirect back to orders list after successful update
-                     setTimeout(function() {
-                         window.location.href = '<?= base_url('recon_orders') ?>';
-                     }, 1500);
-                 } else {
-                     showToast('error', response.message || 'Failed to update order');
-                 }
-             },
-             error: function(xhr, status, error) {
-                 console.error('Update error:', error);
-                 showToast('error', 'An error occurred while updating the order');
-             },
-             complete: function() {
-                 submitBtn.html(originalText).prop('disabled', false);
-             }
-         });
-    });
-    
+    const form = document.getElementById('editReconOrderForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!this.checkValidity()) {
+                e.stopPropagation();
+                this.classList.add('was-validated');
+                return;
+            }
+            
+            const formData = {
+                client_id: document.getElementById('client_id').value,
+                service_id: document.getElementById('service_id').value,
+                service_date: document.getElementById('service_date').value,
+                stock: document.getElementById('stock').value,
+                vin_number: document.getElementById('vin_number').value,
+                vehicle: document.getElementById('vehicle').value,
+                status: document.getElementById('status').value,
+                pictures: document.getElementById('pictures').checked ? 1 : 0,
+                notes: document.getElementById('notes').value
+            };
+            
+            const submitBtn = document.getElementById('updateBtn');
+            const originalText = submitBtn.innerHTML;
+            
+            submitBtn.innerHTML = '<i class="ri-loader-2-line me-1"></i>Updating...';
+            submitBtn.disabled = true;
+            
+            fetch(this.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: new URLSearchParams(formData)
+            })
+            .then(response => response.json())
+            .then(response => {
+                if (response.success) {
+                    showToast('success', response.message || 'Order updated successfully');
+                    // Redirect back to orders list after successful update
+                    setTimeout(function() {
+                        window.location.href = '<?= base_url('recon_orders') ?>';
+                    }, 1500);
+                } else {
+                    showToast('error', response.message || 'Failed to update order');
+                }
+            })
+            .catch(error => {
+                console.error('Update error:', error);
+                showToast('error', 'An error occurred while updating the order');
+            })
+            .finally(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            });
+        });
+    }
+   
     // Load services when client changes
-    $('#client_id').on('change', function() {
-        const clientId = $(this).val();
-        if (clientId) {
-            loadServicesForClient(clientId);
-        }
-    });
+    const clientSelect = document.getElementById('client_id');
+    if (clientSelect) {
+        clientSelect.addEventListener('change', function() {
+            const clientId = this.value;
+            if (clientId) {
+                loadServicesForClient(clientId);
+            }
+        });
+    }
 });
 
 function loadServicesForClient(clientId) {
-    $.ajax({
-        url: '<?= base_url('recon_orders/getServicesForClient/') ?>' + clientId,
-        type: 'GET',
-        success: function(response) {
-            if (response.success && response.data) {
-                const serviceSelect = $('#service_id');
-                const currentServiceId = '<?= $order['service_id'] ?>';
-                
+    fetch('<?= base_url('recon_orders/getServicesForClient/') ?>' + clientId, {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(response => {
+        if (response.success && response.data) {
+            const serviceSelect = document.getElementById('service_id');
+            const currentServiceId = '<?= $order['service_id'] ?>';
+            
+            if (serviceSelect) {
                 // Clear existing options except the first one
-                serviceSelect.find('option:not(:first)').remove();
+                const firstOption = serviceSelect.querySelector('option:first-child');
+                serviceSelect.innerHTML = '';
+                if (firstOption) {
+                    serviceSelect.appendChild(firstOption);
+                } else {
+                    serviceSelect.innerHTML = '<option value="">Select Service</option>';
+                }
                 
                 response.data.forEach(function(service) {
                     if (service.is_active && service.show_in_form) {
-                        const option = $('<option></option>')
-                            .attr('value', service.id)
-                            .text(service.name + (service.price ? ' - $' + parseFloat(service.price).toFixed(2) : ''));
+                        const option = document.createElement('option');
+                        option.value = service.id;
+                        option.textContent = service.name + (service.price ? ' - $' + parseFloat(service.price).toFixed(2) : '');
                         
                         if (service.id == currentServiceId) {
-                            option.attr('selected', 'selected');
+                            option.selected = true;
                         }
                         
-                        serviceSelect.append(option);
+                        serviceSelect.appendChild(option);
                     }
                 });
             }
-        },
-        error: function() {
-            console.error('Error loading services for client');
         }
+    })
+    .catch(error => {
+        console.error('Error loading services for client:', error);
     });
 }
 
