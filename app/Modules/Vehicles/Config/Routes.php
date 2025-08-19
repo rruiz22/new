@@ -52,6 +52,10 @@ return function (RouteCollection $routes) {
     $routes->post('delete-s3-photo', 'VehiclesController::deleteS3Photo');
     $routes->post('delete-photos', 'VehiclesController::deletePhotos');
     
+    // Local Storage Fallback
+    $routes->post('upload-local', 'LocalUploadController::uploadLocal');
+    $routes->get('local-photos/(:any)', 'LocalUploadController::getLocalPhotos/$1');
+    
     // Duplicate photo detection
     $routes->get('detect-duplicates/(:any)', 'VehiclesController::detectDuplicatePhotos/$1');
     $routes->get('debug-duplicates/(:any)', 'VehiclesController::debugDuplicatePhotos/$1');

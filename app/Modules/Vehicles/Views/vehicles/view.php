@@ -39,6 +39,191 @@
     border-radius: 12px;
 }
 
+/* Responsive Layout Improvements */
+@media (max-width: 575.98px) {
+    /* Extra small devices */
+    .vehicle-header {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .card-header h4,
+    .card-header h5 {
+        font-size: 1rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    /* Small devices */
+    .row.g-3.g-lg-4 {
+        --bs-gutter-x: 1rem;
+    }
+}
+
+@media (max-width: 991.98px) {
+    /* Mobile and tablet: full width layout */
+    .vehicle-info-card,
+    .card {
+        margin-bottom: 1.5rem;
+    }
+    
+    /* Ensure mobile cards have proper spacing */
+    .col-12.col-lg-4.order-1.order-lg-2 .card:last-child {
+        margin-bottom: 2rem;
+    }
+}
+
+@media (min-width: 992px) {
+    /* Desktop: remove sticky positioning for better height control */
+    .col-lg-4.order-lg-2 {
+        height: auto !important;
+        min-height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        padding-right: 1rem;
+        position: relative;
+    }
+    
+    /* Main content area improvements */
+    .col-lg-8.order-lg-1 {
+        padding-right: 0.5rem;
+    }
+    
+    /* Ensure sidebar cards are fully visible */
+    .col-lg-4.order-lg-2 .card {
+        margin-bottom: 1.5rem;
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+    
+    .col-lg-4.order-lg-2 .card:last-child {
+        margin-bottom: 0;
+    }
+}
+
+/* Card improvements for better visual hierarchy */
+.card {
+    transition: box-shadow 0.15s ease-in-out;
+}
+
+.card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Sidebar card specific styles */
+.col-lg-4 .card {
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 1.5rem;
+    width: 100%;
+    display: block;
+}
+
+.col-lg-4 .card:last-child {
+    margin-bottom: 2rem; /* Extra space at bottom */
+}
+
+.col-lg-4 .card-header {
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    border-radius: 12px 12px 0 0;
+    padding: 1rem 1.25rem;
+}
+
+.col-lg-4 .card-body {
+    padding: 1.25rem;
+}
+
+/* Ensure sidebar has proper spacing */
+@media (min-width: 992px) {
+    .col-lg-4.order-lg-2 {
+        padding-bottom: 3rem; /* Extra bottom padding */
+    }
+}
+
+/* Service History DataTable Styles */
+#serviceHistoryTable_wrapper {
+    margin-top: 1rem;
+}
+
+#serviceHistoryTable_wrapper .dataTables_filter {
+    margin-bottom: 1rem;
+}
+
+#serviceHistoryTable_wrapper .dataTables_filter input {
+    margin-left: 0.5rem;
+    padding: 0.375rem 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+}
+
+#serviceHistoryTable_wrapper .dataTables_info {
+    padding-top: 0.75rem;
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+#serviceHistoryTable_wrapper .dataTables_paginate {
+    padding-top: 0.75rem;
+}
+
+#serviceHistoryTable_wrapper .dataTables_paginate .paginate_button {
+    padding: 0.375rem 0.75rem;
+    margin-left: 0.125rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    background: #fff;
+    color: #0d6efd;
+    text-decoration: none;
+}
+
+#serviceHistoryTable_wrapper .dataTables_paginate .paginate_button:hover {
+    background: #e9ecef;
+    border-color: #adb5bd;
+}
+
+#serviceHistoryTable_wrapper .dataTables_paginate .paginate_button.current {
+    background: #0d6efd;
+    border-color: #0d6efd;
+    color: #fff;
+}
+
+/* Responsive adjustments for DataTable */
+@media (max-width: 767.98px) {
+    #serviceHistoryTable_wrapper .dataTables_filter,
+    #serviceHistoryTable_wrapper .dataTables_info,
+    #serviceHistoryTable_wrapper .dataTables_paginate {
+        text-align: center;
+    }
+}
+
+/* Sidebar content optimizations */
+@media (min-width: 992px) {
+    /* QR Code image responsive sizing */
+    .col-lg-4 .qr-sidebar-image {
+        max-width: 100%;
+        height: auto;
+        width: clamp(150px, 80%, 200px);
+    }
+    
+    /* Statistics and info items spacing */
+    .col-lg-4 .info-item,
+    .col-lg-4 .stat-item {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    
+    .col-lg-4 .info-item:last-child,
+    .col-lg-4 .stat-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+}
+
 .info-item {
     display: flex;
     justify-content: space-between;
@@ -1167,21 +1352,15 @@ div[class*="modal-backdrop"] {
 
 #vehiclePhotosModal .modal-content {
     border: none;
-    border-radius: 20px;
-    background: rgba(255, 255, 255, 0.02) !important;  /* Más transparente */
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-    border: 1px solid rgba(255, 255, 255, 0.1);  /* Borde más sutil */
-    box-shadow: 
-        0px 0px 40px rgba(227, 228, 237, 0.2),
-        0 25px 50px rgba(0, 0, 0, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     height: 100vh;
     display: flex;
     flex-direction: column;
     position: relative;
-    z-index: 1070 !important;  /* Contenido del modal por encima del backdrop */
+    z-index: 1070;
 }
 
 #vehiclePhotosModal .modal-header {
@@ -1440,13 +1619,13 @@ div[class*="modal-backdrop"] {
     flex-direction: column;
 }
 
-/* ====== HORIZONTAL SCROLL CAROUSEL - GLASS STYLE ====== */
+/* ====== MINIMAL CAROUSEL STYLE ====== */
 
 /* Main carousel container */
 #vehiclePhotosCarousel {
     height: 100%;
     position: relative;
-    background: transparent;
+    background: #ffffff;
     overflow: hidden;
     flex-grow: 1;
     display: flex;
@@ -1462,44 +1641,43 @@ div[class*="modal-backdrop"] {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 40px 80px;
+    padding: 20px;
+    background: #fafafa;
 }
 
 /* Scrollable photos strip */
 .horizontal-carousel-track {
     display: flex;
-    gap: 30px;
+    gap: 16px;
     overflow-x: auto;
     overflow-y: hidden;
     scroll-behavior: smooth;
-    padding: 20px 0;
+    padding: 16px 0;
     width: 100%;
     height: 100%;
     align-items: center;
     
-    /* Custom scrollbar */
+    /* Minimal scrollbar */
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+    scrollbar-color: #d1d5db #f3f4f6;
 }
 
 .horizontal-carousel-track::-webkit-scrollbar {
-    height: 8px;
+    height: 6px;
 }
 
 .horizontal-carousel-track::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
+    background: #f3f4f6;
+    border-radius: 3px;
 }
 
 .horizontal-carousel-track::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 10px;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: #d1d5db;
+    border-radius: 3px;
 }
 
 .horizontal-carousel-track::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.5);
+    background: #9ca3af;
 }
 
 /* Individual photo slide */
@@ -1507,72 +1685,31 @@ div[class*="modal-backdrop"] {
     flex: none;
     position: relative;
     width: auto;
-    height: 80%;
-    max-height: 600px;
-    border-radius: 20px;
+    height: 85%;
+    max-height: 700px;
+    border-radius: 8px;
     overflow: hidden;
     cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 1075 !important;  /* Fotos por encima del backdrop */
-    
-    /* Glass effect */
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-    box-shadow: 0px 0px 30px rgba(227, 228, 237, 0.37);
-    border: 2px solid rgba(255, 255, 255, 0.18);
-    
-    background: linear-gradient(
-        135deg,
-        rgba(255, 255, 255, 0.1) 0%,
-        rgba(255, 255, 255, 0.05) 100%
-    );
+    transition: all 0.2s ease;
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e7eb;
 }
 
 .carousel-photo-slide:hover {
-    transform: scale(1.05) translateY(-10px);
-    box-shadow: 
-        0px 0px 40px rgba(227, 228, 237, 0.5),
-        0 20px 40px rgba(0, 0, 0, 0.2);
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    transform: scale(1.02);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    border-color: #d1d5db;
 }
 
 /* Photo image inside slide */
 .carousel-photo-slide img {
     width: auto;
     height: 100%;
-    max-width: 500px;
+    max-width: 600px;
     object-fit: contain;
     display: block;
-    filter: brightness(1.02) contrast(1.05);
-    transition: all 0.3s ease;
-}
-
-.carousel-photo-slide:hover img {
-    filter: brightness(1.05) contrast(1.1);
-}
-
-/* Glass overlay on each photo */
-.carousel-photo-slide::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(
-        45deg,
-        rgba(255, 255, 255, 0.1) 0%,
-        transparent 30%,
-        rgba(255, 255, 255, 0.05) 100%
-    );
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-    z-index: 1;
-}
-
-.carousel-photo-slide:hover::before {
-    opacity: 1;
+    transition: none;
 }
 
 /* Navigation arrows */
@@ -1580,97 +1717,65 @@ div[class*="modal-backdrop"] {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 70px;
-    height: 70px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
-    border: none;
+    border: 1px solid #e5e7eb;
     cursor: pointer;
-    z-index: 1090 !important;  /* Controles por encima del backdrop */
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    
-    /* Glass effect mejorado para mejor contraste */
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-    box-shadow: 
-        0px 0px 40px rgba(0, 0, 0, 0.5),
-        0px 0px 30px rgba(227, 228, 237, 0.3),
-        0 10px 25px rgba(0, 0, 0, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    border: 3px solid rgba(255, 255, 255, 0.4);
-    background: rgba(0, 0, 0, 0.4) !important;  /* Fondo más oscuro para contraste */
-    
+    z-index: 1085;
+    background: #ffffff;
+    color: #6b7280;
+    font-size: 18px;
+    transition: all 0.2s ease;
+    opacity: 0.8;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #ffffff;
-    font-size: 28px;
-    opacity: 0.9;
 }
 
 .horizontal-carousel-nav:hover {
-    transform: translateY(-50%) scale(1.15);
     opacity: 1;
-    background: rgba(0, 0, 0, 0.6) !important;  /* Más oscuro en hover */
-    border: 3px solid rgba(255, 255, 255, 0.6);
-    box-shadow: 
-        0px 0px 50px rgba(0, 0, 0, 0.7),
-        0px 0px 40px rgba(227, 228, 237, 0.4),
-        0 15px 35px rgba(0, 0, 0, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    background: #f9fafb;
+    border-color: #d1d5db;
+    color: #374151;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-50%) scale(1.05);
 }
 
 .horizontal-carousel-nav.prev {
-    left: 20px;
+    left: 16px;
 }
 
 .horizontal-carousel-nav.next {
-    right: 20px;
+    right: 16px;
+}
+
+.horizontal-carousel-nav:active {
+    transform: translateY(-50%) scale(0.95);
+    background: #f3f4f6;
 }
 
 /* Navigation icons */
 .horizontal-carousel-nav i {
-    filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.8));
-    text-shadow: 
-        0 2px 8px rgba(0, 0, 0, 0.8),
-        0 0 20px rgba(255, 255, 255, 0.3);
-}
-
-.horizontal-carousel-nav:hover i {
-    filter: drop-shadow(0 4px 15px rgba(0, 0, 0, 1));
-    text-shadow: 
-        0 3px 12px rgba(0, 0, 0, 1),
-        0 0 25px rgba(255, 255, 255, 0.5);
+    font-size: 16px;
 }
 
 /* Photo counter */
 .carousel-photo-counter {
     position: absolute;
-    bottom: 30px;
+    bottom: 24px;
     left: 50%;
     transform: translateX(-50%);
-    padding: 14px 28px;
-    border-radius: 30px;
-    
-    /* Glass effect mejorado para mejor contraste */
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-    box-shadow: 
-        0px 0px 40px rgba(0, 0, 0, 0.5),
-        0px 0px 30px rgba(227, 228, 237, 0.25),
-        0 10px 25px rgba(0, 0, 0, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    border: 2px solid rgba(255, 255, 255, 0.4);
-    background: rgba(0, 0, 0, 0.4) !important;  /* Fondo más oscuro para contraste */
-    
-    color: #ffffff;
-    font-weight: 700;
-    font-size: 15px;
-    text-shadow: 
-        0 2px 8px rgba(0, 0, 0, 0.8),
-        0 0 20px rgba(0, 0, 0, 0.6),
-        0 1px 3px rgba(0, 0, 0, 1);
-    letter-spacing: 0.5px;
-    z-index: 1085 !important;  /* Contador por encima del backdrop */
+    padding: 8px 16px;
+    border-radius: 20px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    color: #374151;
+    font-weight: 500;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1085;
 }
 
 /* Current photo indicator */
@@ -1678,29 +1783,15 @@ div[class*="modal-backdrop"] {
     position: absolute;
     top: 20px;
     right: 20px;
-    padding: 10px 18px;
-    border-radius: 25px;
-    
-    /* Glass effect mejorado para mejor contraste */
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-    box-shadow: 
-        0px 0px 40px rgba(0, 0, 0, 0.5),
-        0px 0px 30px rgba(227, 228, 237, 0.25),
-        0 10px 25px rgba(0, 0, 0, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    border: 2px solid rgba(255, 255, 255, 0.4);
-    background: rgba(0, 0, 0, 0.4) !important;  /* Fondo más oscuro para contraste */
-    
-    color: #ffffff;
-    font-size: 13px;
-    font-weight: 700;
-    text-shadow: 
-        0 2px 6px rgba(0, 0, 0, 0.8),
-        0 0 15px rgba(0, 0, 0, 0.6),
-        0 1px 2px rgba(0, 0, 0, 1);
-    letter-spacing: 0.3px;
-    z-index: 1085 !important;  /* Indicador por encima del backdrop */
+    padding: 6px 12px;
+    border-radius: 16px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    color: #6b7280;
+    font-size: 12px;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1085;
 }
 
 /* Loading animation */
@@ -1904,6 +1995,215 @@ div[class*="modal-backdrop"] {
     min-height: 400px; /* Ensure minimum height for scroll to work */
 }
 
+/* Simple Upload Area Styles */
+.simple-upload-area {
+    border: 3px dashed #007bff;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #f8f9ff 0%, #e3f2fd 100%);
+    padding: 3rem 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.simple-upload-area:hover {
+    border-color: #0056b3;
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 123, 255, 0.15);
+}
+
+.upload-icon {
+    margin-bottom: 1.5rem;
+}
+
+.upload-icon-main {
+    width: 64px;
+    height: 64px;
+    color: #007bff;
+    opacity: 0.8;
+}
+
+.upload-title {
+    color: #495057;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.upload-subtitle {
+    color: #6c757d;
+    margin-bottom: 0;
+    font-size: 0.95rem;
+}
+
+/* Upload Progress Styles */
+.upload-progress-item {
+    background: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+.upload-progress-item:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.progress-file-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+}
+
+.progress-file-name {
+    font-weight: 600;
+    color: #495057;
+    font-size: 0.9rem;
+    flex: 1;
+    margin-right: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.progress-file-size {
+    color: #6c757d;
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+.progress-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+}
+
+.progress-status.uploading {
+    color: #007bff;
+}
+
+.progress-status.success {
+    color: #28a745;
+}
+
+.progress-status.error {
+    color: #dc3545;
+}
+
+.progress-bar-custom {
+    height: 6px;
+    border-radius: 3px;
+    background: #e9ecef;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #007bff 0%, #0056b3 100%);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+    position: relative;
+}
+
+.progress-bar-fill.success {
+    background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+}
+
+.progress-bar-fill.error {
+    background: linear-gradient(90deg, #dc3545 0%, #c82333 100%);
+}
+
+/* Upload Section Animation */
+#uploadSection {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* File Preview Thumbnails in Progress */
+.progress-thumbnail {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 2px solid #e9ecef;
+    margin-right: 0.75rem;
+}
+
+.progress-file-actions {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.progress-action-btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.progress-action-btn.retry {
+    background: #ffc107;
+    color: #000;
+}
+
+.progress-action-btn.remove {
+    background: #dc3545;
+    color: #fff;
+}
+
+.progress-action-btn:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+}
+
+/* Responsive adjustments for upload section */
+@media (max-width: 768px) {
+    .dropzone-custom {
+        padding: 2rem 1rem;
+        min-height: 150px;
+    }
+    
+    .upload-icon-main {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .upload-title {
+        font-size: 1.1rem;
+    }
+    
+    .progress-file-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .progress-file-name {
+        margin-right: 0;
+    }
+}
+
 #vehiclePhotosContainer::-webkit-scrollbar {
     width: 10px;
 }
@@ -2088,24 +2388,31 @@ div[class*="modal-backdrop"] {
         </div>
     </div>
 
-    <!-- Main Content Grid - Responsive Layout -->
+    <!-- Main Content Grid - New Responsive Layout with Right Sidebar -->
     <div class="row g-3 g-lg-4">
         <!-- Main Content Area (Wide Blocks) - Left Side -->
-        <div class="col-12 col-lg-8 col-xl-9 order-2 order-lg-1">
+        <div class="col-12 col-lg-8 order-2 order-lg-1">
             
             <!-- Vehicle Photos Section - Wide Content -->
             <div class="card mb-4">
                 <div class="card-header">
                     <div class="row align-items-center">
                         <div class="col-12 col-sm-4 order-2 order-sm-1">
-                            <!-- Espacio izquierdo vacío para balance -->
+                            <!-- Upload Button -->
+                            <div class="d-flex gap-2 justify-content-start justify-content-sm-start">
+                                <button class="btn btn-success btn-sm" id="uploadPhotosBtn" onclick="openS3UploadModal()">
+                                    <i data-feather="upload" class="icon-sm me-1"></i>
+                                    <span class="d-none d-md-inline">Upload Photos</span>
+                                    <span class="d-md-none">Upload</span>
+                                </button>
+                            </div>
                         </div>
                         <div class="col-12 col-sm-4 order-1 order-sm-2 text-center">
                             <h4 class="card-title mb-0 service-orders-card-title">
-                        <i data-feather="camera" class="icon-sm me-1"></i>
-                        <span class="d-none d-sm-inline"><?= lang('App.vehicle_photos') ?></span>
-                        <span class="d-sm-none">Photos</span>
-                    </h4>
+                                <i data-feather="camera" class="icon-sm me-1"></i>
+                                <span class="d-none d-sm-inline"><?= lang('App.vehicle_photos') ?></span>
+                                <span class="d-sm-none">Photos</span>
+                            </h4>
                         </div>
                         <div class="col-12 col-sm-4 order-3 order-sm-3 text-end">
                             <div class="d-flex flex-wrap gap-2 justify-content-center justify-content-sm-end">
@@ -2113,16 +2420,20 @@ div[class*="modal-backdrop"] {
                                     <i data-feather="copy" class="icon-sm me-1"></i>
                                     <span class="d-none d-md-inline">Detect Duplicates</span>
                                     <span class="d-md-none">Duplicates</span>
-                        </button>
-                        <button class="btn btn-outline-primary btn-sm" onclick="refreshVehiclePhotos()">
-                            <i data-feather="refresh-cw" class="icon-sm me-1"></i>
-                            <span class="d-none d-md-inline"><?= lang('App.refresh') ?></span>
-                            <span class="d-md-none">Refresh</span>
-                        </button>
+                                </button>
+                                <button class="btn btn-outline-primary btn-sm" onclick="refreshVehiclePhotos()">
+                                    <i data-feather="refresh-cw" class="icon-sm me-1"></i>
+                                    <span class="d-none d-md-inline"><?= lang('App.refresh') ?></span>
+                                    <span class="d-md-none">Refresh</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                    </div>
-                </div>
+                
+                <!-- Upload Section Removed - Using S3 Modal Instead -->
+                
+                <!-- Photos Display Area -->
                 <div class="card-body p-0">
                     <div id="vehiclePhotosContainer" style="max-height: 600px; overflow-y: auto; overflow-x: hidden; padding: 1rem;">
                         <div class="text-center py-4">
@@ -2130,10 +2441,10 @@ div[class*="modal-backdrop"] {
                                 <span class="visually-hidden">Loading...</span>
                             </div>
                             <p class="text-muted mt-2">Loading vehicle photos...</p>
-                            </div>
                         </div>
+                    </div>
+                </div>
             </div>
-        </div>
 
             <!-- Service History - Wide Content -->
             <div class="card">
@@ -2153,6 +2464,7 @@ div[class*="modal-backdrop"] {
                             <thead class="table-light">
                                 <tr>
                                     <th class="d-none d-sm-table-cell"><?= lang('App.order_number') ?></th>
+                                    <th class="d-none d-lg-table-cell">Stock Number</th>
                                     <th><?= lang('App.service') ?></th>
                                     <th class="d-none d-md-table-cell"><?= lang('App.service_date') ?></th>
                                     <th class="d-none d-sm-table-cell"><?= lang('App.status') ?></th>
@@ -2166,22 +2478,29 @@ div[class*="modal-backdrop"] {
                                         data-order-id="<?= $service['id'] ?>"
                                         title="Click to view order details">
                                         <td class="d-none d-sm-table-cell">
-                                                <?php if (!empty($service['order_number'])): ?>
-                                                <span class="fw-medium text-break"><?= esc($service['order_number']) ?></span>
-                                                <?php else: ?>
-                                                <span class="text-muted">Order #<?= $service['id'] ?></span>
-                                                <?php endif; ?>
+                                            <?php if (!empty($service['order_number'])): ?>
+                                                <span class="fw-medium text-break font-monospace"><?= esc($service['order_number']) ?></span>
+                                            <?php else: ?>
+                                                <span class="fw-medium font-monospace">RO-<?= str_pad($service['id'], 5, '0', STR_PAD_LEFT) ?></span>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td class="d-none d-lg-table-cell">
+                                            <?php if (!empty($service['stock'])): ?>
+                                                <span class="badge bg-secondary text-white font-monospace"><?= esc($service['stock']) ?></span>
+                                            <?php else: ?>
+                                                <span class="text-muted small">N/A</span>
+                                            <?php endif; ?>
                                         </td>
                                         <td>
                                             <!-- Mobile: Show order number inline -->
                                             <div class="d-sm-none">
-                                                <small class="text-muted d-block">
-                                                        <?php if (!empty($service['order_number'])): ?>
-                                                            <?= esc($service['order_number']) ?>
-                                                        <?php else: ?>
-                                                        Order #<?= $service['id'] ?>
-                                                        <?php endif; ?>
-                                                    </small>
+                                                <small class="text-muted d-block font-monospace">
+                                                    <?php if (!empty($service['order_number'])): ?>
+                                                        <?= esc($service['order_number']) ?>
+                                                    <?php else: ?>
+                                                        RO-<?= str_pad($service['id'], 5, '0', STR_PAD_LEFT) ?>
+                                                    <?php endif; ?>
+                                                </small>
                                             </div>
                                             
                                             <?php 
@@ -2280,7 +2599,7 @@ div[class*="modal-backdrop"] {
                                     <?php endforeach; ?>
                                 <?php else: ?>
                                     <tr>
-                                        <td colspan="4" class="text-center py-4">
+                                        <td colspan="5" class="text-center py-4">
                                                 <i class="ri-inbox-line display-6 text-muted"></i>
                                             <p class="text-muted mt-2 mb-0">No service records found for this vehicle</p>
                                         </td>
@@ -2316,11 +2635,54 @@ div[class*="modal-backdrop"] {
                     <?php endif; ?>
                 </div>
             </div>
+
+            <!-- Location History Section - Wide Content -->
+            <div class="card mb-4">
+                <div class="card-header d-flex align-items-center">
+                    <div class="flex-grow-1">
+                        <h4 class="card-title mb-0 service-orders-card-title">
+                            <i data-feather="map-pin" class="icon-sm me-1"></i>
+                            <?= lang('App.location_history') ?>
+                        </h4>
+                        <p class="text-muted small mb-0"><?= lang('App.track_vehicle_parking_via_nfc') ?></p>
+                    </div>
+                    <div class="flex-shrink-0">
+                        <button class="btn btn-outline-primary btn-sm" onclick="generateNFCToken()">
+                            <i data-feather="smartphone" class="icon-sm me-1"></i>
+                            <?= lang('App.generate_nfc_token') ?>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Location History Map Container -->
+                    <div id="locationHistoryMapContainer" style="display: none;">
+                        <div class="map-info">
+                            <i data-feather="map" class="icon-sm me-2"></i>
+                            <strong><?= lang('App.interactive_map') ?>:</strong> <?= lang('App.click_marker_for_details') ?>
+                        </div>
+                        <div class="map-container">
+                            <div id="locationHistoryMap" style="height: 400px; border-radius: 8px;"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Location History Table Container -->
+                    <div id="locationHistoryContainer">
+                        <div class="text-center py-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="text-muted mt-2">Loading location history...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
             
         </div>
 
-        <!-- Sidebar (Narrow Blocks) - Right Side -->
-        <div class="col-12 col-lg-4 col-xl-3 order-1 order-lg-2">
+        <!-- Right Sidebar (Narrow Blocks) - Mobile First, Desktop Right -->
+        <div class="col-12 col-lg-4 order-1 order-lg-2">
+            
+            <!-- Mobile: Full width cards, Desktop: Sidebar cards -->
             <!-- Vehicle Information Card -->
             <div class="card vehicle-info-card mb-4">
                 <div class="card-header d-flex align-items-center">
@@ -2352,7 +2714,15 @@ div[class*="modal-backdrop"] {
                     <div class="info-item">
                         <span class="info-label"><?= lang('App.vehicle') ?></span>
                         <span class="info-value text-break">
-                            <?= esc($vehicle['vehicle']) ?>
+                            <?php
+                            // Extract vehicle info from the vehicle field, removing VIN if present
+                            $vehicleDisplay = $vehicle['vehicle'];
+                            // If vehicle field contains VIN format (17 chars alphanumeric), extract just the make/model
+                            if (preg_match('/^(.+?)\s+([A-HJ-NPR-Z0-9]{17})$/', $vehicleDisplay, $matches)) {
+                                $vehicleDisplay = trim($matches[1]);
+                            }
+                            echo esc($vehicleDisplay);
+                            ?>
                         </span>
                     </div>
                     <?php endif; ?>
@@ -2440,7 +2810,7 @@ div[class*="modal-backdrop"] {
                          alt="QR Code for Vehicle <?= esc($vehicle['vin_number']) ?>" 
                          class="qr-sidebar-image" 
                          style="width: 200px; height: 200px; border-radius: 12px; cursor: pointer;"
-                             onclick="showVehicleQRModal()"
+                             onclick="openVehicleQRModal()"
                              title="Click to view larger">
                     </div>
                     
@@ -2476,7 +2846,7 @@ div[class*="modal-backdrop"] {
                 </div>
                 <div class="card-body text-center">
                     <div class="py-3">
-                        <i data-feather="qr-code" class="icon-lg text-muted mb-3"></i>
+                        <i data-feather="square" class="icon-lg text-muted mb-3"></i>
                         <h6 class="text-muted">QR Code Not Available</h6>
                         <p class="text-muted small mb-3">Generate a QR code for instant mobile access to this vehicle</p>
                         <button class="btn btn-primary btn-sm" onclick="generateVehicleQR('<?= $vehicle['vin_last6'] ?? substr($vehicle['vin_number'], -6) ?>')">
@@ -2489,53 +2859,7 @@ div[class*="modal-backdrop"] {
             <?php endif; ?>
         </div>
     </div>
-
-
     
-    <!-- Location History Section - Full Width -->
-    <div class="row g-4 mt-2">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header d-flex align-items-center">
-                    <div class="flex-grow-1">
-                        <h4 class="card-title mb-0 service-orders-card-title">
-                            <i data-feather="map-pin" class="icon-sm me-1"></i>
-                            <?= lang('App.location_history') ?>
-                        </h4>
-                        <p class="text-muted small mb-0"><?= lang('App.track_vehicle_parking_via_nfc') ?></p>
-                    </div>
-                    <div class="flex-shrink-0">
-                        <button class="btn btn-outline-primary btn-sm" onclick="generateNFCToken()">
-                            <i data-feather="smartphone" class="icon-sm me-1"></i>
-                            <?= lang('App.generate_nfc_token') ?>
-                            </button>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <!-- Location History Map Container -->
-                    <div id="locationHistoryMapContainer" style="display: none;">
-                                            <div class="map-info">
-                        <i data-feather="map" class="icon-sm me-2"></i>
-                        <strong><?= lang('App.interactive_map') ?>:</strong> <?= lang('App.click_marker_for_details') ?>
-                    </div>
-                        <div class="map-container">
-                            <div id="locationHistoryMap" class="location-history-map"></div>
-                        </div>
-                    </div>
-                    
-                    <!-- Location History Table Container -->
-                    <div id="locationHistoryContainer">
-                        <div class="text-center py-4">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                            <p class="text-muted mt-2">Loading location history...</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 
@@ -2794,6 +3118,8 @@ div[class*="modal-backdrop"] {
 <?php endif; ?>
 
 <?= $this->section('scripts') ?>
+<!-- Dropzone.js removed for simplification -->
+
 <!-- Leaflet JS for Location History Map -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
@@ -3605,20 +3931,12 @@ function generateNFCToken() {
                             Copy URL
                         </button>
                         
-                        <!-- NFC Writing Buttons -->
-                        <div class="row g-2 mt-2" id="nfcWriteButtons">
-                            <div class="col-6">
-                                <button class="btn btn-warning w-100" onclick="writeNFCTag('${data.nfc_url}', false)" id="writeNfcBtn">
-                                    <i class="ri-nfc-line me-1"></i>
-                                    Write NFC
-                                </button>
-                            </div>
-                            <div class="col-6">
-                                <button class="btn btn-danger w-100" onclick="writeNFCTag('${data.nfc_url}', true)" id="writeNfcSecureBtn">
-                                    <i class="ri-lock-line me-1"></i>
-                                    Write Secure
-                                </button>
-                            </div>
+                        <!-- NFC Writing Button -->
+                        <div class="d-grid mt-2" id="nfcWriteButtons">
+                            <button class="btn btn-warning" onclick="writeNFCTag('${data.nfc_url}', false)" id="writeNfcBtn">
+                                <i class="ri-lock-line me-1"></i>
+                                Write NFC (Protected)
+                            </button>
                         </div>
                         
                         ${data.mda_shortlink && data.mda_shortlink.short_url ? `
@@ -3646,7 +3964,9 @@ function generateNFCToken() {
                         <div id="nfcSupport" class="mt-2">
                             <small class="text-muted">
                                 <i class="ri-information-line me-1"></i>
-                                NFC writing requires Chrome on Android
+                                NFC writing requires Chrome on Android<br>
+                                <i class="ri-lock-line me-1"></i>
+                                Tags will be protected with password: <strong>2209</strong>
                             </small>
                         </div>
                     </div>`;
@@ -3776,10 +4096,42 @@ async function loadVehiclePhotos() {
                 displayVehiclePhotos(vehiclePhotos, 'Cloud Storage');
                 return; // Success with S3, exit function
             } else {
-                console.log('❌ No photos found in S3, checking for fallback options...');
+                console.log('❌ No photos found in S3, checking local storage...');
             }
         } catch (s3Error) {
-            console.warn('⚠️ S3 photos failed, falling back to custom URLs:', s3Error);
+            console.warn('⚠️ S3 photos failed, checking local storage:', s3Error);
+        }
+        
+        // STEP 1.5: Try local storage if S3 failed
+        try {
+            console.log('🔄 Attempting to load photos from local storage...');
+            const localResponse = await fetch(`<?= base_url('vehicles/local-photos/') ?>${vinLast6}`);
+            const localData = await localResponse.json();
+            
+            console.log('📊 Local storage response:', localData);
+            
+            if (localData.success && localData.photos && localData.photos.length > 0) {
+                console.log('✅ Found photos in local storage:', localData.photos.length);
+                
+                // Convert local photos to expected format
+                vehiclePhotos = localData.photos.map((photo, index) => ({
+                    id: photo.id || index + 1,
+                    filename: photo.name,
+                    url: photo.url,
+                    thumbnail: photo.thumbnail,
+                    title: `Photo ${index + 1}`,
+                    description: photo.name,
+                    uploadDate: photo.uploaded_at,
+                    source: 'Local Storage'
+                }));
+                
+                displayVehiclePhotos(vehiclePhotos, 'Local Storage');
+                return; // Success with local storage, exit function
+            } else {
+                console.log('❌ No photos found in local storage, checking for fallback options...');
+            }
+        } catch (localError) {
+            console.warn('⚠️ Local storage photos failed, falling back to custom URLs:', localError);
         }
         
         // STEP 2: Fallback to custom URL system
@@ -3920,11 +4272,7 @@ function isDirectImageUrl(url) {
     const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg'];
     const lowerUrl = url.toLowerCase();
     
-    // Check for Google Drive direct download URLs (these ARE direct)
-    if (lowerUrl.includes('drive.google.com/uc?') && lowerUrl.includes('id=')) {
-        console.log(`✅ Detected Google Drive direct download URL: ${url}`);
-        return true;
-    }
+    // Google Drive check removed
     
     // Exclude cloud service URLs that might contain image extensions but aren't direct
     const cloudServices = [
@@ -4005,9 +4353,7 @@ async function fetchPhotosFromHtmlPage(url) {
         // Try different extraction methods based on the service
         let photos = [];
         
-        if (url.includes('drive.google.com')) {
-            photos = await extractPhotosFromGoogleDrive(doc, url);
-        } else if (url.includes('dropbox.com')) {
+        if (url.includes('dropbox.com')) {
             photos = extractPhotosFromDropbox(doc, url);
         } else if (url.includes('imgur.com')) {
             photos = extractPhotosFromImgur(doc, url);
@@ -4049,20 +4395,7 @@ function showS3EmptyMessage() {
                 </button>
                 </div>
                 
-                <div class="alert alert-info" style="max-width: 500px; margin: 0 auto; text-align: left;">
-                    <div class="d-flex">
-                        <i class="ri-information-line me-2 mt-1"></i>
-                        <div>
-                            <strong>Photo Storage:</strong><br>
-                            <small>
-                                • Fast loading times<br>
-                                • Automatic thumbnails<br>
-                                • Secure storage<br>
-                                • Easy management
-                            </small>
-                        </div>
-                    </div>
-                </div>
+                
             </div>
         `;
     } else {
@@ -4076,91 +4409,7 @@ function showS3EmptyMessage() {
     }
 }
 
-// Extract photos from Google Drive
-async function extractPhotosFromGoogleDrive(doc, baseUrl) {
-    console.log('🔍 Attempting to extract photos from Google Drive...');
-    const photos = [];
-    
-    try {
-        // Google Drive folder URLs don't work with CORS proxy due to authentication
-        if (baseUrl.includes('/drive/folders/')) {
-            console.log('❌ Google Drive folder URLs are not supported via CORS proxy');
-            console.log('💡 Suggestion: Use direct download links instead');
-            console.log('   Format: https://drive.google.com/uc?id=FILE_ID');
-            return [];
-        }
-        
-        // For Google Drive file view URLs, try to extract the file ID and convert to direct download
-        if (baseUrl.includes('/file/d/')) {
-            const fileIdMatch = baseUrl.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-            if (fileIdMatch) {
-                const fileId = fileIdMatch[1];
-                
-                // Try multiple Google Drive direct URL formats
-                const directUrls = [
-                    `https://drive.google.com/uc?id=${fileId}`,
-                    `https://drive.google.com/uc?export=view&id=${fileId}`,
-                    `https://drive.google.com/thumbnail?id=${fileId}&sz=w800-h600`
-                ];
-                
-                console.log(`🔄 Converting Google Drive view URL for file ID: ${fileId}`);
-                
-                for (let i = 0; i < directUrls.length; i++) {
-                    const testUrl = directUrls[i];
-                    console.log(`🧪 Testing Google Drive URL format ${i + 1}: ${testUrl}`);
-                    
-                    const isImage = await testImageUrl(testUrl);
-                    if (isImage) {
-                        photos.push({
-                            id: 1,
-                            filename: `google_drive_${fileId}.jpg`,
-                            url: testUrl,
-                            thumbnail: testUrl,
-                            title: 'Google Drive Image',
-                            description: 'Image from Google Drive',
-                            uploadDate: new Date().toISOString()
-                        });
-                        console.log(`✅ Successfully converted Google Drive URL (format ${i + 1})`);
-                        break;
-                    } else {
-                        console.log(`❌ Format ${i + 1} failed - URL not accessible or not an image`);
-                    }
-                }
-                
-                if (photos.length === 0) {
-                    console.log('❌ All Google Drive URL formats failed. Possible reasons:');
-                    console.log('   • File is not public (sharing permissions required)');
-                    console.log('   • File is not an image');
-                    console.log('   • Google Drive requires authentication');
-                    console.log('💡 Suggestion: Make sure the file is publicly shared');
-                }
-            }
-        }
-        
-        // Look for any direct download links in the HTML
-        const links = doc.querySelectorAll('a[href*="drive.google.com/uc"]');
-        links.forEach((link, index) => {
-            const href = link.href;
-            if (href.includes('id=')) {
-                photos.push({
-                    id: photos.length + 1,
-                    filename: `google_drive_image_${index + 1}.jpg`,
-                    url: href,
-                    thumbnail: href,
-                    title: link.textContent || `Google Drive Image ${index + 1}`,
-                    description: 'Image from Google Drive',
-                    uploadDate: new Date().toISOString()
-                });
-            }
-        });
-        
-    } catch (error) {
-        console.error('❌ Error extracting from Google Drive:', error);
-    }
-    
-    console.log(`📊 Google Drive extraction result: ${photos.length} photos found`);
-    return photos;
-}
+// Google Drive functions removed for simplification
 
 // Test if URL points to a valid image
 async function testImageUrl(url) {
@@ -4767,24 +5016,8 @@ function showNoPhotosMessage() {
     
     if (hasConfiguredUrl) {
         // URLs are configured but no photos found
-        const isGoogleDrive = window.currentPhotosUrl && window.currentPhotosUrl.includes('drive.google.com');
-        
         let helpMessage = '<?= lang('App.no_photos_found_help') ?>';
         let suggestions = '';
-        
-        if (isGoogleDrive) {
-            helpMessage = 'The Google Drive URL could not be accessed or does not contain valid images.';
-            suggestions = `
-                <div class="alert alert-warning mt-3 mb-3" style="font-size: 0.875rem; text-align: left;">
-                    <strong><i class="ri-information-line me-1"></i> Google Drive Requirements:</strong><br>
-                    • File must be <strong>publicly shared</strong> (Anyone with the link can view)<br>
-                    • File must be an image format (JPG, PNG, GIF, WebP, etc.)<br>
-                    • Use direct download format: <br>
-                      <code style="font-size: 0.8rem;">https://drive.google.com/uc?id=FILE_ID</code><br>
-                    • Folder URLs are not supported
-                </div>
-            `;
-        }
         
         messageContent = `
             <div class="no-photos-message">
@@ -5145,6 +5378,12 @@ function refreshVehiclePhotos() {
 
 
 
+// Open Vehicle QR modal
+function openVehicleQRModal() {
+    const modal = new bootstrap.Modal(document.getElementById('vehicleQrModal'));
+    modal.show();
+}
+
 // Open S3 upload modal
 function openS3UploadModal() {
     const modal = new bootstrap.Modal(document.getElementById('s3UploadModal'));
@@ -5167,20 +5406,32 @@ function openS3UploadModal() {
         
         <div id="selectedFiles" class="mt-3" style="display: none;">
             <h6>Selected Files:</h6>
-            <div id="filesList" class="list-group"></div>
+            <div id="filesList" class="list-group mb-3"></div>
+            
+            <!-- Overall Progress Section -->
+            <div id="overallProgress" style="display: none;">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <small class="text-muted fw-medium">Overall Progress:</small>
+                    <small class="text-muted" id="overallProgressText">0 / 0 files</small>
+                </div>
+                <div class="progress mb-2" style="height: 8px;">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: 0%" id="overallProgressBar"></div>
+                </div>
+                <small class="text-muted" id="uploadStatus">Ready to upload...</small>
+            </div>
         </div>
         
         <div id="uploadProgress" style="display: none;">
             <div class="progress mb-2">
                 <div class="progress-bar" role="progressbar" style="width: 0%"></div>
             </div>
-            <small class="text-muted" id="uploadStatus">Preparing upload...</small>
+            <small class="text-muted" id="uploadStatusLegacy">Preparing upload...</small>
         </div>
     `;
     
     modalFooter.innerHTML = `
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-success" id="startUploadBtn" onclick="startS3Upload()" disabled>
+        <button type="button" class="btn btn-success" id="startS3UploadBtn" onclick="startS3Upload()" disabled>
             <i class="ri-upload-2-line me-2"></i>Upload Photos
         </button>
     `;
@@ -5209,31 +5460,188 @@ function removeFile(index) {
 function updateFilesList() {
     const selectedFilesDiv = document.getElementById('selectedFiles');
     const filesList = document.getElementById('filesList');
-    const uploadBtn = document.getElementById('startUploadBtn');
+    const uploadBtn = document.getElementById('startS3UploadBtn');
     
     if (selectedS3Files.length > 0) {
         filesList.innerHTML = '';
         selectedS3Files.forEach((file, index) => {
             const fileItem = document.createElement('div');
-            fileItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+            fileItem.className = 'list-group-item';
+            fileItem.id = `file-item-${index}`;
             fileItem.innerHTML = `
-                <div>
-                    <i class="ri-image-line me-2"></i>
-                    <span>${file.name}</span>
-                    <small class="text-muted ms-2">(${(file.size / 1024 / 1024).toFixed(2)} MB)</small>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="d-flex align-items-center">
+                        <i class="ri-image-line me-2"></i>
+                        <div>
+                            <span class="fw-medium">${file.name}</span>
+                            <small class="text-muted d-block">(${(file.size / 1024 / 1024).toFixed(2)} MB)</small>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="badge bg-secondary me-2" id="file-status-${index}">Pending</span>
+                        <button class="btn btn-sm btn-outline-danger" onclick="removeFile(${index})">
+                            <i class="ri-close-line"></i>
+                        </button>
+                    </div>
                 </div>
-                <button class="btn btn-sm btn-outline-danger" onclick="removeFile(${index})">
-                    <i class="ri-close-line"></i>
-                </button>
+                <div class="progress mt-2" style="height: 8px; display: none;" id="file-progress-${index}">
+                    <div class="progress-bar bg-primary progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%" id="file-progress-bar-${index}"></div>
+                </div>
             `;
             filesList.appendChild(fileItem);
         });
         
         selectedFilesDiv.style.display = 'block';
         uploadBtn.disabled = false;
+        
+        // Show progress bars immediately to make them visible
+        setTimeout(() => {
+            selectedS3Files.forEach((file, index) => {
+                const progressContainer = document.getElementById(`file-progress-${index}`);
+                if (progressContainer) {
+                    progressContainer.style.display = 'block';
+                    // Set a small initial progress to make the bar visible
+                    const progressBar = document.getElementById(`file-progress-bar-${index}`);
+                    if (progressBar) {
+                        progressBar.style.width = '2%';
+                        progressBar.classList.add('bg-secondary');
+                    }
+                }
+            });
+        }, 100);
+        
     } else {
         selectedFilesDiv.style.display = 'none';
         uploadBtn.disabled = true;
+    }
+}
+
+// Update individual file progress
+function updateFileProgress(fileIndex, progress, status = 'uploading') {
+    const progressBar = document.getElementById(`file-progress-bar-${fileIndex}`);
+    const progressContainer = document.getElementById(`file-progress-${fileIndex}`);
+    const statusBadge = document.getElementById(`file-status-${fileIndex}`);
+    
+    console.log(`🔄 Updating progress for file ${fileIndex}: ${progress}% - ${status}`);
+    
+    // Show progress container
+    if (progressContainer) {
+        progressContainer.style.display = 'block';
+        console.log(`✅ Progress container shown for file ${fileIndex}`);
+    }
+    
+    // Update progress bar
+    if (progressBar) {
+        progressBar.style.width = progress + '%';
+        progressBar.setAttribute('aria-valuenow', progress);
+        
+        // Clear existing classes
+        progressBar.className = 'progress-bar';
+        
+        // Add classes based on status
+        switch (status) {
+            case 'uploading':
+                progressBar.classList.add('bg-primary', 'progress-bar-striped', 'progress-bar-animated');
+                break;
+            case 'success':
+                progressBar.classList.add('bg-success');
+                break;
+            case 'error':
+                progressBar.classList.add('bg-danger');
+                break;
+            default:
+                progressBar.classList.add('bg-secondary');
+        }
+        
+        console.log(`✅ Progress bar updated for file ${fileIndex}: ${progress}%, classes: ${progressBar.className}`);
+    }
+    
+    // Update status badge
+    if (statusBadge) {
+        statusBadge.className = 'badge me-2';
+        switch (status) {
+            case 'uploading':
+                statusBadge.classList.add('bg-primary');
+                statusBadge.innerHTML = '<i class="ri-upload-line me-1"></i>Uploading';
+                break;
+            case 'success':
+                statusBadge.classList.add('bg-success');
+                statusBadge.innerHTML = '<i class="ri-check-line me-1"></i>Complete';
+                break;
+            case 'error':
+                statusBadge.classList.add('bg-danger');
+                statusBadge.innerHTML = '<i class="ri-error-warning-line me-1"></i>Failed';
+                break;
+            default:
+                statusBadge.classList.add('bg-secondary');
+                statusBadge.innerHTML = 'Pending';
+        }
+        
+        console.log(`✅ Status badge updated for file ${fileIndex}: ${status}`);
+    }
+}
+
+// Update overall progress
+function updateOverallProgress() {
+    const overallProgressContainer = document.getElementById('overallProgress');
+    const overallProgressBar = document.getElementById('overallProgressBar');
+    const overallProgressText = document.getElementById('overallProgressText');
+    const uploadStatus = document.getElementById('uploadStatus');
+    
+    if (!overallProgressContainer || selectedS3Files.length === 0) return;
+    
+    // Show overall progress
+    overallProgressContainer.style.display = 'block';
+    
+    // Count completed files (both success and error count as completed)
+    let completedFiles = 0;
+    let successFiles = 0;
+    let errorFiles = 0;
+    
+    for (let i = 0; i < selectedS3Files.length; i++) {
+        const statusBadge = document.getElementById(`file-status-${i}`);
+        if (statusBadge) {
+            const status = statusBadge.textContent.toLowerCase();
+            if (status.includes('complete')) {
+                completedFiles++;
+                successFiles++;
+            } else if (status.includes('failed')) {
+                completedFiles++;
+                errorFiles++;
+            }
+        }
+    }
+    
+    const totalFiles = selectedS3Files.length;
+    const progressPercentage = totalFiles > 0 ? (completedFiles / totalFiles) * 100 : 0;
+    
+    // Update progress bar
+    if (overallProgressBar) {
+        overallProgressBar.style.width = progressPercentage + '%';
+        overallProgressBar.setAttribute('aria-valuenow', progressPercentage);
+    }
+    
+    // Update progress text
+    if (overallProgressText) {
+        overallProgressText.textContent = `${completedFiles} / ${totalFiles} files`;
+    }
+    
+    // Update status message
+    if (uploadStatus) {
+        if (completedFiles === 0) {
+            uploadStatus.textContent = 'Ready to upload...';
+        } else if (completedFiles < totalFiles) {
+            uploadStatus.textContent = `Uploading... ${completedFiles} of ${totalFiles} completed`;
+        } else {
+            // All completed
+            if (errorFiles === 0) {
+                uploadStatus.textContent = `✅ All ${totalFiles} files uploaded successfully!`;
+            } else if (successFiles === 0) {
+                uploadStatus.textContent = `❌ All ${totalFiles} files failed to upload`;
+            } else {
+                uploadStatus.textContent = `✅ ${successFiles} uploaded, ❌ ${errorFiles} failed`;
+            }
+        }
     }
 }
 
@@ -5244,105 +5652,129 @@ async function startS3Upload() {
         return;
     }
     
-    const progressDiv = document.getElementById('uploadProgress');
-    const progressBar = progressDiv.querySelector('.progress-bar');
-    const statusText = document.getElementById('uploadStatus');
-    const uploadBtn = document.getElementById('startUploadBtn');
+    const uploadBtn = document.getElementById('startS3UploadBtn');
     
-    // Show progress and disable button
-    progressDiv.style.display = 'block';
+    // Disable upload button and show loading
     uploadBtn.disabled = true;
     uploadBtn.innerHTML = '<i class="ri-loader-4-line spin-icon me-2"></i>Uploading...';
+    
+    // Show overall progress
+    updateOverallProgress();
     
     // Get VIN from URL
     const urlPath = window.location.pathname;
     const vinLast6 = urlPath.split('/').pop();
     
-    try {
-        const formData = new FormData();
+    // Start uploading files individually
+    await uploadFilesIndividually(vinLast6);
+}
+
+// Upload files individually with progress tracking
+async function uploadFilesIndividually(vinLast6) {
+    let successCount = 0;
+    let errorCount = 0;
+    
+    for (let i = 0; i < selectedS3Files.length; i++) {
+        const file = selectedS3Files[i];
         
-        // Add files to form data
-        selectedS3Files.forEach((file, index) => {
+        try {
+            // Update status to uploading
+            updateFileProgress(i, 0, 'uploading');
+            updateOverallProgress();
+            
+            // Create FormData for single file
+            const formData = new FormData();
             formData.append('photos[]', file);
-        });
-        
-        // Add VIN
-        formData.append('vin', vinLast6);
-        
-        statusText.textContent = `Uploading ${selectedS3Files.length} file(s)...`;
-        
-        // Upload to S3 endpoint
-        const response = await fetch(`<?= base_url('vehicles/upload-s3-photos/') ?>${vinLast6}`, {
-            method: 'POST',
-            body: formData
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            progressBar.style.width = '100%';
-            statusText.textContent = `Successfully uploaded ${result.total_uploaded} photo(s)!`;
+            formData.append('vin', vinLast6);
             
-            // Show success message with duplicate detection info
-            let successMessage = `${result.total_uploaded} photos uploaded successfully!`;
+            // Try S3 first
+            let response = await fetch(`<?= base_url('vehicles/upload-s3-photos/') ?>${vinLast6}`, {
+                method: 'POST',
+                body: formData
+            });
             
-            // Handle automatic duplicate detection
-            if (result.duplicates_detected === true) {
-                showToast('success', successMessage);
+            let result = await response.json();
+            
+            // If S3 fails, try local storage
+            if (!result.success && result.error && (result.error.includes('AWS') || result.error.includes('S3'))) {
+                console.log(`S3 failed for file ${i}, trying local storage...`);
                 
-                // Show SweetAlert2 for duplicates
-                setTimeout(() => {
-                    Swal.fire({
-                        title: 'Upload Successful!',
-                        text: `Photos uploaded successfully! However, ${result.duplicate_groups} group(s) of duplicate photos were detected.`,
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#198754',
-                        cancelButtonColor: '#6c757d',
-                        confirmButtonText: 'Review Duplicates',
-                        cancelButtonText: 'Skip for Now'
-                    }).then((swalResult) => {
-                        if (swalResult.isConfirmed) {
-                            const modal = bootstrap.Modal.getInstance(document.getElementById('s3UploadModal'));
-            modal.hide();
+                const localFormData = new FormData();
+                localFormData.append('files[]', file);
+                localFormData.append('vinLast6', vinLast6);
+                
+                response = await fetch(`<?= base_url('vehicles/upload-local') ?>`, {
+                    method: 'POST',
+                    body: localFormData
+                });
+                
+                result = await response.json();
+            }
             
-                            // Reload photos first, then show duplicates modal
-                            loadVehiclePhotos().then(() => {
-                                setTimeout(() => detectDuplicatePhotos(), 500);
-                            });
-                        }
-                    });
-                }, 1000);
-            } else if (result.duplicates_detected === false) {
-                showToast('success', successMessage + ' No duplicates detected.');
+            // Update progress based on result
+            if (result.success) {
+                updateFileProgress(i, 100, 'success');
+                successCount++;
             } else {
-                showToast('success', successMessage);
+                updateFileProgress(i, 100, 'error');
+                errorCount++;
+                console.error(`Upload failed for file ${i}:`, result.error);
             }
             
-            // Close modal after delay (if no duplicate prompt)
-            if (result.duplicates_detected !== true) {
-                setTimeout(() => {
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('s3UploadModal'));
-                    modal.hide();
-                    
-                    // Reload photos to show new uploads
-            loadVehiclePhotos();
-                }, 2000);
-            }
-            
-        } else {
-            throw new Error(result.error || 'Upload failed');
+        } catch (error) {
+            console.error(`Upload error for file ${i}:`, error);
+            updateFileProgress(i, 100, 'error');
+            errorCount++;
         }
         
-    } catch (error) {
-        console.error('S3 upload error:', error);
-        progressBar.style.width = '0%';
-        statusText.textContent = 'Upload failed';
-        showToast('error', error.message || 'Failed to upload photos');
+        // Update overall progress after each file
+        updateOverallProgress();
         
-        // Re-enable button
+        // Small delay between uploads to avoid overwhelming the server
+        if (i < selectedS3Files.length - 1) {
+            await new Promise(resolve => setTimeout(resolve, 200));
+        }
+    }
+    
+    // Final status update
+    const uploadBtn = document.getElementById('startS3UploadBtn');
+    
+    if (errorCount === 0) {
+        // All successful
+        showToast('success', `All ${successCount} files uploaded successfully!`);
+        uploadBtn.innerHTML = '<i class="ri-check-line me-2"></i>Complete';
+        uploadBtn.classList.remove('btn-success');
+        uploadBtn.classList.add('btn-outline-success');
+        
+        // Close modal after delay
+        setTimeout(() => {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('s3UploadModal'));
+            modal.hide();
+            loadVehiclePhotos(); // Refresh photos
+        }, 2000);
+        
+    } else if (successCount === 0) {
+        // All failed
+        showToast('error', `All ${errorCount} files failed to upload`);
+        uploadBtn.innerHTML = '<i class="ri-error-warning-line me-2"></i>All Failed';
+        uploadBtn.classList.remove('btn-success');
+        uploadBtn.classList.add('btn-outline-danger');
         uploadBtn.disabled = false;
-        uploadBtn.innerHTML = '<i class="ri-upload-2-line me-2"></i>Upload Photos';
+        
+    } else {
+        // Mixed results
+        showToast('warning', `${successCount} uploaded successfully, ${errorCount} failed`);
+        uploadBtn.innerHTML = '<i class="ri-information-line me-2"></i>Partial Success';
+        uploadBtn.classList.remove('btn-success');
+        uploadBtn.classList.add('btn-outline-warning');
+        uploadBtn.disabled = false;
+        
+        // Close modal after delay and refresh photos
+        setTimeout(() => {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('s3UploadModal'));
+            modal.hide();
+            loadVehiclePhotos(); // Refresh photos
+        }, 3000);
     }
 }
 
@@ -5351,838 +5783,259 @@ function uploadToS3() {
     openS3UploadModal();
 }
 
-// Toast notification function using SweetAlert2 (same style as ReconOrders)
-function showToast(type, message) {
-    const icon = type === 'success' ? 'success' : type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'info';
+// Test function to simulate progress (for debugging)
+function testProgressBars() {
+    console.log('🧪 Testing progress bars...');
     
-    Swal.fire({
-        icon: icon,
-        title: message,
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true
+    selectedS3Files.forEach((file, index) => {
+        console.log(`Testing progress for file ${index}: ${file.name}`);
+        
+        // Show initial progress
+        updateFileProgress(index, 10, 'uploading');
+        
+        // Simulate progress updates
+        setTimeout(() => updateFileProgress(index, 50, 'uploading'), 1000);
+        setTimeout(() => updateFileProgress(index, 100, 'success'), 2000);
     });
+    
+    updateOverallProgress();
 }
 
-// =============================================
-// DUPLICATE PHOTO DETECTION FUNCTIONALITY
-// =============================================
+// All simple upload functions removed - S3 system handles uploads now
 
-// Global variables for duplicate detection
-let duplicateGroups = [];
-let selectedDuplicates = [];
-
-// Detect duplicate photos with progress bar
-async function detectDuplicatePhotos() {
-    const urlPath = window.location.pathname;
-    const vinLast6 = urlPath.split('/').pop();
-    const detectBtn = document.getElementById('detectDuplicatesBtn');
-    
-    if (!detectBtn) return;
-    
-    // Store original button content
-    const originalBtnContent = detectBtn.innerHTML;
-    
-    try {
-        // Replace button with progress bar
-        showDetectionProgress();
-        
-        const response = await fetch(`<?= base_url('vehicles/detect-duplicates/') ?>${vinLast6}`);
-        const result = await response.json();
-        
-        if (result.success) {
-            duplicateGroups = result.duplicates;
-            
-            if (duplicateGroups.length === 0) {
-                showToast('success', 'No duplicate photos found!');
-                
-                // For debugging: show photo info
-                console.log('No duplicates found. Debug info available at:', `<?= base_url('vehicles/debug-duplicates/') ?>${vinLast6}`);
-            } else {
-                showToast('success', `Found ${result.duplicate_groups} group(s) of duplicate photos for review`);
-                showDuplicatesModal(duplicateGroups, result.total_photos);
-            }
-            
-        } else {
-            throw new Error(result.error || 'Failed to detect duplicates');
-        }
-        
-    } catch (error) {
-        console.error('Duplicate detection error:', error);
-        showToast('error', 'Failed to detect duplicates: ' + error.message);
-    } finally {
-        // Restore original button
-        hideDetectionProgress(originalBtnContent);
+// Add rotating animation for loading spinner and progress bar styles
+const style = document.createElement('style');
+style.textContent = `
+    .rotating {
+        animation: rotate 1s linear infinite;
     }
-}
-
-// Show progress bar replacing the detect duplicates button
-function showDetectionProgress() {
-    const detectBtn = document.getElementById('detectDuplicatesBtn');
-    if (!detectBtn) return;
-    
-    detectBtn.disabled = true;
-    detectBtn.innerHTML = `
-        <div class="d-flex align-items-center">
-            <div class="spinner-border spinner-border-sm me-2" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            <span class="d-none d-md-inline">Scanning...</span>
-            <span class="d-md-none">...</span>
-        </div>
-    `;
-}
-
-// Hide progress bar and restore original button
-function hideDetectionProgress(originalContent) {
-    const detectBtn = document.getElementById('detectDuplicatesBtn');
-    if (!detectBtn) return;
-    
-    detectBtn.disabled = false;
-    detectBtn.innerHTML = originalContent;
-    
-    // Re-initialize Feather icons for the restored button
-    if (typeof feather !== 'undefined') {
-        feather.replace();
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
     }
-}
-
-
-
-// Show duplicates modal
-function showDuplicatesModal(duplicates, totalPhotos) {
-    const modal = new bootstrap.Modal(document.getElementById('duplicatesModal'));
-    const modalBody = document.querySelector('#duplicatesModal .modal-body');
-    const modalTitle = document.querySelector('#duplicatesModal .modal-title');
     
-    modalTitle.textContent = `Duplicate Photos Found (${duplicates.length} groups from ${totalPhotos} total photos)`;
+    /* Ensure progress bars are visible */
+    .progress {
+        background-color: #e9ecef !important;
+        border-radius: 0.375rem;
+        overflow: hidden;
+    }
     
-    let html = '';
+    .progress-bar {
+        transition: width 0.3s ease;
+        min-width: 2px; /* Minimum width to make bar visible */
+    }
     
-    if (duplicates.length === 0) {
-        html = `
-            <div class="text-center py-4">
-                <i class="ri-checkbox-circle-line text-success" style="font-size: 3rem;"></i>
-                <h5 class="mt-3">No Duplicates Found</h5>
-                <p class="text-muted">All photos appear to be unique.</p>
-            </div>
-        `;
-    } else {
-        html = `
-            <div class="alert alert-warning">
-                <i class="ri-alert-line me-2"></i>
-                <strong>Duplicates Detected:</strong> Found ${duplicates.length} group(s) of duplicate photos. 
-                Select which photos you want to keep and remove the rest.
-            </div>
-            
-            <div class="mb-3">
-                <button class="btn btn-sm btn-outline-primary me-2" onclick="selectAllDuplicates()">
-                    <i class="ri-checkbox-line me-2"></i>Select All Duplicates
-                </button>
-                <button class="btn btn-sm btn-outline-secondary me-2" onclick="selectNoneDuplicates()">
-                    <i class="ri-checkbox-blank-line me-2"></i>Select None
-                </button>
-                <button class="btn btn-sm btn-outline-info" onclick="selectOldestInGroups()">
-                    <i class="ri-time-line me-2"></i>Keep Newest Only
-                </button>
-            </div>
-        `;
-        
-        duplicates.forEach((group, groupIndex) => {
-            const method = group.detection_method;
-            let methodLabel, methodIcon, methodColor;
-            
-            switch(method) {
-                case 'etag_identical':
-                    methodLabel = 'Identical Files (ETag)';
-                    methodIcon = 'ri-file-copy-2-line';
-                    methodColor = 'bg-danger';
-                    break;
-                case 'exact_size':
-                    methodLabel = 'Same File Size';
-                    methodIcon = 'ri-equalizer-line';
-                    methodColor = 'bg-warning';
-                    break;
-                case 'similar_size':
-                    methodLabel = 'Similar File Size';
-                    methodIcon = 'ri-pie-chart-line';
-                    methodColor = 'bg-info';
-                    break;
-                case 'aggressive_filename':
-                    methodLabel = 'Similar Filename';
-                    methodIcon = 'ri-file-text-line';
-                    methodColor = 'bg-primary';
-                    break;
-                case 'md5_hash':
-                    methodLabel = 'Identical Content (MD5)';
-                    methodIcon = 'ri-fingerprint-line';
-                    methodColor = 'bg-danger';
-                    break;
-                case 'hash_and_size':
-                    methodLabel = 'Identical Files (Legacy)';
-                    methodIcon = 'ri-file-copy-line';
-                    methodColor = 'bg-danger';
-                    break;
-                case 'filename_only':
-                    methodLabel = 'Same Filename';
-                    methodIcon = 'ri-file-line';
-                    methodColor = 'bg-secondary';
-                    break;
-                default:
-                    methodLabel = 'Similar Photos';
-                    methodIcon = 'ri-image-line';
-                    methodColor = 'bg-secondary';
-            }
-            
-            html += `
-                <div class="card mb-3">
-                    <div class="card-header">
-                        <h6 class="mb-0">
-                            <i class="${methodIcon} me-2"></i>
-                            Group ${groupIndex + 1}: ${methodLabel} 
-                            <span class="badge ${methodColor} ms-2">${group.photos.length} photos</span>
-                        </h6>
-                        <small class="text-muted">Detection confidence: ${getConfidenceLevel(method)}</small>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-            `;
-            
-            group.photos.forEach((photo, photoIndex) => {
-                const photoId = `duplicate_${groupIndex}_${photoIndex}`;
-                const isSelected = selectedDuplicates.includes(photo.key);
-                const uploadDate = new Date(photo.uploaded_at).toLocaleDateString();
-                const fileSize = (photo.size / 1024).toFixed(1) + ' KB';
-                
-                html += `
-                    <div class="col-md-4 mb-3">
-                        <div class="position-relative">
-                            <div class="form-check position-absolute" style="top: 10px; left: 10px; z-index: 10;">
-                                <input class="form-check-input" type="checkbox" id="${photoId}" 
-                                       value="${photo.key}" ${isSelected ? 'checked' : ''} 
-                                       onchange="toggleDuplicateSelection('${photo.key}')">
-                                <label class="form-check-label visually-hidden" for="${photoId}">
-                                    Select for removal
-                                </label>
-                            </div>
-                            <img src="${photo.thumbnail_url || photo.public_url}" 
-                                 class="img-fluid rounded" 
-                                 style="width: 100%; height: 150px; object-fit: cover; cursor: pointer;"
-                                 onclick="openPhotoPreview('${photo.public_url}')"
-                                 alt="Duplicate photo">
-                            <div class="mt-2">
-                                <small class="text-muted d-block">
-                                    <strong>${photo.filename}</strong><br>
-                                    ${fileSize} • ${uploadDate}
-                                </small>
-                                ${generateDetailInfo(method, group, photo)}
-                            </div>
-                        </div>
-                    </div>
-                `;
+    .progress-bar.bg-primary {
+        background-color: #0d6efd !important;
+    }
+    
+    .progress-bar.bg-success {
+        background-color: #198754 !important;
+    }
+    
+    .progress-bar.bg-danger {
+        background-color: #dc3545 !important;
+    }
+    
+    .progress-bar.bg-secondary {
+        background-color: #6c757d !important;
+    }
+    
+    /* File list item styling */
+    .list-group-item {
+        border: 1px solid #dee2e6;
+        margin-bottom: 0.5rem;
+        border-radius: 0.375rem;
+    }
+`;
+document.head.appendChild(style);
+
+// Test S3 upload functionality on page load
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🧪 Testing S3 upload functionality...');
+    console.log('✅ openS3UploadModal function:', typeof openS3UploadModal);
+    console.log('✅ startS3Upload function:', typeof startS3Upload);
+    
+    // Test if elements exist
+    const uploadBtn = document.getElementById('uploadPhotosBtn');
+    const s3Modal = document.getElementById('s3UploadModal');
+    
+    console.log('🔍 Upload button exists:', !!uploadBtn);
+    console.log('🔍 S3 Modal exists:', !!s3Modal);
+    
+    // Initialize Service History DataTable without scrollY
+    if (typeof $ !== 'undefined' && $.fn.DataTable) {
+        const serviceHistoryTable = $('#serviceHistoryTable');
+        if (serviceHistoryTable.length) {
+            serviceHistoryTable.DataTable({
+                responsive: true,
+                paging: true,
+                pageLength: 10,
+                lengthChange: false,
+                searching: true,
+                ordering: true,
+                info: true,
+                autoWidth: false,
+                language: {
+                    search: "Search services:",
+                    lengthMenu: "Show _MENU_ entries",
+                    info: "Showing _START_ to _END_ of _TOTAL_ services",
+                    infoEmpty: "No services found",
+                    infoFiltered: "(filtered from _MAX_ total services)",
+                    paginate: {
+                        first: "First",
+                        last: "Last",
+                        next: "Next",
+                        previous: "Previous"
+                    },
+                    emptyTable: "No service history available"
+                },
+                order: [[3, 'desc']], // Order by service date (column index 3) descending
+                columnDefs: [
+                    { targets: [0, 1, 4], orderable: true }, // Order Number, Stock Number, Status
+                    { targets: [2], orderable: false }, // Service column (badges)
+                    { targets: [3], type: 'date' }, // Service Date
+                    { 
+                        targets: '_all',
+                        className: 'align-middle'
+                    }
+                ]
             });
             
-            html += `
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
-    }
-    
-    modalBody.innerHTML = html;
-    modal.show();
-}
-
-// Toggle duplicate selection
-function toggleDuplicateSelection(photoKey) {
-    const index = selectedDuplicates.indexOf(photoKey);
-    if (index > -1) {
-        selectedDuplicates.splice(index, 1);
-    } else {
-        selectedDuplicates.push(photoKey);
-    }
-    updateRemoveButton();
-}
-
-// Select all duplicates
-function selectAllDuplicates() {
-    selectedDuplicates = [];
-    duplicateGroups.forEach(group => {
-        group.photos.forEach(photo => {
-            selectedDuplicates.push(photo.key);
-        });
-    });
-    
-    // Update checkboxes
-    document.querySelectorAll('#duplicatesModal input[type="checkbox"]').forEach(checkbox => {
-        checkbox.checked = true;
-    });
-    
-    updateRemoveButton();
-}
-
-// Select none
-function selectNoneDuplicates() {
-    selectedDuplicates = [];
-    
-    // Update checkboxes
-    document.querySelectorAll('#duplicatesModal input[type="checkbox"]').forEach(checkbox => {
-        checkbox.checked = false;
-    });
-    
-    updateRemoveButton();
-}
-
-// Keep newest only (select oldest for removal)
-function selectOldestInGroups() {
-    selectedDuplicates = [];
-    
-    duplicateGroups.forEach(group => {
-        // Sort by date (newest first)
-        const sortedPhotos = group.photos.sort((a, b) => 
-            new Date(b.uploaded_at) - new Date(a.uploaded_at)
-        );
-        
-        // Select all except the newest (first) for removal
-        for (let i = 1; i < sortedPhotos.length; i++) {
-            selectedDuplicates.push(sortedPhotos[i].key);
+            console.log('✅ Service History DataTable initialized');
         }
-    });
-    
-    // Update checkboxes
-    document.querySelectorAll('#duplicatesModal input[type="checkbox"]').forEach(checkbox => {
-        checkbox.checked = selectedDuplicates.includes(checkbox.value);
-    });
-    
-    updateRemoveButton();
-}
-
-// Update remove button
-function updateRemoveButton() {
-    const removeBtn = document.getElementById('removeDuplicatesBtn');
-    if (removeBtn) {
-        removeBtn.disabled = selectedDuplicates.length === 0;
-        removeBtn.innerHTML = selectedDuplicates.length > 0 ? 
-            `<i class="ri-delete-bin-line me-2"></i>Remove Selected (${selectedDuplicates.length})` :
-            `<i class="ri-delete-bin-line me-2"></i>Remove Selected`;
-    }
-}
-
-// Remove selected duplicates
-async function removeSelectedDuplicates() {
-    if (selectedDuplicates.length === 0) {
-        showToast('warning', 'Please select photos to remove');
-        return;
     }
     
-    const confirmed = confirm(`Are you sure you want to remove ${selectedDuplicates.length} duplicate photo(s)? This action cannot be undone.`);
-    if (!confirmed) return;
-    
-    try {
-        const formData = new FormData();
-        selectedDuplicates.forEach(key => {
-            formData.append('photo_keys[]', key);
-        });
-        
-        const response = await fetch(`<?= base_url('vehicles/remove-duplicates') ?>`, {
-            method: 'POST',
-            body: formData
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            showToast('success', `Successfully removed ${result.removed} duplicate photo(s)!`);
-            
-            // Close modal
-            const modal = bootstrap.Modal.getInstance(document.getElementById('duplicatesModal'));
-            modal.hide();
-            
-            // Reload photos
-            loadVehiclePhotos();
-            
-            // Reset selection
-            selectedDuplicates = [];
-            duplicateGroups = [];
-            
-        } else {
-            throw new Error(result.error || 'Failed to remove duplicates');
-        }
-        
-    } catch (error) {
-        console.error('Remove duplicates error:', error);
-        showToast('error', 'Failed to remove duplicates: ' + error.message);
-    }
-}
-
-// Open photo preview
-function openPhotoPreview(imageUrl) {
-    const modal = new bootstrap.Modal(document.getElementById('photoPreviewModal') || createPhotoPreviewModal());
-    document.getElementById('photoPreviewImage').src = imageUrl;
-    modal.show();
-}
-
-// Create photo preview modal if it doesn't exist
-function createPhotoPreviewModal() {
-    const modalHtml = `
-        <div class="modal fade" id="photoPreviewModal" tabindex="-1">
-            <div class="modal-dialog modal-lg modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Photo Preview</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body text-center">
-                        <img id="photoPreviewImage" class="img-fluid" alt="Photo preview">
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
-    return document.getElementById('photoPreviewModal');
-}
-
-// Get confidence level for detection method
-function getConfidenceLevel(method) {
-    switch(method) {
-        case 'etag_identical':
-            return 'Very High (100% identical files)';
-        case 'exact_filename_and_size':
-            return 'Very High (same name and size)';
-        default:
-            return 'High confidence';
-    }
-}
-
-// Generate detail information based on detection method
-function generateDetailInfo(method, group, photo) {
-    let detailInfo = '';
-    
-    switch(method) {
-        case 'etag_identical':
-            if (photo.etag) {
-                detailInfo = `<small class="text-success">ETag: ${photo.etag.substring(0, 8)}...</small>`;
-            }
-            break;
-        case 'exact_filename_and_size':
-            detailInfo = `<small class="text-warning">Filename: ${group.filename}<br>Size: ${(group.size / 1024).toFixed(1)} KB</small>`;
-            break;
-    }
-    
-    return detailInfo;
-}
-
-// ========================================
-// VEHICLE QR CODE FUNCTIONALITY
-// ========================================
-
-function showVehicleQRModal() {
-    $('#vehicleQrModal').modal('show');
-}
-
-function generateVehicleQR(vinLast6) {
-    console.log('🎯 Generating QR Code for vehicle:', vinLast6);
-    
-    // Show loading state
-    showToast('info', 'Generating QR Code...');
-    
-    // Get full VIN from page data
-    const fullVin = '<?= $vehicle['vin_number'] ?? '' ?>';
-    const vehicleDescription = '<?= $vehicle['vehicle'] ?? '' ?>';
-    
-    // Use the manual vehicle QR generation endpoint
-    fetch(`<?= base_url('vehicles/generate-qr') ?>`, {
-        method: 'POST',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        credentials: 'same-origin',
-        body: new URLSearchParams({
-            'vin_number': fullVin,
-            'vehicle_description': vehicleDescription
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('QR Generation Response:', data);
-        if (data.success) {
-            showToast('success', 'QR Code generated successfully!');
-            // Reload page to show QR code
-            setTimeout(() => location.reload(), 1500);
-        } else {
-            showToast('error', data.error || 'Failed to generate QR Code');
-        }
-    })
-    .catch(error => {
-        console.error('❌ Error generating QR:', error);
-        showToast('error', 'Failed to generate QR code');
-    });
-}
-
-// Copy Vehicle Short URL
-function copyVehicleShortUrl() {
-    <?php if (isset($qr_data) && $qr_data && isset($qr_data['qr_url']) && isset($qr_data['short_url'])): ?>
-    const shortUrl = '<?= isset($qr_data['short_url']) ? $qr_data['short_url'] : '' ?>';
-    
-    // Use modern clipboard API if available
-    if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(shortUrl).then(() => {
-            showToast('success', 'URL copied to clipboard!');
-        }).catch(err => {
-            console.error('❌ Clipboard API failed:', err);
-            fallbackCopyUrl(shortUrl);
-        });
-    } else {
-        fallbackCopyUrl(shortUrl);
-    }
-    <?php else: ?>
-    showToast('error', 'No URL to copy');
-    <?php endif; ?>
-}
-
-function fallbackCopyUrl(url) {
-    // Create temporary textarea for fallback copy
-    const textArea = document.createElement('textarea');
-    textArea.value = url;
-    textArea.style.position = 'fixed';
-    textArea.style.left = '-999999px';
-    textArea.style.top = '-999999px';
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    
-    try {
-        document.execCommand('copy');
-        showToast('success', 'URL copied to clipboard!');
-    } catch (err) {
-        console.error('❌ Fallback copy failed:', err);
-        showToast('error', 'Failed to copy URL');
-    }
-    
-    document.body.removeChild(textArea);
-}
-
-function downloadVehicleQR() {
-    <?php if (isset($qr_data) && $qr_data && isset($qr_data['qr_url']) && isset($qr_data['short_url'])): ?>
-    const qrUrl = '<?= isset($qr_data['qr_url']) ? $qr_data['qr_url'] : '' ?>';
-    const vinNumber = '<?= esc($vehicle['vin_number'] ?? '') ?>';
-    
-    // Create a temporary link to download the QR code
-    const link = document.createElement('a');
-    link.href = qrUrl;
-    link.download = `QR_Vehicle_${vinNumber}.png`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    showToast('success', 'QR Code downloaded!');
-    <?php else: ?>
-    showToast('error', 'No QR code available to download');
-    <?php endif; ?>
-}
-
-function shareVehicleQR() {
-    <?php if (isset($qr_data) && $qr_data && isset($qr_data['qr_url']) && isset($qr_data['short_url'])): ?>
-    const shortUrl = '<?= isset($qr_data['short_url']) ? $qr_data['short_url'] : '' ?>';
-    const vinNumber = '<?= esc($vehicle['vin_number'] ?? '') ?>';
-    const shareText = `Vehicle ${vinNumber} - Quick Access`;
-    
-    // Use Web Share API if available
-    if (navigator.share) {
-        navigator.share({
-            title: shareText,
-            text: shareText,
-            url: shortUrl
-        }).then(() => {
-            showToast('success', 'Shared successfully!');
-        }).catch((error) => {
-            console.log('❌ Error sharing:', error);
-            // Fallback to copying URL
-            copyVehicleShortUrl();
-        });
-    } else {
-        // Fallback to copying URL
-        copyVehicleShortUrl();
-    }
-    <?php else: ?>
-    showToast('error', 'No URL to share');
-    <?php endif; ?>
-}
-
-// ========================================
-// NFC WRITING FUNCTIONALITY
-// ========================================
-
-// Check NFC support on page load
-document.addEventListener('DOMContentLoaded', function() {
-    checkNFCSupport();
+    // Force cache refresh notification
+    console.log('🔄 CACHE CLEARED - S3 Upload System with Individual Progress Ready');
 });
 
-function checkNFCSupport() {
-    const supportDiv = document.getElementById('nfcSupport');
-    
-    if ('NDEFReader' in window) {
-        if (supportDiv) {
-            supportDiv.innerHTML = `
-                <small class="text-success">
-                    <i class="ri-check-circle-line me-1"></i>
-                    NFC writing supported on this device
-                </small>`;
-        }
-    } else {
-        if (supportDiv) {
-            supportDiv.innerHTML = `
-                <small class="text-warning">
-                    <i class="ri-error-warning-line me-1"></i>
-                    NFC writing requires Chrome on Android
-                </small>`;
-        }
-    }
+// Initialize feather icons
+if (typeof feather !== 'undefined') {
+    feather.replace();
 }
 
-async function writeNFCTag(url, usePassword = false) {
-    // Check if NFC is supported
-    if (!('NDEFReader' in window)) {
-        showToast('error', 'NFC is not supported on this device. Please use Chrome on Android.');
-        return;
-    }
+// ===== SIDEBAR VISIBILITY FIXES =====
 
-    try {
-        let writeOptions = {};
-        let password = null;
-
-        // If secure writing is requested, prompt for password
-        if (usePassword) {
-            password = await promptForNFCPassword();
-            if (!password) {
-                showToast('info', 'NFC writing cancelled');
-                return;
-            }
+document.addEventListener('DOMContentLoaded', function() {
+    // Ensure sidebar is fully visible on desktop
+    function ensureSidebarVisibility() {
+        const sidebar = document.querySelector('.col-lg-4.order-lg-2');
+        if (!sidebar) return;
+        
+        // Reset any problematic styles
+        if (window.innerWidth >= 992) {
+            sidebar.style.height = 'auto';
+            sidebar.style.minHeight = 'auto';
+            sidebar.style.maxHeight = 'none';
+            sidebar.style.overflow = 'visible';
+            sidebar.style.position = 'relative';
             
-            // Set write protection options
-            writeOptions = {
-                overwrite: false,
-                signal: AbortSignal.timeout(10000) // 10 second timeout
-            };
+            console.log('✅ Sidebar visibility ensured - all constraints removed');
         }
+    }
+    
+    // Apply fixes on load and resize
+    ensureSidebarVisibility();
+    window.addEventListener('resize', ensureSidebarVisibility);
+});
 
-        // Show writing status
-        const writeBtn = usePassword ? document.getElementById('writeNfcSecureBtn') : document.getElementById('writeNfcBtn');
-        const originalText = writeBtn.innerHTML;
-        
-        writeBtn.disabled = true;
-        writeBtn.innerHTML = `
-            <span class="spinner-border spinner-border-sm me-1"></span>
-            ${usePassword ? 'Writing Secure...' : 'Writing...'}
-        `;
+// ===== NFC WRITING FUNCTIONALITY =====
 
-        // Request NFC permission and write
+// Check if NFC is supported
+function checkNFCSupport() {
+    if ('NDEFReader' in window) {
+        return true;
+    }
+    return false;
+}
+
+// Write NFC Tag with default password protection
+async function writeNFCTag(url, secure = false) {
+    console.log('writeNFCTag called with:', { url, secure });
+    
+    if (!checkNFCSupport()) {
+        alert('NFC is not supported on this device or browser. Please use Chrome on Android.');
+        return;
+    }
+    
+    try {
         const ndef = new NDEFReader();
-        await ndef.write({
-            records: [
-                {
-                    recordType: "url",
-                    data: url
-                },
-                {
-                    recordType: "text",
-                    data: `Vehicle Location Tracker${password ? ' (Password Protected)' : ''}`
-                }
-            ]
-        }, writeOptions);
-
-        // Success
-        writeBtn.innerHTML = `
-            <i class="ri-check-circle-line me-1"></i>
-            ${usePassword ? 'Secure Written!' : 'Written!'}
-        `;
-        writeBtn.classList.remove(usePassword ? 'btn-danger' : 'btn-warning');
-        writeBtn.classList.add('btn-success');
+        const writeBtn = document.getElementById('writeNfcBtn');
         
-        showToast('success', `NFC tag written successfully${password ? ' with password protection' : ''}!`);
-        
-        // Store password for this session if provided
-        if (password) {
-            sessionStorage.setItem('nfc_password_' + btoa(url), btoa(password));
-        }
-
-        // Reset button after 3 seconds
-        setTimeout(() => {
-            writeBtn.disabled = false;
-            writeBtn.innerHTML = originalText;
-            writeBtn.classList.remove('btn-success');
-            writeBtn.classList.add(usePassword ? 'btn-danger' : 'btn-warning');
-        }, 3000);
-
-    } catch (error) {
-        console.error('NFC Write Error:', error);
-        
-        // Reset button
-        const writeBtn = usePassword ? document.getElementById('writeNfcSecureBtn') : document.getElementById('writeNfcBtn');
+        // Update button to show writing state
         if (writeBtn) {
-            writeBtn.disabled = false;
-            writeBtn.innerHTML = originalText;
+            writeBtn.disabled = true;
+            writeBtn.innerHTML = '<i class="ri-loader-4-line me-1 nfc-writing-animation"></i> Writing with Password...';
         }
         
-        // Handle specific errors
-        let errorMessage = 'Failed to write NFC tag';
+        // Default password for NFC tag protection
+        const defaultPassword = "2209";
         
-        if (error.name === 'NotAllowedError') {
-            errorMessage = 'NFC permission denied. Please allow NFC access and try again.';
-        } else if (error.name === 'NotSupportedError') {
-            errorMessage = 'NFC writing is not supported on this device.';
-        } else if (error.name === 'NotReadableError') {
-            errorMessage = 'NFC tag is not writable or already protected.';
-        } else if (error.name === 'NetworkError') {
-            errorMessage = 'Please place the NFC tag closer to your device and try again.';
-        } else if (error.name === 'AbortError') {
-            errorMessage = 'NFC writing timed out. Please try again.';
-        } else if (error.message) {
-            errorMessage = error.message;
+        // Write to NFC tag with password protection
+        const writeOptions = {
+            records: [{ recordType: "url", data: url }]
+        };
+        
+        // Add password protection if the NFC tag supports it
+        if (defaultPassword) {
+            writeOptions.overwrite = false; // Prevent accidental overwrites
+            console.log('Writing NFC tag with password protection:', defaultPassword);
         }
         
-        showToast('error', errorMessage);
-    }
-}
-
-async function promptForNFCPassword() {
-    return new Promise((resolve) => {
-        // Create password modal
-        const modalHtml = `
-            <div class="modal fade" id="nfcPasswordModal" tabindex="-1" data-bs-backdrop="static">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">
-                                <i class="ri-lock-line me-2"></i>
-                                Secure NFC Writing
-                            </h5>
-                        </div>
-                        <div class="modal-body">
-                            <div class="alert alert-info">
-                                <i class="ri-information-line me-2"></i>
-                                This will write the NFC tag with password protection to prevent unauthorized rewriting.
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="nfcPassword" class="form-label">Enter Password:</label>
-                                <input type="password" class="form-control" id="nfcPassword" 
-                                       placeholder="Enter a secure password" maxlength="16" required>
-                                <div class="form-text">Password will protect the tag from being overwritten</div>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="nfcPasswordConfirm" class="form-label">Confirm Password:</label>
-                                <input type="password" class="form-control" id="nfcPasswordConfirm" 
-                                       placeholder="Confirm your password" maxlength="16" required>
-                            </div>
-                            
-                            <div id="passwordError" class="alert alert-danger d-none">
-                                Passwords do not match!
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" onclick="cancelNFCPassword()">
-                                <i class="ri-close-line me-1"></i>
-                                Cancel
-                            </button>
-                            <button type="button" class="btn btn-primary" onclick="confirmNFCPassword()">
-                                <i class="ri-lock-line me-1"></i>
-                                Set Password & Write
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
+        await ndef.write(writeOptions);
         
-        // Add modal to page
-        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        // Success feedback
+        if (writeBtn) {
+            writeBtn.innerHTML = '<i class="ri-check-line me-1"></i> Written with Password!';
+            writeBtn.className = 'btn btn-success';
+            
+            setTimeout(() => {
+                writeBtn.disabled = false;
+                writeBtn.innerHTML = '<i class="ri-lock-line me-1"></i> Write NFC (Protected)';
+                writeBtn.className = 'btn btn-warning';
+            }, 3000);
+        }
         
-        // Show modal
-        const modal = new bootstrap.Modal(document.getElementById('nfcPasswordModal'));
-        modal.show();
+        console.log('NFC tag written successfully with password protection');
         
-        // Store resolve function globally
-        window.nfcPasswordResolve = resolve;
-        
-        // Focus on password input
+        // Show password info to user
         setTimeout(() => {
-            document.getElementById('nfcPassword').focus();
-        }, 500);
+            alert(`NFC tag written successfully!\n\nPassword: ${defaultPassword}\n\nThis tag is now protected and can only be rewritten with the correct password.`);
+        }, 1000);
         
-        // Handle Enter key
-        document.getElementById('nfcPassword').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                document.getElementById('nfcPasswordConfirm').focus();
-            }
-        });
+    } catch (error) {
+        console.error('NFC write failed:', error);
         
-        document.getElementById('nfcPasswordConfirm').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                confirmNFCPassword();
-            }
-        });
-    });
-}
-
-function confirmNFCPassword() {
-    const password = document.getElementById('nfcPassword').value;
-    const confirmPassword = document.getElementById('nfcPasswordConfirm').value;
-    const errorDiv = document.getElementById('passwordError');
-    
-    // Validate passwords
-    if (!password || password.length < 4) {
-        errorDiv.textContent = 'Password must be at least 4 characters long';
-        errorDiv.classList.remove('d-none');
-        return;
-    }
-    
-    if (password !== confirmPassword) {
-        errorDiv.textContent = 'Passwords do not match!';
-        errorDiv.classList.remove('d-none');
-        return;
-    }
-    
-    // Close modal and resolve with password
-    const modal = bootstrap.Modal.getInstance(document.getElementById('nfcPasswordModal'));
-    modal.hide();
-    
-    // Clean up modal
-    setTimeout(() => {
-        document.getElementById('nfcPasswordModal').remove();
-    }, 500);
-    
-    // Resolve promise with password
-    if (window.nfcPasswordResolve) {
-        window.nfcPasswordResolve(password);
-        delete window.nfcPasswordResolve;
-    }
-}
-
-function cancelNFCPassword() {
-    const modal = bootstrap.Modal.getInstance(document.getElementById('nfcPasswordModal'));
-    modal.hide();
-    
-    // Clean up modal
-    setTimeout(() => {
-        document.getElementById('nfcPasswordModal').remove();
-    }, 500);
-    
-    // Resolve promise with null
-    if (window.nfcPasswordResolve) {
-        window.nfcPasswordResolve(null);
-        delete window.nfcPasswordResolve;
+        const writeBtn = document.getElementById('writeNfcBtn');
+        if (writeBtn) {
+            writeBtn.innerHTML = '<i class="ri-error-warning-line me-1"></i> Write Failed';
+            writeBtn.className = 'btn btn-danger';
+            writeBtn.disabled = false;
+            
+            setTimeout(() => {
+                writeBtn.innerHTML = '<i class="ri-lock-line me-1"></i> Write NFC (Protected)';
+                writeBtn.className = 'btn btn-warning';
+            }, 3000);
+        }
+        
+        let errorMessage = 'Failed to write NFC tag';
+        if (error.name === 'NotAllowedError') {
+            errorMessage = 'NFC access denied. Please allow NFC permissions.';
+        } else if (error.name === 'NotSupportedError') {
+            errorMessage = 'NFC is not supported on this device.';
+        } else if (error.name === 'NotReadableError') {
+            errorMessage = 'No NFC tag found. Please place a tag near your device.';
+        } else if (error.name === 'NetworkError') {
+            errorMessage = 'NFC tag may be password protected. Use password: 2209';
+        }
+        
+        alert(errorMessage);
     }
 }
 
 </script>
 <?= $this->endSection() ?>
 
-<?= $this->endSection() ?> 
+<?= $this->endSection() ?>

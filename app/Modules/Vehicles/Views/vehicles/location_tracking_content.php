@@ -235,7 +235,7 @@ window.refreshLocationTrackingTable = function() {
 
 function viewLocationMap(vinLast6) {
     // Navigate to vehicle details page where the map would be shown
-    window.location.href = `<?= base_url('vehicles/') ?>${vinLast6}#location-history`;
+    window.location.href = `<?= base_url('vehicles/v/') ?>${vinLast6}#location-history`;
 }
 
 function exportLocationData(vinLast6) {

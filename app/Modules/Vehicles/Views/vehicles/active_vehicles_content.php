@@ -229,6 +229,6 @@ function showLocationHistory(vinLast6) {
 
 function viewServiceHistory(vinLast6) {
     // Navigate to vehicle details page
-    window.location.href = `<?= base_url('vehicles/') ?>${vinLast6}`;
+    window.location.href = `<?= base_url('vehicles/v/') ?>${vinLast6}`;
 }
 </script> 

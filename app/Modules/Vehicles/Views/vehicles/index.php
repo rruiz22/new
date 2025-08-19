@@ -473,7 +473,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="vehicleForm">
-                <div class="modal-body">
+            <div class="modal-body">
                     <div class="row">
                         <!-- VIN Input -->
                         <div class="col-12 mb-3">
@@ -541,14 +541,14 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i data-feather="x" class="icon-sm me-1"></i>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i data-feather="x" class="icon-sm me-1"></i>
                         Cancel
-                    </button>
+                </button>
                     <button type="submit" class="btn btn-primary" id="save_vehicle_btn" disabled>
-                        <i data-feather="save" class="icon-sm me-1"></i>
+                    <i data-feather="save" class="icon-sm me-1"></i>
                         <span class="btn-text">Save Vehicle & Generate QR</span>
                         <span class="spinner-border spinner-border-sm d-none ms-2" role="status" aria-hidden="true"></span>
                     </button>
@@ -1983,7 +1983,7 @@ window.VehiclesColumnHelpers = {
                 // Use last 6 characters of VIN for URL (maintained for routing compatibility)
                 const vinLast6 = rowData.vin_last6 || rowData.vin_number.slice(-6);
                 if (vinLast6) {
-                    window.location.href = `<?= base_url('vehicles/') ?>${vinLast6}`;
+                    window.location.href = `<?= base_url('vehicles/v/') ?>${vinLast6}`;
                 }
             }
         });

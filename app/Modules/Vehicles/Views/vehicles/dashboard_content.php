@@ -350,7 +350,7 @@ function loadRecentActivity(activities) {
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li>
-                                <a class="dropdown-item" href="<?= base_url('vehicles/') ?>${activity.vin_last6}">
+                                <a class="dropdown-item" href="<?= base_url('vehicles/v/') ?>${activity.vin_last6}">
                                     <i data-feather="eye" class="icon-xs align-bottom me-2 text-muted"></i>
                                     <?= lang('App.view_details') ?>
                                 </a>
@@ -435,7 +435,7 @@ function refreshRecentActivity() {
 }
 
 function viewVehicle(vinLast6) {
-    window.location.href = `<?= base_url('vehicles/') ?>${vinLast6}`;
+    window.location.href = `<?= base_url('vehicles/v/') ?>${vinLast6}`;
 }
 
 function showLocationHistory(vinLast6) {
