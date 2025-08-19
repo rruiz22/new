@@ -72,10 +72,31 @@ class VehiclesController extends Controller
         }
 
         // Fallback if no VIN (shouldn't happen normally)
+        // Get QR data if available
+        $qr_data = null;
+        if (!empty($vehicle['vin_number'])) {
+            try {
+                $mdaService = new \App\Services\VehicleMDAService();
+                $result = $mdaService->getVehicleShortlink($vehicle['vin_number']);
+                
+                // Only use qr_data if it's successful and has required fields
+                if ($result && isset($result['success']) && $result['success'] && 
+                    isset($result['qr_url']) && isset($result['short_url'])) {
+                    $qr_data = $result;
+                    log_message('debug', 'QR data retrieved for vehicle: ' . json_encode($qr_data));
+                } else {
+                    log_message('debug', 'QR data not available or invalid for vehicle: ' . json_encode($result));
+                }
+            } catch (Exception $e) {
+                log_message('error', 'Failed to get QR data: ' . $e->getMessage());
+            }
+        }
+        
         $data = [
             'title' => 'Vehicle Details',
             'page_title' => 'Vehicle Details',
-            'vehicle' => $vehicle
+            'vehicle' => $vehicle,
+            'qr_data' => $qr_data // QR code and shortlink data
         ];
 
         return view('Modules\Vehicles\Views\vehicles\view', $data);
@@ -155,11 +176,30 @@ class VehiclesController extends Controller
 
         log_message('debug', 'Vehicle data retrieved successfully');
         
+        // Get QR data if available
+        $qr_data = null;
+        try {
+            $mdaService = new \App\Services\VehicleMDAService();
+            $result = $mdaService->getVehicleShortlink($vin);
+            
+            // Only use qr_data if it's successful and has required fields
+            if ($result && isset($result['success']) && $result['success'] && 
+                isset($result['qr_url']) && isset($result['short_url'])) {
+                $qr_data = $result;
+                log_message('debug', 'QR data retrieved for vehicle: ' . json_encode($qr_data));
+            } else {
+                log_message('debug', 'QR data not available or invalid for vehicle: ' . json_encode($result));
+            }
+        } catch (Exception $e) {
+            log_message('error', 'Failed to get QR data: ' . $e->getMessage());
+        }
+        
         $data = [
             'title' => ($vehicle['vehicle'] ?? 'Vehicle') . ' - ' . $vin,
             'page_title' => 'Vehicle Details',
             'vehicle' => $vehicleData,
-            'vin' => $vin
+            'vin' => $vin,
+            'qr_data' => $qr_data // QR code and shortlink data
         ];
 
         log_message('debug', 'Returning view for VIN: ' . $vin);
@@ -550,12 +590,31 @@ class VehiclesController extends Controller
 
         log_message('debug', 'Vehicle data retrieved successfully');
         
+        // Get QR data if available
+        $qr_data = null;
+        try {
+            $mdaService = new \App\Services\VehicleMDAService();
+            $result = $mdaService->getVehicleShortlink($vehicle['vin_number']);
+            
+            // Only use qr_data if it's successful and has required fields
+            if ($result && isset($result['success']) && $result['success'] && 
+                isset($result['qr_url']) && isset($result['short_url'])) {
+                $qr_data = $result;
+                log_message('debug', 'QR data retrieved for vehicle: ' . json_encode($qr_data));
+            } else {
+                log_message('debug', 'QR data not available or invalid for vehicle: ' . json_encode($result));
+            }
+        } catch (Exception $e) {
+            log_message('error', 'Failed to get QR data: ' . $e->getMessage());
+        }
+        
         $data = [
             'title' => ($vehicle['vehicle'] ?? 'Vehicle') . ' - ' . $vehicle['vin_number'],
             'page_title' => 'Vehicle Details',
             'vehicle' => $vehicleData,
             'vin' => $vehicle['vin_number'], // Full VIN for display
-            'last6' => $last6 // Last 6 for URL
+            'last6' => $last6, // Last 6 for URL
+            'qr_data' => $qr_data // QR code and shortlink data
         ];
 
         log_message('debug', 'Returning view for VIN last6: ' . $last6);
@@ -2438,6 +2497,135 @@ class VehiclesController extends Controller
         return array_filter($allPhotos, function($photo) use ($foundKeys) {
             return !in_array($photo['key'], $foundKeys);
         });
+    }
+
+    /**
+     * Generate QR code for manual vehicle entry
+     */
+    public function generateManualVehicleQR()
+    {
+        if (!auth()->loggedIn()) {
+            return $this->response->setJSON(['success' => false, 'error' => 'Unauthorized']);
+        }
+
+        $vinNumber = $this->request->getPost('vin_number');
+        $vehicleDescription = $this->request->getPost('vehicle_description');
+        
+        if (empty($vinNumber)) {
+            return $this->response->setJSON(['success' => false, 'error' => 'VIN number is required']);
+        }
+
+        try {
+            // Initialize services
+            $vehicleService = new \App\Services\VehicleService();
+            $mdaService = new \App\Services\VehicleMDAService();
+            
+            // Create or find vehicle
+            $vehicle = $vehicleService->createManualVehicle($vinNumber, $vehicleDescription);
+            
+            // Generate MDA shortlink and QR
+            $shortlinkData = $mdaService->generateVehicleShortlink($vinNumber, $vehicle['id']);
+            
+            return $this->response->setJSON([
+                'success' => true,
+                'vehicle' => $vehicle,
+                'shortlink_data' => $shortlinkData,
+                'message' => 'Vehicle created and QR generated successfully'
+            ]);
+
+        } catch (Exception $e) {
+            log_message('error', 'Error generating manual vehicle QR: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false, 
+                'error' => 'Failed to generate QR: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Generate QR code for existing vehicle by VIN last 6
+     */
+    public function generateVehicleQR($vinLast6 = null)
+    {
+        if (!auth()->loggedIn()) {
+            return $this->response->setJSON(['success' => false, 'error' => 'Unauthorized']);
+        }
+
+        if (!$vinLast6) {
+            return $this->response->setJSON(['success' => false, 'error' => 'VIN identifier required']);
+        }
+
+        try {
+            // Find vehicle by last 6 VIN digits
+            $vehicle = $this->db->table('recon_vehicles')
+                ->where('RIGHT(vin_number, 6)', strtoupper($vinLast6))
+                ->get()
+                ->getRowArray();
+
+            if (!$vehicle) {
+                return $this->response->setJSON(['success' => false, 'error' => 'Vehicle not found']);
+            }
+
+            // Generate MDA shortlink and QR
+            $mdaService = new \App\Services\VehicleMDAService();
+            $shortlinkData = $mdaService->generateVehicleShortlink($vehicle['vin_number'], $vehicle['id']);
+            
+            return $this->response->setJSON([
+                'success' => true,
+                'vehicle' => $vehicle,
+                'shortlink_data' => $shortlinkData
+            ]);
+
+        } catch (Exception $e) {
+            log_message('error', 'Error generating vehicle QR: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false, 
+                'error' => 'Failed to generate QR: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Get existing QR code for vehicle
+     */
+    public function getVehicleQR($vinLast6 = null)
+    {
+        if (!auth()->loggedIn()) {
+            return $this->response->setJSON(['success' => false, 'error' => 'Unauthorized']);
+        }
+
+        if (!$vinLast6) {
+            return $this->response->setJSON(['success' => false, 'error' => 'VIN identifier required']);
+        }
+
+        try {
+            // Find vehicle by last 6 VIN digits
+            $vehicle = $this->db->table('recon_vehicles')
+                ->where('RIGHT(vin_number, 6)', strtoupper($vinLast6))
+                ->get()
+                ->getRowArray();
+
+            if (!$vehicle) {
+                return $this->response->setJSON(['success' => false, 'error' => 'Vehicle not found']);
+            }
+
+            // Get existing shortlink
+            $mdaService = new \App\Services\VehicleMDAService();
+            $shortlinkData = $mdaService->getVehicleShortlink($vehicle['vin_number']);
+            
+            return $this->response->setJSON([
+                'success' => true,
+                'vehicle' => $vehicle,
+                'shortlink_data' => $shortlinkData
+            ]);
+
+        } catch (Exception $e) {
+            log_message('error', 'Error getting vehicle QR: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false, 
+                'error' => 'Failed to get QR: ' . $e->getMessage()
+            ]);
+        }
     }
 
     /**

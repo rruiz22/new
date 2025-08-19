@@ -466,20 +466,194 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="vehicleModalLabel"><?= lang('App.add_vehicle') ?></h5>
+                <h5 class="modal-title" id="vehicleModalLabel">
+                    <i data-feather="truck" class="icon-sm me-2"></i>
+                    Add Vehicle Manually
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="vehicleForm">
+                <div class="modal-body">
+                    <div class="row">
+                        <!-- VIN Input -->
+                        <div class="col-12 mb-3">
+                            <label for="vin_number" class="form-label">
+                                <i data-feather="hash" class="icon-sm me-1"></i>
+                                VIN Number <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="vin_number" 
+                                   name="vin_number" 
+                                   maxlength="17" 
+                                   placeholder="Enter 17-character VIN number"
+                                   required>
+                            <div class="form-text">
+                                <i data-feather="info" class="icon-xs me-1"></i>
+                                VIN will be validated and vehicle information will be decoded automatically
+                            </div>
+                            <div class="invalid-feedback" id="vin_error"></div>
+                            <div class="valid-feedback" id="vin_success"></div>
+                        </div>
+
+                        <!-- Vehicle Description (Auto-filled) -->
+                        <div class="col-12 mb-3">
+                            <label for="vehicle_description" class="form-label">
+                                <i data-feather="truck" class="icon-sm me-1"></i>
+                                Vehicle Description
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="vehicle_description" 
+                                   name="vehicle_description" 
+                                   placeholder="Vehicle information will be filled automatically"
+                                   readonly>
+                            <div class="form-text">
+                                <i data-feather="zap" class="icon-xs me-1"></i>
+                                This field will be populated automatically from VIN decoding
+                            </div>
+                        </div>
+
+                        <!-- VIN Validation Status -->
+                        <div class="col-12 mb-3" id="vin_status_container" style="display: none;">
+                            <div class="alert alert-info" id="vin_status">
+                                <div class="d-flex align-items-center">
+                                    <div class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></div>
+                                    <span>Validating VIN...</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Decoded Vehicle Information -->
+                        <div class="col-12 mb-3" id="decoded_info_container" style="display: none;">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="card-title mb-0">
+                                        <i data-feather="info" class="icon-sm me-1"></i>
+                                        Decoded Vehicle Information
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row" id="decoded_info">
+                                        <!-- Decoded information will be populated here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i data-feather="x" class="icon-sm me-1"></i>
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="save_vehicle_btn" disabled>
+                        <i data-feather="save" class="icon-sm me-1"></i>
+                        <span class="btn-text">Save Vehicle & Generate QR</span>
+                        <span class="spinner-border spinner-border-sm d-none ms-2" role="status" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- QR Code Result Modal -->
+<div class="modal fade" id="qrResultModal" tabindex="-1" aria-labelledby="qrResultModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="qrResultModalLabel">
+                    <i data-feather="check-circle" class="icon-sm me-2 text-success"></i>
+                    Vehicle Created Successfully
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <!-- Vehicle form will be loaded here -->
+                <div class="text-center mb-4">
+                    <div class="alert alert-success">
+                        <h6 class="alert-heading">Vehicle Added Successfully!</h6>
+                        <p class="mb-0">Your vehicle has been created and QR codes have been generated.</p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Vehicle Profile QR -->
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-header text-center">
+                                <h6 class="card-title mb-0">
+                                    <i data-feather="eye" class="icon-sm me-1"></i>
+                                    Vehicle Profile
+                                </h6>
+                            </div>
+                            <div class="card-body text-center">
+                                <div id="profile_qr_container">
+                                    <!-- QR code will be inserted here -->
+                                </div>
+                                <div class="mt-3">
+                                    <small class="text-muted">Scan to view vehicle details</small>
+                                </div>
+                                <div class="mt-2">
+                                    <button class="btn btn-sm btn-outline-primary" id="copy_profile_url">
+                                        <i data-feather="copy" class="icon-xs me-1"></i>
+                                        Copy Link
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Location Tracking QR -->
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-header text-center">
+                                <h6 class="card-title mb-0">
+                                    <i data-feather="map-pin" class="icon-sm me-1"></i>
+                                    Location Tracking
+                                </h6>
+                            </div>
+                            <div class="card-body text-center">
+                                <div id="tracking_qr_container">
+                                    <!-- QR code will be inserted here -->
+                                </div>
+                                <div class="mt-3">
+                                    <small class="text-muted">Scan to track location</small>
+                                </div>
+                                <div class="mt-2">
+                                    <button class="btn btn-sm btn-outline-info" id="copy_tracking_url">
+                                        <i data-feather="copy" class="icon-xs me-1"></i>
+                                        Copy Link
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vehicle Information Summary -->
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="card-title mb-0">
+                            <i data-feather="info" class="icon-sm me-1"></i>
+                            Vehicle Summary
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div id="vehicle_summary">
+                            <!-- Vehicle summary will be populated here -->
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     <i data-feather="x" class="icon-sm me-1"></i>
-                    <?= lang('App.cancel') ?>
+                    Close
                 </button>
-                <button type="submit" class="btn btn-primary" form="vehicleForm">
-                    <i data-feather="save" class="icon-sm me-1"></i>
-                    <?= lang('App.save_vehicle') ?>
+                <button type="button" class="btn btn-primary" id="view_vehicle_btn">
+                    <i data-feather="eye" class="icon-sm me-1"></i>
+                    View Vehicle
                 </button>
             </div>
         </div>
@@ -1155,6 +1329,429 @@ function refreshAllVehicles() {
 if (typeof feather !== 'undefined') {
     feather.replace();
 }
+
+// =====================================================================
+// VEHICLE MODAL AND QR GENERATION FUNCTIONALITY
+// =====================================================================
+
+// Initialize vehicle modal functionality
+function initVehicleModal() {
+    if (typeof $ === 'undefined') {
+        setTimeout(initVehicleModal, 100);
+        return;
+    }
+    
+    // Add vehicle button click
+    $('#addVehicleBtn').on('click', function() {
+        $('#vehicleModal').modal('show');
+        resetVehicleForm();
+    });
+    
+    // VIN input validation
+    $('#vin_number').on('input', function() {
+        const vin = $(this).val().toUpperCase();
+        $(this).val(vin); // Convert to uppercase
+        
+        if (vin.length === 17) {
+            validateAndDecodeVIN(vin);
+        } else {
+            resetVehicleValidation();
+        }
+    });
+    
+    // Form submission
+    $('#vehicleForm').on('submit', function(e) {
+        e.preventDefault();
+        submitVehicleForm();
+    });
+    
+    // QR result modal buttons
+    $('#copy_profile_url').on('click', function() {
+        copyToClipboard(window.currentVehicleData?.profile_url, 'Profile URL copied to clipboard!');
+    });
+    
+    $('#copy_tracking_url').on('click', function() {
+        copyToClipboard(window.currentVehicleData?.tracking_url, 'Tracking URL copied to clipboard!');
+    });
+    
+    $('#view_vehicle_btn').on('click', function() {
+        if (window.currentVehicleData?.vehicle_url) {
+            window.location.href = window.currentVehicleData.vehicle_url;
+        }
+    });
+}
+
+// Reset vehicle form
+function resetVehicleForm() {
+    $('#vehicleForm')[0].reset();
+    $('#vehicle_description').val('').prop('readonly', true);
+    $('#save_vehicle_btn').prop('disabled', true);
+    resetVehicleValidation();
+}
+
+// Reset validation states
+function resetVehicleValidation() {
+    $('#vin_number').removeClass('is-valid is-invalid');
+    $('#vin_status_container').hide();
+    $('#decoded_info_container').hide();
+    $('#save_vehicle_btn').prop('disabled', true);
+}
+
+// Validate and decode VIN
+function validateAndDecodeVIN(vin) {
+    console.log('🔍 Validating VIN:', vin);
+    
+    // Show loading state
+    $('#vin_status_container').show();
+    $('#vin_status').html(`
+        <div class="d-flex align-items-center">
+            <div class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></div>
+            <span>Validating VIN...</span>
+        </div>
+    `).removeClass('alert-success alert-danger').addClass('alert-info');
+    
+    // Basic VIN validation
+    if (!isValidVinFormat(vin)) {
+        showVinError('Invalid VIN format. VIN must be 17 characters and contain only letters and numbers (no I, O, or Q).');
+        return;
+    }
+    
+    // VIN checksum validation
+    if (!isValidVinChecksum(vin)) {
+        showVinError('Invalid VIN checksum. Please verify the VIN number is correct.');
+        return;
+    }
+    
+    // VIN passed validation, now decode
+    decodeVIN(vin);
+}
+
+// Basic VIN format validation
+function isValidVinFormat(vin) {
+    // Must be exactly 17 characters
+    if (vin.length !== 17) return false;
+    
+    // Must contain only valid characters (no I, O, Q)
+    const validPattern = /^[A-HJ-NPR-Z0-9]{17}$/;
+    if (!validPattern.test(vin)) return false;
+    
+    // Check for suspicious patterns
+    const repeatedChar = vin.charAt(0);
+    const isAllSameChar = vin.split('').every(char => char === repeatedChar);
+    if (isAllSameChar) return false;
+    
+    return true;
+}
+
+// VIN checksum validation (simplified)
+function isValidVinChecksum(vin) {
+    const weights = [8, 7, 6, 5, 4, 3, 2, 10, 0, 9, 8, 7, 6, 5, 4, 3, 2];
+    const values = {
+        'A': 1, 'B': 2, 'C': 3, 'D': 4, 'E': 5, 'F': 6, 'G': 7, 'H': 8,
+        'J': 1, 'K': 2, 'L': 3, 'M': 4, 'N': 5, 'P': 7, 'R': 9,
+        'S': 2, 'T': 3, 'U': 4, 'V': 5, 'W': 6, 'X': 7, 'Y': 8, 'Z': 9,
+        '0': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9
+    };
+    
+    let sum = 0;
+    for (let i = 0; i < 17; i++) {
+        if (i === 8) continue; // Skip check digit position
+        const char = vin.charAt(i);
+        sum += (values[char] || 0) * weights[i];
+    }
+    
+    const checkDigit = sum % 11;
+    const expectedCheck = checkDigit === 10 ? 'X' : checkDigit.toString();
+    const actualCheck = vin.charAt(8);
+    
+    return expectedCheck === actualCheck;
+}
+
+// Decode VIN using NHTSA API with fallback
+function decodeVIN(vin) {
+    console.log('🔧 Decoding VIN:', vin);
+    
+    // Try NHTSA API first
+    const nhtsa_url = `https://vpic.nhtsa.dot.gov/api/vehicles/decodevin/${vin}?format=json`;
+    
+    fetch(nhtsa_url)
+        .then(response => response.json())
+        .then(data => {
+            console.log('📡 NHTSA API Response:', data);
+            
+            if (data.Results && data.Results.length > 0) {
+                processNHTSAResponse(vin, data.Results);
+            } else {
+                console.warn('⚠️ NHTSA API returned no results, using fallback');
+                processFallbackDecoding(vin);
+            }
+        })
+        .catch(error => {
+            console.warn('⚠️ NHTSA API failed, using fallback:', error);
+            processFallbackDecoding(vin);
+        });
+}
+
+// Process NHTSA API response
+function processNHTSAResponse(vin, results) {
+    const vehicleData = {};
+    
+    // Extract relevant information
+    results.forEach(result => {
+        switch(result.Variable) {
+            case 'Make':
+                vehicleData.make = result.Value || '';
+                break;
+            case 'Model':
+                vehicleData.model = result.Value || '';
+                break;
+            case 'Model Year':
+                vehicleData.year = result.Value || '';
+                break;
+            case 'Vehicle Type':
+                vehicleData.type = result.Value || '';
+                break;
+            case 'Body Class':
+                vehicleData.bodyClass = result.Value || '';
+                break;
+            case 'Engine Number of Cylinders':
+                vehicleData.cylinders = result.Value || '';
+                break;
+            case 'Fuel Type - Primary':
+                vehicleData.fuelType = result.Value || '';
+                break;
+        }
+    });
+    
+    // Build vehicle description
+    let description = '';
+    if (vehicleData.year) description += vehicleData.year + ' ';
+    if (vehicleData.make) description += vehicleData.make + ' ';
+    if (vehicleData.model) description += vehicleData.model;
+    
+    if (!description.trim()) {
+        description = 'Vehicle Information Available';
+    }
+    
+    showVinSuccess(vin, description.trim(), vehicleData);
+}
+
+// Fallback VIN decoding
+function processFallbackDecoding(vin) {
+    console.log('🔄 Using fallback VIN decoding');
+    
+    // Extract basic information from VIN structure
+    const wmi = vin.substring(0, 3); // World Manufacturer Identifier
+    const year_code = vin.charAt(9);
+    
+    // Simple year decoding
+    const year_map = {
+        'A': '2010', 'B': '2011', 'C': '2012', 'D': '2013', 'E': '2014',
+        'F': '2015', 'G': '2016', 'H': '2017', 'J': '2018', 'K': '2019',
+        'L': '2020', 'M': '2021', 'N': '2022', 'P': '2023', 'R': '2024',
+        '1': '2001', '2': '2002', '3': '2003', '4': '2004', '5': '2005',
+        '6': '2006', '7': '2007', '8': '2008', '9': '2009'
+    };
+    
+    const year = year_map[year_code] || '';
+    const description = year ? `${year} Vehicle (VIN: ${vin.substring(-6)})` : `Vehicle (VIN: ${vin.substring(-6)})`;
+    
+    const vehicleData = {
+        year: year,
+        make: 'Unknown',
+        model: 'Unknown',
+        source: 'fallback'
+    };
+    
+    showVinSuccess(vin, description, vehicleData);
+}
+
+// Show VIN validation error
+function showVinError(message) {
+    $('#vin_number').removeClass('is-valid').addClass('is-invalid');
+    $('#vin_error').text(message);
+    $('#vin_status').html(`
+        <div class="d-flex align-items-center">
+            <i data-feather="x-circle" class="icon-sm me-2 text-danger"></i>
+            <span>${message}</span>
+        </div>
+    `).removeClass('alert-info alert-success').addClass('alert-danger');
+    
+    $('#decoded_info_container').hide();
+    $('#save_vehicle_btn').prop('disabled', true);
+    
+    if (typeof feather !== 'undefined') feather.replace();
+}
+
+// Show VIN validation success
+function showVinSuccess(vin, description, vehicleData) {
+    $('#vin_number').removeClass('is-invalid').addClass('is-valid');
+    $('#vin_success').text('VIN validated successfully');
+    $('#vehicle_description').val(description).prop('readonly', false);
+    
+    $('#vin_status').html(`
+        <div class="d-flex align-items-center">
+            <i data-feather="check-circle" class="icon-sm me-2 text-success"></i>
+            <span>VIN validated and decoded successfully</span>
+        </div>
+    `).removeClass('alert-info alert-danger').addClass('alert-success');
+    
+    // Show decoded information
+    displayDecodedInfo(vehicleData);
+    $('#decoded_info_container').show();
+    $('#save_vehicle_btn').prop('disabled', false);
+    
+    if (typeof feather !== 'undefined') feather.replace();
+}
+
+// Display decoded vehicle information
+function displayDecodedInfo(vehicleData) {
+    let html = '';
+    
+    if (vehicleData.year) {
+        html += `<div class="col-md-6 mb-2"><strong>Year:</strong> ${vehicleData.year}</div>`;
+    }
+    if (vehicleData.make) {
+        html += `<div class="col-md-6 mb-2"><strong>Make:</strong> ${vehicleData.make}</div>`;
+    }
+    if (vehicleData.model) {
+        html += `<div class="col-md-6 mb-2"><strong>Model:</strong> ${vehicleData.model}</div>`;
+    }
+    if (vehicleData.type) {
+        html += `<div class="col-md-6 mb-2"><strong>Type:</strong> ${vehicleData.type}</div>`;
+    }
+    if (vehicleData.bodyClass) {
+        html += `<div class="col-md-6 mb-2"><strong>Body:</strong> ${vehicleData.bodyClass}</div>`;
+    }
+    if (vehicleData.fuelType) {
+        html += `<div class="col-md-6 mb-2"><strong>Fuel:</strong> ${vehicleData.fuelType}</div>`;
+    }
+    
+    if (!html) {
+        html = '<div class="col-12"><em>Basic VIN validation passed. Limited information available.</em></div>';
+    }
+    
+    $('#decoded_info').html(html);
+}
+
+// Submit vehicle form
+function submitVehicleForm() {
+    const submitBtn = $('#save_vehicle_btn');
+    const btnText = submitBtn.find('.btn-text');
+    const btnSpinner = submitBtn.find('.spinner-border');
+    
+    // Show loading state
+    submitBtn.prop('disabled', true);
+    btnText.text('Creating Vehicle...');
+    btnSpinner.removeClass('d-none');
+    
+    const formData = {
+        vin_number: $('#vin_number').val(),
+        vehicle_description: $('#vehicle_description').val()
+    };
+    
+    console.log('💾 Submitting vehicle form:', formData);
+    
+    // Submit to backend
+    $.post('<?= base_url('vehicles/generate-qr') ?>', formData)
+        .done(function(response) {
+            console.log('✅ Vehicle creation response:', response);
+            
+            if (response.success) {
+                // Store vehicle data globally
+                window.currentVehicleData = {
+                    vehicle: response.vehicle,
+                    shortlink_data: response.shortlink_data,
+                    profile_url: response.shortlink_data?.short_url,
+                    tracking_url: '<?= base_url('api/location/track/') ?>' + response.vehicle.vin_number.slice(-6),
+                    vehicle_url: '<?= base_url('vehicles/v/') ?>' + response.vehicle.vin_number.slice(-6)
+                };
+                
+                // Close vehicle modal and show result modal
+                $('#vehicleModal').modal('hide');
+                showQRResultModal(response);
+                
+                // Refresh dashboard
+                refreshDashboard();
+                
+            } else {
+                showToast('error', response.error || 'Failed to create vehicle');
+                resetSubmitButton();
+            }
+        })
+        .fail(function(xhr, status, error) {
+            console.error('❌ Vehicle creation failed:', error);
+            showToast('error', 'Failed to create vehicle. Please try again.');
+            resetSubmitButton();
+        });
+    
+    function resetSubmitButton() {
+        submitBtn.prop('disabled', false);
+        btnText.text('Save Vehicle & Generate QR');
+        btnSpinner.addClass('d-none');
+    }
+}
+
+// Show QR result modal
+function showQRResultModal(response) {
+    const vehicle = response.vehicle;
+    const shortlinkData = response.shortlink_data;
+    
+    // Update modal title with vehicle info
+    $('#qrResultModalLabel').html(`
+        <i data-feather="check-circle" class="icon-sm me-2 text-success"></i>
+        ${vehicle.vehicle_info || 'Vehicle'} Created Successfully
+    `);
+    
+    // Generate QR codes
+    const profileQR = generateQRCode(shortlinkData.short_url, 200);
+    const trackingQR = generateQRCode(window.currentVehicleData.tracking_url, 200);
+    
+    $('#profile_qr_container').html(profileQR);
+    $('#tracking_qr_container').html(trackingQR);
+    
+    // Vehicle summary
+    const summary = `
+        <div class="row">
+            <div class="col-md-6 mb-2"><strong>VIN:</strong> ${vehicle.vin_number}</div>
+            <div class="col-md-6 mb-2"><strong>Vehicle:</strong> ${vehicle.vehicle_info}</div>
+            <div class="col-md-6 mb-2"><strong>Profile URL:</strong> 
+                <a href="${shortlinkData.short_url}" target="_blank">${shortlinkData.short_url}</a>
+            </div>
+            <div class="col-md-6 mb-2"><strong>Custom Slug:</strong> ${shortlinkData.custom_slug || 'Auto-generated'}</div>
+        </div>
+    `;
+    
+    $('#vehicle_summary').html(summary);
+    
+    // Show modal
+    $('#qrResultModal').modal('show');
+    
+    if (typeof feather !== 'undefined') feather.replace();
+}
+
+// Generate QR Code HTML
+function generateQRCode(url, size = 200) {
+    return `<img src="https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(url)}" 
+                 alt="QR Code" class="img-fluid" style="max-width: ${size}px;">`;
+}
+
+// Copy to clipboard utility
+function copyToClipboard(text, successMessage = 'Copied to clipboard!') {
+    if (!text) return;
+    
+    navigator.clipboard.writeText(text).then(function() {
+        showToast('success', successMessage);
+    }).catch(function(err) {
+        console.error('Failed to copy: ', err);
+        showToast('error', 'Failed to copy to clipboard');
+    });
+}
+
+// Initialize vehicle modal when page loads
+$(document).ready(function() {
+    setTimeout(initVehicleModal, 1000);
+});
 </script>
 
 <!-- Estilos específicos del módulo Vehicles ya incluidos en shared_styles.php -->

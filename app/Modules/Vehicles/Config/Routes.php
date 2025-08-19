@@ -5,11 +5,11 @@ namespace Modules\Vehicles\Config;
 use CodeIgniter\Router\RouteCollection;
 
 /**
- * @var RouteCollection $routes
+ * Vehicles Module Routes
  */
-
-// Vehicles module routes
-$routes->group('vehicles', ['namespace' => 'Modules\Vehicles\Controllers'], function($routes) {
+return function (RouteCollection $routes) {
+    // Vehicles Routes with authentication filter
+    $routes->group('vehicles', ['namespace' => 'Modules\Vehicles\Controllers', 'filter' => 'sessionauth'], function($routes) {
     // Main routes
     $routes->get('/', 'VehiclesController::index');
     $routes->get('search', 'VehiclesController::search');
@@ -20,6 +20,9 @@ $routes->group('vehicles', ['namespace' => 'Modules\Vehicles\Controllers'], func
     $routes->get('analytics-data', 'VehiclesController::getAnalyticsData');
     $routes->get('all-vehicles-data', 'VehiclesController::getAllVehiclesData');
     $routes->get('dashboard-data', 'VehiclesController::getDashboardData');
+    $routes->get('recent-vehicles-data', 'VehiclesController::getRecentVehiclesData');
+    $routes->get('active-vehicles-data', 'VehiclesController::getActiveVehiclesData');
+    $routes->get('location-tracking-data', 'VehiclesController::getLocationTrackingData');
     
     // Filter options endpoints
     $routes->get('filter-options/clients', 'VehiclesController::getClientFilterOptions');
@@ -28,6 +31,9 @@ $routes->group('vehicles', ['namespace' => 'Modules\Vehicles\Controllers'], func
     
     // Action endpoints
     $routes->post('generate-nfc-token', 'VehiclesController::generateNfcToken');
+    $routes->post('generate-qr', 'VehiclesController::generateManualVehicleQR');
+    $routes->post('generate-qr/(:any)', 'VehiclesController::generateVehicleQR/$1');
+    $routes->get('qr/(:any)', 'VehiclesController::getVehicleQR/$1');
     $routes->get('export-data/(:any)', 'VehiclesController::exportVehicleData/$1');
     $routes->get('export-all', 'VehiclesController::exportAllVehicles');
     
@@ -59,4 +65,8 @@ $routes->group('vehicles', ['namespace' => 'Modules\Vehicles\Controllers'], func
     
     // VIN-based view using last 6 characters with prefix
     $routes->get('v/([A-Za-z0-9]{6})', 'VehiclesController::viewByVinLast6/$1');
-}); 
+    
+    // Direct VIN-based view using last 6 characters (without prefix)
+    $routes->get('([A-Za-z0-9]{6})', 'VehiclesController::viewByVinLast6/$1');
+    });
+};

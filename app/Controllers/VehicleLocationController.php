@@ -597,52 +597,30 @@ class VehicleLocationController extends ResourceController
             return $this->fail('VIN number is required', 400);
         }
 
-        // Get vehicle info
-        $vehicle = $this->db->table('recon_orders')
-            ->select('id, vin_number, vehicle')
-            ->where('vin_number', strtoupper($vinNumber))
-            ->where('deleted_at IS NULL')
-            ->get()
-            ->getRowArray();
-
-        if (!$vehicle) {
-            return $this->fail('Vehicle not found', 404);
-        }
-
-        // Check if token already exists
-        $existingToken = $this->db->table('vehicle_location_tokens')
-            ->where('vin_number', $vehicle['vin_number'])
-            ->where('is_active', 1)
-            ->get()
-            ->getRowArray();
-
-        if ($existingToken) {
-            $token = $existingToken['token'];
-        } else {
-            // Generate new token
-            $token = bin2hex(random_bytes(32));
+        try {
+            // Use unified token service
+            $tokenService = new \App\Services\VehicleTokenService();
+            $result = $tokenService->generateUnifiedVehicleToken($vinNumber);
             
-            $tokenData = [
-                'vehicle_id' => $vehicle['id'],
-                'vin_number' => $vehicle['vin_number'],
-                'token' => $token,
-                'is_active' => 1,
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ];
-
-            $this->db->table('vehicle_location_tokens')->insert($tokenData);
+            if ($result['success']) {
+                return $this->respond([
+                    'success' => true,
+                    'vehicle' => $result['vehicle'],
+                    'token' => $result['location_token']['token'],
+                    'nfc_url' => $result['location_token']['nfc_url'],
+                    'qr_data' => $result['location_token']['nfc_url'],
+                    // Add unified data for enhanced modal
+                    'mda_shortlink' => $result['mda_shortlink'],
+                    'unified_urls' => $result['unified_urls']
+                ]);
+            } else {
+                return $this->fail('Failed to generate token', 500);
+            }
+            
+        } catch (Exception $e) {
+            log_message('error', 'Generate unified token error: ' . $e->getMessage());
+            return $this->fail('Failed to generate token: ' . $e->getMessage(), 500);
         }
-
-        $nfcUrl = base_url("location/{$token}");
-
-        return $this->respond([
-            'success' => true,
-            'vehicle' => $vehicle,
-            'token' => $token,
-            'nfc_url' => $nfcUrl,
-            'qr_data' => $nfcUrl
-        ]);
     }
 
     /**

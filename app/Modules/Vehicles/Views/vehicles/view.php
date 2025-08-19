@@ -1955,6 +1955,49 @@ div[class*="modal-backdrop"] {
 #vehiclePhotosContainer .vehicle-photos-grid {
     padding-bottom: 20px;
 }
+
+/* NFC Writing Styles */
+.btn-nfc-write {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-nfc-write:disabled {
+    opacity: 0.7;
+}
+
+.nfc-writing-animation {
+    animation: nfc-pulse 1.5s infinite;
+}
+
+@keyframes nfc-pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+#nfcWriteButtons .btn {
+    font-size: 0.875rem;
+}
+
+/* NFC Status indicators */
+.nfc-status {
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+}
+
+.nfc-supported {
+    background-color: #d1f2eb;
+    color: #0f5132;
+    border: 1px solid #a7e6d7;
+}
+
+.nfc-not-supported {
+    background-color: #fff3cd;
+    color: #664d03;
+    border: 1px solid #ffe69c;
+}
 </style>
 <?= $this->endSection() ?>
 
@@ -2379,6 +2422,71 @@ div[class*="modal-backdrop"] {
                     </div>
                 </div>
             </div>
+
+            <!-- QR Code Card -->
+            <?php if (isset($qr_data) && $qr_data && isset($qr_data['qr_url']) && isset($qr_data['short_url'])): ?>
+            <div class="card mb-4 d-none d-md-block">
+                <div class="card-header">
+                    <h5 class="card-title mb-0 fw-bold">
+                        <i data-feather="smartphone" class="icon-sm me-2"></i>
+                        QR Code Access
+                    </h5>
+                    <small class="text-muted">Instant mobile access</small>
+                </div>
+                <div class="card-body text-center">
+                    <!-- Large QR Code Display -->
+                    <div class="qr-large-display">
+                                            <img src="<?= isset($qr_data['qr_url']) ? $qr_data['qr_url'] : '' ?>" 
+                         alt="QR Code for Vehicle <?= esc($vehicle['vin_number']) ?>" 
+                         class="qr-sidebar-image" 
+                         style="width: 200px; height: 200px; border-radius: 12px; cursor: pointer;"
+                             onclick="showVehicleQRModal()"
+                             title="Click to view larger">
+                    </div>
+                    
+                    <!-- Short URL Display -->
+                    <div class="mt-3">
+                        <div class="input-group">
+                            <input type="text" class="form-control text-center" 
+                                   value="<?= $qr_data['short_url'] ?>" 
+                                   readonly 
+                                   style="font-size: 0.75rem;">
+                            <button class="btn btn-outline-secondary btn-sm" 
+                                    type="button" 
+                                    onclick="copyVehicleShortUrl()"
+                                    title="Copy URL">
+                                <i class="ri-file-copy-line"></i>
+                            </button>
+                        </div>
+                        <small class="text-muted d-block mt-1">
+                            <?= $qr_data['shortener'] ?? 'MDA.to' ?>
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <?php else: ?>
+            <!-- QR Code Not Available Card -->
+            <div class="card mb-4 d-none d-md-block">
+                <div class="card-header">
+                    <h5 class="card-title mb-0 fw-bold">
+                        <i data-feather="smartphone" class="icon-sm me-2"></i>
+                        QR Code Access
+                    </h5>
+                    <small class="text-muted">Generate QR for mobile access</small>
+                </div>
+                <div class="card-body text-center">
+                    <div class="py-3">
+                        <i data-feather="qr-code" class="icon-lg text-muted mb-3"></i>
+                        <h6 class="text-muted">QR Code Not Available</h6>
+                        <p class="text-muted small mb-3">Generate a QR code for instant mobile access to this vehicle</p>
+                        <button class="btn btn-primary btn-sm" onclick="generateVehicleQR('<?= $vehicle['vin_last6'] ?? substr($vehicle['vin_number'], -6) ?>')">
+                            <i data-feather="plus" class="icon-sm me-1"></i>
+                            Generate QR Code
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <?php endif; ?>
         </div>
     </div>
 
@@ -2507,6 +2615,74 @@ div[class*="modal-backdrop"] {
                     <span class="visually-hidden">Generating...</span>
                 </div>
                 <p class="text-muted mt-2">Generating NFC token...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Vehicle QR Code Modal -->
+<div class="modal fade" id="vehicleQrModal" tabindex="-1" aria-labelledby="vehicleQrModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="vehicleQrModalLabel">
+                    <i data-feather="smartphone" class="icon-sm me-2"></i>
+                    QR Code - Vehicle <?= esc($vehicle['vin_number'] ?? '') ?>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <?php if (isset($qr_data) && $qr_data && isset($qr_data['qr_url']) && isset($qr_data['short_url'])): ?>
+                <!-- QR Code Available -->
+                <div class="mb-4">
+                    <img src="<?= isset($qr_data['qr_url']) ? $qr_data['qr_url'] : '' ?>" 
+                         alt="QR Code for Vehicle <?= esc($vehicle['vin_number']) ?>" 
+                         class="img-fluid" 
+                         style="max-width: 300px; border-radius: 12px;">
+                </div>
+                
+                <!-- Short URL Display -->
+                <div class="mb-3">
+                    <label class="form-label fw-medium">Short URL:</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="vehicleQrShortUrl" value="<?= $qr_data['short_url'] ?>" readonly>
+                        <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard('vehicleQrShortUrl')">
+                            <i data-feather="copy" class="icon-xs"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-center gap-2">
+                    <button class="btn btn-outline-primary" onclick="downloadVehicleQR()">
+                        <i data-feather="download" class="icon-xs me-1"></i>
+                        Download
+                    </button>
+                    <button class="btn btn-outline-success" onclick="shareVehicleQR()">
+                        <i data-feather="share-2" class="icon-xs me-1"></i>
+                        Share
+                    </button>
+                </div>
+                
+                <!-- Usage Info -->
+                <div class="mt-4 p-3 bg-light rounded">
+                    <small class="text-muted">
+                        <i data-feather="info" class="icon-xs me-1"></i>
+                        Scan with any phone camera or QR reader to access this vehicle instantly
+                    </small>
+                </div>
+                <?php else: ?>
+                <!-- QR Code Not Available -->
+                <div class="text-center py-4">
+                    <i data-feather="alert-triangle" class="icon-lg text-warning mb-3"></i>
+                    <h6 class="text-warning">QR Code Unavailable</h6>
+                    <p class="text-muted small">Generate a QR code for instant mobile access</p>
+                    <button class="btn btn-primary" onclick="generateVehicleQR('<?= $vehicle['vin_last6'] ?? substr($vehicle['vin_number'], -6) ?>')">
+                        <i data-feather="plus" class="icon-sm me-1"></i>
+                        Generate QR Code
+                    </button>
+                </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -3428,6 +3604,51 @@ function generateNFCToken() {
                             <i class="ri-file-copy-line me-2"></i>
                             Copy URL
                         </button>
+                        
+                        <!-- NFC Writing Buttons -->
+                        <div class="row g-2 mt-2" id="nfcWriteButtons">
+                            <div class="col-6">
+                                <button class="btn btn-warning w-100" onclick="writeNFCTag('${data.nfc_url}', false)" id="writeNfcBtn">
+                                    <i class="ri-nfc-line me-1"></i>
+                                    Write NFC
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button class="btn btn-danger w-100" onclick="writeNFCTag('${data.nfc_url}', true)" id="writeNfcSecureBtn">
+                                    <i class="ri-lock-line me-1"></i>
+                                    Write Secure
+                                </button>
+                            </div>
+                        </div>
+                        
+                        ${data.mda_shortlink && data.mda_shortlink.short_url ? `
+                        <!-- MDA Shortlink Section -->
+                        <hr class="my-3">
+                        <div class="mb-3">
+                            <h6><i class="ri-link me-2"></i>Vehicle Profile:</h6>
+                            <div class="input-group input-group-sm">
+                                <input type="text" class="form-control font-monospace" 
+                                       value="${data.mda_shortlink.short_url}" 
+                                       id="mdaUrlInput" readonly>
+                                <button class="btn btn-outline-secondary" onclick="copyToClipboard('mdaUrlInput')">
+                                    <i class="ri-file-copy-line"></i>
+                                </button>
+                            </div>
+                            <small class="text-muted">MDA.to shortlink for vehicle profile</small>
+                        </div>
+                        
+                        <a href="${data.mda_shortlink.short_url}" class="btn btn-outline-info w-100" target="_blank">
+                            <i class="ri-external-link-line me-2"></i>
+                            View Vehicle Profile
+                        </a>
+                        ` : ''}
+                        
+                        <div id="nfcSupport" class="mt-2">
+                            <small class="text-muted">
+                                <i class="ri-information-line me-1"></i>
+                                NFC writing requires Chrome on Android
+                            </small>
+                        </div>
                     </div>`;
                 
                 // Generate QR Code using QR Server API
@@ -5554,6 +5775,411 @@ function generateDetailInfo(method, group, photo) {
     }
     
     return detailInfo;
+}
+
+// ========================================
+// VEHICLE QR CODE FUNCTIONALITY
+// ========================================
+
+function showVehicleQRModal() {
+    $('#vehicleQrModal').modal('show');
+}
+
+function generateVehicleQR(vinLast6) {
+    console.log('🎯 Generating QR Code for vehicle:', vinLast6);
+    
+    // Show loading state
+    showToast('info', 'Generating QR Code...');
+    
+    // Get full VIN from page data
+    const fullVin = '<?= $vehicle['vin_number'] ?? '' ?>';
+    const vehicleDescription = '<?= $vehicle['vehicle'] ?? '' ?>';
+    
+    // Use the manual vehicle QR generation endpoint
+    fetch(`<?= base_url('vehicles/generate-qr') ?>`, {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        credentials: 'same-origin',
+        body: new URLSearchParams({
+            'vin_number': fullVin,
+            'vehicle_description': vehicleDescription
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('QR Generation Response:', data);
+        if (data.success) {
+            showToast('success', 'QR Code generated successfully!');
+            // Reload page to show QR code
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            showToast('error', data.error || 'Failed to generate QR Code');
+        }
+    })
+    .catch(error => {
+        console.error('❌ Error generating QR:', error);
+        showToast('error', 'Failed to generate QR code');
+    });
+}
+
+// Copy Vehicle Short URL
+function copyVehicleShortUrl() {
+    <?php if (isset($qr_data) && $qr_data && isset($qr_data['qr_url']) && isset($qr_data['short_url'])): ?>
+    const shortUrl = '<?= isset($qr_data['short_url']) ? $qr_data['short_url'] : '' ?>';
+    
+    // Use modern clipboard API if available
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(shortUrl).then(() => {
+            showToast('success', 'URL copied to clipboard!');
+        }).catch(err => {
+            console.error('❌ Clipboard API failed:', err);
+            fallbackCopyUrl(shortUrl);
+        });
+    } else {
+        fallbackCopyUrl(shortUrl);
+    }
+    <?php else: ?>
+    showToast('error', 'No URL to copy');
+    <?php endif; ?>
+}
+
+function fallbackCopyUrl(url) {
+    // Create temporary textarea for fallback copy
+    const textArea = document.createElement('textarea');
+    textArea.value = url;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+        document.execCommand('copy');
+        showToast('success', 'URL copied to clipboard!');
+    } catch (err) {
+        console.error('❌ Fallback copy failed:', err);
+        showToast('error', 'Failed to copy URL');
+    }
+    
+    document.body.removeChild(textArea);
+}
+
+function downloadVehicleQR() {
+    <?php if (isset($qr_data) && $qr_data && isset($qr_data['qr_url']) && isset($qr_data['short_url'])): ?>
+    const qrUrl = '<?= isset($qr_data['qr_url']) ? $qr_data['qr_url'] : '' ?>';
+    const vinNumber = '<?= esc($vehicle['vin_number'] ?? '') ?>';
+    
+    // Create a temporary link to download the QR code
+    const link = document.createElement('a');
+    link.href = qrUrl;
+    link.download = `QR_Vehicle_${vinNumber}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    showToast('success', 'QR Code downloaded!');
+    <?php else: ?>
+    showToast('error', 'No QR code available to download');
+    <?php endif; ?>
+}
+
+function shareVehicleQR() {
+    <?php if (isset($qr_data) && $qr_data && isset($qr_data['qr_url']) && isset($qr_data['short_url'])): ?>
+    const shortUrl = '<?= isset($qr_data['short_url']) ? $qr_data['short_url'] : '' ?>';
+    const vinNumber = '<?= esc($vehicle['vin_number'] ?? '') ?>';
+    const shareText = `Vehicle ${vinNumber} - Quick Access`;
+    
+    // Use Web Share API if available
+    if (navigator.share) {
+        navigator.share({
+            title: shareText,
+            text: shareText,
+            url: shortUrl
+        }).then(() => {
+            showToast('success', 'Shared successfully!');
+        }).catch((error) => {
+            console.log('❌ Error sharing:', error);
+            // Fallback to copying URL
+            copyVehicleShortUrl();
+        });
+    } else {
+        // Fallback to copying URL
+        copyVehicleShortUrl();
+    }
+    <?php else: ?>
+    showToast('error', 'No URL to share');
+    <?php endif; ?>
+}
+
+// ========================================
+// NFC WRITING FUNCTIONALITY
+// ========================================
+
+// Check NFC support on page load
+document.addEventListener('DOMContentLoaded', function() {
+    checkNFCSupport();
+});
+
+function checkNFCSupport() {
+    const supportDiv = document.getElementById('nfcSupport');
+    
+    if ('NDEFReader' in window) {
+        if (supportDiv) {
+            supportDiv.innerHTML = `
+                <small class="text-success">
+                    <i class="ri-check-circle-line me-1"></i>
+                    NFC writing supported on this device
+                </small>`;
+        }
+    } else {
+        if (supportDiv) {
+            supportDiv.innerHTML = `
+                <small class="text-warning">
+                    <i class="ri-error-warning-line me-1"></i>
+                    NFC writing requires Chrome on Android
+                </small>`;
+        }
+    }
+}
+
+async function writeNFCTag(url, usePassword = false) {
+    // Check if NFC is supported
+    if (!('NDEFReader' in window)) {
+        showToast('error', 'NFC is not supported on this device. Please use Chrome on Android.');
+        return;
+    }
+
+    try {
+        let writeOptions = {};
+        let password = null;
+
+        // If secure writing is requested, prompt for password
+        if (usePassword) {
+            password = await promptForNFCPassword();
+            if (!password) {
+                showToast('info', 'NFC writing cancelled');
+                return;
+            }
+            
+            // Set write protection options
+            writeOptions = {
+                overwrite: false,
+                signal: AbortSignal.timeout(10000) // 10 second timeout
+            };
+        }
+
+        // Show writing status
+        const writeBtn = usePassword ? document.getElementById('writeNfcSecureBtn') : document.getElementById('writeNfcBtn');
+        const originalText = writeBtn.innerHTML;
+        
+        writeBtn.disabled = true;
+        writeBtn.innerHTML = `
+            <span class="spinner-border spinner-border-sm me-1"></span>
+            ${usePassword ? 'Writing Secure...' : 'Writing...'}
+        `;
+
+        // Request NFC permission and write
+        const ndef = new NDEFReader();
+        await ndef.write({
+            records: [
+                {
+                    recordType: "url",
+                    data: url
+                },
+                {
+                    recordType: "text",
+                    data: `Vehicle Location Tracker${password ? ' (Password Protected)' : ''}`
+                }
+            ]
+        }, writeOptions);
+
+        // Success
+        writeBtn.innerHTML = `
+            <i class="ri-check-circle-line me-1"></i>
+            ${usePassword ? 'Secure Written!' : 'Written!'}
+        `;
+        writeBtn.classList.remove(usePassword ? 'btn-danger' : 'btn-warning');
+        writeBtn.classList.add('btn-success');
+        
+        showToast('success', `NFC tag written successfully${password ? ' with password protection' : ''}!`);
+        
+        // Store password for this session if provided
+        if (password) {
+            sessionStorage.setItem('nfc_password_' + btoa(url), btoa(password));
+        }
+
+        // Reset button after 3 seconds
+        setTimeout(() => {
+            writeBtn.disabled = false;
+            writeBtn.innerHTML = originalText;
+            writeBtn.classList.remove('btn-success');
+            writeBtn.classList.add(usePassword ? 'btn-danger' : 'btn-warning');
+        }, 3000);
+
+    } catch (error) {
+        console.error('NFC Write Error:', error);
+        
+        // Reset button
+        const writeBtn = usePassword ? document.getElementById('writeNfcSecureBtn') : document.getElementById('writeNfcBtn');
+        if (writeBtn) {
+            writeBtn.disabled = false;
+            writeBtn.innerHTML = originalText;
+        }
+        
+        // Handle specific errors
+        let errorMessage = 'Failed to write NFC tag';
+        
+        if (error.name === 'NotAllowedError') {
+            errorMessage = 'NFC permission denied. Please allow NFC access and try again.';
+        } else if (error.name === 'NotSupportedError') {
+            errorMessage = 'NFC writing is not supported on this device.';
+        } else if (error.name === 'NotReadableError') {
+            errorMessage = 'NFC tag is not writable or already protected.';
+        } else if (error.name === 'NetworkError') {
+            errorMessage = 'Please place the NFC tag closer to your device and try again.';
+        } else if (error.name === 'AbortError') {
+            errorMessage = 'NFC writing timed out. Please try again.';
+        } else if (error.message) {
+            errorMessage = error.message;
+        }
+        
+        showToast('error', errorMessage);
+    }
+}
+
+async function promptForNFCPassword() {
+    return new Promise((resolve) => {
+        // Create password modal
+        const modalHtml = `
+            <div class="modal fade" id="nfcPasswordModal" tabindex="-1" data-bs-backdrop="static">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">
+                                <i class="ri-lock-line me-2"></i>
+                                Secure NFC Writing
+                            </h5>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-info">
+                                <i class="ri-information-line me-2"></i>
+                                This will write the NFC tag with password protection to prevent unauthorized rewriting.
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="nfcPassword" class="form-label">Enter Password:</label>
+                                <input type="password" class="form-control" id="nfcPassword" 
+                                       placeholder="Enter a secure password" maxlength="16" required>
+                                <div class="form-text">Password will protect the tag from being overwritten</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="nfcPasswordConfirm" class="form-label">Confirm Password:</label>
+                                <input type="password" class="form-control" id="nfcPasswordConfirm" 
+                                       placeholder="Confirm your password" maxlength="16" required>
+                            </div>
+                            
+                            <div id="passwordError" class="alert alert-danger d-none">
+                                Passwords do not match!
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" onclick="cancelNFCPassword()">
+                                <i class="ri-close-line me-1"></i>
+                                Cancel
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="confirmNFCPassword()">
+                                <i class="ri-lock-line me-1"></i>
+                                Set Password & Write
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Add modal to page
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        
+        // Show modal
+        const modal = new bootstrap.Modal(document.getElementById('nfcPasswordModal'));
+        modal.show();
+        
+        // Store resolve function globally
+        window.nfcPasswordResolve = resolve;
+        
+        // Focus on password input
+        setTimeout(() => {
+            document.getElementById('nfcPassword').focus();
+        }, 500);
+        
+        // Handle Enter key
+        document.getElementById('nfcPassword').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('nfcPasswordConfirm').focus();
+            }
+        });
+        
+        document.getElementById('nfcPasswordConfirm').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                confirmNFCPassword();
+            }
+        });
+    });
+}
+
+function confirmNFCPassword() {
+    const password = document.getElementById('nfcPassword').value;
+    const confirmPassword = document.getElementById('nfcPasswordConfirm').value;
+    const errorDiv = document.getElementById('passwordError');
+    
+    // Validate passwords
+    if (!password || password.length < 4) {
+        errorDiv.textContent = 'Password must be at least 4 characters long';
+        errorDiv.classList.remove('d-none');
+        return;
+    }
+    
+    if (password !== confirmPassword) {
+        errorDiv.textContent = 'Passwords do not match!';
+        errorDiv.classList.remove('d-none');
+        return;
+    }
+    
+    // Close modal and resolve with password
+    const modal = bootstrap.Modal.getInstance(document.getElementById('nfcPasswordModal'));
+    modal.hide();
+    
+    // Clean up modal
+    setTimeout(() => {
+        document.getElementById('nfcPasswordModal').remove();
+    }, 500);
+    
+    // Resolve promise with password
+    if (window.nfcPasswordResolve) {
+        window.nfcPasswordResolve(password);
+        delete window.nfcPasswordResolve;
+    }
+}
+
+function cancelNFCPassword() {
+    const modal = bootstrap.Modal.getInstance(document.getElementById('nfcPasswordModal'));
+    modal.hide();
+    
+    // Clean up modal
+    setTimeout(() => {
+        document.getElementById('nfcPasswordModal').remove();
+    }, 500);
+    
+    // Resolve promise with null
+    if (window.nfcPasswordResolve) {
+        window.nfcPasswordResolve(null);
+        delete window.nfcPasswordResolve;
+    }
 }
 
 </script>
