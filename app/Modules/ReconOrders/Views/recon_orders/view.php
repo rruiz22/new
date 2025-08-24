@@ -851,10 +851,32 @@
 /* Activity changes styling */
 .activity-changes {
     margin-top: 0.5rem;
-    padding: 0.5rem;
+    padding: 0.75rem;
     background: #f8fafc;
-    border-radius: 6px;
+    border-radius: 8px;
     border: 1px solid #e2e8f0;
+}
+
+.activity-changes .changes-content {
+    margin-left: 0.5rem;
+}
+
+.activity-changes .change-item {
+    padding: 0.25rem 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.activity-changes .change-item:last-child {
+    border-bottom: none;
+}
+
+.activity-changes .change-values {
+    gap: 0.25rem;
+}
+
+.activity-changes .badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
 }
 
 /* Activity value tooltip styling */
@@ -885,6 +907,17 @@
 .activity-description-tooltip:hover {
     text-decoration-style: solid;
     color: #0d6efd;
+}
+
+/* Ensure tooltips stay within viewport and activity container */
+#activityList .tooltip {
+    z-index: 1070 !important;
+}
+
+/* Prevent tooltip overflow issues */
+.activity-item {
+    position: relative;
+    overflow: visible;
 }
 
 /* Activity description general styling to prevent horizontal scroll */
@@ -1176,11 +1209,10 @@
                         <small class="text-muted">Complete details for this recon order</small>
                     </div>
                     <div class="d-flex gap-2">
-                        <button class="btn btn-primary btn-sm" onclick="editReconOrder(<?= $order['id'] ?>)">
-                            <i data-feather="edit" class="icon-xs me-1"></i>
-                            Edit Order
-                        </button>
-                       
+                        <a href="<?= base_url('recon_orders') ?>" class="btn btn-outline-secondary btn-sm">
+                            <i data-feather="arrow-left" class="icon-xs me-1"></i>
+                            Go Back
+                        </a>
                         <button class="btn btn-outline-danger btn-sm" onclick="downloadReconPDF(<?= $order['id'] ?>)">
                             <i data-feather="download" class="icon-xs me-1"></i>
                             Download PDF
@@ -1844,7 +1876,7 @@ function initializePicturesToggle() {
             },
             success: function(response) {
                 if (response.success) {
-                    showToast('success', 'Pictures status updated successfully');
+                    showToast('Pictures status updated successfully', 'success');
                     
                     // Auto-refresh activities to show the pictures change activity
                     setTimeout(() => {
@@ -1889,7 +1921,7 @@ function generateQRCode(orderId) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            showToast('success', 'QR Code ready!');
+            showToast('QR Code ready!', 'success');
             // Reload page to show QR code
             setTimeout(() => location.reload(), 1500);
         } else {
@@ -1902,7 +1934,7 @@ function copyToClipboard(elementId) {
     const element = document.getElementById(elementId);
     element.select();
     document.execCommand('copy');
-    showToast('success', 'Copied to clipboard!');
+    showToast('Copied to clipboard!', 'success');
 }
 
 // Copy Short URL
@@ -1913,7 +1945,7 @@ function copyShortUrl() {
     // Use modern clipboard API if available
     if (navigator.clipboard && window.isSecureContext) {
         navigator.clipboard.writeText(shortUrl).then(() => {
-            showToast('success', '<?= lang('App.url_copied') ?>');
+            showToast('<?= lang('App.url_copied') ?>', 'success');
         }).catch(err => {
             console.error('❌ Clipboard API failed:', err);
             fallbackCopyUrl(shortUrl);
@@ -1937,7 +1969,7 @@ function fallbackCopyUrl(url) {
     
     try {
         document.execCommand('copy');
-        showToast('success', '<?= lang('App.url_copied') ?>');
+        showToast( '<?= lang('App.url_copied') ?>');
     } catch (err) {
         console.error('❌ Copy failed:', err);
         showToast('error', '<?= lang('App.copy_failed') ?>');
@@ -1952,7 +1984,7 @@ function downloadQRSimple() {
     link.href = '<?= $qr_data['qr_url'] ?>';
     link.download = 'recon-order-<?= str_pad($order['id'], 5, '0', STR_PAD_LEFT) ?>-qr.png';
     link.click();
-    showToast('success', 'QR Code downloaded!');
+    showToast( 'QR Code downloaded!');
     <?php else: ?>
     showToast('warning', 'QR Code not available for download');
     <?php endif; ?>
@@ -1966,7 +1998,7 @@ function shareQRSimple() {
             text: 'Access recon order details',
             url: '<?= $qr_data['short_url'] ?>'
         }).then(() => {
-            showToast('success', 'Shared successfully!');
+            showToast( 'Shared successfully!');
         }).catch(() => {
             // Fallback to clipboard
             navigator.clipboard.writeText('<?= $qr_data['short_url'] ?>');
@@ -1989,35 +2021,126 @@ function updateStatus() {
     const statusSelect = document.getElementById('statusSelect');
     const newStatus = statusSelect.value;
     const orderId = <?= $order['id'] ?? 0 ?>;
+    const previousStatus = statusSelect.getAttribute('data-previous-status') || '<?= $order['status'] ?? 'pending' ?>';
     
-    if (confirm('Are you sure you want to change the status to "' + newStatus.replace('_', ' ') + '"?')) {
-        $.ajax({
-            url: '<?= base_url('recon_orders/updateStatus/') ?>' + orderId,
-            type: 'POST',
-            data: {
-                status: newStatus
-            },
-            success: function(response) {
-                if (response.success) {
-                    showToast('success', 'Status updated successfully!');
-                    
-                    // Auto-refresh activities to show the status change activity
-                    setTimeout(() => {
+    // Store the previous status for rollback
+    statusSelect.setAttribute('data-previous-status', previousStatus);
+    
+    // Show loading state
+    statusSelect.disabled = true;
+    
+    $.ajax({
+        url: '<?= base_url('recon_orders/updateStatus/') ?>' + orderId,
+        type: 'POST',
+        data: {
+            status: newStatus
+        },
+        success: function(response) {
+            if (response.success) {
+                showToast('Status updated successfully!', 'success');
+                
+                // Update the status badge in the top bar if it exists
+                updateStatusBadgeInTopBar(newStatus);
+                
+                // Update the status in the basic information section
+                updateStatusInBasicInfo(newStatus);
+                
+                // Update the stored previous status
+                statusSelect.setAttribute('data-previous-status', newStatus);
+                
+                // Auto-refresh activities to show the status change activity
+                setTimeout(() => {
+                    if (typeof autoRefreshActivities === 'function') {
                         autoRefreshActivities();
-                    }, 1000);
-                    
-                    // Reload page to show updated status
-                    setTimeout(function() {
-                        location.reload();
-                    }, 2000);
-                } else {
-                    showToast('error', response.message || 'Failed to update status');
-                }
-            },
-            error: function() {
-                showToast('error', 'An error occurred while updating status');
+                    }
+                }, 500);
+                
+            } else {
+                showToast(response.message || 'Failed to update status', 'error');
+                // Reset select to previous value on error
+                statusSelect.value = previousStatus;
             }
-        });
+        },
+        error: function() {
+            showToast('An error occurred while updating status', 'error');
+            // Reset select to previous value on error
+            statusSelect.value = previousStatus;
+        },
+        complete: function() {
+            // Re-enable the select
+            statusSelect.disabled = false;
+        }
+    });
+}
+
+// Helper functions to update status in the UI without page refresh
+function updateStatusBadgeInTopBar(newStatus) {
+    // Update status badge in the top bar
+    const topBarStatus = document.querySelector('.top-bar-item .badge');
+    if (topBarStatus) {
+        // Remove existing status classes
+        topBarStatus.className = topBarStatus.className.replace(/bg-\w+/g, '');
+        
+        // Add new status class and text
+        let statusText = '';
+        let statusClass = '';
+        
+        switch(newStatus) {
+            case 'pending':
+                statusText = '⏳ Pending';
+                statusClass = 'bg-warning';
+                break;
+            case 'in_progress':
+                statusText = '🔄 In Progress';
+                statusClass = 'bg-info';
+                break;
+            case 'completed':
+                statusText = '✅ Completed';
+                statusClass = 'bg-success';
+                break;
+            case 'cancelled':
+                statusText = '❌ Cancelled';
+                statusClass = 'bg-danger';
+                break;
+        }
+        
+        topBarStatus.textContent = statusText;
+        topBarStatus.classList.add(statusClass);
+    }
+}
+
+function updateStatusInBasicInfo(newStatus) {
+    // Update status in the basic information section
+    const basicInfoStatus = document.querySelector('.card-body .badge');
+    if (basicInfoStatus) {
+        // Remove existing status classes
+        basicInfoStatus.className = basicInfoStatus.className.replace(/bg-\w+/g, '');
+        
+        // Add new status class and text
+        let statusText = '';
+        let statusClass = '';
+        
+        switch(newStatus) {
+            case 'pending':
+                statusText = 'Pending';
+                statusClass = 'bg-warning';
+                break;
+            case 'in_progress':
+                statusText = 'In Progress';
+                statusClass = 'bg-info';
+                break;
+            case 'completed':
+                statusText = 'Completed';
+                statusClass = 'bg-success';
+                break;
+            case 'cancelled':
+                statusText = 'Cancelled';
+                statusClass = 'bg-danger';
+                break;
+        }
+        
+        basicInfoStatus.textContent = statusText;
+        basicInfoStatus.classList.add(statusClass);
     }
 }
 
@@ -2033,7 +2156,7 @@ function deleteOrder(orderId) {
             type: 'POST',
             success: function(response) {
                 if (response.success) {
-                    showToast('success', 'Order deleted successfully');
+                    showToast( 'Order deleted successfully');
                     // Redirect to orders list
                     setTimeout(function() {
                         window.location.href = '<?= base_url('recon_orders') ?>';
@@ -2323,7 +2446,7 @@ function submitComment() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            showToast('success', 'Comment added successfully');
+            showToast( 'Comment added successfully');
             
             // Clear form
             commentText.value = '';
@@ -2871,7 +2994,7 @@ function addFollower() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            showToast('success', data.message || 'Follower added successfully');
+            showToast( data.message || 'Follower added successfully');
             $('#addFollowerModal').modal('hide');
             
             // Reset form
@@ -2905,7 +3028,7 @@ function removeFollower(followerId) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            showToast('success', data.message || 'Follower removed successfully');
+            showToast( data.message || 'Follower removed successfully');
             // Reload followers
             loadFollowers();
         } else {
@@ -2934,6 +3057,15 @@ function loadRecentActivity(reset = true) {
     const activityList = document.getElementById('activityList');
     
     if (reset) {
+        // Clean up existing tooltips before clearing content
+        const existingTooltips = activityList.querySelectorAll('[data-bs-toggle="tooltip"]');
+        existingTooltips.forEach(element => {
+            const tooltip = bootstrap.Tooltip.getInstance(element);
+            if (tooltip) {
+                tooltip.dispose();
+            }
+        });
+        
         activitiesPagination.currentPage = 1;
         activitiesPagination.hasMore = true;
         activitiesPagination.loading = false;
@@ -3135,16 +3267,7 @@ function createEnhancedActivityHtml(activity) {
     const activityType = activity.activity_type || 'general';
     const activityClass = `activity-${activityType}`;
     
-    // Build preview section if available
-    let previewHtml = '';
-    if (activity.preview) {
-        previewHtml = `
-            <div class="activity-preview mt-2 p-2 bg-light rounded">
-                <small class="text-muted">Preview:</small>
-                <div class="activity-preview-content">"${activity.preview}"</div>
-            </div>
-        `;
-    }
+    // Preview section removed - descriptions will be truncated with tooltips instead
     
     // Build changes section if available
     let changesHtml = '';
@@ -3154,20 +3277,30 @@ function createEnhancedActivityHtml(activity) {
         
         changesHtml = `
             <div class="activity-changes mt-2">
-                <small class="text-muted d-block mb-1">Changes:</small>
+                <small class="text-muted d-block mb-1">
+                    <i data-feather="edit-3" class="icon-xs me-1"></i>
+                    Changes:
+                </small>
                 <div class="changes-content">
         `;
         
         // Show old -> new value changes
         const allKeys = new Set([...Object.keys(oldVals), ...Object.keys(newVals)]);
         allKeys.forEach(key => {
-            if (oldVals[key] !== newVals[key]) {
+            const oldVal = oldVals[key];
+            const newVal = newVals[key];
+            
+            // Only show if values are actually different
+            if (oldVal !== newVal) {
+                const fieldLabel = getFieldLabel(key);
                 changesHtml += `
-                    <div class="change-item d-flex align-items-center mb-1">
-                        <small class="text-muted me-2">${key}:</small>
-                        ${formatValueForDisplay(oldVals[key], 'old')}
-                        <i data-feather="arrow-right" class="icon-xs mx-1"></i>
-                        ${formatValueForDisplay(newVals[key], 'new')}
+                    <div class="change-item d-flex align-items-center mb-1 flex-wrap">
+                        <small class="text-muted me-2 fw-medium">${fieldLabel}:</small>
+                        <div class="change-values d-flex align-items-center">
+                            ${formatValueForDisplay(oldVal, 'old')}
+                            <i data-feather="arrow-right" class="icon-xs mx-1 text-muted"></i>
+                            ${formatValueForDisplay(newVal, 'new')}
+                        </div>
                     </div>
                 `;
             }
@@ -3179,18 +3312,21 @@ function createEnhancedActivityHtml(activity) {
         `;
     }
     
-    // Format description with tooltip support for truncated content
+    // Format description with automatic truncation and tooltip
     let descriptionHtml = '';
     if (activity.description) {
-        if (typeof activity.description === 'object' && activity.description.is_truncated) {
-            const tooltipContent = escapeForTooltip(activity.description.full);
+        const description = typeof activity.description === 'object' ? activity.description.text || activity.description.full || '' : activity.description;
+        
+        if (description.length > 20) {
+            const truncated = description.substring(0, 20) + '...';
+            const tooltipContent = escapeForTooltip(description);
             descriptionHtml = `<span class="activity-description-tooltip" 
                                     data-bs-toggle="tooltip" 
-                                    data-bs-placement="top" 
+                                    data-bs-placement="right" 
                                     data-bs-html="false" 
-                                    title="${tooltipContent}">${activity.description.text}</span>`;
+                                    title="${tooltipContent}">${truncated}</span>`;
         } else {
-            descriptionHtml = activity.description;
+            descriptionHtml = description;
         }
     }
     
@@ -3213,7 +3349,6 @@ function createEnhancedActivityHtml(activity) {
                         </small>
                     </div>
                     
-                    ${previewHtml}
                     ${changesHtml}
                     
                     <div class="activity-meta mt-2">
@@ -3230,8 +3365,8 @@ function createEnhancedActivityHtml(activity) {
 
 // Helper function to format values for display with tooltip support
 function formatValueForDisplay(value, type) {
-    if (!value) {
-        return '';
+    if (!value && value !== 0 && value !== '0') {
+        return `<span class="badge bg-light text-muted">Empty</span>`;
     }
     
     const badgeClass = type === 'old' ? 'bg-danger-subtle text-danger' : 'bg-success-subtle text-success';
@@ -3245,8 +3380,30 @@ function formatValueForDisplay(value, type) {
                       data-bs-html="false" 
                       title="${tooltipContent}">${value.truncated}</span>`;
     } else {
-        return `<span class="badge ${badgeClass} me-1">${value}</span>`;
+        const displayValue = typeof value === 'string' ? value : String(value);
+        return `<span class="badge ${badgeClass} me-1">${displayValue}</span>`;
     }
+}
+
+// Helper function to get friendly field labels
+function getFieldLabel(fieldName) {
+    const labels = {
+        'status': 'Status',
+        'pictures': 'Pictures',
+        'vin_number': 'VIN Number',
+        'client_id': 'Client',
+        'assigned_to': 'Assigned To',
+        'service_id': 'Service',
+        'vehicle': 'Vehicle',
+        'service_date': 'Service Date',
+        'comments': 'Comments',
+        'comment': 'Comment',
+        'stock': 'Stock Number',
+        'phone': 'Phone',
+        'email': 'Email'
+    };
+    
+    return labels[fieldName] || fieldName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 }
 
 // Helper function to escape content for tooltip
@@ -3260,12 +3417,26 @@ function escapeForTooltip(text) {
 
 // Initialize tooltips for activity elements
 function initializeActivityTooltips() {
-    // Initialize Bootstrap tooltips for activity value elements
-    const tooltipTriggerList = document.querySelectorAll('.activity-value-tooltip[data-bs-toggle="tooltip"], .activity-description-tooltip[data-bs-toggle="tooltip"]');
+    // First, dispose of any existing tooltips to prevent stuck tooltips
+    const existingTooltips = document.querySelectorAll('#activityList [data-bs-toggle="tooltip"]');
+    existingTooltips.forEach(element => {
+        const existingTooltip = bootstrap.Tooltip.getInstance(element);
+        if (existingTooltip) {
+            existingTooltip.dispose();
+        }
+    });
+    
+    // Now initialize new tooltips only within the activity list
+    const activityList = document.getElementById('activityList');
+    if (!activityList) return;
+    
+    const tooltipTriggerList = activityList.querySelectorAll('.activity-value-tooltip[data-bs-toggle="tooltip"], .activity-description-tooltip[data-bs-toggle="tooltip"]');
     const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => {
         return new bootstrap.Tooltip(tooltipTriggerEl, {
             trigger: 'hover focus',
-            placement: 'top',
+            placement: 'auto',
+            container: '#activityList',
+            boundary: 'viewport',
             html: false
         });
     });
@@ -3387,11 +3558,11 @@ function nl2br(text) {
 }
 
 function showSuccess(message) {
-    showToast('success', message);
+    showToast(message, 'success');
 }
 
 function showError(message) {
-    showToast('error', message);
+    showToast(message, 'error');
 }
 
 // showToast function removed - using global definition from index.php

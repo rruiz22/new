@@ -29,7 +29,7 @@
                 <div class="main-content">
 
             <!-- Page Title -->
-            <?= $this->include('partials/page-title') ?>
+             
 
             <!-- Start Page-content -->
             <div class="page-content">

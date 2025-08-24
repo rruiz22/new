@@ -2409,10 +2409,10 @@ div[class*="modal-backdrop"] {
                         </div>
                         <div class="col-12 col-sm-4 order-1 order-sm-2 text-center">
                             <h4 class="card-title mb-0 service-orders-card-title">
-                                <i data-feather="camera" class="icon-sm me-1"></i>
-                                <span class="d-none d-sm-inline"><?= lang('App.vehicle_photos') ?></span>
-                                <span class="d-sm-none">Photos</span>
-                            </h4>
+                        <i data-feather="camera" class="icon-sm me-1"></i>
+                        <span class="d-none d-sm-inline"><?= lang('App.vehicle_photos') ?></span>
+                        <span class="d-sm-none">Photos</span>
+                    </h4>
                         </div>
                         <div class="col-12 col-sm-4 order-3 order-sm-3 text-end">
                             <div class="d-flex flex-wrap gap-2 justify-content-center justify-content-sm-end">
@@ -2420,14 +2420,14 @@ div[class*="modal-backdrop"] {
                                     <i data-feather="copy" class="icon-sm me-1"></i>
                                     <span class="d-none d-md-inline">Detect Duplicates</span>
                                     <span class="d-md-none">Duplicates</span>
-                                </button>
-                                <button class="btn btn-outline-primary btn-sm" onclick="refreshVehiclePhotos()">
-                                    <i data-feather="refresh-cw" class="icon-sm me-1"></i>
-                                    <span class="d-none d-md-inline"><?= lang('App.refresh') ?></span>
-                                    <span class="d-md-none">Refresh</span>
-                                </button>
-                            </div>
-                        </div>
+                        </button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="refreshVehiclePhotos()">
+                            <i data-feather="refresh-cw" class="icon-sm me-1"></i>
+                            <span class="d-none d-md-inline"><?= lang('App.refresh') ?></span>
+                            <span class="d-md-none">Refresh</span>
+                        </button>
+                    </div>
+                </div>
                     </div>
                 </div>
                 
@@ -2441,10 +2441,10 @@ div[class*="modal-backdrop"] {
                                 <span class="visually-hidden">Loading...</span>
                             </div>
                             <p class="text-muted mt-2">Loading vehicle photos...</p>
+                            </div>
                         </div>
-                    </div>
-                </div>
             </div>
+        </div>
 
             <!-- Service History - Wide Content -->
             <div class="card">
@@ -2478,9 +2478,9 @@ div[class*="modal-backdrop"] {
                                         data-order-id="<?= $service['id'] ?>"
                                         title="Click to view order details">
                                         <td class="d-none d-sm-table-cell">
-                                            <?php if (!empty($service['order_number'])): ?>
+                                                <?php if (!empty($service['order_number'])): ?>
                                                 <span class="fw-medium text-break font-monospace"><?= esc($service['order_number']) ?></span>
-                                            <?php else: ?>
+                                                <?php else: ?>
                                                 <span class="fw-medium font-monospace">RO-<?= str_pad($service['id'], 5, '0', STR_PAD_LEFT) ?></span>
                                             <?php endif; ?>
                                         </td>
@@ -2489,18 +2489,18 @@ div[class*="modal-backdrop"] {
                                                 <span class="badge bg-secondary text-white font-monospace"><?= esc($service['stock']) ?></span>
                                             <?php else: ?>
                                                 <span class="text-muted small">N/A</span>
-                                            <?php endif; ?>
+                                                <?php endif; ?>
                                         </td>
                                         <td>
                                             <!-- Mobile: Show order number inline -->
                                             <div class="d-sm-none">
                                                 <small class="text-muted d-block font-monospace">
-                                                    <?php if (!empty($service['order_number'])): ?>
-                                                        <?= esc($service['order_number']) ?>
-                                                    <?php else: ?>
+                                                        <?php if (!empty($service['order_number'])): ?>
+                                                            <?= esc($service['order_number']) ?>
+                                                        <?php else: ?>
                                                         RO-<?= str_pad($service['id'], 5, '0', STR_PAD_LEFT) ?>
-                                                    <?php endif; ?>
-                                                </small>
+                                                        <?php endif; ?>
+                                                    </small>
                                             </div>
                                             
                                             <?php 
@@ -2635,7 +2635,7 @@ div[class*="modal-backdrop"] {
                     <?php endif; ?>
                 </div>
             </div>
-
+            
             <!-- Location History Section - Wide Content -->
             <div class="card mb-4">
                 <div class="card-header d-flex align-items-center">
@@ -2663,8 +2663,8 @@ div[class*="modal-backdrop"] {
                         <div class="map-container">
                             <div id="locationHistoryMap" style="height: 400px; border-radius: 8px;"></div>
                         </div>
-                    </div>
-                    
+        </div>
+
                     <!-- Location History Table Container -->
                     <div id="locationHistoryContainer">
                         <div class="text-center py-4">
@@ -2802,7 +2802,7 @@ div[class*="modal-backdrop"] {
                         QR Code Access
                     </h5>
                     <small class="text-muted">Instant mobile access</small>
-                </div>
+        </div>
                 <div class="card-body text-center">
                     <!-- Large QR Code Display -->
                     <div class="qr-large-display">
@@ -2812,8 +2812,8 @@ div[class*="modal-backdrop"] {
                          style="width: 200px; height: 200px; border-radius: 12px; cursor: pointer;"
                              onclick="openVehicleQRModal()"
                              title="Click to view larger">
-                    </div>
-                    
+    </div>
+
                     <!-- Short URL Display -->
                     <div class="mt-3">
                         <div class="input-group">
@@ -2827,13 +2827,13 @@ div[class*="modal-backdrop"] {
                                     title="Copy URL">
                                 <i class="ri-file-copy-line"></i>
                             </button>
-                        </div>
+                    </div>
                         <small class="text-muted d-block mt-1">
                             <?= $qr_data['shortener'] ?? 'MDA.to' ?>
                         </small>
-                    </div>
                 </div>
-            </div>
+                    </div>
+                        </div>
             <?php else: ?>
             <!-- QR Code Not Available Card -->
             <div class="card mb-4 d-none d-md-block">
@@ -2843,7 +2843,7 @@ div[class*="modal-backdrop"] {
                         QR Code Access
                     </h5>
                     <small class="text-muted">Generate QR for mobile access</small>
-                </div>
+                    </div>
                 <div class="card-body text-center">
                     <div class="py-3">
                         <i data-feather="square" class="icon-lg text-muted mb-3"></i>
@@ -2853,12 +2853,12 @@ div[class*="modal-backdrop"] {
                             <i data-feather="plus" class="icon-sm me-1"></i>
                             Generate QR Code
                         </button>
+                            </div>
+                        </div>
                     </div>
+            <?php endif; ?>
                 </div>
             </div>
-            <?php endif; ?>
-        </div>
-    </div>
     
 </div>
 
@@ -5471,17 +5471,17 @@ function updateFilesList() {
             fileItem.innerHTML = `
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <div class="d-flex align-items-center">
-                        <i class="ri-image-line me-2"></i>
+                    <i class="ri-image-line me-2"></i>
                         <div>
                             <span class="fw-medium">${file.name}</span>
                             <small class="text-muted d-block">(${(file.size / 1024 / 1024).toFixed(2)} MB)</small>
-                        </div>
+                </div>
                     </div>
                     <div class="d-flex align-items-center">
                         <span class="badge bg-secondary me-2" id="file-status-${index}">Pending</span>
-                        <button class="btn btn-sm btn-outline-danger" onclick="removeFile(${index})">
-                            <i class="ri-close-line"></i>
-                        </button>
+                <button class="btn btn-sm btn-outline-danger" onclick="removeFile(${index})">
+                    <i class="ri-close-line"></i>
+                </button>
                     </div>
                 </div>
                 <div class="progress mt-2" style="height: 8px; display: none;" id="file-progress-${index}">
@@ -5715,13 +5715,13 @@ async function uploadFilesIndividually(vinLast6) {
             if (result.success) {
                 updateFileProgress(i, 100, 'success');
                 successCount++;
-            } else {
+        } else {
                 updateFileProgress(i, 100, 'error');
                 errorCount++;
                 console.error(`Upload failed for file ${i}:`, result.error);
-            }
-            
-        } catch (error) {
+        }
+        
+    } catch (error) {
             console.error(`Upload error for file ${i}:`, error);
             updateFileProgress(i, 100, 'error');
             errorCount++;
@@ -6038,4 +6038,4 @@ async function writeNFCTag(url, secure = false) {
 </script>
 <?= $this->endSection() ?>
 
-<?= $this->endSection() ?>
+<?= $this->endSection() ?> 

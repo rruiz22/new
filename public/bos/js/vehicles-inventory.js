@@ -67,7 +67,6 @@ function handleSessionExpiry(response) {
                         window.location.pathname.includes('public/bos/');
     
     if (isPublicPage) {
-        console.log('🌐 Public page detected - ignoring session expiry');
         return;
     }
     
@@ -161,10 +160,7 @@ if (window.location.pathname.includes('/bos/') || window.location.pathname.inclu
                 const count = stockCounts.get(cleanStock) || 0;
                 stockCounts.set(cleanStock, count + 1);
                 
-            if (index < 5) { // Reduce logging
-                console.log(`Row ${index}: Stock "${cleanStock}" - Count: ${count + 1}`);
-            }
-            }
+                    }
         });
         
         // Identify duplicates (stocks that appear more than once)
@@ -180,15 +176,8 @@ if (window.location.pathname.includes('/bos/') || window.location.pathname.inclu
         window.allStockNumbers = allStocks; // For debugging
         
         // Log duplicate information for debugging
-        console.log('📊 Stock analysis:', {
-            totalItems: data.length,
-            uniqueStocks: stockCounts.size,
-            duplicateStocks: duplicates.size,
-            duplicateList: Array.from(duplicates)
-        });
         
         if (duplicates.size > 0) {
-            console.log('🚨 Duplicate stock numbers detected:', Array.from(duplicates));
             
             // Only show toast if duplicates have changed or it's the first time
             const duplicateKey = Array.from(duplicates).sort().join(',');
@@ -204,7 +193,6 @@ if (window.location.pathname.includes('/bos/') || window.location.pathname.inclu
             }
         } else {
 
-            // Clear the duplicate key if no duplicates found
             window.lastDuplicateKey = null;
         }
         
@@ -327,7 +315,6 @@ function updateInventoryStatusColumns() {
 function applyStatusRowColors() {
     const $ = window.jQuery;
     
-    console.log('🎨 Applying status-based row colors...');
     
     $('#inventoryTable tbody tr').each(function() {
         const $row = $(this);
@@ -369,7 +356,6 @@ function processInventoryData(data) {
         loadOrderInfoForInventory();
         
         if (hasDuplicateStocks()) {
-            console.log('🔄 Processing duplicate icons for:', Array.from(window.duplicateStocks));
             updateDuplicateIcons();
         }
     }, 150);
@@ -432,7 +418,6 @@ function processInventoryData(data) {
 function loadOrderInfoForInventory() {
     const $ = window.jQuery;
     
-    console.log('🔍 Loading real status data for inventory...');
     
     // Get all stock numbers from current table data
     let stockNumbers = [];
@@ -441,7 +426,6 @@ function loadOrderInfoForInventory() {
         stockNumbers = tableData.map(row => row.stock_number).filter(stock => stock);
     }
     
-    console.log('📋 Loading status for', stockNumbers.length, 'stock numbers');
     
     // Load real status data from our new endpoint
     $.ajax({
@@ -454,14 +438,11 @@ function loadOrderInfoForInventory() {
         dataType: 'json',
         timeout: 15000,
         success: function(response) {
-            console.log('📦 Real status response:', response);
             
             if (response.success && response.data) {
                 window.orderInfoLookup = response.data;
-                console.log('✅ Real status data loaded:', Object.keys(response.data).length, 'items');
                 updateInventoryStatusColumns();
             } else {
-                console.log('⚠️ No status data received from database');
                 window.orderInfoLookup = {};
                 updateInventoryStatusColumns();
             }
@@ -599,11 +580,9 @@ function updateCheckboxStates() {
                 tableState.isInitComplete = window.inventoryTable.settings()[0]._bInitComplete;
             }
             
-            console.log('📊 Current table state:', tableState);
             
             // If table exists but is not functional, destroy it and reinitialize
             if (!tableState.hasData || !tableState.isInitComplete || !tableState.hasAjax) {
-                console.warn('⚠️ Table exists but is not functional, destroying and reinitializing...');
                 try {
                     if (typeof window.inventoryTable.destroy === 'function') {
                         window.inventoryTable.destroy();
@@ -612,22 +591,18 @@ function updateCheckboxStates() {
                     window.tableInitializing = false;
                     // Continue with initialization
                 } catch (e) {
-                    console.error('❌ Error destroying non-functional table:', e);
                     window.inventoryTable = null;
                     window.tableInitializing = false;
                 }
             } else {
-                console.log('✅ Table is functional, skipping initialization');
                 return;
             }
         }
         
         if (window.tableInitializing) {
-            console.log('🔄 Table initialization already in progress, skipping...');
             return;
         }
         
-        console.log('🚀 Starting table initialization...');
         window.tableInitializing = true;
         
         // Use jQuery safely
@@ -693,7 +668,6 @@ function updateCheckboxStates() {
                 if (window.duplicateStocks && window.duplicateStocks instanceof Set && window.duplicateStocks.size > 0) {
                     const stockString = data.toString().trim();
                     if (window.duplicateStocks.has(stockString)) {
-                        console.log(`🚨 Rendering duplicate icon for stock: ${stockString}`);
                         duplicateIcon = `<i id="${duplicateIconId}" class="ri-alert-line text-warning ms-2 duplicate-alert" 
                             title="Duplicate stock number detected!" 
                             style="font-size: 0.9rem; cursor: pointer;"></i>`;
@@ -766,7 +740,6 @@ function updateCheckboxStates() {
         ];
 
         // Initialize Inventory Table
-        console.log('📊 Initializing inventory DataTable...');
         window.inventoryTable = $('#inventoryTable').DataTable({
             processing: true,
             serverSide: false,
@@ -781,7 +754,6 @@ function updateCheckboxStates() {
                                         window.location.pathname.includes('public/bos/');
                     
                     if (isPublicPage) {
-                        console.log('🌐 Public page - ignoring AJAX error:', xhr.status);
                         return false;
                     }
                     
@@ -801,18 +773,15 @@ function updateCheckboxStates() {
                     return false;
                 },
                 dataSrc: function(json) {
-                    console.log('📦 Received inventory data:', json);
                     let data = json;
                     if (json.success && json.data) {
                         data = json.data;
                     }
                     
                     if (!Array.isArray(data)) {
-                        console.warn('⚠️ Data is not an array:', data);
                         return [];
                     }
                     
-                    console.log('✅ Processing inventory data:', data.length, 'items');
                 return processInventoryData(data);
                 },
                 error: function(xhr, error, thrown) {
@@ -893,12 +862,9 @@ function updateCheckboxStates() {
                 }
             },
             initComplete: function(settings, json) {
-                console.log('🎉 DataTable initialization complete!');
-                console.log('📊 Loaded data:', json ? (json.data ? json.data.length : json.length || 'unknown') : 'no data');
                 
                 // Ensure the table is marked as ready
                 if (window.inventoryTable) {
-                    console.log('✅ Table is available and ready for use');
                 }
             }
         });
@@ -914,12 +880,6 @@ function updateCheckboxStates() {
         // Mark table initialization as complete
         window.tableInitializing = false;
         
-        console.log('✅ Table initialization completed successfully');
-        console.log('📊 Final table state:', {
-            exists: !!window.inventoryTable,
-            hasData: window.inventoryTable && typeof window.inventoryTable.data === 'function',
-            isInitComplete: window.inventoryTable && window.inventoryTable.settings && window.inventoryTable.settings().length > 0 ? window.inventoryTable.settings()[0]._bInitComplete : false
-        });
         
         // Update loading status
         if (window.updateLoadingText) {
@@ -928,7 +888,6 @@ function updateCheckboxStates() {
         
         // Trigger custom event when tables are ready
         setTimeout(() => {
-            console.log('🎯 Dispatching tablesReady event');
             window.dispatchEvent(new CustomEvent('tablesReady'));
         }, 1000);
     }
@@ -958,8 +917,7 @@ function updateCheckboxStates() {
                                                 window.location.pathname.includes('public/bos/');
                             
                             if (isPublicPage) {
-                                console.log('🌐 Public page - ignoring AJAX error:', xhr.status);
-                                return false;
+                                        return false;
                             }
                             
                             // Handle session expiry ONLY if user was previously authenticated
@@ -1028,7 +986,6 @@ function updateCheckboxStates() {
                 }
             });
             } catch (error) {
-                console.warn('⚠️ Failed to initialize Inventory Orders table:', error);
             }
         }
 
@@ -1053,8 +1010,7 @@ function updateCheckboxStates() {
                                                 window.location.pathname.includes('public/bos/');
                             
                             if (isPublicPage) {
-                                console.log('🌐 Public page - ignoring AJAX error:', xhr.status);
-                                return false;
+                                        return false;
                             }
                             
                             // Handle session expiry ONLY if user was previously authenticated
@@ -1123,7 +1079,6 @@ function updateCheckboxStates() {
                 }
             });
             } catch (error) {
-                console.warn('⚠️ Failed to initialize All Orders table:', error);
             }
         }
     }
@@ -1157,7 +1112,6 @@ function updateCheckboxStates() {
             
             // Safety timeout to restore button if something goes wrong
             const safetyTimeout = setTimeout(() => {
-                console.warn('⚠️ Refresh timeout reached, restoring button');
                 restoreButton(false, 'Refresh timed out');
             }, 30000); // 30 seconds timeout
             
@@ -1202,15 +1156,12 @@ function updateCheckboxStates() {
                         restoreButton(true, 'Inventory refreshed successfully');
                     }, function(xhr, error, thrown) {
                         // Error callback
-                        console.error('❌ Error refreshing inventory:', error, thrown);
                         restoreButton(false, 'Failed to refresh inventory data');
                     });
                 } catch (e) {
-                    console.error('❌ Exception during refresh:', e);
                     restoreButton(false, 'Error occurred during refresh');
                 }
             } else {
-                console.warn('⚠️ Table not available for refresh');
                 restoreButton(false, 'Table not available for refresh');
             }
         });
@@ -1421,7 +1372,6 @@ function updateCheckboxStates() {
 // ====================================
 
     function showBulkConversionModal(selectedItems) {
-        console.log('🔄 Bulk conversion modal for:', selectedItems);
         
         if (!selectedItems || selectedItems.length === 0) {
             showToast('No items selected for conversion', 'warning');
@@ -1440,7 +1390,6 @@ function updateCheckboxStates() {
     
     // Function to handle individual item conversion
     window.moveToRecon = function(stockNumber) {
-        console.log('🔄 Moving single item to recon:', stockNumber);
         
         if (!stockNumber) {
             showToast('Invalid stock number', 'error');
@@ -1473,7 +1422,6 @@ function updateCheckboxStates() {
     
     // Function to process the actual conversion
     function processBulkConversion(items) {
-        console.log('🚀 Processing conversion for', items.length, 'items:', items);
         
         // Show loading state
         showToast(`Processing ${items.length} item(s)...`, 'info');
@@ -1482,7 +1430,6 @@ function updateCheckboxStates() {
         // For now, we'll simulate the process
         setTimeout(() => {
             const stockNumbers = items.map(item => item.stock_number);
-            console.log('✅ Conversion completed for stocks:', stockNumbers);
             showToast(`Successfully moved ${items.length} item(s) to Recon Orders`, 'success');
             
             // Refresh the inventory table to reflect changes
@@ -1504,11 +1451,9 @@ function updateCheckboxStates() {
 
 // Function to update authentication UI
 function updateAuthenticationUI() {
-    console.log('🔐 updateAuthenticationUI called - isAuthenticated:', window.isAuthenticated);
     
     // Show/hide staff-only elements
     const staffOnlyElements = document.querySelectorAll('.staff-only, [class*="staff-only"]');
-    console.log('📋 Found', staffOnlyElements.length, 'staff-only elements');
     
     staffOnlyElements.forEach((element, index) => {
         if (window.isAuthenticated) {
@@ -1536,10 +1481,8 @@ function updateAuthenticationUI() {
     if (topBar) {
         if (window.isAuthenticated) {
             topBar.classList.add('show');
-            console.log('✅ Showing top bar');
         } else {
             topBar.classList.remove('show');
-            console.log('❌ Hiding top bar');
         }
     }
     
@@ -1554,7 +1497,6 @@ function updateAuthenticationUI() {
     const isPublicPage = window.location.pathname.includes('/bos/') || window.location.pathname.includes('public/bos/');
     
     if (isPublicPage) {
-        console.log('🌐 Public page detected, skipping auth-based table reinitialization');
         return;
     }
     
@@ -1562,12 +1504,10 @@ function updateAuthenticationUI() {
     const authActuallyChanged = (typeof window.lastAuthState !== 'undefined') && (window.lastAuthState !== currentAuth);
     
     if (authActuallyChanged) {
-        console.log(`🔄 Auth state actually changed: ${window.lastAuthState} → ${currentAuth}`);
         window.lastAuthState = currentAuth;
         
         // Only reinitialize if table actually exists and is not already being reinitialized
         if (window.inventoryTable && typeof window.inventoryTable.destroy === 'function' && !window.tableReinitializing) {
-            console.log('🔄 Auth state changed, reinitializing table...');
             window.tableReinitializing = true;
             
             try {
@@ -1577,25 +1517,21 @@ function updateAuthenticationUI() {
                 
                 // Add delay before reinitializing to prevent conflicts
                 setTimeout(() => {
-                    console.log('🚀 Reinitializing table after auth change...');
         initializeTables();
                     window.tableReinitializing = false;
                 }, 500); // Increased delay
             } catch (e) {
-                console.error('❌ Error during table reinitialization:', e);
                 window.tableReinitializing = false;
                 window.tableInitializing = false;
             }
         } else if (!window.inventoryTable && !window.tableInitializing && !window.tableReinitializing) {
             // If no table exists and nothing is initializing, start initialization
-            console.log('🆕 No table exists, starting fresh initialization...');
             initializeTables();
         }
     } else {
         // Set lastAuthState if it's the first time
         if (typeof window.lastAuthState === 'undefined') {
             window.lastAuthState = currentAuth;
-            console.log(`🔧 Setting initial auth state: ${currentAuth}`);
         }
     }
 }
@@ -1689,12 +1625,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Wait for authentication to be verified before initializing tables
     function waitForAuth() {
         if (typeof window.authCheckCompleted === 'undefined') {
-            console.log('⏳ Waiting for auth check to complete...');
-            setTimeout(waitForAuth, 100);
+                    setTimeout(waitForAuth, 100);
         return;
     }
     
-        console.log('✅ Auth check completed, initializing tables...');
         initializeTables();
     }
     
@@ -1704,7 +1638,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Emergency fallback - initialize tables after 3 seconds regardless
     setTimeout(() => {
         if (!window.inventoryTable) {
-            console.warn('🚨 Emergency table initialization - auth check taking too long');
             window.authCheckCompleted = true;
             initializeTables();
         }

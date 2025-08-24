@@ -57,8 +57,8 @@ class ReconOrdersController extends BaseController
             return redirect()->to(base_url('recon_orders'))->with('error', 'Order not found');
         }
 
-        // Generate QR Code data using simplified method
-        $qr_data = $this->getQRDataForOrderSimple($id);
+        // Generate QR Code data using MDA Links integration
+        $qr_data = $this->getQRDataForOrder($id);
 
         // Initialize data arrays (these will be loaded via AJAX)
         $comments = [];
@@ -453,7 +453,7 @@ class ReconOrdersController extends BaseController
                          COALESCE(recon_orders.source_type, "manual") as source_type')
                 ->join('clients', 'clients.id = recon_orders.client_id', 'left')
                 ->where('recon_orders.deleted_at IS NULL')
-                ->where('DATE(recon_orders.created_at)', date('Y-m-d')); // Today's orders
+                ->where('DATE(recon_orders.service_date)', date('Y-m-d')); // Today's orders
             
             // Apply filters
             if (!empty($clientFilter)) {
@@ -465,11 +465,11 @@ class ReconOrdersController extends BaseController
             }
             
             if (!empty($dateFromFilter)) {
-                $builder->where('DATE(recon_orders.created_at) >=', $dateFromFilter);
+                $builder->where('DATE(recon_orders.service_date) >=', $dateFromFilter);
             }
             
             if (!empty($dateToFilter)) {
-                $builder->where('DATE(recon_orders.created_at) <=', $dateToFilter);
+                $builder->where('DATE(recon_orders.service_date) <=', $dateToFilter);
             }
             
             $orders = $builder->orderBy('recon_orders.created_at', 'DESC')
@@ -521,11 +521,11 @@ class ReconOrdersController extends BaseController
             }
             
             if (!empty($dateFromFilter)) {
-                $builder->where('DATE(recon_orders.created_at) >=', $dateFromFilter);
+                $builder->where('DATE(recon_orders.service_date) >=', $dateFromFilter);
             }
             
             if (!empty($dateToFilter)) {
-                $builder->where('DATE(recon_orders.created_at) <=', $dateToFilter);
+                $builder->where('DATE(recon_orders.service_date) <=', $dateToFilter);
             }
             
             $orders = $builder->orderBy('recon_orders.created_at', 'DESC')
@@ -740,6 +740,28 @@ class ReconOrdersController extends BaseController
                 
                 $builder->where('recon_orders.deleted_at IS NULL');
                 
+                // Apply global filters
+                $clientFilter = $this->request->getPost('client_filter');
+                $statusFilter = $this->request->getPost('status_filter');
+                $dateFromFilter = $this->request->getPost('date_from_filter');
+                $dateToFilter = $this->request->getPost('date_to_filter');
+                
+                if (!empty($clientFilter)) {
+                    $builder->where('recon_orders.client_id', $clientFilter);
+                }
+                
+                if (!empty($statusFilter)) {
+                    $builder->where('recon_orders.status', $statusFilter);
+                }
+                
+                if (!empty($dateFromFilter)) {
+                    $builder->where('DATE(recon_orders.service_date) >=', $dateFromFilter);
+                }
+                
+                if (!empty($dateToFilter)) {
+                    $builder->where('DATE(recon_orders.service_date) <=', $dateToFilter);
+                }
+                
                 // Apply search filter
                 if (!empty($searchValue)) {
                     $builder->groupStart()
@@ -877,13 +899,22 @@ class ReconOrdersController extends BaseController
                 }
                 
                 $builder->where('recon_orders.deleted_at IS NULL')
-                       ->where('DATE(recon_orders.created_at)', date('Y-m-d'));
+                       ->where('DATE(recon_orders.service_date)', date('Y-m-d'));
                 
-                // Apply search filter
-                if (!empty($searchValue)) {
+                // Apply individual table filters (Users)
+                $statusFilter = $this->request->getPost('status_filter');
+                $searchFilter = $this->request->getPost('search_filter');
+                
+                if (!empty($statusFilter)) {
+                    $builder->where('recon_orders.status', $statusFilter);
+                }
+                
+                // Apply search filter (from DataTables search or individual filter)
+                $searchToUse = !empty($searchFilter) ? $searchFilter : $searchValue;
+                if (!empty($searchToUse)) {
                     $builder->groupStart()
-                        ->like('recon_orders.vehicle', $searchValue)
-                        ->orLike('recon_orders.stock', $searchValue)
+                        ->like('recon_orders.vehicle', $searchToUse)
+                        ->orLike('recon_orders.stock', $searchToUse)
                         ->groupEnd();
                 }
                 
@@ -1017,6 +1048,23 @@ class ReconOrdersController extends BaseController
                 }
                 
                 $builder->where('recon_orders.deleted_at IS NULL');
+                
+                // Apply individual table filters (Users)
+                $statusFilter = $this->request->getPost('status_filter');
+                $dateFromFilter = $this->request->getPost('date_from_filter');
+                $dateToFilter = $this->request->getPost('date_to_filter');
+                
+                if (!empty($statusFilter)) {
+                    $builder->where('recon_orders.status', $statusFilter);
+                }
+                
+                if (!empty($dateFromFilter)) {
+                    $builder->where('DATE(recon_orders.service_date) >=', $dateFromFilter);
+                }
+                
+                if (!empty($dateToFilter)) {
+                    $builder->where('DATE(recon_orders.service_date) <=', $dateToFilter);
+                }
                 
                 // Apply search filter
                 if (!empty($searchValue)) {
@@ -2355,14 +2403,15 @@ class ReconOrdersController extends BaseController
                 $activity['created_at_relative'] = $this->formatRelativeTime($activity['created_at']);
                 $activity['created_at_formatted'] = date('M j, Y g:i A', strtotime($activity['created_at']));
                 
-                // Add preview information
-                $activity['preview'] = $metadata['preview'] ?? $metadata['old_preview'] ?? $metadata['new_preview'] ?? null;
+                // Preview information removed - descriptions will be truncated in frontend
                 
                 // Add change details for display
                 if (!empty($oldValues) || !empty($newValues)) {
                     $activity['has_changes'] = true;
                     $activity['old_values_formatted'] = $this->formatValuesForDisplay($oldValues);
                     $activity['new_values_formatted'] = $this->formatValuesForDisplay($newValues);
+                } else {
+                    $activity['has_changes'] = false;
                 }
             }
 
@@ -2573,8 +2622,8 @@ class ReconOrdersController extends BaseController
         
         $formatted = [];
         foreach ($values as $key => $value) {
-            // Only show comments field in the changes section
-            if ($key !== 'comment') {
+            // Skip empty values
+            if (empty($value) && $value !== '0' && $value !== 0) {
                 continue;
             }
             
@@ -2592,7 +2641,11 @@ class ReconOrdersController extends BaseController
                     ];
                 } elseif (is_string($displayValue) && strlen($displayValue) > 50) {
                     // For other long fields, use the original truncation
-                    $formatted[$key] = substr($displayValue, 0, 50) . '...';
+                    $formatted[$key] = [
+                        'truncated' => substr($displayValue, 0, 50) . '...',
+                        'full' => $displayValue,
+                        'is_truncated' => true
+                    ];
                 } else {
                     $formatted[$key] = $displayValue;
                 }
@@ -2827,10 +2880,9 @@ class ReconOrdersController extends BaseController
             $linkId = null;
             $orderUrl = base_url("recon_orders/view/{$orderId}");
             
-            // Initialize settings
-            $settingsModel = new \App\Models\SettingsModel();
-            $apiKey = $settingsModel->getSetting('lima_api_key');
-            $brandedDomain = $settingsModel->getSetting('lima_branded_domain');
+            // Initialize settings from environment variables
+            $apiKey = env('MDA_API_KEY');
+            $brandedDomain = env('MDA_BRANDED_DOMAIN');
             
             // Check if we already have a short URL for this order
             if (isset($order['short_url']) && isset($order['short_url_slug']) && isset($order['lima_link_id']) && 

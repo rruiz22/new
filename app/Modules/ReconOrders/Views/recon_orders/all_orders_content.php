@@ -12,6 +12,124 @@
             </div>
 
             <div class="card-body">
+                <!-- Individual Table Filters (Users) -->
+                <?php 
+                $isAdmin = false;
+                if (auth()->loggedIn()) {
+                    $user = auth()->user();
+                    $userGroups = $user->getGroups();
+                    $isAdmin = !empty($userGroups) && (in_array('admin', $userGroups) || in_array('superadmin', $userGroups));
+                }
+                ?>
+                <?php if (!$isAdmin): ?>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="bg-light rounded p-3">
+                            <div class="row g-2 align-items-end">
+                                <div class="col-md-3">
+                                    <label class="form-label text-muted small mb-1">
+                                        <i data-feather="activity" class="icon-xs me-1"></i>
+                                        Status
+                                    </label>
+                                    <select id="allOrdersStatusFilter" class="form-select form-select-sm">
+                                        <option value="">All Status</option>
+                                        <option value="pending">⏳ Pending</option>
+                                        <option value="in_progress">🔄 In Progress</option>
+                                        <option value="completed">✅ Completed</option>
+                                        <option value="cancelled">❌ Cancelled</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label text-muted small mb-1">
+                                        <i data-feather="calendar" class="icon-xs me-1"></i>
+                                        Service Date From
+                                    </label>
+                                    <input type="date" id="allOrdersDateFromFilter" class="form-control form-control-sm">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label text-muted small mb-1">
+                                        <i data-feather="calendar" class="icon-xs me-1"></i>
+                                        Service Date To
+                                    </label>
+                                    <input type="date" id="allOrdersDateToFilter" class="form-control form-control-sm">
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="d-flex gap-1">
+                                        <button class="btn btn-primary btn-sm" onclick="applyAllOrdersFilters()">
+                                            <i data-feather="filter" class="icon-xs me-1"></i>
+                                            Filter
+                                        </button>
+                                        <button class="btn btn-outline-secondary btn-sm" onclick="clearAllOrdersFilters()">
+                                            <i data-feather="x" class="icon-xs me-1"></i>
+                                            Clear
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php endif; ?>
+
+                <!-- Individual Table Filters (Users) -->
+                <?php 
+                $isAdmin = false;
+                if (auth()->loggedIn()) {
+                    $user = auth()->user();
+                    $userGroups = $user->getGroups();
+                    $isAdmin = !empty($userGroups) && (in_array('admin', $userGroups) || in_array('superadmin', $userGroups));
+                }
+                ?>
+                <?php if (!$isAdmin): ?>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="bg-light rounded p-3">
+                            <div class="row g-2 align-items-end">
+                                <div class="col-md-3">
+                                    <label class="form-label text-muted small mb-1">
+                                        <i data-feather="activity" class="icon-xs me-1"></i>
+                                        <?= lang('App.filter_by_status') ?>
+                                    </label>
+                                    <select id="allOrdersStatusFilter" class="form-select form-select-sm">
+                                        <option value=""><?= lang('App.all_status') ?></option>
+                                        <option value="pending">⏳ <?= lang('App.pending') ?></option>
+                                        <option value="in_progress">🔄 <?= lang('App.in_progress') ?></option>
+                                        <option value="completed">✅ <?= lang('App.completed') ?></option>
+                                        <option value="cancelled">❌ <?= lang('App.cancelled') ?></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label text-muted small mb-1">
+                                        <i data-feather="calendar" class="icon-xs me-1"></i>
+                                        <?= lang('App.service_date_from') ?>
+                                    </label>
+                                    <input type="date" id="allOrdersDateFromFilter" class="form-control form-control-sm">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label text-muted small mb-1">
+                                        <i data-feather="calendar" class="icon-xs me-1"></i>
+                                        <?= lang('App.service_date_to') ?>
+                                    </label>
+                                    <input type="date" id="allOrdersDateToFilter" class="form-control form-control-sm">
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="d-flex gap-1">
+                                        <button class="btn btn-primary btn-sm" onclick="applyAllOrdersFilters()">
+                                            <i data-feather="filter" class="icon-xs me-1"></i>
+                                            <?= lang('App.apply_filters') ?>
+                                        </button>
+                                        <button class="btn btn-outline-secondary btn-sm" onclick="clearAllOrdersFilters()">
+                                            <i data-feather="x" class="icon-xs me-1"></i>
+                                            <?= lang('App.clear_filters') ?>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php endif; ?>
+
                 <div class="table-responsive">
                     <table id="all-orders-table" class="table table-borderless table-hover table-nowrap align-middle mb-0 w-100">
                         <thead class="table-light">
@@ -166,7 +284,7 @@ function initializeAllOrdersTable() {
             return;
         }
 
-        var allOrdersTable = $('#all-orders-table').DataTable({
+        window.allOrdersTable = $('#all-orders-table').DataTable({
             processing: true,
             serverSide: true,
             responsive: false,
@@ -177,6 +295,21 @@ function initializeAllOrdersTable() {
                 type: 'POST',
                 data: function(d) {
                     d.ajax = true;
+                    
+                    // Add global filters (Admin only)
+                    if (typeof window.globalFilters !== 'undefined' && <?= $isAdmin ? 'true' : 'false' ?>) {
+                        d.client_filter = window.globalFilters.client;
+                        d.status_filter = window.globalFilters.status;
+                        d.date_from_filter = window.globalFilters.dateFrom;
+                        d.date_to_filter = window.globalFilters.dateTo;
+                    }
+                    
+                    // Add individual table filters (Users)
+                    if (<?= !$isAdmin ? 'true' : 'false' ?>) {
+                        d.status_filter = document.getElementById('allOrdersStatusFilter')?.value || '';
+                        d.date_from_filter = document.getElementById('allOrdersDateFromFilter')?.value || '';
+                        d.date_to_filter = document.getElementById('allOrdersDateToFilter')?.value || '';
+                    }
                 },
                 error: function(xhr, error, thrown) {
                     console.error('All Orders AJAX Error:', error);
@@ -332,13 +465,13 @@ function initializeAllOrdersTable() {
                     data: 'id',
                     render: function(data, type, row) {
                         return '<div class="d-flex justify-content-center gap-2 action-buttons">' +
-                               '<a href="<?= base_url('recon_orders/view/') ?>' + data + '" class="link-primary fs-15" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= lang('App.view') ?>">' +
+                               '<a href="<?= base_url('recon_orders/view/') ?>' + data + '" class="link-primary fs-15" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= lang("App.view") ?>">' +
                                '<i class="ri-eye-fill"></i>' +
                                '</a>' +
-                               '<a href="#" class="link-success fs-15 edit-order-btn" data-id="' + data + '" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= lang('App.edit') ?>">' +
+                               '<a href="#" class="link-success fs-15 edit-order-btn" data-id="' + data + '" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= lang("App.edit") ?>">' +
                                '<i class="ri-edit-fill"></i>' +
                                '</a>' +
-                               '<a href="#" class="link-danger fs-15 delete-order-btn" data-id="' + data + '" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= lang('App.delete') ?>">' +
+                               '<a href="#" class="link-danger fs-15 delete-order-btn" data-id="' + data + '" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= lang("App.delete") ?>">' +
                                '<i class="ri-delete-bin-line"></i>' +
                                '</a>' +
                                '</div>';
@@ -375,7 +508,7 @@ function initializeAllOrdersTable() {
                 // Apply status color to rows
                 $('#all-orders-table tbody tr').each(function() {
                     var $row = $(this);
-                    var rowData = allOrdersTable.row($row).data();
+                    var rowData = window.allOrdersTable.row($row).data();
                     if (rowData && rowData.status) {
                         const statusColors = {
                             'pending': '#ffc107',
@@ -407,7 +540,7 @@ function initializeAllOrdersTable() {
 
         // Refresh button
         $('#refreshAllTable').on('click', function() {
-            allOrdersTable.ajax.reload();
+            window.allOrdersTable.ajax.reload();
         });
 
 
@@ -441,7 +574,7 @@ function initializeAllOrdersTable() {
                 return;
             }
             
-            var data = allOrdersTable.row(this).data();
+            var data = window.allOrdersTable.row(this).data();
             if (data && data.id) {
                 window.location.href = '<?= base_url('recon_orders/view/') ?>' + data.id;
             }
@@ -479,14 +612,14 @@ function deleteReconOrder(orderId) {
     // Show confirmation dialog
     if (typeof Swal !== 'undefined') {
         Swal.fire({
-            title: '<?= lang('App.are_you_sure') ?>',
+            title: '<?= lang("App.are_you_sure") ?>',
             text: 'Are you sure you want to delete this recon order?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
             cancelButtonColor: '#3085d6',
-            confirmButtonText: '<?= lang('App.yes_delete') ?>',
-            cancelButtonText: '<?= lang('App.cancel') ?>',
+            confirmButtonText: '<?= lang("App.yes_delete") ?>',
+            cancelButtonText: '<?= lang("App.cancel") ?>',
             reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
@@ -507,7 +640,7 @@ function performDeleteOrder(orderId) {
         dataType: 'json',
         success: function(response) {
             if (response.success) {
-                showToast('success', response.message || 'Recon order deleted successfully');
+                showToast(response.message || '<?= lang("App.order_deleted_successfully") ?>', 'success');
                 
                 // Refresh all orders table
                 if (typeof $ !== 'undefined' && $.fn.DataTable && $('#all-orders-table').length) {
@@ -537,5 +670,24 @@ function performDeleteOrder(orderId) {
 }
 
 // showToast function removed - using global definition from index.php
+
+// Individual All Orders Filters (Users only)
+function applyAllOrdersFilters() {
+    if (typeof window.allOrdersTable !== 'undefined' && window.allOrdersTable) {
+        window.allOrdersTable.ajax.reload();
+        showToast('<?= lang("App.all_orders_filters_applied") ?>', 'success');
+    }
+}
+
+function clearAllOrdersFilters() {
+    document.getElementById('allOrdersStatusFilter').value = '';
+    document.getElementById('allOrdersDateFromFilter').value = '';
+    document.getElementById('allOrdersDateToFilter').value = '';
+    
+    if (typeof window.allOrdersTable !== 'undefined' && window.allOrdersTable) {
+        window.allOrdersTable.ajax.reload();
+        showToast('<?= lang("App.all_orders_filters_cleared") ?>', 'success');
+    }
+}
 
 </script> 

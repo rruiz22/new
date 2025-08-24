@@ -1,31 +1,17 @@
-<?php
-// Get the base URL dynamically
-$baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'];
-$appPath = str_replace('/public/bos', '', dirname($_SERVER['SCRIPT_NAME']));
-$fullBaseUrl = $baseUrl . $appPath;
-?>
-
-<!-- JAVASCRIPT -->
-<script src="<?= $fullBaseUrl ?>/assets/libs/jquery/jquery.min.js"></script>
-<script src="<?= $fullBaseUrl ?>/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="<?= $fullBaseUrl ?>/assets/libs/feather-icons/feather.min.js"></script>
-
-<!-- Node Waves -->
-<script src="<?= $fullBaseUrl ?>/assets/libs/node-waves/waves.min.js"></script>
+<!-- JAVASCRIPT from CDN -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- DataTables -->
-<script src="<?= $fullBaseUrl ?>/assets/libs/datatables/jquery.dataTables.min.js"></script>
-<script src="<?= $fullBaseUrl ?>/assets/libs/datatables/dataTables.bootstrap5.min.js"></script>
-<script src="<?= $fullBaseUrl ?>/assets/libs/datatables/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
 
 <!-- SweetAlert2 -->
-<script src="<?= $fullBaseUrl ?>/assets/libs/sweetalert2/sweetalert2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.0/dist/sweetalert2.all.min.js"></script>
 
 <!-- ApexCharts -->
-<script src="<?= $fullBaseUrl ?>/assets/libs/apexcharts/apexcharts.min.js"></script>
-
-<!-- App JS -->
-<script src="<?= $fullBaseUrl ?>/assets/js/app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts@3.44.0/dist/apexcharts.min.js"></script>
 
 <!-- Initialize body loaded class -->
 <script>

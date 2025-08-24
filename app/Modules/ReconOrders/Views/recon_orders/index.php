@@ -106,81 +106,58 @@ Recon Orders
                     </div>
                 </div>
                 
-                <!-- Filters Accordion -->
-                <div class="accordion" id="filtersAccordion">
-                    <div class="accordion-item border">
-                        <h6 class="accordion-header mb-0" id="filtersHeading">
-                            <button class="accordion-button collapsed py-2 px-3 shadow-none" type="button" 
-                                    data-bs-toggle="collapse" data-bs-target="#filtersContent" 
-                                    aria-expanded="false" aria-controls="filtersContent">
-                                <i data-feather="filter" class="icon-sm me-2"></i>
-                                <span class="fw-semibold"><?= lang('App.filters') ?></span>
-                                <span id="activeFiltersCount" class="badge bg-primary ms-2 d-none">0</span>
-                            </button>
-                        </h6>
-                        <div id="filtersContent" class="accordion-collapse collapse" 
-                             aria-labelledby="filtersHeading" data-bs-parent="#filtersAccordion">
-                            <div class="accordion-body pt-3 pb-2">
-                                <!-- Filtros Row 1 -->
-                                <div class="row g-2 mb-3">
-                                    <!-- Filtro de Cliente -->
-                                    <div class="col-lg-3 col-md-4 col-sm-6">
-                                        <label class="form-label text-muted small mb-1"><?= lang('App.filter_by_client') ?></label>
-                                        <select id="globalClientFilter" class="form-select form-select-sm">
-                                            <option value=""><?= lang('App.all_clients') ?></option>
-                                            <!-- Las opciones se cargarán via AJAX -->
-                                        </select>
-                                    </div>
+                <!-- Filter System -->
+                <?php 
+                $isAdmin = false;
+                if (auth()->loggedIn()) {
+                    $user = auth()->user();
+                    $userGroups = $user->getGroups();
+                    $isAdmin = !empty($userGroups) && (in_array('admin', $userGroups) || in_array('superadmin', $userGroups));
+                }
+                ?>
+                
+                <!-- Demo Toggle for Testing (Remove in production) -->
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="btn-group" role="group">
+                        <input type="radio" class="btn-check" name="filterMode" id="adminMode" autocomplete="off" <?= $isAdmin ? 'checked' : '' ?>>
+                        <label class="btn btn-outline-secondary btn-sm" for="adminMode">
+                            <i data-feather="shield" class="icon-xs me-1"></i>
+                            Admin View
+                        </label>
+                        
+                        <input type="radio" class="btn-check" name="filterMode" id="userMode" autocomplete="off" <?= !$isAdmin ? 'checked' : '' ?>>
+                        <label class="btn btn-outline-secondary btn-sm" for="userMode">
+                            <i data-feather="user" class="icon-xs me-1"></i>
+                            User View
+                        </label>
+                    </div>
+                    <small class="text-muted">
+                        <i data-feather="eye" class="icon-xs me-1"></i>
+                        Testing both filter modes
+                    </small>
+                </div>
 
-                                    <!-- Filtro de Estado -->
-                                    <div class="col-lg-2 col-md-4 col-sm-6">
-                                        <label class="form-label text-muted small mb-1"><?= lang('App.filter_by_status') ?></label>
-                                        <select id="globalStatusFilter" class="form-select form-select-sm">
-                                            <option value=""><?= lang('App.all_status') ?></option>
-                                            <option value="pending"><?= lang('App.pending') ?></option>
-                                            <option value="in_progress"><?= lang('App.in_progress') ?></option>
-                                            <option value="completed"><?= lang('App.completed') ?></option>
-                                            <option value="cancelled"><?= lang('App.cancelled') ?></option>
-                                        </select>
-                                    </div>
+                <!-- Admin Global Filters -->
+                <div id="adminFilters" style="display: <?= $isAdmin ? 'block' : 'none' ?>;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#globalFiltersModal">
+                            <i data-feather="filter" class="icon-sm me-1"></i>
+                            <?= lang('App.global_filters') ?>
+                            <span id="activeFiltersCount" class="badge bg-primary ms-2 d-none">0</span>
+                        </button>
+                        <small class="text-muted">
+                            <i data-feather="shield" class="icon-xs me-1"></i>
+                            <?= lang('App.admin_global_filters') ?>
+                        </small>
+                    </div>
+                </div>
 
-                                    <!-- Filtro Fecha Desde -->
-                                    <div class="col-lg-2 col-md-6 col-sm-6">
-                                        <label class="form-label text-muted small mb-1"><?= lang('App.date_from') ?></label>
-                                        <input type="date" id="globalDateFromFilter" class="form-control form-control-sm">
-                                    </div>
-
-                                    <!-- Filtro Fecha Hasta -->
-                                    <div class="col-lg-2 col-md-6 col-sm-6">
-                                        <label class="form-label text-muted small mb-1"><?= lang('App.date_to') ?></label>
-                                        <input type="date" id="globalDateToFilter" class="form-control form-control-sm">
-                                    </div>
-                                </div>
-
-                                <!-- Botones de Acción -->
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="d-flex gap-2 flex-wrap justify-content-between align-items-center">
-                                            <div class="d-flex gap-2 flex-wrap">
-                                                <button id="applyGlobalFilters" class="btn btn-primary btn-sm">
-                                                    <i data-feather="check" class="icon-sm me-1"></i> <?= lang('App.apply_filters') ?>
-                                                </button>
-                                                <button id="clearGlobalFilters" class="btn btn-outline-secondary btn-sm">
-                                                    <i data-feather="x" class="icon-sm me-1"></i> <?= lang('App.clear_filters') ?>
-                                                </button>
-                                                <button id="refreshAllTables" class="btn btn-outline-info btn-sm" onclick="manualRefreshReconOrders()">
-                                                    <i data-feather="refresh-cw" class="icon-sm me-1"></i> <?= lang('App.refresh') ?>
-                                                </button>
-                                            </div>
-                                            <small class="text-muted d-none d-md-block">
-                                                <i data-feather="info" class="icon-xs me-1"></i>
-                                                Filters apply to all tables
-                                            </small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                <!-- User Individual Filters Info -->
+                <div id="userFilters" style="display: <?= !$isAdmin ? 'block' : 'none' ?>;">
+                    <div class="alert alert-info alert-dismissible fade show py-2" role="alert">
+                        <i data-feather="info" class="icon-sm me-2"></i>
+                        <small><?= lang('App.individual_table_filters') ?></small>
+                        <button type="button" class="btn-close btn-close-sm" data-bs-dismiss="alert"></button>
                     </div>
                 </div>
             </div>
@@ -254,6 +231,124 @@ Recon Orders
         </div>
     </div>
 </div>
+
+<!-- Global Filters Modal (Admin Only) -->
+<?php if ($isAdmin): ?>
+<div class="modal fade" id="globalFiltersModal" tabindex="-1" aria-labelledby="globalFiltersModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="globalFiltersModalLabel">
+                    <i data-feather="filter" class="icon-sm me-2"></i>
+                    <?= lang('App.global_filters') ?> - Admin Panel
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning d-flex align-items-center" role="alert">
+                    <i data-feather="alert-triangle" class="icon-sm me-2"></i>
+                    <div>
+                        <strong><?= lang('App.global_filters') ?>:</strong> <?= lang('App.admin_global_filters') ?>
+                    </div>
+                </div>
+
+                <form id="globalFiltersForm">
+                    <!-- Filter Row 1 -->
+                    <div class="row g-3 mb-4">
+                        <!-- Client Filter -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">
+                                <i data-feather="users" class="icon-xs me-1"></i>
+                                <?= lang('App.filter_by_client') ?>
+                            </label>
+                            <select id="globalClientFilter" class="form-select">
+                                <option value=""><?= lang('App.all_clients') ?></option>
+                                <!-- Options loaded via AJAX -->
+                            </select>
+                        </div>
+
+                        <!-- Status Filter -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">
+                                <i data-feather="activity" class="icon-xs me-1"></i>
+                                <?= lang('App.filter_by_status') ?>
+                            </label>
+                            <select id="globalStatusFilter" class="form-select">
+                                <option value=""><?= lang('App.all_status') ?></option>
+                                <option value="pending">⏳ <?= lang('App.pending') ?></option>
+                                <option value="in_progress">🔄 <?= lang('App.in_progress') ?></option>
+                                <option value="completed">✅ <?= lang('App.completed') ?></option>
+                                <option value="cancelled">❌ <?= lang('App.cancelled') ?></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Filter Row 2 -->
+                    <div class="row g-3 mb-4">
+                        <!-- Date From -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">
+                                <i data-feather="calendar" class="icon-xs me-1"></i>
+                                <?= lang('App.service_date_from') ?>
+                            </label>
+                            <input type="date" id="globalDateFromFilter" class="form-control">
+                        </div>
+
+                        <!-- Date To -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">
+                                <i data-feather="calendar" class="icon-xs me-1"></i>
+                                <?= lang('App.service_date_to') ?>
+                            </label>
+                            <input type="date" id="globalDateToFilter" class="form-control">
+                        </div>
+                    </div>
+
+                    <!-- Filter Summary -->
+                    <div class="card bg-light">
+                        <div class="card-body py-3">
+                            <h6 class="card-title mb-2">
+                                <i data-feather="list" class="icon-xs me-1"></i>
+                                Affected Tables:
+                            </h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <ul class="list-unstyled mb-0 small">
+                                        <li><i data-feather="check-circle" class="icon-xs me-1 text-success"></i> Dashboard</li>
+                                        <li><i data-feather="check-circle" class="icon-xs me-1 text-success"></i> Today's Orders</li>
+                                        <li><i data-feather="check-circle" class="icon-xs me-1 text-success"></i> All Orders</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <ul class="list-unstyled mb-0 small">
+                                        <li><i data-feather="check-circle" class="icon-xs me-1 text-success"></i> Deleted Orders</li>
+                                        <li><i data-feather="check-circle" class="icon-xs me-1 text-success"></i> Services</li>
+                                        <li><i data-feather="check-circle" class="icon-xs me-1 text-success"></i> Vehicles/Inventory</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" id="clearGlobalFilters">
+                    <i data-feather="x" class="icon-xs me-1"></i>
+                    <?= lang('App.clear_all_filters') ?>
+                </button>
+                <button type="button" class="btn btn-outline-info" onclick="manualRefreshReconOrders()">
+                    <i data-feather="refresh-cw" class="icon-xs me-1"></i>
+                    <?= lang('App.refresh_tables') ?>
+                </button>
+                <button type="button" class="btn btn-primary" id="applyGlobalFilters" data-bs-dismiss="modal">
+                    <i data-feather="check" class="icon-xs me-1"></i>
+                    <?= lang('App.apply_filters') ?>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
 
 <!-- Recon Order Modal -->
 <div class="modal fade recon-order-modal" id="reconOrderModal" tabindex="-1" role="dialog" aria-labelledby="reconOrderModalLabel" aria-hidden="true">
@@ -541,14 +636,14 @@ window.deleteReconOrder = function(id) {
     } else if (typeof Swal !== 'undefined') {
         // Fallback to direct Swal usage
         Swal.fire({
-            title: '<?= lang('App.are_you_sure') ?>',
+            title: '<?= lang("App.are_you_sure") ?>',
             text: 'Are you sure you want to delete this recon order?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
             cancelButtonColor: '#3085d6',
-            confirmButtonText: '<?= lang('App.yes_delete') ?>',
-            cancelButtonText: '<?= lang('App.cancel') ?>',
+            confirmButtonText: '<?= lang("App.yes_delete") ?>',
+            cancelButtonText: '<?= lang("App.cancel") ?>',
             reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
@@ -569,16 +664,16 @@ function performDeleteOrder(id) {
         type: 'DELETE',
         success: function(response) {
             if (response.success) {
-                showToast(response.message || 'Recon order deleted successfully', 'success');
+                showToast(response.message || '<?= lang("App.order_deleted_successfully") ?>', 'success');
                 refreshAllReconOrdersData();
                 // Order deleted and all data refreshed
             } else {
-                showToast(response.message || 'Failed to delete recon order', 'error');
+                showToast(response.message || '<?= lang("App.error_deleting_order") ?>', 'error');
             }
         },
         error: function(xhr, status, error) {
             console.error('Delete error:', error);
-            showToast('An error occurred while deleting the order', 'error');
+            showToast('<?= lang("App.error_occurred") ?>', 'error');
         }
     });
 }
@@ -596,7 +691,7 @@ window.refreshAllReconOrdersData = function(options = {}) {
         progressToast = window.showToast('🔄 Refreshing tables...', 'info', { duration: 0 });
     }
     
-    // Refresh all DataTables that are currently loaded - including vehicles tab tables
+    // Refresh all DataTables that are currently loaded and initialized
     var tableSelectors = [
         '#dashboard-table',
         '#today-table', 
@@ -610,15 +705,23 @@ window.refreshAllReconOrdersData = function(options = {}) {
     
     var refreshedCount = 0;
     var totalTables = 0;
+    var foundTables = [];
     
+    // First pass: identify which tables exist and are initialized
     tableSelectors.forEach(function(selector) {
         var table = document.querySelector(selector);
-        // Checking table
         if (table && $.fn.DataTable && $.fn.DataTable.isDataTable(table)) {
+            foundTables.push(selector);
             totalTables++;
+        }
+    });
+    
+    // Second pass: refresh only the found tables
+    foundTables.forEach(function(selector) {
+        var table = document.querySelector(selector);
+        if (table && $.fn.DataTable && $.fn.DataTable.isDataTable(table)) {
             $(table).DataTable().ajax.reload(function() {
                 refreshedCount++;
-                // Refreshed DataTable
                 
                 // If all tables are refreshed, hide progress and show completion
                 if (refreshedCount === totalTables) {
@@ -628,13 +731,8 @@ window.refreshAllReconOrdersData = function(options = {}) {
                     if (showToast && typeof window.showToast === 'function') {
                         window.showToast(`✅ ${totalTables} tables refreshed successfully!`, 'success');
                     }
-                    // All ReconOrders tables refresh completed
                 }
             }, false);
-        } else if (table) {
-            console.warn('⚠️ Table found but not initialized as DataTable:', selector);
-        } else {
-            console.warn('⚠️ Table not found:', selector);
         }
     });
     
@@ -643,7 +741,9 @@ window.refreshAllReconOrdersData = function(options = {}) {
         if (progressToast && typeof progressToast.close === 'function') {
             progressToast.close();
         }
-        // No DataTables found to refresh
+        if (showToast && typeof window.showToast === 'function') {
+            window.showToast('No DataTables found to refresh on current view', 'info');
+        }
     }
     
     // Started refresh for tables
@@ -797,7 +897,7 @@ function setupFilterEventListeners() {
     });
     
     document.getElementById('applyGlobalFilters').addEventListener('click', function() {
-        showToast('Filters applied to all tables', 'success');
+        showToast('<?= lang("App.filters_applied") ?>', 'success');
         refreshAllReconOrdersData();
     });
     
@@ -837,7 +937,7 @@ function clearAllFilters() {
     localStorage.removeItem('reconOrdersGlobalDateToFilter');
     
     updateActiveFiltersCounter();
-    showToast('All filters cleared', 'success');
+    showToast('<?= lang("App.filters_cleared") ?>', 'success');
     refreshAllReconOrdersData();
 }
 
@@ -917,6 +1017,26 @@ window.getCurrentTab = function() {
 window.clearReconOrdersData = function() {
     return window.reconOrdersTabManager.clearAllData();
 };
+
+// Toggle between Admin and User filter modes (for testing)
+$(document).ready(function() {
+    $('input[name="filterMode"]').change(function() {
+        const isAdminMode = $('#adminMode').is(':checked');
+        
+        if (isAdminMode) {
+            $('#adminFilters').show();
+            $('#userFilters').hide();
+        } else {
+            $('#adminFilters').hide();
+            $('#userFilters').show();
+        }
+        
+        // Refresh all tables when switching modes
+        if (typeof refreshAllReconOrdersData === 'function') {
+            refreshAllReconOrdersData();
+        }
+    });
+});
 
 </script>
 

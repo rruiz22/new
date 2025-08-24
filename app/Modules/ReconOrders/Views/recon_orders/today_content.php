@@ -338,6 +338,58 @@
             </div>
 
             <div class="card-body">
+                <!-- Individual Table Filters (Users) -->
+                <?php 
+                $isAdmin = false;
+                if (auth()->loggedIn()) {
+                    $user = auth()->user();
+                    $userGroups = $user->getGroups();
+                    $isAdmin = !empty($userGroups) && (in_array('admin', $userGroups) || in_array('superadmin', $userGroups));
+                }
+                ?>
+                <?php if (!$isAdmin): ?>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="bg-light rounded p-3">
+                            <div class="row g-2 align-items-end">
+                                <div class="col-md-4">
+                                    <label class="form-label text-muted small mb-1">
+                                        <i data-feather="activity" class="icon-xs me-1"></i>
+                                        Status
+                                    </label>
+                                    <select id="todayStatusFilter" class="form-select form-select-sm">
+                                        <option value="">All Status</option>
+                                        <option value="pending">⏳ Pending</option>
+                                        <option value="in_progress">🔄 In Progress</option>
+                                        <option value="completed">✅ Completed</option>
+                                        <option value="cancelled">❌ Cancelled</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label text-muted small mb-1">
+                                        <i data-feather="search" class="icon-xs me-1"></i>
+                                        Search Stock/Vehicle
+                                    </label>
+                                    <input type="text" id="todaySearchFilter" class="form-control form-control-sm" placeholder="Search...">
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="d-flex gap-1">
+                                        <button class="btn btn-primary btn-sm" onclick="applyTodayFilters()">
+                                            <i data-feather="filter" class="icon-xs me-1"></i>
+                                            Filter
+                                        </button>
+                                        <button class="btn btn-outline-secondary btn-sm" onclick="clearTodayFilters()">
+                                            <i data-feather="x" class="icon-xs me-1"></i>
+                                            Clear
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php endif; ?>
+
                 <div class="table-responsive">
                     <table id="today-table" class="table table-borderless table-hover table-nowrap align-middle mb-0 w-100">
                         <thead class="table-light">
@@ -508,7 +560,7 @@
 </style>
 
 <script>
-function initializeTodayTable() {
+window.initializeTodayTable = function() {
     try {
         // console.log('Initializing Today Table...');
         
@@ -522,7 +574,7 @@ function initializeTodayTable() {
             return;
         }
 
-        var todayTable = $('#today-table').DataTable({
+        window.todayTable = $('#today-table').DataTable({
             processing: true,
             serverSide: true,
             responsive: false,
@@ -533,6 +585,20 @@ function initializeTodayTable() {
                 type: 'POST',
                 data: function(d) {
                     d.ajax = true;
+                    
+                    // Add global filters (Admin only)
+                    if (typeof window.globalFilters !== 'undefined' && <?= $isAdmin ? 'true' : 'false' ?>) {
+                        d.client_filter = window.globalFilters.client;
+                        d.status_filter = window.globalFilters.status;
+                        d.date_from_filter = window.globalFilters.dateFrom;
+                        d.date_to_filter = window.globalFilters.dateTo;
+                    }
+                    
+                    // Add individual table filters (Users)
+                    if (<?= !$isAdmin ? 'true' : 'false' ?>) {
+                        d.status_filter = document.getElementById('todayStatusFilter')?.value || '';
+                        d.search_filter = document.getElementById('todaySearchFilter')?.value || '';
+                    }
                 },
                 error: function(xhr, error, thrown) {
                     console.error('Today AJAX Error:', error);
@@ -676,13 +742,13 @@ function initializeTodayTable() {
                     data: 'id',
                     render: function(data, type, row) {
                         return '<div class="d-flex justify-content-center gap-2 action-buttons">' +
-                               '<a href="<?= base_url('recon_orders/view/') ?>' + data + '" class="link-primary fs-15" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= lang('App.view') ?>">' +
+                               '<a href="<?= base_url('recon_orders/view/') ?>' + data + '" class="link-primary fs-15" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= lang("App.view") ?>">' +
                                '<i class="ri-eye-fill"></i>' +
                                '</a>' +
-                               '<a href="#" class="link-success fs-15 edit-order-btn" data-id="' + data + '" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= lang('App.edit') ?>">' +
+                               '<a href="#" class="link-success fs-15 edit-order-btn" data-id="' + data + '" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= lang("App.edit") ?>">' +
                                '<i class="ri-edit-fill"></i>' +
                                '</a>' +
-                               '<a href="#" class="link-danger fs-15 delete-order-btn" data-id="' + data + '" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= lang('App.delete') ?>">' +
+                               '<a href="#" class="link-danger fs-15 delete-order-btn" data-id="' + data + '" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= lang("App.delete") ?>">' +
                                '<i class="ri-delete-bin-line"></i>' +
                                '</a>' +
                                '</div>';
@@ -719,7 +785,7 @@ function initializeTodayTable() {
                 // Apply status color to rows
                 $('#today-table tbody tr').each(function() {
                     var $row = $(this);
-                    var rowData = todayTable.row($row).data();
+                    var rowData = window.todayTable.row($row).data();
                     if (rowData && rowData.status) {
                         const statusColors = {
                             'pending': '#ffc107',
@@ -751,7 +817,7 @@ function initializeTodayTable() {
 
         // Refresh button
         $('#refreshTodayTable').on('click', function() {
-            todayTable.ajax.reload();
+            window.todayTable.ajax.reload();
         });
 
 
@@ -785,7 +851,7 @@ function initializeTodayTable() {
                 return;
             }
             
-            var data = todayTable.row(this).data();
+            var data = window.todayTable.row(this).data();
             if (data && data.id) {
                 window.location.href = '<?= base_url('recon_orders/view/') ?>' + data.id;
             }
@@ -809,7 +875,7 @@ function initializeTodayTable() {
     } catch (error) {
         console.error('Error initializing Today Table:', error);
     }
-}
+};
 
 // Helper function to convert hex color to rgba
 function hexToRgba(hex, alpha) {
@@ -871,7 +937,7 @@ function initializeQuickForm() {
         
         // Validate required fields
         if (!formData.client_id || !formData.stock || !formData.vin_number || !formData.vehicle || !formData.service_id) {
-            showToast('<?= lang('App.complete_all_fields') ?>', 'error');
+            showToast('<?= lang("App.complete_all_fields") ?>', 'error');
             return false;
         }
         
@@ -896,7 +962,7 @@ function initializeQuickForm() {
             },
             success: function(response) {
                 if (response.success) {
-                    showToast(response.message || '<?= lang('App.order_saved_successfully') ?>', 'success');
+                    showToast(response.message || '<?= lang("App.order_saved_successfully") ?>', 'success');
                     
                     // Reset validation messages and classes
                     $('#quickOrderForm').removeClass('was-validated');
@@ -934,11 +1000,11 @@ function initializeQuickForm() {
                         }
                     }
                 } else {
-                    showToast(response.message || '<?= lang('App.error_saving_order') ?>', 'error');
+                    showToast(response.message || '<?= lang("App.error_saving_order") ?>', 'error');
                 }
             },
             error: function(xhr) {
-                let errorMessage = '<?= lang('App.error_saving_order') ?>';
+                let errorMessage = '<?= lang("App.error_saving_order") ?>';
                 
                 // console.log('AJAX Error:', xhr);
                 // console.log('Status:', xhr.status);
@@ -1601,6 +1667,24 @@ function clearQuickForm() {
 
 // editReconOrder function removed - using global definition from index.php
 
+// Individual Today's Orders Filters (Users only)
+function applyTodayFilters() {
+    if (typeof window.todayTable !== 'undefined' && window.todayTable) {
+        window.todayTable.ajax.reload();
+        showToast('<?= lang("App.today_orders_filters_applied") ?>', 'success');
+    }
+}
+
+function clearTodayFilters() {
+    document.getElementById('todayStatusFilter').value = '';
+    document.getElementById('todaySearchFilter').value = '';
+    
+    if (typeof window.todayTable !== 'undefined' && window.todayTable) {
+        window.todayTable.ajax.reload();
+        showToast('<?= lang("App.today_orders_filters_cleared") ?>', 'success');
+    }
+}
+
 function deleteReconOrder(orderId) {
     if (!orderId) {
         showToast('Invalid order ID', 'error');
@@ -1610,14 +1694,14 @@ function deleteReconOrder(orderId) {
     // Show confirmation dialog
     if (typeof Swal !== 'undefined') {
         Swal.fire({
-            title: '<?= lang('App.are_you_sure') ?>',
+            title: '<?= lang("App.are_you_sure") ?>',
             text: 'Are you sure you want to delete this recon order?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
             cancelButtonColor: '#3085d6',
-            confirmButtonText: '<?= lang('App.yes_delete') ?>',
-            cancelButtonText: '<?= lang('App.cancel') ?>',
+            confirmButtonText: '<?= lang("App.yes_delete") ?>',
+            cancelButtonText: '<?= lang("App.cancel") ?>',
             reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
@@ -1638,7 +1722,7 @@ function performDeleteOrder(orderId) {
         dataType: 'json',
         success: function(response) {
             if (response.success) {
-                showToast(response.message || 'Recon order deleted successfully', 'success');
+                showToast(response.message || '<?= lang("App.order_deleted_successfully") ?>', 'success');
                 
                 // Refresh today's table
                 if (typeof $ !== 'undefined' && $.fn.DataTable && $('#today-table').length) {
