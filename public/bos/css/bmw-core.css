@@ -1,0 +1,226 @@
+/* ====================================
+   BMW Core Styles - Variables and Utilities
+   BOS Inventory Management System
+   ==================================== */
+
+/* BMW Brand Color Palette */
+:root {
+  /* BMW Primary Blues */
+  --bmw-primary-blue: #0066CC;
+  --bmw-primary-blue-dark: #004499;
+  --bmw-primary-blue-light: #3399FF;
+  --bmw-secondary-blue: #1C4E80;
+  --bmw-accent-blue: #0099FF;
+  
+  /* BMW Whites & Greys */
+  --bmw-white: #FFFFFF;
+  --bmw-light-grey: #F5F7FA;
+  --bmw-medium-grey: #E0E6ED;
+  --bmw-dark-grey: #6B7280;
+  --bmw-charcoal: #374151;
+  
+  /* BMW Accent Colors */
+  --bmw-silver: #C0C4CC;
+  --bmw-platinum: #E5E7EB;
+  --bmw-success: #059669;
+  --bmw-warning: #D97706;
+  --bmw-danger: #DC2626;
+  
+  /* Gradients */
+  --bmw-gradient-primary: linear-gradient(135deg, var(--bmw-primary-blue) 0%, var(--bmw-accent-blue) 100%);
+  --bmw-gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.05) 100%);
+  --bmw-gradient-card: linear-gradient(135deg, var(--bmw-white) 0%, var(--bmw-light-grey) 100%);
+  
+  /* Shadows */
+  --bmw-shadow-sm: 0 2px 8px rgba(0, 102, 204, 0.08);
+  --bmw-shadow-md: 0 4px 16px rgba(0, 102, 204, 0.12);
+  --bmw-shadow-lg: 0 8px 32px rgba(0, 102, 204, 0.16);
+  --bmw-shadow-xl: 0 12px 48px rgba(0, 102, 204, 0.20);
+  
+  /* Border Radius */
+  --bmw-radius-sm: 6px;
+  --bmw-radius-md: 8px;
+  --bmw-radius-lg: 12px;
+  --bmw-radius-xl: 16px;
+  --bmw-radius-2xl: 20px;
+  
+  /* Spacing */
+  --bmw-spacing-xs: 4px;
+  --bmw-spacing-sm: 8px;
+  --bmw-spacing-md: 16px;
+  --bmw-spacing-lg: 24px;
+  --bmw-spacing-xl: 32px;
+  --bmw-spacing-2xl: 48px;
+  
+  /* Typography */
+  --bmw-font-family: 'BMW Group Type', 'Helvetica Neue', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+  --bmw-font-mono: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  
+  /* Transitions */
+  --bmw-transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --bmw-transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --bmw-transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Breakpoints */
+  --bmw-breakpoint-xs: 480px;
+  --bmw-breakpoint-sm: 768px;
+  --bmw-breakpoint-md: 1024px;
+  --bmw-breakpoint-lg: 1280px;
+  --bmw-breakpoint-xl: 1536px;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bmw-white: #1F2937;
+    --bmw-light-grey: #374151;
+    --bmw-medium-grey: #4B5563;
+    --bmw-charcoal: #F9FAFB;
+    --bmw-dark-grey: #D1D5DB;
+    --bmw-silver: #9CA3AF;
+    --bmw-platinum: #6B7280;
+  }
+}
+
+/* Base reset and typography */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--bmw-font-family);
+  line-height: 1.6;
+  color: var(--bmw-charcoal);
+  background: var(--bmw-light-grey);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Utility Classes */
+.bmw-text-center { text-align: center; }
+.bmw-text-left { text-align: left; }
+.bmw-text-right { text-align: right; }
+
+.bmw-font-mono { font-family: var(--bmw-font-mono); }
+.bmw-font-bold { font-weight: 700; }
+.bmw-font-semibold { font-weight: 600; }
+.bmw-font-medium { font-weight: 500; }
+
+.bmw-text-primary { color: var(--bmw-primary-blue); }
+.bmw-text-success { color: var(--bmw-success); }
+.bmw-text-warning { color: var(--bmw-warning); }
+.bmw-text-danger { color: var(--bmw-danger); }
+.bmw-text-muted { color: var(--bmw-dark-grey); }
+
+.bmw-bg-primary { background: var(--bmw-primary-blue); }
+.bmw-bg-light { background: var(--bmw-light-grey); }
+.bmw-bg-white { background: var(--bmw-white); }
+
+.bmw-shadow-sm { box-shadow: var(--bmw-shadow-sm); }
+.bmw-shadow-md { box-shadow: var(--bmw-shadow-md); }
+.bmw-shadow-lg { box-shadow: var(--bmw-shadow-lg); }
+.bmw-shadow-xl { box-shadow: var(--bmw-shadow-xl); }
+
+.bmw-rounded-sm { border-radius: var(--bmw-radius-sm); }
+.bmw-rounded-md { border-radius: var(--bmw-radius-md); }
+.bmw-rounded-lg { border-radius: var(--bmw-radius-lg); }
+.bmw-rounded-xl { border-radius: var(--bmw-radius-xl); }
+.bmw-rounded-2xl { border-radius: var(--bmw-radius-2xl); }
+
+.bmw-transition { transition: all var(--bmw-transition-normal); }
+.bmw-transition-fast { transition: all var(--bmw-transition-fast); }
+.bmw-transition-slow { transition: all var(--bmw-transition-slow); }
+
+/* Spacing utilities */
+.bmw-p-xs { padding: var(--bmw-spacing-xs); }
+.bmw-p-sm { padding: var(--bmw-spacing-sm); }
+.bmw-p-md { padding: var(--bmw-spacing-md); }
+.bmw-p-lg { padding: var(--bmw-spacing-lg); }
+.bmw-p-xl { padding: var(--bmw-spacing-xl); }
+
+.bmw-m-xs { margin: var(--bmw-spacing-xs); }
+.bmw-m-sm { margin: var(--bmw-spacing-sm); }
+.bmw-m-md { margin: var(--bmw-spacing-md); }
+.bmw-m-lg { margin: var(--bmw-spacing-lg); }
+.bmw-m-xl { margin: var(--bmw-spacing-xl); }
+
+/* Flex utilities */
+.bmw-flex { display: flex; }
+.bmw-flex-col { flex-direction: column; }
+.bmw-flex-center { 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+}
+.bmw-flex-between { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+}
+.bmw-flex-wrap { flex-wrap: wrap; }
+.bmw-flex-1 { flex: 1; }
+
+/* Grid utilities */
+.bmw-grid { display: grid; }
+.bmw-grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
+.bmw-grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.bmw-grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.bmw-grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+.bmw-grid-cols-5 { grid-template-columns: repeat(5, 1fr); }
+
+.bmw-gap-sm { gap: var(--bmw-spacing-sm); }
+.bmw-gap-md { gap: var(--bmw-spacing-md); }
+.bmw-gap-lg { gap: var(--bmw-spacing-lg); }
+
+/* Position utilities */
+.bmw-relative { position: relative; }
+.bmw-absolute { position: absolute; }
+.bmw-fixed { position: fixed; }
+.bmw-sticky { position: sticky; }
+
+/* Visibility utilities */
+.bmw-hidden { display: none; }
+.bmw-invisible { visibility: hidden; }
+.bmw-opacity-0 { opacity: 0; }
+.bmw-opacity-50 { opacity: 0.5; }
+.bmw-opacity-100 { opacity: 1; }
+
+/* Focus styles for accessibility */
+.bmw-focusable:focus {
+  outline: 2px solid var(--bmw-primary-blue);
+  outline-offset: 2px;
+  border-radius: var(--bmw-radius-sm);
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast support */
+@media (prefers-contrast: high) {
+  :root {
+    --bmw-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --bmw-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --bmw-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Print styles */
+@media print {
+  .bmw-no-print {
+    display: none !important;
+  }
+  
+  .bmw-glass-card {
+    background: white !important;
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+  }
+}

@@ -96,6 +96,10 @@ if (!function_exists('lang')) {
     
     <?php include 'partials/head-css.php'; ?>
     
+    <!-- Responsive Framework CSS -->
+    <link rel="stylesheet" href="css/responsive-framework.css">
+    <link rel="stylesheet" href="css/responsive-integration.css">
+    
     <!-- Minimal BOS-specific styles -->
     <style>
         /* Staff-only elements hidden by default */
@@ -556,6 +560,9 @@ if (!function_exists('lang')) {
         checkAuthenticationStatus();
     </script>
 
+    <!-- Load responsive interactions -->
+    <script src="js/responsive-interactions.js"></script>
+    
     <!-- Load main vehicles inventory script -->
     <script src="js/vehicles-inventory.js"></script>
 

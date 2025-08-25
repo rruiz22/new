@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(/C:\\Users\\rudyr\\.claude/**)",
+      "Read(/C:\\Users\\rudyr/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

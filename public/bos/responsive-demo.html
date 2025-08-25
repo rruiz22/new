@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOS Inventory - Responsive Framework Demo</title>
+    
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <!-- Responsive Framework -->
+    <link rel="stylesheet" href="css/responsive-framework.css">
+    <link rel="stylesheet" href="css/responsive-integration.css">
+    <link rel="stylesheet" href="css/bos-stylesq.css">
+    
+    <style>
+        /* Demo-specific styles */
+        .demo-section {
+            margin: 2rem 0;
+            padding: 2rem;
+            border: 2px dashed #e5e7eb;
+            border-radius: 12px;
+            background: #f9fafb;
+        }
+        
+        .demo-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2563eb;
+            margin-bottom: 1rem;
+        }
+        
+        .breakpoint-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #2563eb;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            z-index: 9999;
+        }
+        
+        .viewport-info {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            background: #059669;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            z-index: 9998;
+        }
+    </style>
+</head>
+<body>
+    <!-- Breakpoint Indicator -->
+    <div class="breakpoint-indicator" id="breakpointIndicator">
+        Loading...
+    </div>
+    
+    <div class="viewport-info" id="viewportInfo">
+        Loading...
+    </div>
+    
+    <!-- Main Layout -->
+    <div id="layout-wrapper">
+        
+        <!-- Responsive Header -->
+        <header id="page-topbar">
+            <div class="layout-width">
+                <div class="navbar-header">
+                    <div class="d-flex">
+                        <!-- Mobile Menu Toggle (Mobile Only) -->
+                        <button class="mobile-sidebar-toggle mobile-only" aria-label="Toggle menu">
+                            <i class="ri-menu-line"></i>
+                        </button>
+                        
+                        <!-- Logo -->
+                        <div class="navbar-brand-box horizontal-logo">
+                            <a href="#" class="logo logo-dark">
+                                <span class="logo-sm mobile-only">
+                                    <i class="ri-database-2-line fs-22 text-primary"></i>
+                                </span>
+                                <span class="logo-lg mobile-hidden">
+                                    <div class="d-flex align-items-center">
+                                        <i class="ri-database-2-line fs-24 text-primary me-2"></i>
+                                        <div>
+                                            <span class="fw-bold fs-18 text-white">BOS Inventory</span>
+                                            <div class="fs-11 text-white-50">Responsive Demo</div>
+                                        </div>
+                                    </div>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center">
+                        <!-- Desktop Actions -->
+                        <div class="ms-1 header-item mobile-hidden">
+                            <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle">
+                                <i class='bx bx-refresh fs-22'></i>
+                            </button>
+                        </div>
+
+                        <!-- User Info -->
+                        <div class="dropdown ms-sm-3 header-item topbar-user">
+                            <button type="button" class="btn" data-bs-toggle="dropdown">
+                                <span class="d-flex align-items-center">
+                                    <div class="avatar-xs">
+                                        <div class="avatar-title rounded-circle bg-primary-subtle text-primary fs-16 fw-bold">
+                                            D
+                                        </div>
+                                    </div>
+                                    <span class="text-start ms-xl-2 mobile-hidden">
+                                        <span class="d-none d-xl-inline-block ms-1 fw-semibold user-name-text text-white">Demo User</span>
+                                        <span class="d-none d-xl-block ms-1 fs-12 text-white-50 user-name-sub-text">Testing</span>
+                                    </span>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="page-content">
+                <div class="container-xxl">
+
+                    <!-- Demo Section 1: Responsive Grid -->
+                    <div class="demo-section">
+                        <h2 class="demo-title">
+                            <i class="ri-layout-grid-line me-2"></i>
+                            Responsive Statistics Grid
+                        </h2>
+                        <p>This grid automatically adjusts: 1 column (mobile), 2 columns (tablet), 3 columns (laptop), 5 columns (desktop)</p>
+                        
+                        <div class="stats-grid">
+                            <div class="stat-card filter-widget" data-filter="">
+                                <div class="stat-value">125</div>
+                                <div class="stat-label">Total Items</div>
+                                <div class="stat-unit">vehicles</div>
+                            </div>
+                            
+                            <div class="stat-card filter-widget" data-filter="0-1">
+                                <div class="stat-value">23</div>
+                                <div class="stat-label">Recent</div>
+                                <div class="stat-unit">0-1 days</div>
+                            </div>
+                            
+                            <div class="stat-card filter-widget" data-filter="2-5">
+                                <div class="stat-value">47</div>
+                                <div class="stat-label">Moderate</div>
+                                <div class="stat-unit">2-5 days</div>
+                            </div>
+                            
+                            <div class="stat-card filter-widget" data-filter="6+">
+                                <div class="stat-value">55</div>
+                                <div class="stat-label">Aged</div>
+                                <div class="stat-unit">6+ days</div>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-value">4.2</div>
+                                <div class="stat-label">Average</div>
+                                <div class="stat-unit">days</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Demo Section 2: Responsive Table -->
+                    <div class="demo-section">
+                        <h2 class="demo-title">
+                            <i class="ri-table-line me-2"></i>
+                            Responsive Table with Mobile Cards
+                        </h2>
+                        <p>Table on larger screens, stacked cards on mobile with horizontal scroll indicators</p>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                                    <h4 class="card-title mb-0">Inventory Management</h4>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-outline-secondary btn-sm" id="clearFiltersDemo">
+                                            <i class="ri-filter-off-line me-1"></i>Clear
+                                        </button>
+                                        <button class="btn btn-primary btn-sm" id="refreshDemo">
+                                            <i class="ri-refresh-line me-1"></i>Refresh
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card-body">
+                                <!-- Table View (Desktop/Tablet) -->
+                                <div class="table-view">
+                                    <div class="table-responsive">
+                                        <div class="table-wrapper">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Date</th>
+                                                        <th>Days</th>
+                                                        <th>Stock #</th>
+                                                        <th>Vehicle</th>
+                                                        <th>Status</th>
+                                                        <th>Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <tr>
+                                                        <td>12/15/2024</td>
+                                                        <td><span class="badge bg-success days-badge">1 day</span></td>
+                                                        <td><span class="stock-number-enhanced">ABC123</span></td>
+                                                        <td>2024 BMW X5 xDrive40i</td>
+                                                        <td><span class="badge bg-warning">Pending</span></td>
+                                                        <td>
+                                                            <button class="btn btn-primary btn-sm">
+                                                                <i class="ri-arrow-right-line me-1"></i>Move
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>12/13/2024</td>
+                                                        <td><span class="badge bg-warning days-badge">3 days</span></td>
+                                                        <td><span class="stock-number-enhanced">DEF456</span></td>
+                                                        <td>2024 BMW 330i</td>
+                                                        <td><span class="badge bg-info">In Progress</span></td>
+                                                        <td>
+                                                            <button class="btn btn-primary btn-sm">
+                                                                <i class="ri-arrow-right-line me-1"></i>Move
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>12/09/2024</td>
+                                                        <td><span class="badge bg-danger days-badge">7 days</span></td>
+                                                        <td><span class="stock-number-enhanced">GHI789</span></td>
+                                                        <td>2024 BMW M4 Competition</td>
+                                                        <td><span class="badge bg-success">Completed</span></td>
+                                                        <td>
+                                                            <button class="btn btn-secondary btn-sm" disabled>
+                                                                <i class="ri-check-line me-1"></i>Done
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Mobile Card View -->
+                                <div class="mobile-card-view">
+                                    <div class="mobile-cards-container">
+                                        <div class="mobile-inventory-card">
+                                            <div class="mobile-card-header">
+                                                <div class="mobile-card-stock">ABC123</div>
+                                                <div class="badge bg-success mobile-card-days">1 day</div>
+                                            </div>
+                                            <div class="mobile-card-body">
+                                                <div class="mobile-card-row">
+                                                    <span class="mobile-card-label">Date</span>
+                                                    <span class="mobile-card-value">12/15/2024</span>
+                                                </div>
+                                                <div class="mobile-card-row">
+                                                    <span class="mobile-card-label">Vehicle</span>
+                                                    <span class="mobile-card-value">2024 BMW X5 xDrive40i</span>
+                                                </div>
+                                                <div class="mobile-card-row">
+                                                    <span class="mobile-card-label">Status</span>
+                                                    <span class="mobile-card-value"><span class="badge bg-warning">Pending</span></span>
+                                                </div>
+                                            </div>
+                                            <div class="mobile-card-actions">
+                                                <button class="btn btn-primary flex-fill">
+                                                    <i class="ri-arrow-right-line me-1"></i>Move
+                                                </button>
+                                                <button class="btn btn-outline-secondary">
+                                                    <i class="ri-more-line"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mobile-inventory-card">
+                                            <div class="mobile-card-header">
+                                                <div class="mobile-card-stock">DEF456</div>
+                                                <div class="badge bg-warning mobile-card-days">3 days</div>
+                                            </div>
+                                            <div class="mobile-card-body">
+                                                <div class="mobile-card-row">
+                                                    <span class="mobile-card-label">Date</span>
+                                                    <span class="mobile-card-value">12/13/2024</span>
+                                                </div>
+                                                <div class="mobile-card-row">
+                                                    <span class="mobile-card-label">Vehicle</span>
+                                                    <span class="mobile-card-value">2024 BMW 330i</span>
+                                                </div>
+                                                <div class="mobile-card-row">
+                                                    <span class="mobile-card-label">Status</span>
+                                                    <span class="mobile-card-value"><span class="badge bg-info">In Progress</span></span>
+                                                </div>
+                                            </div>
+                                            <div class="mobile-card-actions">
+                                                <button class="btn btn-primary flex-fill">
+                                                    <i class="ri-arrow-right-line me-1"></i>Move
+                                                </button>
+                                                <button class="btn btn-outline-secondary">
+                                                    <i class="ri-more-line"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mobile-inventory-card">
+                                            <div class="mobile-card-header">
+                                                <div class="mobile-card-stock">GHI789</div>
+                                                <div class="badge bg-danger mobile-card-days">7 days</div>
+                                            </div>
+                                            <div class="mobile-card-body">
+                                                <div class="mobile-card-row">
+                                                    <span class="mobile-card-label">Date</span>
+                                                    <span class="mobile-card-value">12/09/2024</span>
+                                                </div>
+                                                <div class="mobile-card-row">
+                                                    <span class="mobile-card-label">Vehicle</span>
+                                                    <span class="mobile-card-value">2024 BMW M4 Competition</span>
+                                                </div>
+                                                <div class="mobile-card-row">
+                                                    <span class="mobile-card-label">Status</span>
+                                                    <span class="mobile-card-value"><span class="badge bg-success">Completed</span></span>
+                                                </div>
+                                            </div>
+                                            <div class="mobile-card-actions">
+                                                <button class="btn btn-secondary flex-fill" disabled>
+                                                    <i class="ri-check-line me-1"></i>Done
+                                                </button>
+                                                <button class="btn btn-outline-secondary" disabled>
+                                                    <i class="ri-more-line"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Demo Section 3: Responsive Buttons & Forms -->
+                    <div class="demo-section">
+                        <h2 class="demo-title">
+                            <i class="ri-hand-heart-line me-2"></i>
+                            Touch-Friendly Interactive Elements
+                        </h2>
+                        <p>Buttons and form elements optimized for touch interaction with minimum 44px touch targets</p>
+                        
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
+                                <h5>Button Examples</h5>
+                                <div class="d-flex flex-wrap gap-2 mb-3">
+                                    <button class="btn btn-primary">
+                                        <i class="ri-save-line me-1"></i>Primary Action
+                                    </button>
+                                    <button class="btn btn-secondary">
+                                        <i class="ri-settings-line me-1"></i>Secondary
+                                    </button>
+                                    <button class="btn btn-outline-secondary">
+                                        <i class="ri-download-line me-1"></i>Outline
+                                    </button>
+                                </div>
+                                
+                                <div class="btn-group mobile-hidden">
+                                    <button class="btn btn-outline-primary">Group 1</button>
+                                    <button class="btn btn-outline-primary">Group 2</button>
+                                    <button class="btn btn-outline-primary">Group 3</button>
+                                </div>
+                                
+                                <div class="btn-group mobile-only">
+                                    <button class="btn btn-outline-primary">Stacked 1</button>
+                                    <button class="btn btn-outline-primary">Stacked 2</button>
+                                    <button class="btn btn-outline-primary">Stacked 3</button>
+                                </div>
+                            </div>
+                            
+                            <div class="col-12 col-md-6">
+                                <h5>Form Elements</h5>
+                                <div class="mb-3">
+                                    <label class="form-label">Search Inventory</label>
+                                    <input type="text" class="form-control" placeholder="Enter stock number or vehicle...">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="demoCheck1">
+                                        <label class="form-check-label" for="demoCheck1">
+                                            Show completed items
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="demoCheck2" checked>
+                                        <label class="form-check-label" for="demoCheck2">
+                                            Auto-refresh enabled
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Demo Section 4: Responsive Utilities -->
+                    <div class="demo-section">
+                        <h2 class="demo-title">
+                            <i class="ri-eye-line me-2"></i>
+                            Responsive Visibility
+                        </h2>
+                        <p>Elements that show/hide based on screen size using responsive utility classes</p>
+                        
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <div class="alert alert-info mobile-only">
+                                    <i class="ri-smartphone-line me-2"></i>
+                                    <strong>Mobile Only:</strong> You're viewing on a mobile device (≤767px)
+                                </div>
+                                
+                                <div class="alert alert-warning tablet-only">
+                                    <i class="ri-tablet-line me-2"></i>
+                                    <strong>Tablet Only:</strong> You're viewing on a tablet device (768px-1365px)
+                                </div>
+                                
+                                <div class="alert alert-success laptop-only">
+                                    <i class="ri-computer-line me-2"></i>
+                                    <strong>Laptop Only:</strong> You're viewing on a laptop screen (1366px-1919px)
+                                </div>
+                                
+                                <div class="alert alert-primary desktop-only">
+                                    <i class="ri-tv-line me-2"></i>
+                                    <strong>Desktop Only:</strong> You're viewing on a desktop screen (≥1920px)
+                                </div>
+                                
+                                <div class="alert alert-secondary">
+                                    <i class="ri-eye-line me-2"></i>
+                                    <strong>Always Visible:</strong> This message appears on all screen sizes
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Demo Instructions -->
+                    <div class="demo-section">
+                        <h2 class="demo-title">
+                            <i class="ri-information-line me-2"></i>
+                            Testing Instructions
+                        </h2>
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-6">
+                                <h5>Resize Your Browser</h5>
+                                <ul>
+                                    <li><strong>Mobile:</strong> ≤767px width</li>
+                                    <li><strong>Tablet:</strong> 768px-1365px width</li>
+                                    <li><strong>Laptop:</strong> 1366px-1919px width</li>
+                                    <li><strong>Desktop:</strong> ≥1920px width</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="col-12 col-lg-6">
+                                <h5>Test Features</h5>
+                                <ul>
+                                    <li>Statistics grid adapts to screen size</li>
+                                    <li>Table becomes cards on mobile</li>
+                                    <li>Touch-friendly button sizes</li>
+                                    <li>Mobile sidebar menu (small screens)</li>
+                                    <li>Responsive visibility utilities</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Sidebar -->
+    <div class="mobile-sidebar">
+        <div class="mobile-sidebar-header">
+            <div class="d-flex align-items-center justify-content-between p-3 border-bottom">
+                <h5 class="mb-0 text-white">Demo Menu</h5>
+                <button class="mobile-sidebar-close btn btn-link p-0">
+                    <i class="ri-close-line fs-20 text-white"></i>
+                </button>
+            </div>
+        </div>
+        <div class="mobile-sidebar-body">
+            <div class="p-3">
+                <div class="mobile-sidebar-section">
+                    <h6 class="text-muted text-uppercase fs-12 mb-3">Demo Sections</h6>
+                    <ul class="list-unstyled mobile-sidebar-menu">
+                        <li><a href="#" class="mobile-sidebar-link">Statistics Grid</a></li>
+                        <li><a href="#" class="mobile-sidebar-link">Responsive Table</a></li>
+                        <li><a href="#" class="mobile-sidebar-link">Touch Elements</a></li>
+                        <li><a href="#" class="mobile-sidebar-link">Visibility Utils</a></li>
+                    </ul>
+                </div>
+                
+                <div class="mobile-sidebar-section">
+                    <h6 class="text-muted text-uppercase fs-12 mb-3">Actions</h6>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary btn-sm">
+                            <i class="ri-refresh-line me-1"></i>Refresh Demo
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm">
+                            <i class="ri-settings-line me-1"></i>Settings
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mobile Sidebar Overlay -->
+    <div class="mobile-sidebar-overlay"></div>
+
+    <!-- Scripts -->
+    <script src="js/responsive-interactions.js"></script>
+    
+    <script>
+        // Demo-specific JavaScript
+        document.addEventListener('DOMContentLoaded', function() {
+            const breakpointIndicator = document.getElementById('breakpointIndicator');
+            const viewportInfo = document.getElementById('viewportInfo');
+            
+            function updateIndicators() {
+                if (window.responsiveManager) {
+                    const info = window.responsiveManager.getCurrentBreakpointInfo();
+                    const width = window.innerWidth;
+                    const height = window.innerHeight;
+                    
+                    breakpointIndicator.textContent = `${info.current.toUpperCase()}`;
+                    viewportInfo.textContent = `${width}×${height}px`;
+                    
+                    // Update body class for demo
+                    document.body.className = document.body.className.replace(/demo-\w+/g, '');
+                    document.body.classList.add(`demo-${info.current}`);
+                }
+            }
+            
+            // Update on load and resize
+            updateIndicators();
+            window.addEventListener('resize', updateIndicators);
+            window.addEventListener('breakpointChange', updateIndicators);
+            
+            // Demo button handlers
+            document.getElementById('refreshDemo').addEventListener('click', function() {
+                this.innerHTML = '<i class="ri-loader-4-line me-1 spinner-border spinner-border-sm"></i>Refreshing...';
+                setTimeout(() => {
+                    this.innerHTML = '<i class="ri-refresh-line me-1"></i>Refresh';
+                    alert('Demo refresh completed!');
+                }, 1500);
+            });
+            
+            document.getElementById('clearFiltersDemo').addEventListener('click', function() {
+                // Remove active state from filter widgets
+                document.querySelectorAll('.filter-widget.active').forEach(widget => {
+                    widget.classList.remove('active');
+                });
+                alert('Demo filters cleared!');
+            });
+            
+            // Filter widget demo functionality
+            document.querySelectorAll('.filter-widget').forEach(widget => {
+                widget.addEventListener('click', function() {
+                    // Remove active from all
+                    document.querySelectorAll('.filter-widget').forEach(w => w.classList.remove('active'));
+                    // Add active to clicked
+                    this.classList.add('active');
+                    
+                    const filter = this.dataset.filter;
+                    const filterName = filter === '' ? 'All items' : 
+                                     filter === '0-1' ? 'Recent items (0-1 days)' :
+                                     filter === '2-5' ? 'Moderate items (2-5 days)' :
+                                     filter === '6+' ? 'Aged items (6+ days)' : filter;
+                    
+                    console.log(`Filter applied: ${filterName}`);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
