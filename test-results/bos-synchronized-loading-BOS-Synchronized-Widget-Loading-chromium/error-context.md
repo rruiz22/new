@@ -1,0 +1,56 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e3]:
+      - heading "BMW of Sudbury" [level=1] [ref=e4]
+      - paragraph [ref=e5]: Professional inventory management system for luxury automotive dealership
+    - generic [ref=e7]:
+      - generic "Click to filter results" [ref=e8] [cursor=pointer]:
+        - generic [ref=e10] [cursor=pointer]: Total Items
+        - generic [ref=e12] [cursor=pointer]: vehicles
+      - generic "Click to filter results" [ref=e13] [cursor=pointer]:
+        - generic [ref=e15] [cursor=pointer]: Recent
+        - generic [ref=e17] [cursor=pointer]: 0-1 days
+      - generic "Click to filter results" [ref=e18] [cursor=pointer]:
+        - generic [ref=e20] [cursor=pointer]: Moderate
+        - generic [ref=e22] [cursor=pointer]: 2-5 days
+      - generic "Click to filter results" [ref=e23] [cursor=pointer]:
+        - generic [ref=e25] [cursor=pointer]: Aged
+        - generic [ref=e27] [cursor=pointer]: 6+ days
+      - generic [ref=e28]:
+        - generic [ref=e30]: Average Days
+        - generic [ref=e32]: avg days
+    - heading " Vehicle Status Overview" [level=3] [ref=e36]:
+      - generic [ref=e37]: 
+      - text: Vehicle Status Overview
+    - generic [ref=e39]:
+      - generic [ref=e40]:
+        - heading " Inventory Management" [level=3] [ref=e42]:
+          - generic [ref=e43]: 
+          - text: Inventory Management
+        - generic [ref=e44]:
+          - generic [ref=e45]:
+            - textbox "Search inventory..." [ref=e46]
+            - generic [ref=e47]: 
+          - button " Clear Filters" [ref=e48] [cursor=pointer]:
+            - generic [ref=e49] [cursor=pointer]: 
+            - text: Clear Filters
+          - button " Refresh" [ref=e50] [cursor=pointer]:
+            - generic [ref=e51] [cursor=pointer]: 
+            - text: Refresh
+      - table [ref=e53]:
+        - rowgroup [ref=e54]:
+          - row "Date in Detail Day in this Step Keys Stock Number Vehicle Notes Status" [ref=e55]:
+            - columnheader "Date in Detail" [ref=e56]
+            - columnheader "Day in this Step" [ref=e57]
+            - columnheader "Keys" [ref=e58]
+            - columnheader "Stock Number" [ref=e59]
+            - columnheader "Vehicle" [ref=e60]
+            - columnheader "Notes" [ref=e61]
+            - columnheader "Status" [ref=e62]
+        - rowgroup
+  - text: 
+  - img
+```
