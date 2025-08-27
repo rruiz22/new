@@ -20,7 +20,10 @@ $fullBaseUrl = $baseUrl . $appPath;
 <!-- SweetAlert2 -->
 <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.0/dist/sweetalert2.min.css" rel="stylesheet">
 <!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<!-- BOS Notion-Style Enterprise CSS -->
+<link href="css/bos-notion-enterprise.css" rel="stylesheet">
 
 <!-- Velzon Theme - Modern Dashboard Styles -->
 <style>

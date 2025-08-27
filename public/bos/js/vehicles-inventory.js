@@ -248,6 +248,10 @@ function updateInventoryStatusColumns() {
             // Add indicators for data source
             let dataSourceIndicator = '';
             let statusText = orderInfo.status.replace('_', ' ');
+            // Capitalize each word
+            statusText = statusText.split(' ').map(word => 
+                word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+            ).join(' ');
             
             if (orderInfo.real_data) {
                 dataSourceIndicator = ' title="Real status from database"';
@@ -264,7 +268,7 @@ function updateInventoryStatusColumns() {
                 statusText = 'NO STATUS YET';
             }
             
-            html += `<span class="badge bg-${statusColor} px-1 py-1 fw-bold text-uppercase" style="font-size: 0.6rem; letter-spacing: 0.3px;"${dataSourceIndicator}>${statusText}</span>`;
+            html += `<span class="status-badge-enhanced status-${orderInfo.status}" style="font-size: 0.7rem; letter-spacing: 0.5px; padding: 6px 10px; border-radius: 8px; font-weight: 600;"${dataSourceIndicator}>${statusText}</span>`;
             
             // Service info below - smaller and muted
             if (orderInfo.service_name && orderInfo.service_name !== 'No Order Found') {
@@ -466,6 +470,15 @@ function loadOrderInfoForInventory() {
 function updateInventoryStats(data) {
     if (!Array.isArray(data)) return;
     
+    // Wait 1 second before updating stats to ensure table is ready
+    setTimeout(() => {
+        updateStatsAfterDelay(data);
+    }, 1000);
+}
+
+function updateStatsAfterDelay(data) {
+    if (!Array.isArray(data)) return;
+    
     // Filter out completed items for stats calculation
     const filteredData = data.filter(row => {
         const stockNumber = row[2]; // stock_number is at index 2
@@ -526,13 +539,36 @@ function updateInventoryStats(data) {
     
     
     // Update stats
-    $('#totalInventoryItems').text(total);
-    $('#recentItems').text(recentItems);
-    $('#moderateItems').text(moderateItems);
-    $('#agedItems').text(agedItems);
+    // Replace loading dots with actual number\n    const totalElement = document.getElementById('totalInventoryItems');\n    if (totalElement) {\n        totalElement.innerHTML = total.toLocaleString();\n    }
+    const recentElement = document.getElementById('recentItems');
+    if (recentElement) {
+        recentElement.innerHTML = recentItems.toLocaleString();
+    }
+    const moderateElement = document.getElementById('moderateItems');
+    if (moderateElement) {
+        moderateElement.innerHTML = moderateItems.toLocaleString();
+    }
+    const agedElement = document.getElementById('agedItems');
+    if (agedElement) {
+        agedElement.innerHTML = agedItems.toLocaleString();
+    }
     
     // Update mini widget average days
-    $('#avgDaysNumber').text(avgDays);
+    const avgElement = document.getElementById('avgDaysNumber');
+    if (avgElement) {
+        avgElement.innerHTML = avgDays.toLocaleString();
+    }
+    
+    // Trigger status widget update at the same time
+    setTimeout(() => {
+        if (window.StatusOverviewWidget) {
+            window.StatusOverviewWidget.refresh();
+        }
+        // Also trigger the event for other listeners
+        document.dispatchEvent(new CustomEvent('statsUpdated', {
+            detail: { total, recentItems, moderateItems, agedItems, avgDays }
+        }));
+    }, 100); // Small delay to ensure DOM updates are complete
 }
 
 function updateCheckboxStates() {
@@ -640,9 +676,9 @@ function updateCheckboxStates() {
                     const days = parseInt(data);
                     if (isNaN(days)) return '-';
                     
-                    let badgeClass = 'bg-success';
-                    if (days >= 6) badgeClass = 'bg-danger';
-                    else if (days >= 2) badgeClass = 'bg-warning';
+                    let badgeClass = 'days-badge-recent';
+                    if (days >= 6) badgeClass = 'days-badge-aged';
+                    else if (days >= 2) badgeClass = 'days-badge-moderate';
                     
                     const dayText = days === 1 ? 'day' : 'days';
                     
@@ -743,8 +779,8 @@ function updateCheckboxStates() {
         window.inventoryTable = $('#inventoryTable').DataTable({
             processing: true,
             serverSide: false,
-            scrollY: '500px',
-            scrollCollapse: true,
+            paging: true,
+            scrollX: false,
             ajax: {
                 url: './get_inventory.php',
                 type: 'GET',
@@ -789,7 +825,7 @@ function updateCheckboxStates() {
                 }
             },
             columns: columns,
-            order: [[window.isAuthenticated ? 2 : 1, 'asc']], // Adjust order column based on auth (ascending - least days first)
+            order: [[window.isAuthenticated ? 1 : 0, 'asc']], // Sort by date - oldest first
             pageLength: 25,
             lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
             responsive: true,
@@ -841,6 +877,8 @@ function updateCheckboxStates() {
                     // Apply row background colors based on status after updating status columns
                     setTimeout(() => {
                         applyStatusRowColors();
+                        // Trigger event for status widget
+                        document.dispatchEvent(new CustomEvent('tableDataLoaded'));
                     }, 200);
                 }, 100);
                 } catch (statusError) {
@@ -876,6 +914,7 @@ function updateCheckboxStates() {
 
         setupEventHandlers();
         setupWidgetFiltering();
+        setupSearchFunctionality();
         
         // Mark table initialization as complete
         window.tableInitializing = false;
@@ -902,8 +941,8 @@ function updateCheckboxStates() {
                 window.inventoryOrdersTable = $('#inventoryOrdersTable').DataTable({
                     processing: true,
                     serverSide: true,
-                    scrollY: '250px',
-                    scrollCollapse: true,
+                    paging: true,
+                    scrollX: false,
                     ajax: {
                         url: '../recon_orders/inventory_orders_data',
                         type: 'POST',
@@ -995,8 +1034,8 @@ function updateCheckboxStates() {
                 window.allOrdersTable = $('#allOrdersTable').DataTable({
                     processing: true,
                     serverSide: true,
-                    scrollY: '250px',
-                    scrollCollapse: true,
+                    paging: true,
+                    scrollX: false,
                     ajax: {
                         url: '../recon_orders/all_orders_content',
                         type: 'POST',
@@ -1150,6 +1189,8 @@ function updateCheckboxStates() {
                     // Apply status row colors after update
                     setTimeout(() => {
                         applyStatusRowColors();
+                        // Trigger event for status widget
+                        document.dispatchEvent(new CustomEvent('tableDataLoaded'));
                     }, 300);
                 }, 300);
                 
@@ -1274,8 +1315,36 @@ function updateCheckboxStates() {
     }
 
 // ====================================
-// FILTERING SYSTEM
+// SEARCH AND FILTERING SYSTEM
 // ====================================
+
+    // Setup search functionality
+    function setupSearchFunctionality() {
+        const $ = window.jQuery;
+        
+        $('#inventorySearch').on('keyup', function() {
+            const searchValue = $(this).val();
+            
+            if (window.inventoryTable) {
+                window.inventoryTable.search(searchValue).draw();
+            }
+            
+            // Show search feedback
+            if (searchValue.length > 0) {
+                $(this).addClass('searching');
+            } else {
+                $(this).removeClass('searching');
+            }
+        });
+        
+        // Clear search when clear filters is clicked
+        $('#clearAllFilters').on('click', function() {
+            $('#inventorySearch').val('').removeClass('searching');
+            if (window.inventoryTable) {
+                window.inventoryTable.search('').draw();
+            }
+        });
+    }
 
     function setupWidgetFiltering() {
         const $ = window.jQuery;
