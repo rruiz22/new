@@ -139,7 +139,7 @@ if (!function_exists('lang')) {
                     <!-- Notion Page Header -->
                     <div class="notion-page-header">
                         <h1 class="notion-page-title">BMW of Sudbury</h1>
-                        <p class="notion-page-subtitle">Professional inventory management system for luxury automotive dealership</p>
+                        <p class="notion-page-subtitle"></p>
                     </div>
 
                     <!-- Enterprise Statistics Grid -->
