@@ -2803,9 +2803,9 @@ class SalesOrdersController extends BaseController
         try {
             // Get activities from database with user information
             $activities = $this->activityModel->select('sales_orders_activities.*, 
+                                                      CONCAT(users.first_name, " ", users.last_name) as user_name,
                                                       users.first_name, 
-                                                      users.last_name,
-                                                      users.username')
+                                                      users.last_name')
                                                ->join('users', 'users.id = sales_orders_activities.user_id', 'left')
                                                ->where('sales_orders_activities.order_id', $id)
                                                ->orderBy('sales_orders_activities.created_at', 'DESC')
@@ -2820,9 +2820,9 @@ class SalesOrdersController extends BaseController
                 
                 // Re-fetch after creating sample data
                 $activities = $this->activityModel->select('sales_orders_activities.*, 
+                                                          CONCAT(users.first_name, " ", users.last_name) as user_name,
                                                           users.first_name, 
-                                                          users.last_name,
-                                                          users.username')
+                                                          users.last_name')
                                                    ->join('users', 'users.id = sales_orders_activities.user_id', 'left')
                                                    ->where('sales_orders_activities.order_id', $id)
                                                    ->orderBy('sales_orders_activities.created_at', 'DESC')
@@ -2835,7 +2835,17 @@ class SalesOrdersController extends BaseController
             // Format activities for display
             $formattedActivities = [];
             foreach ($activities as $activity) {
-                $userName = $this->formatAuthorName($activity);
+                $userName = $activity['user_name'] ?: 'System';
+                
+                // If user_name is empty but we have first/last name, construct it
+                if (empty($userName) || $userName === ' ') {
+                    if (!empty($activity['first_name']) || !empty($activity['last_name'])) {
+                        $userName = trim(($activity['first_name'] ?? '') . ' ' . ($activity['last_name'] ?? ''));
+                    }
+                    if (empty($userName)) {
+                        $userName = 'System';
+                    }
+                }
 
                 $formattedActivities[] = [
                     'id' => $activity['id'],
@@ -3115,12 +3125,6 @@ class SalesOrdersController extends BaseController
                 // Generate avatar URL manually to avoid authentication issues
                 $comment['avatar_url'] = $this->generateAvatarUrl($comment, 32);
                 
-                // Create author_name field for frontend compatibility
-                $comment['author_name'] = $this->formatAuthorName($comment);
-                
-                // Create user_name field for JavaScript comments component compatibility
-                $comment['user_name'] = $this->formatAuthorName($comment);
-                
                 // Map description to comment for frontend compatibility
                 $comment['comment'] = $comment['description'];
                 
@@ -3138,12 +3142,6 @@ class SalesOrdersController extends BaseController
                         
                         // Generate avatar URL
                         $reply['avatar_url'] = $this->generateAvatarUrl($reply, 20); // Smaller avatar for replies
-                        
-                        // Create author_name field for frontend compatibility
-                        $reply['author_name'] = $this->formatAuthorName($reply);
-                        
-                        // Create user_name field for JavaScript comments component compatibility
-                        $reply['user_name'] = $this->formatAuthorName($reply);
                         
                         // Map description to comment for frontend compatibility
                         $reply['comment'] = $reply['description'];
@@ -5725,7 +5723,6 @@ class SalesOrdersController extends BaseController
                     clients.name as client_name,
                     users.first_name,
                     users.last_name,
-                    users.username,
                     sales_orders_services.service_name
                 ')
                 ->join('clients', 'clients.id = sales_orders.client_id', 'left')
@@ -5768,7 +5765,7 @@ class SalesOrdersController extends BaseController
                     'action' => $action,
                     'time_ago' => $this->timeAgo($activityTime),
                     'client_name' => $order['client_name'] ?? 'Unknown Client',
-                    'salesperson' => $this->formatAuthorName($order),
+                    'salesperson' => trim(($order['first_name'] ?? '') . ' ' . ($order['last_name'] ?? '')) ?: 'Unknown',
                     'status' => $order['status']
                 ];
             }
@@ -6319,10 +6316,7 @@ class SalesOrdersController extends BaseController
                       ->select('sales_orders_comments.order_id, 
                                sales_orders_comments.description as comment, 
                                sales_orders_comments.created_at,
-                               sales_orders_comments.created_by,
-                               users.first_name, 
-                               users.last_name,
-                               users.username')
+                               CONCAT(users.first_name, " ", users.last_name) as author_name')
                       ->join('users', 'users.id = sales_orders_comments.created_by', 'left')
                       ->whereIn('sales_orders_comments.order_id', $orderIds)
                       ->orderBy('sales_orders_comments.created_at', 'DESC')
@@ -6347,7 +6341,7 @@ class SalesOrdersController extends BaseController
                 
                 $groupedComments[$orderId][] = [
                     'comment' => $commentText,
-                    'author_name' => $this->formatAuthorName($comment),
+                    'author_name' => $comment['author_name'] ?? 'Unknown',
                     'created_at' => $comment['created_at'],
                     'time_ago' => $this->timeAgo($comment['created_at'])
                 ];
@@ -6373,10 +6367,7 @@ class SalesOrdersController extends BaseController
                    ->select('internal_notes.order_id, 
                             internal_notes.note, 
                             internal_notes.created_at,
-                            internal_notes.author_id,
-                            users.first_name, 
-                            users.last_name,
-                            users.username')
+                            CONCAT(users.first_name, " ", users.last_name) as author_name')
                    ->join('users', 'users.id = internal_notes.author_id', 'left')
                    ->whereIn('internal_notes.order_id', $orderIds)
                    ->where('internal_notes.order_type', 'sales_order')
@@ -6403,7 +6394,7 @@ class SalesOrdersController extends BaseController
                 
                 $groupedNotes[$orderId][] = [
                     'content' => $noteText,
-                    'author_name' => $this->formatAuthorName($note),
+                    'author_name' => $note['author_name'] ?? 'Unknown',
                     'created_at' => $note['created_at'],
                     'time_ago' => $this->timeAgo($note['created_at'])
                 ];
@@ -7184,35 +7175,6 @@ class SalesOrdersController extends BaseController
         log_message('warning', 'Order number generation reached max attempts, using fallback: ' . $fallback);
         
         return $fallback;
-    }
-
-    /**
-     * Format author name from user data
-     * This fixes the "System Administrator" issue by creating the proper author_name field
-     * Uses the same logic as the topbar to ensure consistency
-     */
-    private function formatAuthorName($userData)
-    {
-        // First try to get the username (same as topbar logic)
-        if (!empty($userData['username'])) {
-            return $userData['username'];
-        }
-        
-        // Fallback: Try different combinations to get the user's name
-        if (!empty($userData['first_name']) && !empty($userData['last_name'])) {
-            return trim($userData['first_name'] . ' ' . $userData['last_name']);
-        }
-        
-        if (!empty($userData['first_name'])) {
-            return $userData['first_name'];
-        }
-        
-        if (!empty($userData['last_name'])) {
-            return $userData['last_name'];
-        }
-        
-        // Final fallback - this should now rarely happen
-        return 'Unknown User';
     }
 
 }

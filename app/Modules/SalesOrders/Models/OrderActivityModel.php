@@ -35,9 +35,8 @@ class OrderActivityModel extends Model
     public function getOrderActivities($orderId, $limit = 10, $offset = 0)
     {
         return $this->select('sales_orders_activities.*, 
-                             users.first_name, 
-                             users.last_name,
-                             users.username')
+                             CONCAT(users.first_name, " ", users.last_name) as user_name,
+                             users.first_name, users.last_name')
                     ->join('users', 'users.id = sales_orders_activities.user_id', 'left')
                     ->where('order_id', $orderId)
                     ->orderBy('created_at', 'DESC')
@@ -263,8 +262,7 @@ class OrderActivityModel extends Model
     {
         return $this->select('sales_orders_activities.*,
                               users.first_name,
-                              users.last_name,
-                              users.username')
+                              users.last_name')
                     ->join('users', 'users.id = sales_orders_activities.user_id', 'left')
                     ->where('order_id', $orderId)
                     ->orderBy('created_at', 'DESC')

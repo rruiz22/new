@@ -382,114 +382,6 @@
     border: 1px solid #e9ecef;
 }
 
-/* Selected Files Preview Styles */
-.selected-files-preview {
-    margin-top: 12px;
-    padding: 10px;
-    background-color: #f8f9fa;
-    border: 1px solid #e9ecef;
-    border-radius: 6px;
-    max-height: 200px;
-    overflow-y: auto;
-}
-
-.preview-files-container {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.selected-file-item {
-    display: flex;
-    align-items: center;
-    padding: 8px;
-    background-color: #ffffff;
-    border: 1px solid #dee2e6;
-    border-radius: 4px;
-    position: relative;
-}
-
-.selected-file-thumbnail {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 10px;
-    border-radius: 4px;
-    overflow: hidden;
-    background-color: #f8f9fa;
-    border: 1px solid #e9ecef;
-}
-
-.selected-file-thumbnail img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.selected-file-thumbnail i {
-    font-size: 18px;
-    color: #6c757d;
-}
-
-.selected-file-info {
-    flex: 1;
-    min-width: 0;
-}
-
-.selected-file-name {
-    font-size: 12px;
-    font-weight: 500;
-    color: #495057;
-    margin-bottom: 2px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.selected-file-size {
-    font-size: 11px;
-    color: #6c757d;
-}
-
-.selected-file-remove {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background-color: #dc3545;
-    color: white;
-    border: 2px solid white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 10px;
-    transition: all 0.2s ease;
-}
-
-.selected-file-remove:hover {
-    background-color: #c82333;
-    transform: scale(1.1);
-}
-
-.preview-files-title {
-    font-size: 12px;
-    font-weight: 600;
-    color: #495057;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-}
-
-.preview-files-title i {
-    margin-right: 5px;
-    font-size: 12px;
-}
-
 .attachments-title {
     display: flex;
     align-items: center;
@@ -2309,10 +2201,6 @@
                                 Attach Files
                             </button>
                             <span id="attachmentCount" class="text-muted small ms-2"></span>
-                            <!-- File Preview Container -->
-                            <div id="commentFilePreview" class="selected-files-preview mt-2" style="display: none;">
-                                <div class="preview-files-container"></div>
-                            </div>
                                         </div>
                     <button type="submit" class="btn btn-primary btn-sm">
                         <i data-feather="send" class="icon-xs me-1"></i>
@@ -2397,10 +2285,6 @@
                                             Attach Files
                                         </button>
                                         <span id="attachmentCount" class="text-muted small ms-2"></span>
-                                        <!-- File Preview Container -->
-                                        <div id="noteFilePreview" class="selected-files-preview mt-2" style="display: none;">
-                                            <div class="preview-files-container"></div>
-                                        </div>
                                     </div>
                                     <button type="submit" class="btn btn-primary btn-sm">
                                         <i data-feather="send" class="icon-xs me-1"></i>
@@ -4153,10 +4037,10 @@ function createAttachmentHtml(attachment) {
                 <span class="attachment-size">${formatFileSize(attachment.size || 0)}</span>
             </div>
             <div class="attachment-actions">
-                ${canView ? `<a href="${attachment.url}" class="btn btn-sm btn-outline-primary me-1" onclick="openAttachmentModal('${attachment.url}', '${attachment.original_name}', '${extension}'); return false;" title="View">
+                ${canView ? `<a href="${attachment.url}" class="btn btn-sm btn-outline-primary me-1" target="_blank" title="Ver en navegador">
                     <i data-feather="eye" class="icon-xs"></i>
                 </a>` : ''}
-                <a href="${attachment.url}" class="btn btn-sm btn-outline-secondary" title="Download" download="${attachment.original_name}">
+                <a href="${attachment.url}" class="btn btn-sm btn-outline-secondary" title="Descargar" download="${attachment.original_name}">
                     <i data-feather="download" class="icon-xs"></i>
                 </a>
             </div>
@@ -4907,174 +4791,20 @@ function initializeForms() {
     }
 }
 
-// Update attachment count display and show previews
+// Update attachment count display
 function updateAttachmentCount() {
     const attachmentInput = document.getElementById('commentAttachments');
     const countSpan = document.getElementById('attachmentCount');
-    const previewContainer = document.getElementById('commentFilePreview');
     
     if (attachmentInput && countSpan) {
         const fileCount = attachmentInput.files.length;
         if (fileCount > 0) {
             countSpan.textContent = `${fileCount} file${fileCount > 1 ? 's' : ''} selected`;
             countSpan.className = 'text-primary small ms-2';
-            
-            // Show file previews
-            showFilePreview(attachmentInput.files, previewContainer, 'commentAttachments');
         } else {
             countSpan.textContent = '';
-            if (previewContainer) {
-                previewContainer.style.display = 'none';
-            }
         }
     }
-}
-
-// Enhanced file preview function
-function showFilePreview(files, previewContainer, inputId) {
-    if (!previewContainer) return;
-    
-    const filesContainer = previewContainer.querySelector('.preview-files-container');
-    if (!filesContainer) return;
-    
-    // Clear previous previews
-    filesContainer.innerHTML = '';
-    
-    if (files.length === 0) {
-        previewContainer.style.display = 'none';
-        return;
-    }
-    
-    // Add title
-    const titleElement = document.createElement('div');
-    titleElement.className = 'preview-files-title';
-    titleElement.innerHTML = `<i data-feather="paperclip"></i>Selected Files (${files.length})`;
-    filesContainer.appendChild(titleElement);
-    
-    // Process each file
-    Array.from(files).forEach((file, index) => {
-        const fileItem = createSelectedFileItem(file, index, inputId);
-        filesContainer.appendChild(fileItem);
-    });
-    
-    previewContainer.style.display = 'block';
-    
-    // Re-initialize Feather icons for the new elements
-    if (window.feather) {
-        window.feather.replace();
-    }
-}
-
-// Create individual file preview item
-function createSelectedFileItem(file, index, inputId) {
-    const fileItem = document.createElement('div');
-    fileItem.className = 'selected-file-item';
-    fileItem.setAttribute('data-file-index', index);
-    
-    // Create thumbnail
-    const thumbnail = document.createElement('div');
-    thumbnail.className = 'selected-file-thumbnail';
-    
-    // Create file info
-    const fileInfo = document.createElement('div');
-    fileInfo.className = 'selected-file-info';
-    
-    const fileName = document.createElement('div');
-    fileName.className = 'selected-file-name';
-    fileName.textContent = file.name;
-    fileName.title = file.name;
-    
-    const fileSize = document.createElement('div');
-    fileSize.className = 'selected-file-size';
-    fileSize.textContent = formatFileSize(file.size);
-    
-    fileInfo.appendChild(fileName);
-    fileInfo.appendChild(fileSize);
-    
-    // Create remove button
-    const removeBtn = document.createElement('div');
-    removeBtn.className = 'selected-file-remove';
-    removeBtn.innerHTML = '×';
-    removeBtn.title = 'Remove file';
-    removeBtn.onclick = () => removeSelectedFile(index, inputId);
-    
-    // Handle different file types for thumbnails
-    const extension = file.name.split('.').pop().toLowerCase();
-    const imageTypes = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'];
-    
-    if (imageTypes.includes(extension)) {
-        // Create image preview
-        const img = document.createElement('img');
-        img.onload = function() {
-            URL.revokeObjectURL(this.src);
-        };
-        img.onerror = function() {
-            // Fallback to icon if image fails to load
-            thumbnail.innerHTML = getFileIconHtml(extension);
-        };
-        img.src = URL.createObjectURL(file);
-        thumbnail.appendChild(img);
-    } else {
-        // Show file type icon
-        thumbnail.innerHTML = getFileIconHtml(extension);
-    }
-    
-    fileItem.appendChild(thumbnail);
-    fileItem.appendChild(fileInfo);
-    fileItem.appendChild(removeBtn);
-    
-    return fileItem;
-}
-
-// Remove selected file
-function removeSelectedFile(index, inputId) {
-    const input = document.getElementById(inputId);
-    if (!input) return;
-    
-    const dt = new DataTransfer();
-    const files = Array.from(input.files);
-    
-    // Add all files except the one to remove
-    files.forEach((file, i) => {
-        if (i !== index) {
-            dt.items.add(file);
-        }
-    });
-    
-    input.files = dt.files;
-    
-    // Update the display
-    if (inputId === 'commentAttachments') {
-        updateAttachmentCount();
-    } else if (inputId === 'noteAttachments') {
-        window.internalNotesManager.updateAttachmentCount({ target: input });
-    }
-}
-
-// Get file icon HTML
-function getFileIconHtml(extension) {
-    const iconMap = {
-        'pdf': '<i class="fas fa-file-pdf text-danger"></i>',
-        'doc': '<i class="fas fa-file-word text-primary"></i>',
-        'docx': '<i class="fas fa-file-word text-primary"></i>',
-        'xls': '<i class="fas fa-file-excel text-success"></i>',
-        'xlsx': '<i class="fas fa-file-excel text-success"></i>',
-        'ppt': '<i class="fas fa-file-powerpoint text-warning"></i>',
-        'pptx': '<i class="fas fa-file-powerpoint text-warning"></i>',
-        'txt': '<i class="fas fa-file-alt text-info"></i>',
-        'mp4': '<i class="fas fa-file-video text-purple"></i>',
-        'mov': '<i class="fas fa-file-video text-purple"></i>',
-        'avi': '<i class="fas fa-file-video text-purple"></i>',
-        'zip': '<i class="fas fa-file-archive text-warning"></i>',
-        'rar': '<i class="fas fa-file-archive text-warning"></i>',
-        'jpg': '<i class="fas fa-file-image text-success"></i>',
-        'jpeg': '<i class="fas fa-file-image text-success"></i>',
-        'png': '<i class="fas fa-file-image text-success"></i>',
-        'gif': '<i class="fas fa-file-image text-success"></i>',
-        'webp': '<i class="fas fa-file-image text-success"></i>'
-    };
-    
-    return iconMap[extension] || '<i class="fas fa-file text-secondary"></i>';
 }
 
 // Submit Comment Function
@@ -7609,17 +7339,8 @@ class InternalNotesSystem {
     updateAttachmentCount(e) {
         const count = e.target.files.length;
         const countSpan = document.getElementById('attachmentCount');
-        const previewContainer = document.getElementById('noteFilePreview');
-        
         if (countSpan) {
             countSpan.textContent = count > 0 ? `${count}${window.internalNotesTranslations.filesSelected}` : '';
-        }
-        
-        // Show file previews for notes
-        if (count > 0) {
-            showFilePreview(e.target.files, previewContainer, 'noteAttachments');
-        } else if (previewContainer) {
-            previewContainer.style.display = 'none';
         }
     }
     
@@ -7627,7 +7348,6 @@ class InternalNotesSystem {
         const noteContent = document.getElementById('noteContent');
         const noteAttachments = document.getElementById('noteAttachments');
         const attachmentCount = document.getElementById('attachmentCount');
-        const previewContainer = document.getElementById('noteFilePreview');
         
         if (noteContent) {
             noteContent.value = '';
@@ -7635,7 +7355,6 @@ class InternalNotesSystem {
         }
         if (noteAttachments) noteAttachments.value = '';
         if (attachmentCount) attachmentCount.textContent = '';
-        if (previewContainer) previewContainer.style.display = 'none';
     }
     
     updateCharacterCount(text) {
@@ -8804,10 +8523,10 @@ class InternalNotesSystem {
                         <span class="attachment-size">${this.formatFileSize(attachment.size)}</span>
                     </div>
                     <div class="attachment-actions">
-                        ${canView ? `<a href="${viewUrl}" class="btn btn-sm btn-outline-primary me-1" onclick="openAttachmentModal('${viewUrl}', '${attachment.original_name}', '${extension}'); return false;" title="View">
+                        ${canView ? `<a href="${viewUrl}" class="btn btn-sm btn-outline-primary me-1" target="_blank" title="Ver en navegador">
                             <i data-feather="eye" class="icon-xs"></i>
                         </a>` : ''}
-                        <a href="${downloadUrl}" class="btn btn-sm btn-outline-secondary" title="Download">
+                        <a href="${downloadUrl}" class="btn btn-sm btn-outline-secondary" title="Descargar">
                             <i data-feather="download" class="icon-xs"></i>
                         </a>
                     </div>
@@ -10004,24 +9723,6 @@ echo view('sms/enhanced_modal');
     </div>
 </div>
 
-<!-- Attachment Viewer Modal -->
-<div class="modal fade" id="attachmentModal" tabindex="-1" aria-labelledby="attachmentModalTitle" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="attachmentModalTitle">
-                    <i data-feather="paperclip" class="icon-sm me-2"></i>
-                    Attachment Viewer
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body p-0" id="attachmentModalBody">
-                <!-- Content will be loaded dynamically -->
-            </div>
-        </div>
-    </div>
-</div>
-
 <?= $this->endSection() ?>
 
 <?= $this->section('scripts') ?>
@@ -10586,72 +10287,6 @@ function generateIdenticonAvatar(name) {
 }
 
 // Followers initialization is now handled in the main DOMContentLoaded listener
-
-// Attachment Modal Functionality
-function openAttachmentModal(url, filename, extension) {
-    const modal = document.getElementById('attachmentModal');
-    const modalTitle = document.getElementById('attachmentModalTitle');
-    const modalBody = document.getElementById('attachmentModalBody');
-    
-    // Set modal title
-    modalTitle.textContent = filename;
-    
-    // Clear previous content
-    modalBody.innerHTML = '';
-    
-    // Create content based on file type
-    const imageTypes = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'];
-    const pdfType = ['pdf'];
-    const videoTypes = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm'];
-    
-    if (imageTypes.includes(extension.toLowerCase())) {
-        // Display image
-        modalBody.innerHTML = `
-            <div class="text-center">
-                <img src="${url}" class="img-fluid" alt="${filename}" style="max-height: 70vh; object-fit: contain;">
-            </div>
-        `;
-    } else if (pdfType.includes(extension.toLowerCase())) {
-        // Display PDF in iframe
-        modalBody.innerHTML = `
-            <iframe src="${url}" width="100%" height="500px" style="border: none;"></iframe>
-        `;
-    } else if (videoTypes.includes(extension.toLowerCase())) {
-        // Display video
-        modalBody.innerHTML = `
-            <div class="text-center">
-                <video controls style="max-width: 100%; max-height: 70vh;">
-                    <source src="${url}" type="video/${extension}">
-                    Your browser does not support the video tag.
-                </video>
-            </div>
-        `;
-    } else {
-        // For other file types, show a download link
-        modalBody.innerHTML = `
-            <div class="text-center p-4">
-                <i data-feather="file" class="icon-lg mb-3 text-muted"></i>
-                <h5>${filename}</h5>
-                <p class="text-muted">This file type cannot be previewed in the browser.</p>
-                <a href="${url}" class="btn btn-primary" download="${filename}">
-                    <i data-feather="download" class="icon-sm me-1"></i>
-                    Download File
-                </a>
-            </div>
-        `;
-        // Initialize feather icons for the new content
-        feather.replace();
-    }
-    
-    // Show modal
-    const attachmentModal = new bootstrap.Modal(modal);
-    attachmentModal.show();
-    
-    // Initialize feather icons for the new content
-    setTimeout(() => {
-        feather.replace();
-    }, 100);
-}
 </script>
 
 <style>
