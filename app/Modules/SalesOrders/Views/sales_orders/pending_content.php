@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-12">
-        <div class="card">
+        <div class="card border-0 shadow-none">
             <div class="card-header d-flex align-items-center">
                 <h4 class="card-title mb-0 flex-grow-1 text-center">
                     <i data-feather="clock" class="icon-sm me-1"></i>
@@ -14,9 +14,9 @@
                 </div>
             </div>
 
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table id="pending-orders-table" class="table table-borderless table-hover table-nowrap align-middle mb-0 w-100">
+            <div class="card-body p-0">
+                <div class="table-container overflow-hidden">
+                    <table id="pending-orders-table" class="table table-borderless table-hover table-nowrap align-middle mb-0">
                         <thead class="table-light">
                             <tr>
                                 <th scope="col"><?= lang('App.order_id') ?></th>
@@ -90,20 +90,36 @@
     }
 }
 
+/* Table Container Styling */
+.table-container {
+    width: 100%;
+    max-width: 100%;
+    position: relative;
+    padding: 1rem;
+}
+
+/* Force DataTable to use full width and prevent overflow */
 #pending-orders-table {
     width: 100% !important;
+    max-width: 100% !important;
+    table-layout: auto !important;
 }
 
 #pending-orders-table_wrapper {
     width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
 }
 
 #pending-orders-table thead th {
     width: auto !important;
+    max-width: none !important;
+    white-space: nowrap;
 }
 
 .dataTables_wrapper {
     width: 100% !important;
+    max-width: 100% !important;
 }
 
 .dataTables_wrapper .dataTables_length select,
@@ -204,6 +220,66 @@
     flex-wrap: wrap !important;
 }
 
+/* Elegant DataTable Loading Styling - Contained within table */
+.dataTables_processing {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 12px !important;
+    z-index: 100 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+    color: #405189 !important;
+    font-size: 1.1rem !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.5px !important;
+    animation: elegantFadeIn 0.4s ease-out !important;
+}
+
+/* Only show as flex when DataTables makes it visible */
+.dataTables_processing[style*="display: block"] {
+    display: flex !important;
+}
+
+.dataTables_processing::before {
+    content: '';
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(64, 81, 137, 0.1);
+    border-top: 3px solid #405189;
+    border-radius: 50%;
+    animation: elegantSpin 1s linear infinite;
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+@keyframes elegantFadeIn {
+    from {
+        opacity: 0;
+        backdrop-filter: blur(0px);
+        -webkit-backdrop-filter: blur(0px);
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        transform: scale(1);
+    }
+}
+
+@keyframes elegantSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 /* Center table headers */
 #pending-orders-table thead th {
     text-align: center !important;
@@ -253,40 +329,6 @@
     text-align: left !important;
 }
 
-/* DataTable Loading Overlay Styles */
-.datatable-loading-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(3px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    border-radius: 8px;
-}
-
-.datatable-loading-content {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: row;
-    background: #fff;
-    padding: 1.5rem 2rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e3ebf0;
-}
-
-.datatable-loading-text {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #64748b;
-    margin-left: 0.5rem;
-}
 
 /* Comments Badge Styles */
 .comments-badge {
@@ -926,8 +968,8 @@ waitForDataTablesOnPending(function() {
             }
 
             // Force table width before initialization
-            $('#pending-orders-table').css('width', '100%');
-            $('.table-responsive').css('width', '100%');
+            $('#pending-orders-table').css({'width': '100%', 'max-width': '100%'});
+            $('.table-container').css({'width': '100%', 'max-width': '100%', 'overflow': 'hidden'});
 
 
             pendingOrdersTable = $('#pending-orders-table').DataTable({
@@ -937,12 +979,8 @@ waitForDataTablesOnPending(function() {
                 scrollX: false,
                 autoWidth: false,
                 columnDefs: [
-                    { width: "15%", targets: 0, className: "text-center" }, // Order ID
-                    { width: "20%", targets: 1, className: "text-center" }, // Stock
-                    { width: "25%", targets: 2, className: "text-center" }, // Client
-                    { width: "12%", targets: 3, className: "text-center" }, // Date
-                    { width: "13%", targets: 4, className: "text-center" }, // Status
-                    { width: "15%", targets: 5, orderable: false, searchable: false, className: "text-center" } // Actions
+                    { className: "text-center", targets: [0, 1, 2, 3, 4, 5] },
+                    { orderable: false, searchable: false, targets: 5 }
                 ],
                 ajax: {
                     url: '<?= base_url('sales_orders/all_content') ?>',
@@ -1201,16 +1239,7 @@ waitForDataTablesOnPending(function() {
                                             
                         return langMap[currentLang] || langMap['en'];
                     }(),
-                    processing: `
-                        <div class="datatable-loading-overlay">
-                            <div class="datatable-loading-content">
-                                <div class="spinner-border text-primary me-2" role="status">
-                                    <span class="visually-hidden"><?= lang('App.loading') ?>...</span>
-                                </div>
-                                <span class="datatable-loading-text"><?= lang('App.loading_orders') ?>...</span>
-                            </div>
-                        </div>
-                    `,
+                    processing: "<?= lang('App.loading') ?>...",
                     lengthMenu: "<?= lang('App.show') ?> _MENU_ <?= lang('App.entries') ?>",
                     zeroRecords: `
                         <div class="text-center py-5">
@@ -1235,7 +1264,7 @@ waitForDataTablesOnPending(function() {
                         previous: "<?= lang('App.previous') ?>"
                     }
                 },
-                dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rt<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                dom: '<"row align-items-center mb-3"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-end"f>>rt<"row align-items-center mt-3"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7 d-flex justify-content-end"p>>',
                 rowCallback: function(row, data, index) {
                     // Apply CSS class to the row based on order status and timing
                     if (data.row_class && data.row_class !== '') {
@@ -1243,57 +1272,41 @@ waitForDataTablesOnPending(function() {
                     }
                 },
                 initComplete: function(settings, json) {
-                    
-                    const table = this.api();
-
-                    setTimeout(() => {
-                        table.columns.adjust();
-                        $('#pending-orders-table').css('width', '100%');
-                    }, 50);
-
-                    setTimeout(() => {
-                        table.columns.adjust().draw();
-                        $('#pending-orders-table').css('width', '100%');
-                    }, 150);
-
-                    setTimeout(() => {
-                        table.columns.adjust();
-                        $('#pending-orders-table').css('width', '100%');
-                        $('.dataTables_wrapper').css('width', '100%');
-                    }, 300);
-
                     // Calculate and set title count
                     const count = json.recordsFiltered || 0;
-                    
                     updatePendingOrderCount(count);
+                    
+                    // Single column adjustment without redraw
+                    setTimeout(() => {
+                        this.api().columns.adjust();
+                    }, 100);
                 },
                 drawCallback: function(settings) {
-                    // Calculate count for this specific draw
-                    const api = this.api();
-                    const pageInfo = api.page.info();
-                    
-                    
-                    const count = pageInfo.recordsDisplay || 0;
-                    
-                    updatePendingOrderCount(count);
-
-                    // Refresh icons
-                    if (typeof feather !== 'undefined') {
-                        setTimeout(() => {
+                    // Only refresh icons and tooltips - avoid any operations that trigger redraws
+                    setTimeout(() => {
+                        if (typeof feather !== 'undefined') {
                             feather.replace();
-                        }, 50);
-                    }
+                        }
+                        
+                        // Initialize tooltips
+                        if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+                            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                                return new bootstrap.Tooltip(tooltipTriggerEl);
+                            });
+                        }
+                    }, 10);
+                }
+            });
 
-                    // Initialize tooltips
-                    if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
-                        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-                        tooltipTriggerList.map(function (tooltipTriggerEl) {
-                            return new bootstrap.Tooltip(tooltipTriggerEl);
-                        });
-                    }
+        } catch (error) {
+            console.error('❌ Error initializing DataTable:', error);
+            isInitializing = false;
+        }
+    }
 
-                    // Status change event listeners are handled globally in index.php
-                    /*
+    // Status change event listeners are handled globally in index.php
+    /*
                     $(document).off('change', '.status-dropdown').on('change', '.status-dropdown', function(e) {
                         e.stopPropagation();
                         const selectElement = this;
@@ -1350,40 +1363,6 @@ waitForDataTablesOnPending(function() {
                     });
                     */
 
-                    // Add row click event listeners
-                    $('#pending-orders-table tbody tr').off('click').on('click', function(e) {
-                        // Don't trigger row click if clicking on action buttons, links, or dropdowns
-                        if ($(e.target).closest('.action-buttons').length > 0 || 
-                            $(e.target).closest('a').length > 0 || 
-                            $(e.target).hasClass('badge') ||
-                            $(e.target).closest('.duplicate-indicator').length > 0 ||
-                            $(e.target).hasClass('status-dropdown') ||
-                            $(e.target).closest('select').length > 0) {
-                            return;
-                        }
-                        
-                        // Get the order ID from the row data
-                        const table = $('#pending-orders-table').DataTable();
-                        const rowData = table.row(this).data();
-                        if (rowData && rowData.id) {
-                            window.location.href = `<?= base_url('sales_orders/view/') ?>${rowData.id}`;
-                        }
-                    });
-
-                    // Ensure table uses full width on every draw
-                    $('#pending-orders-table').css('width', '100%');
-                    $('.dataTables_wrapper').css('width', '100%');
-                }
-            });
-
-            isInitializing = false;
-
-        } catch (error) {
-            console.error('❌ Error initializing Pending DataTable:', error);
-            isInitializing = false;
-        }
-    }
-
     // Refresh function
     $('#refreshPendingTable').on('click', function() {
         if (pendingOrdersTable) {
@@ -1410,8 +1389,7 @@ waitForDataTablesOnPending(function() {
     };
 
     // Toast function
-    // Toast function
-function showToast(type, message) {
+    function showToast(type, message) {
         if (typeof Toastify !== 'undefined') {
             const colors = {
                 success: "#28a745",

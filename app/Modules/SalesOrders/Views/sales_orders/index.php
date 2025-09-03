@@ -7,7 +7,7 @@
 <?= $this->section('page_title_breadcrumb') ?><?= lang('App.sales_orders') ?><?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<div class="card">
+<div class="card border-0 shadow-none">
                         <div class="card-header d-flex align-items-center">
                             <h4 class="card-title mb-0 flex-grow-1"><?= lang('App.sales_orders') ?></h4>
                             <div class="flex-shrink-0">
@@ -362,13 +362,13 @@
 
                 .form-label {
                     font-weight: 500;
-                    font-size: 0.875rem;
+                    font-size: 0.788rem;
                     margin-bottom: 0.5rem;
                 }
 
                 .form-control,
                 .form-select {
-                    font-size: 0.875rem;
+                    font-size: 0.788rem;
                     padding: 0.5rem 0.75rem;
                     min-height: 38px;
                     border: 1px solid #ced4da;
@@ -425,7 +425,7 @@
 
                 /* Navigation badge styles */
                 #todayOrdersBadge {
-                    font-size: 0.65rem;
+                    font-size: 0.585rem;
                     padding: 0.25em 0.5em;
                     line-height: 1;
                     border-radius: 50rem;
@@ -454,14 +454,14 @@
                 .global-filter-container .form-label {
                     white-space: nowrap;
                     margin-bottom: 0;
-                    font-size: 0.875rem;
+                    font-size: 0.788rem;
                     font-weight: 500;
                 }
 
                 #globalClientFilter {
                     min-width: 180px;
                     max-width: 250px;
-                    font-size: 0.875rem;
+                    font-size: 0.788rem;
                 }
 
 
@@ -518,7 +518,7 @@
                     right: 10px;
                     top: 50%;
                     transform: translateY(-50%);
-                    font-size: 0.75rem;
+                    font-size: 0.675rem;
                     color: #6c757d;
                     pointer-events: none;
                 }
@@ -544,7 +544,7 @@
                     display: none;
                     width: 100%;
                     margin-top: 0.25rem;
-                    font-size: 0.875rem;
+                    font-size: 0.788rem;
                     color: #dc3545;
                 }
 
@@ -556,7 +556,7 @@
                 .status-dropdown {
                     border: 1px solid #dee2e6;
                     background-color: #fff;
-                    font-size: 11px !important;
+                    font-size: 9.9px !important;
                     padding: 0.25rem 0.5rem !important;
                     min-height: 28px !important;
                     line-height: 1.2;
@@ -714,7 +714,7 @@
                 /* Colored Status Options */
                 .status-dropdown option {
                     padding: 0.25rem 0.5rem;
-                    font-size: 11px;
+                    font-size: 9.9px;
                     font-weight: 500;
                 }
 
@@ -832,7 +832,7 @@
                     box-sizing: border-box !important;
                     border: 1px solid #dee2e6 !important;
                     background-color: #fff !important;
-                    font-size: 11px !important;
+                    font-size: 9.9px !important;
                     padding: 0.25rem 0.5rem !important;
                     min-height: 28px !important;
                     line-height: 1.2 !important;
@@ -4047,7 +4047,7 @@ function addIndexVINStyles() {
             right: 10px;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 0.75rem;
+            font-size: 0.675rem;
             font-weight: 500;
             pointer-events: none;
             z-index: 10;
@@ -4140,7 +4140,7 @@ function addIndexVINStyles() {
         /* VIN Toast Styling */
         .vin-toast {
             font-family: inherit !important;
-            font-size: 14px !important;
+            font-size: 12.6px !important;
             border-radius: 8px !important;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
             border: 1px solid rgba(255, 255, 255, 0.2) !important;
@@ -4155,7 +4155,7 @@ function addIndexVINStyles() {
         
         .vin-toast .toastify-content::before {
             content: '⚠️';
-            font-size: 16px;
+            font-size: 14.4px;
             line-height: 1;
         }
         

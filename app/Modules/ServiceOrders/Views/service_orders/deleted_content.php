@@ -9,8 +9,8 @@
 
 <div class="row">
     <div class="col-12">
-        <div class="table-responsive">
-            <table id="deletedOrdersTable" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
+        <div class="table-container overflow-hidden">
+            <table id="deletedOrdersTable" class="table table-striped table-bordered dt-responsive nowrap">
                 <thead>
                     <tr>
                         <th><?= lang('App.order_id') ?></th>

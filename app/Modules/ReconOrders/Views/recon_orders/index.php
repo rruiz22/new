@@ -92,7 +92,7 @@ Recon Orders
 
 <div class="row">
     <div class="col-12">
-        <div class="card" style="border-radius: 16px;">
+        <div class="card border-0 shadow-none" style="border-radius: 16px;">
             <!-- Filters Section -->
             <div class="card-header border-0 pb-0">
                 <div class="d-flex justify-content-between align-items-center mb-3">

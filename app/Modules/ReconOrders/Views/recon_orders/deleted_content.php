@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-12">
-        <div class="card table-card">
+        <div class="card table-card border-0 shadow-none">
             <div class="card-header d-flex align-items-center">
                 <h4 class="card-title mb-0 flex-grow-1"><?= lang('App.deleted_orders') ?></h4>
                 <div class="flex-shrink-0">
@@ -12,7 +12,7 @@
             </div>
 
             <div class="card-body">
-                <div class="table-responsive">
+                <div class="table-container overflow-hidden">
                     <table id="deleted-table" class="table table-borderless table-hover table-nowrap align-middle mb-0">
                         <thead class="table-light">
                             <tr>
@@ -118,6 +118,7 @@ window.initializeDeletedOrdersTable = function() {
             processing: true,
             serverSide: true,
             responsive: true,
+            scrollX: false,
             autoWidth: false,
             retrieve: true,
             ajax: {

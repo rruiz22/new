@@ -4,7 +4,7 @@ use App\Helpers\DeviceHelper;
 
 <div class="row">
     <div class="col-12">
-        <div class="card">
+        <div class="card border-0 shadow-none">
             <div class="card-header">
                 <div class="row align-items-center">
                     <div class="col">
@@ -18,8 +18,8 @@ use App\Helpers\DeviceHelper;
                     </div>
                 </div>
             </div>
-            <div class="card-body">
-                <div class="table-responsive">
+            <div class="card-body p-0">
+                <div class="table-container overflow-hidden">
                     <table class="table table-striped table-hover" id="deletedOrdersTable">
                         <thead>
                             <tr>
@@ -54,6 +54,8 @@ $(document).ready(function() {
     var deletedTable = $('#deletedOrdersTable').DataTable({
         processing: true,
         serverSide: false,
+        scrollX: false,
+        autoWidth: false,
         ajax: {
             url: '<?= base_url('car_wash/getDeletedOrders') ?>',
             type: 'GET',

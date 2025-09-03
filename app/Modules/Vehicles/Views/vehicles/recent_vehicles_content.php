@@ -23,7 +23,7 @@
 
 <div class="row">
     <div class="col-12">
-        <div class="card">
+        <div class="card border-0 shadow-none">
             <div class="card-header d-flex align-items-center">
                 <h4 class="card-title mb-0 flex-grow-1 vehicles-dashboard-card-title">
                     <i data-feather="clock" class="icon-sm me-1"></i>
@@ -36,8 +36,8 @@
                     </button>
                 </div>
             </div>
-            <div class="card-body">
-                <div class="table-responsive">
+            <div class="card-body p-0">
+                <div class="table-container overflow-hidden">
                     <table id="recentVehiclesTable" class="table table-borderless table-hover align-middle mb-0 service-orders-table dt-responsive">
                         <thead class="table-light">
                             <tr>
@@ -130,13 +130,13 @@ function initializeRecentTableWithData(data) {
         order: [[3, 'desc']], // Order by status desc (recent items first)
         pageLength: 10,
         responsive: false,
-        scrollX: true,
+        scrollX: false,
         autoWidth: false,
         columnDefs: [
-            { width: "30%", targets: 0, className: 'vehicle-info-col' }, // Vehicle Info
-            { width: "20%", targets: 1, className: 'client-col' }, // Client
-            { width: "30%", targets: 2, className: 'service-history-col' }, // Service History
-            { width: "20%", targets: 3, className: 'status-col' }  // Status
+            { targets: 0, className: 'vehicle-info-col' }, // Vehicle Info
+            { targets: 1, className: 'client-col' }, // Client
+            { targets: 2, className: 'service-history-col' }, // Service History
+            { targets: 3, className: 'status-col' }  // Status
         ],
         language: {
             emptyTable: '<?= lang('App.no_recent_vehicles_found') ?>',

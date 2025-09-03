@@ -36,8 +36,8 @@
 
 <div class="row">
     <div class="col-xl-3 col-lg-6">
-        <div class="card card-animate">
-            <div class="card-body">
+        <div class="card card-animate border-0 shadow-none">
+            <div class="card-body p-0">
                 <div class="d-flex align-items-center">
                     <div class="flex-grow-1 overflow-hidden">
                         <p class="text-uppercase fw-medium text-muted text-truncate mb-0"><?= lang('App.total_vehicles') ?></p>
@@ -64,8 +64,8 @@
     </div>
 
     <div class="col-xl-3 col-lg-6">
-        <div class="card card-animate">
-            <div class="card-body">
+        <div class="card card-animate border-0 shadow-none">
+            <div class="card-body p-0">
                 <div class="d-flex align-items-center">
                     <div class="flex-grow-1 overflow-hidden">
                         <p class="text-uppercase fw-medium text-muted text-truncate mb-0"><?= lang('App.active_vehicles') ?></p>
@@ -92,8 +92,8 @@
     </div>
 
     <div class="col-xl-3 col-lg-6">
-        <div class="card card-animate">
-            <div class="card-body">
+        <div class="card card-animate border-0 shadow-none">
+            <div class="card-body p-0">
                 <div class="d-flex align-items-center">
                     <div class="flex-grow-1 overflow-hidden">
                         <p class="text-uppercase fw-medium text-muted text-truncate mb-0"><?= lang('App.location_tracked') ?></p>
@@ -120,8 +120,8 @@
     </div>
 
     <div class="col-xl-3 col-lg-6">
-        <div class="card card-animate">
-            <div class="card-body">
+        <div class="card card-animate border-0 shadow-none">
+            <div class="card-body p-0">
                 <div class="d-flex align-items-center">
                     <div class="flex-grow-1 overflow-hidden">
                         <p class="text-uppercase fw-medium text-muted text-truncate mb-0"><?= lang('App.total_services') ?></p>
@@ -151,7 +151,7 @@
 <!-- Second Row with Additional Metrics -->
 <div class="row">
     <div class="col-xl-8">
-        <div class="card">
+        <div class="card border-0 shadow-none">
             <div class="card-header d-flex align-items-center">
                 <h4 class="card-title mb-0 flex-grow-1 vehicles-dashboard-card-title">
                     <i data-feather="clock" class="icon-sm me-1"></i>
@@ -164,8 +164,8 @@
                     </button>
                 </div>
             </div>
-            <div class="card-body">
-                <div class="table-responsive">
+            <div class="card-body p-0">
+                <div class="table-container overflow-hidden">
                     <table class="table table-borderless table-hover align-middle mb-0 service-orders-table dt-responsive">
                         <thead class="table-light">
                             <tr>
@@ -197,7 +197,7 @@
                     <?= lang('App.vehicle_distribution') ?>
                 </h4>
             </div>
-            <div class="card-body">
+            <div class="card-body p-0">
                 <div id="vehicleDistributionChart" class="chart-container"></div>
             </div>
         </div>
@@ -207,14 +207,14 @@
 <!-- Third Row with Quick Stats and More Charts -->
 <div class="row">
     <div class="col-xl-4">
-        <div class="card">
+        <div class="card border-0 shadow-none">
             <div class="card-header d-flex align-items-center">
                 <h4 class="card-title mb-0 flex-grow-1 vehicles-dashboard-card-title">
                     <i data-feather="trending-up" class="icon-sm me-1"></i>
                     <?= lang('App.quick_statistics') ?>
                 </h4>
             </div>
-            <div class="card-body">
+            <div class="card-body p-0">
                 <div class="quick-stats-grid">
                     <div class="quick-stat-item">
                         <div class="quick-stat-value" id="averageServicesPerVehicle">0</div>
@@ -238,28 +238,28 @@
     </div>
 
     <div class="col-xl-4">
-        <div class="card">
+        <div class="card border-0 shadow-none">
             <div class="card-header d-flex align-items-center">
                 <h4 class="card-title mb-0 flex-grow-1 vehicles-dashboard-card-title">
                     <i data-feather="bar-chart" class="icon-sm me-1"></i>
                     <?= lang('App.services_by_month') ?>
                 </h4>
             </div>
-            <div class="card-body">
+            <div class="card-body p-0">
                 <div id="servicesByMonthChart" class="chart-container"></div>
             </div>
         </div>
     </div>
 
     <div class="col-xl-4">
-        <div class="card">
+        <div class="card border-0 shadow-none">
             <div class="card-header d-flex align-items-center">
                 <h4 class="card-title mb-0 flex-grow-1 vehicles-dashboard-card-title">
                     <i data-feather="users" class="icon-sm me-1"></i>
                     <?= lang('App.top_clients') ?>
                 </h4>
             </div>
-            <div class="card-body">
+            <div class="card-body p-0">
                 <div id="topClientsContainer">
                     <div class="text-center text-muted">
                         <i data-feather="loader" class="icon-sm me-1 spin-icon"></i>

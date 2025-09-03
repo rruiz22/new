@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\SettingsModel;
-use App\Helpers\LimaLinksHelper;
+use App\Helpers\MDALinksHelper;
 
 class SettingsController extends BaseController
 {
@@ -661,7 +661,16 @@ Sales Team'
     }
 
     /**
+     * Test MDA Links API connection from backend (avoids CORS issues)
+     */
+    public function testMDALinks()
+    {
+        return $this->testLimaLinks();
+    }
+
+    /**
      * Test Lima Links API connection from backend (avoids CORS issues)
+     * @deprecated Use testMDALinks() instead
      */
     public function testLimaLinks()
     {
@@ -679,7 +688,7 @@ Sales Team'
             if (!$apiKey) {
                 return $this->response->setJSON([
                     'success' => false,
-                    'message' => 'Lima Links API key is required'
+                    'message' => 'MDA Links API key is required'
                 ]);
             }
             
@@ -704,7 +713,7 @@ Sales Team'
             // Initialize cURL
             $ch = curl_init();
             curl_setopt_array($ch, [
-                CURLOPT_URL => LimaLinksHelper::buildApiUrl(),
+                CURLOPT_URL => MDALinksHelper::buildApiUrl(),
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_POST => true,
                 CURLOPT_POSTFIELDS => json_encode($testPayload),
@@ -780,7 +789,7 @@ Sales Team'
                             'data' => [
                                 'short_url' => $data['shorturl'],
                                 'original_url' => $testPayload['url'],
-                                'domain' => $brandedDomain ?: LimaLinksHelper::getDefaultDomain(),
+                                'domain' => $brandedDomain ?: MDALinksHelper::getDefaultDomain(),
                                 'full_response' => $data
                             ]
                         ]);
@@ -949,7 +958,7 @@ Sales Team'
     {
         $ch = curl_init();
                     curl_setopt_array($ch, [
-                CURLOPT_URL => LimaLinksHelper::buildApiUrl(),
+                CURLOPT_URL => MDALinksHelper::buildApiUrl(),
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_POST => true,
             CURLOPT_POSTFIELDS => json_encode($payload),
@@ -1022,7 +1031,7 @@ Sales Team'
     {
         // Try to use Lima Links QR endpoint if we have link ID
         if ($linkId) {
-            $qrUrl = LimaLinksHelper::buildQrUrl($linkId, $size, $format);
+            $qrUrl = MDALinksHelper::buildQrUrl($linkId, $size, $format);
             
             // Verify QR endpoint is accessible
             $ch = curl_init();
@@ -1056,7 +1065,7 @@ Sales Team'
             
             $ch = curl_init();
             curl_setopt_array($ch, [
-                CURLOPT_URL => LimaLinksHelper::buildApiUrl('api/qr/generate'),
+                CURLOPT_URL => MDALinksHelper::buildApiUrl('api/qr/generate'),
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_POST => true,
                 CURLOPT_POSTFIELDS => json_encode($qrPayload),
@@ -1083,7 +1092,7 @@ Sales Team'
         }
         
         // Final fallback: use direct QR URL pattern
-        return LimaLinksHelper::buildQrUrl($linkId, $size, $format);
+        return MDALinksHelper::buildQrUrl($linkId, $size, $format);
     }
 
     /**

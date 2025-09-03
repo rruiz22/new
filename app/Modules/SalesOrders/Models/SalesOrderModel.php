@@ -430,4 +430,47 @@ class SalesOrderModel extends Model
                     ->where('sales_orders.id', $id)
                     ->first();
     }
+
+    /**
+     * Get activities for an order
+     */
+    public function getOrderActivities($orderId, $limit = 10, $offset = 0)
+    {
+        $activityModel = new \Modules\SalesOrders\Models\OrderActivityModel();
+        return $activityModel->getOrderActivities($orderId, $limit, $offset);
+    }
+
+    /**
+     * Get comments for an order
+     */
+    public function getOrderComments($orderId, $limit = 10, $offset = 0)
+    {
+        $commentsModel = model('Modules\SalesOrders\Models\SalesOrderCommentModel');
+        if ($commentsModel === null) {
+            return [];
+        }
+        return $commentsModel->getCommentsWithUsers($orderId, $limit, $offset);
+    }
+
+    /**
+     * Count total comments for an order
+     */
+    public function countOrderComments($orderId)
+    {
+        $commentsModel = model('Modules\SalesOrders\Models\SalesOrderCommentModel');
+        if ($commentsModel === null) {
+            return 0;
+        }
+        return $commentsModel->getCommentsCount($orderId);
+    }
+
+    /**
+     * Count total activities for an order
+     */
+    public function countOrderActivities($orderId)
+    {
+        $activityModel = new \Modules\SalesOrders\Models\OrderActivityModel();
+        return $activityModel->countOrderActivities($orderId);
+    }
+
 } 

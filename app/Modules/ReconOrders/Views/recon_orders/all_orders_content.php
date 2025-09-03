@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-12">
-        <div class="card">
+        <div class="card border-0 shadow-none">
             <div class="card-header d-flex align-items-center">
                 <h4 class="card-title mb-0 flex-grow-1 text-center"><?= lang('App.all_orders') ?></h4>
                 <div class="flex-shrink-0">
@@ -130,8 +130,8 @@
                 </div>
                 <?php endif; ?>
 
-                <div class="table-responsive">
-                    <table id="all-orders-table" class="table table-borderless table-hover table-nowrap align-middle mb-0 w-100">
+                <div class="table-container overflow-hidden">
+                    <table id="all-orders-table" class="table table-borderless table-hover table-nowrap align-middle mb-0">
                         <thead class="table-light">
                             <tr>
                                 <th scope="col"><?= lang('App.order_id') ?></th>
@@ -690,4 +690,98 @@ function clearAllOrdersFilters() {
     }
 }
 
-</script> 
+</script>
+
+<style>
+/* Table Container Styling */
+.table-container {
+    width: 100%;
+    max-width: 100%;
+    position: relative;
+    padding: 1rem;
+}
+
+/* Force DataTable to use full width and prevent overflow */
+#all-orders-table {
+    width: 100% !important;
+    max-width: 100% !important;
+    table-layout: auto !important;
+}
+
+#all-orders-table_wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+}
+
+#all-orders-table thead th {
+    width: auto !important;
+    max-width: none !important;
+    white-space: nowrap;
+}
+
+.dataTables_wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+/* Elegant DataTable Loading Styling - Contained within table */
+.dataTables_processing {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 12px !important;
+    z-index: 100 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+    color: #405189 !important;
+    font-size: 1.1rem !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.5px !important;
+    animation: elegantFadeIn 0.4s ease-out !important;
+}
+
+/* Only show as flex when DataTables makes it visible */
+.dataTables_processing[style*="display: block"] {
+    display: flex !important;
+}
+
+.dataTables_processing::before {
+    content: '';
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(64, 81, 137, 0.1);
+    border-top: 3px solid #405189;
+    border-radius: 50%;
+    animation: elegantSpin 1s linear infinite;
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+@keyframes elegantFadeIn {
+    from {
+        opacity: 0;
+        backdrop-filter: blur(0px);
+        -webkit-backdrop-filter: blur(0px);
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        transform: scale(1);
+    }
+}
+
+@keyframes elegantSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+</style> 

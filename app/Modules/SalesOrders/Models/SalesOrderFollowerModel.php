@@ -329,4 +329,12 @@ class SalesOrderFollowerModel extends Model
                    ->where('status', 'active')
                    ->countAllResults();
     }
+
+    /**
+     * Get order followers (alias for getFollowersWithDetails for controller compatibility)
+     */
+    public function getOrderFollowers($salesOrderId)
+    {
+        return $this->getFollowersWithDetails($salesOrderId);
+    }
 } 

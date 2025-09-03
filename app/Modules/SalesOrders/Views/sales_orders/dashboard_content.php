@@ -2,7 +2,7 @@
 <div class="row mb-4">
     <!-- Today's Orders Widget -->
     <div class="col-xl-3 col-lg-6 col-md-6">
-        <div class="card card-animate widget-clickable modern-widget" data-tab="today" style="cursor: pointer;">
+        <div class="card card-animate widget-clickable modern-widget border-0 shadow-none" data-tab="today" style="cursor: pointer;">
             <div class="card-body">
                 <div class="d-flex align-items-center justify-content-between">
                     <div class="flex-grow-1">
@@ -34,7 +34,7 @@
 
     <!-- Tomorrow's Orders Widget -->
     <div class="col-xl-3 col-lg-6 col-md-6">
-        <div class="card card-animate widget-clickable modern-widget" data-tab="tomorrow" style="cursor: pointer;">
+        <div class="card card-animate widget-clickable modern-widget border-0 shadow-none" data-tab="tomorrow" style="cursor: pointer;">
             <div class="card-body">
                 <div class="d-flex align-items-center justify-content-between">
                     <div class="flex-grow-1">
@@ -66,7 +66,7 @@
 
     <!-- Pending Orders Widget -->
     <div class="col-xl-3 col-lg-6 col-md-6">
-        <div class="card card-animate widget-clickable modern-widget" data-tab="pending" style="cursor: pointer;">
+        <div class="card card-animate widget-clickable modern-widget border-0 shadow-none" data-tab="pending" style="cursor: pointer;">
             <div class="card-body">
                 <div class="d-flex align-items-center justify-content-between">
                     <div class="flex-grow-1">
@@ -98,7 +98,7 @@
 
     <!-- Week Orders Widget -->
     <div class="col-xl-3 col-lg-6 col-md-6">
-        <div class="card card-animate widget-clickable modern-widget" data-tab="week" style="cursor: pointer;">
+        <div class="card card-animate widget-clickable modern-widget border-0 shadow-none" data-tab="week" style="cursor: pointer;">
             <div class="card-body">
                 <div class="d-flex align-items-center justify-content-between">
                     <div class="flex-grow-1">
@@ -133,7 +133,7 @@
 <div class="row mb-4">
     <!-- Orders Trend Chart -->
     <div class="col-xl-8">
-        <div class="card modern-card">
+        <div class="card modern-card border-0 shadow-none">
             <div class="card-header border-0 pb-0">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
@@ -187,7 +187,7 @@
 
     <!-- Status Distribution Chart -->
     <div class="col-xl-4">
-        <div class="card modern-card h-100">
+        <div class="card modern-card h-100 border-0 shadow-none">
             <div class="card-header border-0 pb-0">
                 <div>
                     <h5 class="card-title mb-1">
@@ -263,7 +263,7 @@
 <div class="row mb-4">
     <!-- Top Clients Widget -->
     <div class="col-xl-6">
-        <div class="card modern-card h-100">
+        <div class="card modern-card h-100 border-0 shadow-none">
             <div class="card-header border-0 pb-0">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
@@ -301,7 +301,7 @@
 
     <!-- Performance Metrics Widget -->
     <div class="col-xl-6">
-        <div class="card modern-card h-100">
+        <div class="card modern-card h-100 border-0 shadow-none">
             <div class="card-header border-0 pb-0">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
@@ -404,7 +404,7 @@
 <div class="row mb-4">
     <!-- Quick Actions Widget -->
     <div class="col-xl-4">
-        <div class="card modern-card h-100">
+        <div class="card modern-card h-100 border-0 shadow-none">
             <div class="card-header border-0 pb-0">
                 <div>
                     <h5 class="card-title mb-1">
@@ -462,7 +462,7 @@
 
     <!-- Recent Activity Widget -->
     <div class="col-xl-8">
-        <div class="card modern-card h-100">
+        <div class="card modern-card h-100 border-0 shadow-none">
             <div class="card-header border-0 pb-0">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
@@ -579,7 +579,7 @@
 .performance-card {
     padding: 20px 15px;
     border-radius: 12px;
-    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    background: #f8f9fa;
     border: 1px solid rgba(0,0,0,0.06);
     transition: all 0.3s ease;
 }
@@ -666,13 +666,13 @@
 }
 
 .quick-action-btn.primary-action {
-    background: linear-gradient(135deg, #405189 0%, #5a6acf 100%);
+    background: #405189;
     color: white;
     border-color: #405189;
 }
 
 .quick-action-btn.primary-action:hover {
-    background: linear-gradient(135deg, #364675 0%, #4c5bb8 100%);
+    background: #364675;
     color: white;
 }
 
@@ -1015,7 +1015,7 @@
 
 /* Performance Metrics Styles */
 .performance-metric {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    background: #f8f9fa;
     border-radius: 12px;
     padding: 20px;
     text-align: center;
@@ -1030,12 +1030,12 @@
 }
 
 .performance-metric.on-time {
-    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    background: #d4edda;
     border-color: #28a745;
 }
 
 .performance-metric.delayed {
-    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    background: #fff3cd;
     border-color: #ffc107;
 }
 
@@ -1108,7 +1108,7 @@
 .client-rank {
     width: 40px;
     height: 40px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #667eea;
     color: white;
     border-radius: 50%;
     display: flex;
@@ -1120,15 +1120,15 @@
 }
 
 .client-rank.gold {
-    background: linear-gradient(135deg, #f7b84b 0%, #f06548 100%);
+    background: #f7b84b;
 }
 
 .client-rank.silver {
-    background: linear-gradient(135deg, #adb5bd 0%, #6c757d 100%);
+    background: #adb5bd;
 }
 
 .client-rank.bronze {
-    background: linear-gradient(135deg, #cd7f32 0%, #8b4513 100%);
+    background: #cd7f32;
 }
 
 .client-info {
@@ -1505,11 +1505,11 @@ function loadDashboardStats() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            updateDashboardStats(data.stats);
+            updateDashboardStats(data.data || data.metrics || data.stats);
             if (data.charts) {
                 updateChartsData(data.charts);
             }
-                } else {
+        } else {
             console.error('❌ Dashboard: Error loading stats:', data.message);
             updateDashboardStats({ today: 0, tomorrow: 0, pending: 0, week: 0 });
         }
@@ -1523,10 +1523,10 @@ function loadDashboardStats() {
 // Update dashboard statistics
 function updateDashboardStats(stats) {
     const elements = {
-        'todayOrdersCount': stats.today || 0,
-        'tomorrowOrdersCount': stats.tomorrow || 0,
-        'pendingOrdersCount': stats.pending || 0,
-        'weekOrdersCount': stats.week || 0
+        'todayOrdersCount': stats.today_count || stats.today || 0,
+        'tomorrowOrdersCount': stats.tomorrow_count || stats.tomorrow || 0,
+        'pendingOrdersCount': stats.pending_count || stats.pending || 0,
+        'weekOrdersCount': stats.week_count || stats.week || 0
     };
     
     Object.keys(elements).forEach((elementId, index) => {
@@ -1593,7 +1593,7 @@ function loadTopClients() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            displayTopClients(data.clients || []);
+            displayTopClients(data.data || data.clients || []);
         } else {
             console.error('❌ Dashboard: Error loading top clients:', data.message);
             showTopClientsError('Error loading top clients data');
@@ -1629,7 +1629,7 @@ function displayTopClients(clients) {
             <div class="client-item">
                 <div class="client-rank ${rankClass}">${index + 1}</div>
                 <div class="client-info">
-                    <div class="client-name">${client.client_name || 'Unknown Client'}</div>
+                    <div class="client-name">${client.name || client.client_name || 'Unknown Client'}</div>
                     <div class="client-details">
                         Orders this month: ${client.order_count || 0}
                     </div>
@@ -1685,7 +1685,7 @@ function loadPerformanceMetrics() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            displayPerformanceMetrics(data.metrics || {});
+            displayPerformanceMetrics(data.data || data.metrics || {});
         } else {
             console.error('❌ Dashboard: Error loading performance metrics:', data.message);
             showPerformanceMetricsError();
@@ -1812,7 +1812,7 @@ function loadRecentActivity() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            displayRecentActivity(data.activities || []);
+            displayRecentActivity(data.data || data.activities || []);
         } else {
             console.error('❌ Dashboard: Error loading recent activity:', data.message);
             showRecentActivityError('Error loading recent activity');
@@ -1843,8 +1843,14 @@ function displayRecentActivity(activities) {
 
     let html = '';
     activities.slice(0, 8).forEach(activity => {
-        const iconClass = getActivityIconClass(activity.action);
-        const icon = getActivityIcon(activity.action);
+        const iconClass = getActivityIconClass(activity.activity_type || activity.action);
+        const icon = getActivityIcon(activity.activity_type || activity.action);
+        
+        // Format time ago
+        const timeAgo = activity.time_ago || formatTimeAgo(activity.created_at);
+        const orderNumber = activity.order_number || `SAL-${String(activity.order_id || 0).padStart(5, '0')}`;
+        const title = `${orderNumber} - ${activity.activity_type || 'Updated'}`;
+        const description = activity.description || 'Order activity';
         
         html += `
             <div class="activity-item">
@@ -1852,9 +1858,9 @@ function displayRecentActivity(activities) {
                     <i data-feather="${icon}"></i>
                 </div>
                 <div class="activity-content">
-                    <div class="activity-title">${activity.title || 'Order Update'}</div>
-                    <div class="activity-description">${activity.description || 'No description'}</div>
-                    <div class="activity-time">${activity.time_ago || 'Unknown time'}</div>
+                    <div class="activity-title">${title}</div>
+                    <div class="activity-description">${description}</div>
+                    <div class="activity-time">${timeAgo}</div>
                 </div>
             </div>
         `;
@@ -1890,6 +1896,29 @@ function getActivityIcon(action) {
         'cancelled': 'x-circle'
     };
     return icons[action] || 'edit-3';
+}
+
+// Format time ago helper function
+function formatTimeAgo(dateString) {
+    if (!dateString) return 'Unknown time';
+    
+    try {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMins / 60);
+        const diffDays = Math.floor(diffHours / 24);
+        
+        if (diffMins < 1) return 'Just now';
+        if (diffMins < 60) return `${diffMins}m ago`;
+        if (diffHours < 24) return `${diffHours}h ago`;
+        if (diffDays < 7) return `${diffDays}d ago`;
+        
+        return date.toLocaleDateString();
+    } catch (error) {
+        return 'Unknown time';
+    }
 }
 
 // Show recent activity error

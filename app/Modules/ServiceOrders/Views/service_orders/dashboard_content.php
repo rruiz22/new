@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-xl-3 col-lg-6">
-        <div class="card card-animate">
+        <div class="card card-animate border-0 shadow-none">
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-grow-1 overflow-hidden">
@@ -28,7 +28,7 @@
     </div>
 
     <div class="col-xl-3 col-lg-6">
-        <div class="card card-animate">
+        <div class="card card-animate border-0 shadow-none">
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-grow-1 overflow-hidden">
@@ -56,7 +56,7 @@
     </div>
 
     <div class="col-xl-3 col-lg-6">
-        <div class="card card-animate">
+        <div class="card card-animate border-0 shadow-none">
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-grow-1 overflow-hidden">
@@ -84,7 +84,7 @@
     </div>
 
     <div class="col-xl-3 col-lg-6">
-        <div class="card card-animate">
+        <div class="card card-animate border-0 shadow-none">
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-grow-1 overflow-hidden">
@@ -114,7 +114,7 @@
 
 <div class="row">
     <div class="col-xl-8">
-        <div class="card">
+        <div class="card border-0 shadow-none">
             <div class="card-header">
                 <h4 class="card-title mb-0">Recent Service Orders</h4>
             </div>
@@ -143,7 +143,7 @@
     </div>
 
     <div class="col-xl-4">
-        <div class="card card-height-100">
+        <div class="card card-height-100 border-0 shadow-none">
             <div class="card-header">
                 <h4 class="card-title mb-0">Order Status Distribution</h4>
             </div>

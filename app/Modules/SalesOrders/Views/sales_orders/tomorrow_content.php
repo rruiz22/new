@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-12">
-        <div class="card">
+        <div class="card border-0 shadow-none">
             <div class="card-header d-flex align-items-center">
                 <h4 class="card-title mb-0 flex-grow-1 text-center">
                     <i data-feather="calendar" class="icon-sm me-1"></i>
@@ -14,9 +14,9 @@
                 </div>
             </div>
 
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table id="tomorrow-orders-table" class="table table-borderless table-hover table-nowrap align-middle mb-0 w-100">
+            <div class="card-body p-0">
+                <div class="table-container overflow-hidden">
+                    <table id="tomorrow-orders-table" class="table table-borderless table-hover table-nowrap align-middle mb-0">
                         <thead class="table-light">
                             <tr>
                                 <th scope="col"><?= lang('App.order_id') ?></th>
@@ -60,20 +60,36 @@
     }
 }
 
+/* Table Container Styling */
+.table-container {
+    width: 100%;
+    max-width: 100%;
+    position: relative;
+    padding: 1rem;
+}
+
+/* Force DataTable to use full width and prevent overflow */
 #tomorrow-orders-table {
     width: 100% !important;
+    max-width: 100% !important;
+    table-layout: auto !important;
 }
 
 #tomorrow-orders-table_wrapper {
     width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
 }
 
 #tomorrow-orders-table thead th {
     width: auto !important;
+    max-width: none !important;
+    white-space: nowrap;
 }
 
 .dataTables_wrapper {
     width: 100% !important;
+    max-width: 100% !important;
 }
 
 .dataTables_wrapper .dataTables_length select,
@@ -172,6 +188,66 @@
 
 .flex-wrap {
     flex-wrap: wrap !important;
+}
+
+/* Elegant DataTable Loading Styling - Contained within table */
+.dataTables_processing {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 12px !important;
+    z-index: 100 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+    color: #405189 !important;
+    font-size: 1.1rem !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.5px !important;
+    animation: elegantFadeIn 0.4s ease-out !important;
+}
+
+/* Only show as flex when DataTables makes it visible */
+.dataTables_processing[style*="display: block"] {
+    display: flex !important;
+}
+
+.dataTables_processing::before {
+    content: '';
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(64, 81, 137, 0.1);
+    border-top: 3px solid #405189;
+    border-radius: 50%;
+    animation: elegantSpin 1s linear infinite;
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+@keyframes elegantFadeIn {
+    from {
+        opacity: 0;
+        backdrop-filter: blur(0px);
+        -webkit-backdrop-filter: blur(0px);
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        transform: scale(1);
+    }
+}
+
+@keyframes elegantSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 /* Center table headers */
@@ -524,8 +600,8 @@ waitForDataTablesOnTomorrow(function() {
             }
 
             // Force table width before initialization
-            $('#tomorrow-orders-table').css('width', '100%');
-            $('.table-responsive').css('width', '100%');
+            $('#tomorrow-orders-table').css({'width': '100%', 'max-width': '100%'});
+            $('.table-container').css({'width': '100%', 'max-width': '100%', 'overflow': 'hidden'});
 
             const tomorrowDate = getTomorrowDate();
 
@@ -536,12 +612,8 @@ waitForDataTablesOnTomorrow(function() {
                 scrollX: false,
                 autoWidth: false,
                 columnDefs: [
-                    { width: "15%", targets: 0, className: "text-center" }, // Order ID
-                    { width: "20%", targets: 1, className: "text-center" }, // Stock
-                    { width: "25%", targets: 2, className: "text-center" }, // Client
-                    { width: "12%", targets: 3, className: "text-center" }, // Date
-                    { width: "13%", targets: 4, className: "text-center" }, // Status
-                    { width: "15%", targets: 5, orderable: false, searchable: false, className: "text-center" } // Actions
+                    { className: "text-center", targets: [0, 1, 2, 3, 4, 5] },
+                    { orderable: false, searchable: false, targets: 5 }
                 ],
                 ajax: {
                     url: '<?= base_url('sales_orders/all_content') ?>',
@@ -812,16 +884,7 @@ waitForDataTablesOnTomorrow(function() {
                                             
                         return langMap[currentLang] || langMap['en'];
                     }(),
-                    processing: `
-                        <div class="datatable-loading-overlay">
-                            <div class="datatable-loading-content">
-                                <div class="spinner-border text-primary me-2" role="status">
-                                    <span class="visually-hidden"><?= lang('App.loading') ?>...</span>
-                                </div>
-                                <span class="datatable-loading-text"><?= lang('App.loading_orders') ?>...</span>
-                            </div>
-                        </div>
-                    `,
+                    processing: "<?= lang('App.loading') ?>...",
                     lengthMenu: "<?= lang('App.show') ?> _MENU_ <?= lang('App.entries') ?>",
                     zeroRecords: `
                         <div class="text-center py-5">
@@ -846,7 +909,7 @@ waitForDataTablesOnTomorrow(function() {
                         previous: "<?= lang('App.previous') ?>"
                     }
                 },
-                dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rt<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                dom: '<"row align-items-center mb-3"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-end"f>>rt<"row align-items-center mt-3"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7 d-flex justify-content-end"p>>',
                 rowCallback: function(row, data, index) {
                     // Apply CSS class to the row based on order status and timing
                     if (data.row_class && data.row_class !== '') {
@@ -854,72 +917,35 @@ waitForDataTablesOnTomorrow(function() {
                     }
                 },
                 initComplete: function(settings, json) {
-                    
-                    const table = this.api();
-
-                    setTimeout(() => {
-                        table.columns.adjust();
-                        $('#tomorrow-orders-table').css('width', '100%');
-                    }, 50);
-
-                    setTimeout(() => {
-                        table.columns.adjust().draw();
-                        $('#tomorrow-orders-table').css('width', '100%');
-                    }, 150);
-
-                    setTimeout(() => {
-                        table.columns.adjust();
-                        $('#tomorrow-orders-table').css('width', '100%');
-                        $('.dataTables_wrapper').css('width', '100%');
-                    }, 300);
-
-                    // Update order count in title - try multiple sources for count
-                    let count = 0;
-                    if (json.recordsFiltered !== undefined) {
-                        count = json.recordsFiltered;
-                    } else if (json.recordsTotal !== undefined) {
-                        count = json.recordsTotal;
-                    } else if (json.data && Array.isArray(json.data)) {
-                        count = json.data.length;
-                    }
-                    
+                    // Update order count from initial data
+                    const count = json.recordsFiltered || 0;
                     updateTomorrowOrderCount(count);
+                    
+                    // Single column adjustment without redraw
+                    setTimeout(() => {
+                        this.api().columns.adjust();
+                    }, 100);
                 },
                 drawCallback: function(settings) {
                     // Update order count in title
                     const api = this.api();
                     const pageInfo = api.page.info();
-                    
-                    
-                    // Try multiple sources for the count
-                    let count = 0;
-                    if (pageInfo.recordsDisplay !== undefined) {
-                        count = pageInfo.recordsDisplay;
-                    } else if (pageInfo.recordsFiltered !== undefined) {
-                        count = pageInfo.recordsFiltered;
-                    } else if (pageInfo.recordsTotal !== undefined) {
-                        count = pageInfo.recordsTotal;
-                    } else {
-                        // Fallback: count visible rows
-                        count = api.rows({ page: 'all' }).count();
-                    }
-                    
+                    const count = pageInfo.recordsDisplay || 0;
                     updateTomorrowOrderCount(count);
 
-                    // Initialize Feather icons after each redraw
-                    if (typeof feather !== 'undefined') {
-                        setTimeout(() => {
+                    // Only refresh icons and tooltips - avoid operations that trigger redraws
+                    setTimeout(() => {
+                        if (typeof feather !== 'undefined') {
                             feather.replace();
-                        }, 50);
-                    }
-
-                    // Initialize tooltips
-                    if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
-                        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-                        tooltipTriggerList.map(function (tooltipTriggerEl) {
-                            return new bootstrap.Tooltip(tooltipTriggerEl);
-                        });
-                    }
+                        }
+                        
+                        if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+                            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                                return new bootstrap.Tooltip(tooltipTriggerEl);
+                            });
+                        }
+                    }, 10);
 
                     // Status change event listeners are handled globally in index.php
                     
@@ -943,8 +969,8 @@ waitForDataTablesOnTomorrow(function() {
                     });
 
                     // Ensure table uses full width on every draw
-                    $('#tomorrow-orders-table').css('width', '100%');
-                    $('.dataTables_wrapper').css('width', '100%');
+                    $('#tomorrow-orders-table').css({'width': '100%', 'max-width': '100%'});
+                    $('.dataTables_wrapper').css({'width': '100%', 'max-width': '100%'});
                 }
             });
 

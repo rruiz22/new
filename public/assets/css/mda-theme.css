@@ -1,0 +1,536 @@
+/*
+ * MDA Unified Theme System - Compiled CSS
+ * Compact, clean design system for productivity applications
+ * Author: MDA System
+ * Version: 2.0
+ */
+
+/* ================================================
+   MDA CSS CUSTOM PROPERTIES (CSS Variables)
+   ================================================ */
+
+:root {
+  /* Font Scale Variables (15% smaller) */
+  --mda-font-size-xs: 0.6375rem;     /* ~10.2px */
+  --mda-font-size-sm: 0.74375rem;    /* ~11.9px */
+  --mda-font-size-base: 0.85rem;     /* ~13.6px */
+  --mda-font-size-lg: 0.95625rem;    /* ~15.3px */
+  --mda-font-size-xl: 1.0625rem;     /* ~17px */
+  --mda-font-size-2xl: 1.275rem;     /* ~20.4px */
+  --mda-font-size-3xl: 1.59375rem;   /* ~25.5px */
+  --mda-font-size-4xl: 1.9125rem;    /* ~30.6px */
+
+  /* Font Families */
+  --mda-font-family-primary: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  --mda-font-family-mono: ui-monospace, "SF Mono", "Consolas", "Liberation Mono", "Menlo", monospace;
+
+  /* Color Variables (Light, no gradients) */
+  --mda-text-primary: #212121;
+  --mda-text-secondary: #757575;
+  --mda-text-muted: #9e9e9e;
+  --mda-text-light: #bdbdbd;
+  
+  --mda-bg-primary: #ffffff;
+  --mda-bg-secondary: #fafafa;
+  --mda-bg-tertiary: #f5f5f5;
+  --mda-bg-hover: #f0f0f0;
+  
+  --mda-border-light: #eeeeee;
+  --mda-border-medium: #e0e0e0;
+  --mda-border-strong: #bdbdbd;
+
+  /* Soft Shadow Variables */
+  --mda-shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  --mda-shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px 0 rgba(0, 0, 0, 0.02);
+  --mda-shadow-base: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+  --mda-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.06), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+  --mda-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.06), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+
+  /* Spacing Variables */
+  --mda-space-1: 0.25rem;   /* 4px */
+  --mda-space-2: 0.5rem;    /* 8px */
+  --mda-space-3: 0.75rem;   /* 12px */
+  --mda-space-4: 1rem;      /* 16px */
+  --mda-space-5: 1.25rem;   /* 20px */
+  --mda-space-6: 1.5rem;    /* 24px */
+  --mda-space-8: 2rem;      /* 32px */
+  --mda-space-10: 2.5rem;   /* 40px */
+  --mda-space-12: 3rem;     /* 48px */
+  --mda-space-16: 4rem;     /* 64px */
+
+  /* Border Radius Variables */
+  --mda-radius-sm: 0.25rem;   /* 4px */
+  --mda-radius-base: 0.375rem; /* 6px */
+  --mda-radius-md: 0.5rem;    /* 8px */
+  --mda-radius-lg: 0.75rem;   /* 12px */
+  --mda-radius-xl: 1rem;      /* 16px */
+
+  /* Smooth Transition Variables */
+  --mda-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --mda-transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --mda-transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Line Height Variables */
+  --mda-leading-tight: 1.25;
+  --mda-leading-normal: 1.4;
+  --mda-leading-relaxed: 1.5;
+}
+
+/* ================================================
+   MDA BASE TYPOGRAPHY & LAYOUT SYSTEM
+   ================================================ */
+
+body.mda-theme,
+.mda-theme {
+  font-family: var(--mda-font-family-primary);
+  font-size: var(--mda-font-size-base);
+  line-height: var(--mda-leading-normal);
+  color: var(--mda-text-primary);
+  background-color: var(--mda-bg-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* === HEADINGS (15% smaller than standard) === */
+body.mda-theme h1, body.mda-theme .h1,
+.mda-theme h1, .mda-theme .h1 {
+  font-size: var(--mda-font-size-3xl);
+  font-weight: 700;
+  line-height: var(--mda-leading-tight);
+  margin-bottom: var(--mda-space-4);
+  color: var(--mda-text-primary);
+  font-family: var(--mda-font-family-primary);
+}
+
+body.mda-theme h2, body.mda-theme .h2,
+.mda-theme h2, .mda-theme .h2 {
+  font-size: var(--mda-font-size-2xl);
+  font-weight: 600;
+  line-height: var(--mda-leading-tight);
+  margin-bottom: var(--mda-space-3);
+  color: var(--mda-text-primary);
+  font-family: var(--mda-font-family-primary);
+}
+
+body.mda-theme h3, body.mda-theme .h3,
+.mda-theme h3, .mda-theme .h3 {
+  font-size: var(--mda-font-size-xl);
+  font-weight: 600;
+  line-height: var(--mda-leading-tight);
+  margin-bottom: var(--mda-space-3);
+  color: var(--mda-text-primary);
+  font-family: var(--mda-font-family-primary);
+}
+
+body.mda-theme h4, body.mda-theme .h4,
+.mda-theme h4, .mda-theme .h4 {
+  font-size: var(--mda-font-size-lg);
+  font-weight: 600;
+  line-height: var(--mda-leading-normal);
+  margin-bottom: var(--mda-space-2);
+  color: var(--mda-text-primary);
+  font-family: var(--mda-font-family-primary);
+}
+
+body.mda-theme h5, body.mda-theme .h5,
+.mda-theme h5, .mda-theme .h5 {
+  font-size: var(--mda-font-size-base);
+  font-weight: 600;
+  line-height: var(--mda-leading-normal);
+  margin-bottom: var(--mda-space-2);
+  color: var(--mda-text-primary);
+  font-family: var(--mda-font-family-primary);
+}
+
+body.mda-theme h6, body.mda-theme .h6,
+.mda-theme h6, .mda-theme .h6 {
+  font-size: var(--mda-font-size-sm);
+  font-weight: 600;
+  line-height: var(--mda-leading-normal);
+  margin-bottom: var(--mda-space-2);
+  color: var(--mda-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: var(--mda-font-family-primary);
+}
+
+/* === BODY TEXT (15% smaller) === */
+body.mda-theme p, body.mda-theme .lead, body.mda-theme .text-body,
+.mda-theme p, .mda-theme .lead, .mda-theme .text-body {
+  font-size: var(--mda-font-size-base);
+  line-height: var(--mda-leading-relaxed);
+  margin-bottom: var(--mda-space-3);
+  color: var(--mda-text-primary);
+}
+
+body.mda-theme small, body.mda-theme .small,
+.mda-theme small, .mda-theme .small {
+  font-size: var(--mda-font-size-sm);
+  color: var(--mda-text-secondary);
+}
+
+body.mda-theme .text-muted,
+.mda-theme .text-muted {
+  color: var(--mda-text-muted) !important;
+}
+
+/* === LINKS === */
+body.mda-theme a,
+.mda-theme a {
+  color: var(--mda-text-primary);
+  text-decoration: none;
+  transition: color var(--mda-transition-fast);
+}
+
+body.mda-theme a:hover, body.mda-theme a:focus,
+.mda-theme a:hover, .mda-theme a:focus {
+  color: var(--mda-text-secondary);
+  text-decoration: none;
+}
+
+/* ================================================
+   MDA COMPONENT OVERRIDES
+   ================================================ */
+
+/* === CARDS === */
+body.mda-theme .card,
+.mda-theme .card {
+  background-color: var(--mda-bg-primary);
+  border: 1px solid var(--mda-border-light);
+  border-radius: var(--mda-radius-lg);
+  box-shadow: var(--mda-shadow-sm);
+  transition: all var(--mda-transition-base);
+  font-size: var(--mda-font-size-sm);
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+body.mda-theme .card:hover,
+.mda-theme .card:hover {
+  box-shadow: var(--mda-shadow-base);
+  transform: translateY(-2px);
+  border-color: var(--mda-border-medium);
+}
+
+body.mda-theme .card .card-header,
+.mda-theme .card .card-header {
+  background-color: var(--mda-bg-primary);
+  border-bottom: 1px solid var(--mda-border-light);
+  padding: var(--mda-space-4) var(--mda-space-5);
+  border-radius: var(--mda-radius-lg) var(--mda-radius-lg) 0 0;
+}
+
+body.mda-theme .card .card-header h1, 
+body.mda-theme .card .card-header h2, 
+body.mda-theme .card .card-header h3, 
+body.mda-theme .card .card-header h4, 
+body.mda-theme .card .card-header h5, 
+body.mda-theme .card .card-header h6,
+.mda-theme .card .card-header h1, 
+.mda-theme .card .card-header h2, 
+.mda-theme .card .card-header h3, 
+.mda-theme .card .card-header h4, 
+.mda-theme .card .card-header h5, 
+.mda-theme .card .card-header h6 {
+  margin-bottom: 0;
+  font-size: var(--mda-font-size-base);
+  font-weight: 600;
+  color: var(--mda-text-primary);
+}
+
+body.mda-theme .card .card-header .card-title,
+.mda-theme .card .card-header .card-title {
+  font-size: var(--mda-font-size-base);
+  font-weight: 600;
+  color: var(--mda-text-primary);
+  margin-bottom: 0;
+}
+
+body.mda-theme .card .card-body,
+.mda-theme .card .card-body {
+  padding: var(--mda-space-5);
+  font-size: var(--mda-font-size-sm);
+  color: var(--mda-text-primary);
+  line-height: 1.6;
+  background-color: rgba(var(--mda-bg-primary), 0.8);
+}
+
+body.mda-theme .card .card-body p:last-child,
+.mda-theme .card .card-body p:last-child {
+  margin-bottom: 0;
+}
+
+body.mda-theme .card .card-footer,
+.mda-theme .card .card-footer {
+  background-color: var(--mda-bg-secondary);
+  border-top: 1px solid var(--mda-border-light);
+  padding: var(--mda-space-3) var(--mda-space-5);
+  font-size: var(--mda-font-size-xs);
+  color: var(--mda-text-secondary);
+  border-radius: 0 0 var(--mda-radius-lg) var(--mda-radius-lg);
+}
+
+/* === ENHANCED CARD VARIANTS === */
+/* Colored borders removed for cleaner appearance */
+
+/* === BUTTONS === */
+body.mda-theme .btn,
+.mda-theme .btn {
+  font-size: var(--mda-font-size-sm);
+  font-weight: 500;
+  padding: var(--mda-space-2) var(--mda-space-4);
+  border-radius: var(--mda-radius-base);
+  transition: all var(--mda-transition-fast);
+  border: 1px solid transparent;
+  box-shadow: var(--mda-shadow-xs);
+}
+
+body.mda-theme .btn:hover,
+.mda-theme .btn:hover {
+  box-shadow: var(--mda-shadow-sm);
+  transform: translateY(-1px);
+}
+
+body.mda-theme .btn:active,
+.mda-theme .btn:active {
+  transform: translateY(0);
+  box-shadow: var(--mda-shadow-xs);
+}
+
+body.mda-theme .btn.btn-sm,
+.mda-theme .btn.btn-sm {
+  font-size: var(--mda-font-size-xs);
+  padding: var(--mda-space-1) var(--mda-space-3);
+}
+
+body.mda-theme .btn.btn-lg,
+.mda-theme .btn.btn-lg {
+  font-size: var(--mda-font-size-base);
+  padding: var(--mda-space-3) var(--mda-space-6);
+}
+
+/* === FORMS === */
+body.mda-theme .form-control, body.mda-theme .form-select,
+.mda-theme .form-control, .mda-theme .form-select {
+  font-size: var(--mda-font-size-sm);
+  padding: var(--mda-space-2) var(--mda-space-3);
+  border: 1px solid var(--mda-border-medium);
+  border-radius: var(--mda-radius-base);
+  background-color: var(--mda-bg-primary);
+  transition: all var(--mda-transition-fast);
+  color: var(--mda-text-primary);
+  box-shadow: var(--mda-shadow-xs);
+}
+
+body.mda-theme .form-control:focus, body.mda-theme .form-select:focus,
+.mda-theme .form-control:focus, .mda-theme .form-select:focus {
+  border-color: var(--mda-border-strong);
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
+  outline: none;
+}
+
+body.mda-theme .form-control::placeholder,
+.mda-theme .form-control::placeholder {
+  color: var(--mda-text-muted);
+  font-size: var(--mda-font-size-sm);
+}
+
+body.mda-theme .form-label,
+.mda-theme .form-label {
+  font-size: var(--mda-font-size-sm);
+  font-weight: 500;
+  color: var(--mda-text-primary);
+  margin-bottom: var(--mda-space-1);
+}
+
+body.mda-theme .form-text,
+.mda-theme .form-text {
+  font-size: var(--mda-font-size-xs);
+  color: var(--mda-text-muted);
+  margin-top: var(--mda-space-1);
+}
+
+/* === TABLES === */
+body.mda-theme .table,
+.mda-theme .table {
+  font-size: var(--mda-font-size-sm);
+  color: var(--mda-text-primary);
+}
+
+body.mda-theme .table th,
+.mda-theme .table th {
+  font-size: var(--mda-font-size-xs);
+  font-weight: 600;
+  color: var(--mda-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: var(--mda-space-2) var(--mda-space-3);
+  border-bottom: 2px solid var(--mda-border-medium);
+  background-color: var(--mda-bg-secondary);
+}
+
+body.mda-theme .table td,
+.mda-theme .table td {
+  padding: var(--mda-space-3);
+  border-bottom: 1px solid var(--mda-border-light);
+  vertical-align: middle;
+}
+
+body.mda-theme .table tbody tr,
+.mda-theme .table tbody tr {
+  transition: background-color var(--mda-transition-fast);
+}
+
+body.mda-theme .table tbody tr:hover,
+.mda-theme .table tbody tr:hover {
+  background-color: var(--mda-bg-hover);
+}
+
+/* ================================================
+   MDA UTILITY CLASSES
+   ================================================ */
+
+/* Typography Scale Classes */
+.mda-text-xs { font-size: var(--mda-font-size-xs) !important; }
+.mda-text-sm { font-size: var(--mda-font-size-sm) !important; }
+.mda-text-base { font-size: var(--mda-font-size-base) !important; }
+.mda-text-lg { font-size: var(--mda-font-size-lg) !important; }
+.mda-text-xl { font-size: var(--mda-font-size-xl) !important; }
+.mda-text-2xl { font-size: var(--mda-font-size-2xl) !important; }
+.mda-text-3xl { font-size: var(--mda-font-size-3xl) !important; }
+.mda-text-4xl { font-size: var(--mda-font-size-4xl) !important; }
+
+/* Text Color Classes */
+.mda-text-primary { color: var(--mda-text-primary) !important; }
+.mda-text-secondary { color: var(--mda-text-secondary) !important; }
+.mda-text-muted { color: var(--mda-text-muted) !important; }
+.mda-text-light { color: var(--mda-text-light) !important; }
+
+/* Font Weight Classes */
+.mda-font-normal { font-weight: 400 !important; }
+.mda-font-medium { font-weight: 500 !important; }
+.mda-font-semibold { font-weight: 600 !important; }
+.mda-font-bold { font-weight: 700 !important; }
+
+/* Line Height Classes */
+.mda-leading-tight { line-height: var(--mda-leading-tight) !important; }
+.mda-leading-normal { line-height: var(--mda-leading-normal) !important; }
+.mda-leading-relaxed { line-height: var(--mda-leading-relaxed) !important; }
+
+/* Shadow utilities (soft shadows only) */
+.mda-shadow-xs { box-shadow: var(--mda-shadow-xs) !important; }
+.mda-shadow-sm { box-shadow: var(--mda-shadow-sm) !important; }
+.mda-shadow-base { box-shadow: var(--mda-shadow-base) !important; }
+.mda-shadow-lg { box-shadow: var(--mda-shadow-lg) !important; }
+.mda-shadow-xl { box-shadow: var(--mda-shadow-xl) !important; }
+.mda-shadow-none { box-shadow: none !important; }
+
+/* Border radius utilities */
+.mda-rounded-sm { border-radius: var(--mda-radius-sm) !important; }
+.mda-rounded { border-radius: var(--mda-radius-base) !important; }
+.mda-rounded-md { border-radius: var(--mda-radius-md) !important; }
+.mda-rounded-lg { border-radius: var(--mda-radius-lg) !important; }
+.mda-rounded-xl { border-radius: var(--mda-radius-xl) !important; }
+
+/* Background color utilities (light colors only) */
+.mda-bg-primary { background-color: var(--mda-bg-primary) !important; }
+.mda-bg-secondary { background-color: var(--mda-bg-secondary) !important; }
+.mda-bg-tertiary { background-color: var(--mda-bg-tertiary) !important; }
+.mda-bg-hover { background-color: var(--mda-bg-hover) !important; }
+
+/* Border utilities */
+.mda-border { border: 1px solid var(--mda-border-light) !important; }
+.mda-border-light { border-color: var(--mda-border-light) !important; }
+.mda-border-medium { border-color: var(--mda-border-medium) !important; }
+.mda-border-strong { border-color: var(--mda-border-strong) !important; }
+
+/* Spacing utilities (compact spacing) */
+.mda-p-1 { padding: var(--mda-space-1) !important; }
+.mda-p-2 { padding: var(--mda-space-2) !important; }
+.mda-p-3 { padding: var(--mda-space-3) !important; }
+.mda-p-4 { padding: var(--mda-space-4) !important; }
+.mda-p-5 { padding: var(--mda-space-5) !important; }
+.mda-p-6 { padding: var(--mda-space-6) !important; }
+
+.mda-m-1 { margin: var(--mda-space-1) !important; }
+.mda-m-2 { margin: var(--mda-space-2) !important; }
+.mda-m-3 { margin: var(--mda-space-3) !important; }
+.mda-m-4 { margin: var(--mda-space-4) !important; }
+.mda-m-5 { margin: var(--mda-space-5) !important; }
+.mda-m-6 { margin: var(--mda-space-6) !important; }
+
+/* Transition utilities (smooth transitions) */
+.mda-transition { transition: all var(--mda-transition-base) !important; }
+.mda-transition-fast { transition: all var(--mda-transition-fast) !important; }
+.mda-transition-slow { transition: all var(--mda-transition-slow) !important; }
+
+/* ================================================
+   RESPONSIVE DESIGN
+   ================================================ */
+
+@media (max-width: 768px) {
+  body.mda-theme, .mda-theme {
+    /* Reduce font sizes slightly more on mobile devices */
+    --mda-font-size-4xl: 1.43438rem; /* ~23px */
+    --mda-font-size-3xl: 1.14563rem; /* ~18.3px */
+    --mda-font-size-2xl: 0.95625rem; /* ~15.3px */
+  }
+}
+
+/* ================================================
+   ACCESSIBILITY & USER PREFERENCES
+   ================================================ */
+
+/* Respect user's reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  body.mda-theme *, .mda-theme * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  body.mda-theme, .mda-theme {
+    --mda-text-primary: #000000;
+    --mda-text-secondary: #333333;
+    --mda-text-muted: #666666;
+    --mda-border-light: #999999;
+    --mda-border-medium: #666666;
+    --mda-border-strong: #333333;
+  }
+}
+
+/* Focus styles for accessibility */
+body.mda-theme *:focus-visible,
+.mda-theme *:focus-visible {
+  outline: 2px solid #005fcc;
+  outline-offset: 2px;
+  border-radius: var(--mda-radius-sm);
+}
+
+/* ================================================
+   PRINT STYLES
+   ================================================ */
+
+@media print {
+  body.mda-theme, .mda-theme {
+    font-family: Georgia, "Times New Roman", serif;
+    color: black !important;
+    background: white !important;
+  }
+  
+  body.mda-theme h1, body.mda-theme h2, body.mda-theme h3, body.mda-theme h4, body.mda-theme h5, body.mda-theme h6,
+  .mda-theme h1, .mda-theme h2, .mda-theme h3, .mda-theme h4, .mda-theme h5, .mda-theme h6 {
+    color: black !important;
+    page-break-after: avoid;
+  }
+  
+  body.mda-theme p,
+  .mda-theme p {
+    orphans: 3;
+    widows: 3;
+  }
+}

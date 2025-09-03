@@ -1,0 +1,365 @@
+/*
+ * MDA Notion-Style Typography System
+ * Consistent, compact typography inspired by Notion's clean design
+ * Author: MDA System
+ * Version: 1.0
+ */
+
+/* ================================================
+   CSS CUSTOM PROPERTIES (Variables)
+   ================================================ */
+
+:root {
+  /* === Font Family Variables === */
+  --mda-font-family-primary: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  --mda-font-family-mono: ui-monospace, "SF Mono", "Consolas", "Liberation Mono", "Menlo", monospace;
+  --mda-font-family-heading: var(--mda-font-family-primary);
+
+  /* === Font Weight Variables === */
+  --mda-font-weight-light: 300;
+  --mda-font-weight-normal: 400;
+  --mda-font-weight-medium: 500;
+  --mda-font-weight-semibold: 600;
+  --mda-font-weight-bold: 700;
+
+  /* === Font Size Variables (Notion-inspired scale) === */
+  --mda-font-size-xs: 0.75rem;    /* 12px */
+  --mda-font-size-sm: 0.875rem;   /* 14px */
+  --mda-font-size-base: 1rem;     /* 16px */
+  --mda-font-size-lg: 1.125rem;   /* 18px */
+  --mda-font-size-xl: 1.25rem;    /* 20px */
+  --mda-font-size-2xl: 1.5rem;    /* 24px */
+  --mda-font-size-3xl: 1.875rem;  /* 30px */
+  --mda-font-size-4xl: 2.25rem;   /* 36px */
+  --mda-font-size-5xl: 3rem;      /* 48px */
+
+  /* === Line Height Variables (Compact spacing) === */
+  --mda-line-height-tight: 1.25;
+  --mda-line-height-normal: 1.4;
+  --mda-line-height-relaxed: 1.6;
+
+  /* === Spacing Variables (Notion-style compact) === */
+  --mda-spacing-2xs: 0.125rem;    /* 2px */
+  --mda-spacing-xs: 0.25rem;      /* 4px */
+  --mda-spacing-sm: 0.5rem;       /* 8px */
+  --mda-spacing-md: 0.75rem;      /* 12px */
+  --mda-spacing-lg: 1rem;         /* 16px */
+  --mda-spacing-xl: 1.5rem;       /* 24px */
+  --mda-spacing-2xl: 2rem;        /* 32px */
+  --mda-spacing-3xl: 3rem;        /* 48px */
+
+  /* === Color Variables === */
+  --mda-color-text-primary: #2e2e2e;
+  --mda-color-text-secondary: #6b6b6b;
+  --mda-color-text-muted: #9b9b9b;
+  --mda-color-text-light: #c4c4c4;
+}
+
+/* ================================================
+   BASE TYPOGRAPHY RESET
+   ================================================ */
+
+/* Global font family application */
+body, 
+.mda-typography {
+  font-family: var(--mda-font-family-primary);
+  line-height: var(--mda-line-height-normal);
+  color: var(--mda-color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Reset default margins for consistency */
+h1, h2, h3, h4, h5, h6,
+p, blockquote, pre,
+ul, ol, dl, dd,
+figure, table, fieldset {
+  margin: 0;
+  margin-bottom: var(--mda-spacing-md);
+}
+
+/* ================================================
+   HEADING STYLES (H1-H6) - Notion Inspired
+   ================================================ */
+
+/* H1 - Page Title */
+h1, .mda-h1 {
+  font-family: var(--mda-font-family-heading);
+  font-size: var(--mda-font-size-4xl);
+  font-weight: var(--mda-font-weight-bold);
+  line-height: var(--mda-line-height-tight);
+  color: var(--mda-color-text-primary);
+  margin-bottom: var(--mda-spacing-xl);
+  margin-top: 0;
+  letter-spacing: -0.02em;
+}
+
+/* H2 - Section Heading */
+h2, .mda-h2 {
+  font-family: var(--mda-font-family-heading);
+  font-size: var(--mda-font-size-3xl);
+  font-weight: var(--mda-font-weight-bold);
+  line-height: var(--mda-line-height-tight);
+  color: var(--mda-color-text-primary);
+  margin-bottom: var(--mda-spacing-lg);
+  margin-top: var(--mda-spacing-2xl);
+  letter-spacing: -0.015em;
+}
+
+/* H3 - Subsection Heading */
+h3, .mda-h3 {
+  font-family: var(--mda-font-family-heading);
+  font-size: var(--mda-font-size-2xl);
+  font-weight: var(--mda-font-weight-semibold);
+  line-height: var(--mda-line-height-tight);
+  color: var(--mda-color-text-primary);
+  margin-bottom: var(--mda-spacing-md);
+  margin-top: var(--mda-spacing-xl);
+  letter-spacing: -0.01em;
+}
+
+/* H4 - Component Heading */
+h4, .mda-h4 {
+  font-family: var(--mda-font-family-heading);
+  font-size: var(--mda-font-size-xl);
+  font-weight: var(--mda-font-weight-semibold);
+  line-height: var(--mda-line-height-normal);
+  color: var(--mda-color-text-primary);
+  margin-bottom: var(--mda-spacing-md);
+  margin-top: var(--mda-spacing-lg);
+}
+
+/* H5 - Minor Heading */
+h5, .mda-h5 {
+  font-family: var(--mda-font-family-heading);
+  font-size: var(--mda-font-size-lg);
+  font-weight: var(--mda-font-weight-semibold);
+  line-height: var(--mda-line-height-normal);
+  color: var(--mda-color-text-primary);
+  margin-bottom: var(--mda-spacing-sm);
+  margin-top: var(--mda-spacing-md);
+}
+
+/* H6 - Small Heading */
+h6, .mda-h6 {
+  font-family: var(--mda-font-family-heading);
+  font-size: var(--mda-font-size-base);
+  font-weight: var(--mda-font-weight-semibold);
+  line-height: var(--mda-line-height-normal);
+  color: var(--mda-color-text-secondary);
+  margin-bottom: var(--mda-spacing-sm);
+  margin-top: var(--mda-spacing-md);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: var(--mda-font-size-sm);
+}
+
+/* ================================================
+   BODY TEXT STYLES
+   ================================================ */
+
+/* Paragraph */
+p, .mda-text {
+  font-family: var(--mda-font-family-primary);
+  font-size: var(--mda-font-size-base);
+  font-weight: var(--mda-font-weight-normal);
+  line-height: var(--mda-line-height-relaxed);
+  color: var(--mda-color-text-primary);
+  margin-bottom: var(--mda-spacing-md);
+}
+
+/* Small text */
+small, .mda-text-sm {
+  font-size: var(--mda-font-size-sm);
+  color: var(--mda-color-text-secondary);
+  line-height: var(--mda-line-height-normal);
+}
+
+/* Extra small text */
+.mda-text-xs {
+  font-size: var(--mda-font-size-xs);
+  color: var(--mda-color-text-muted);
+  line-height: var(--mda-line-height-normal);
+}
+
+/* Large text */
+.mda-text-lg {
+  font-size: var(--mda-font-size-lg);
+  line-height: var(--mda-line-height-normal);
+}
+
+/* ================================================
+   TEXT UTILITIES
+   ================================================ */
+
+/* Font weights */
+.mda-font-light { font-weight: var(--mda-font-weight-light) !important; }
+.mda-font-normal { font-weight: var(--mda-font-weight-normal) !important; }
+.mda-font-medium { font-weight: var(--mda-font-weight-medium) !important; }
+.mda-font-semibold { font-weight: var(--mda-font-weight-semibold) !important; }
+.mda-font-bold { font-weight: var(--mda-font-weight-bold) !important; }
+
+/* Text colors */
+.mda-text-primary { color: var(--mda-color-text-primary) !important; }
+.mda-text-secondary { color: var(--mda-color-text-secondary) !important; }
+.mda-text-muted { color: var(--mda-color-text-muted) !important; }
+.mda-text-light { color: var(--mda-color-text-light) !important; }
+
+/* Line heights */
+.mda-leading-tight { line-height: var(--mda-line-height-tight) !important; }
+.mda-leading-normal { line-height: var(--mda-line-height-normal) !important; }
+.mda-leading-relaxed { line-height: var(--mda-line-height-relaxed) !important; }
+
+/* ================================================
+   SPACING UTILITIES (Notion-style compact)
+   ================================================ */
+
+/* Margin utilities */
+.mda-mb-2xs { margin-bottom: var(--mda-spacing-2xs) !important; }
+.mda-mb-xs { margin-bottom: var(--mda-spacing-xs) !important; }
+.mda-mb-sm { margin-bottom: var(--mda-spacing-sm) !important; }
+.mda-mb-md { margin-bottom: var(--mda-spacing-md) !important; }
+.mda-mb-lg { margin-bottom: var(--mda-spacing-lg) !important; }
+.mda-mb-xl { margin-bottom: var(--mda-spacing-xl) !important; }
+.mda-mb-2xl { margin-bottom: var(--mda-spacing-2xl) !important; }
+.mda-mb-3xl { margin-bottom: var(--mda-spacing-3xl) !important; }
+
+.mda-mt-2xs { margin-top: var(--mda-spacing-2xs) !important; }
+.mda-mt-xs { margin-top: var(--mda-spacing-xs) !important; }
+.mda-mt-sm { margin-top: var(--mda-spacing-sm) !important; }
+.mda-mt-md { margin-top: var(--mda-spacing-md) !important; }
+.mda-mt-lg { margin-top: var(--mda-spacing-lg) !important; }
+.mda-mt-xl { margin-top: var(--mda-spacing-xl) !important; }
+.mda-mt-2xl { margin-top: var(--mda-spacing-2xl) !important; }
+.mda-mt-3xl { margin-top: var(--mda-spacing-3xl) !important; }
+
+/* ================================================
+   COMPONENT-SPECIFIC STYLES
+   ================================================ */
+
+/* Card headers with consistent typography */
+.card-header h1,
+.card-header h2,
+.card-header h3,
+.card-header h4,
+.card-header h5,
+.card-header h6 {
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+/* Page title area */
+.page-title h1 {
+  margin-bottom: var(--mda-spacing-sm);
+}
+
+.page-title .breadcrumb {
+  font-size: var(--mda-font-size-sm);
+  color: var(--mda-color-text-secondary);
+  margin-bottom: 0;
+}
+
+/* Dashboard widgets */
+.dashboard-widget h3 {
+  margin-top: 0;
+  margin-bottom: var(--mda-spacing-sm);
+}
+
+/* Form labels */
+.form-label {
+  font-weight: var(--mda-font-weight-medium);
+  font-size: var(--mda-font-size-sm);
+  color: var(--mda-color-text-primary);
+  margin-bottom: var(--mda-spacing-xs);
+}
+
+/* Table headers */
+.table th {
+  font-weight: var(--mda-font-weight-semibold);
+  font-size: var(--mda-font-size-sm);
+  color: var(--mda-color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ================================================
+   RESPONSIVE TYPOGRAPHY
+   ================================================ */
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  :root {
+    /* Slightly reduce font sizes on mobile */
+    --mda-font-size-4xl: 1.875rem;  /* 30px instead of 36px */
+    --mda-font-size-3xl: 1.5rem;    /* 24px instead of 30px */
+    --mda-font-size-2xl: 1.25rem;   /* 20px instead of 24px */
+  }
+
+  /* Reduce margins on mobile for compactness */
+  h1, .mda-h1 { margin-bottom: var(--mda-spacing-lg); }
+  h2, .mda-h2 { 
+    margin-bottom: var(--mda-spacing-md); 
+    margin-top: var(--mda-spacing-xl);
+  }
+  h3, .mda-h3 { 
+    margin-bottom: var(--mda-spacing-sm); 
+    margin-top: var(--mda-spacing-lg);
+  }
+}
+
+/* ================================================
+   PRINT STYLES
+   ================================================ */
+
+@media print {
+  /* Optimize typography for print */
+  body {
+    font-family: Georgia, "Times New Roman", Times, serif;
+    font-size: 11pt;
+    line-height: 1.4;
+    color: black;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: black;
+    page-break-after: avoid;
+  }
+
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+}
+
+/* ================================================
+   ACCESSIBILITY
+   ================================================ */
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --mda-color-text-primary: #000000;
+    --mda-color-text-secondary: #333333;
+    --mda-color-text-muted: #666666;
+  }
+}
+
+/* Focus styles for keyboard navigation */
+h1:focus-visible,
+h2:focus-visible,
+h3:focus-visible,
+h4:focus-visible,
+h5:focus-visible,
+h6:focus-visible {
+  outline: 2px solid #005fcc;
+  outline-offset: 2px;
+}

@@ -86,7 +86,7 @@
 
 .qr-large-display {
     padding: 10px;
-    background: linear-gradient(145deg, #f8f9fa, #ffffff);
+    background: #f8f9fa;
     border-radius: 15px;
     border: 1px solid rgba(0,0,0,0.05);
 }
@@ -113,20 +113,20 @@
 
 /* Time Status Indicators - Enhanced */
 .time-status-on-time {
-    background: linear-gradient(135deg, #22c55e, #16a34a) !important;
+    background: #22c55e !important;
     color: white !important;
     box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
 }
 
 .time-status-warning {
-    background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+    background: #f59e0b !important;
     color: white !important;
     box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
     animation: pulse-warning 2s infinite;
 }
 
 .time-status-danger {
-    background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+    background: #ef4444 !important;
     color: white !important;
     box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
     animation: flash-danger 1s infinite;
@@ -145,18 +145,18 @@
 
 @keyframes flash-danger {
     0%, 100% {
-        background: linear-gradient(135deg, #ef4444, #dc2626);
+        background: #ef4444;
         box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
     }
     50% {
-        background: linear-gradient(135deg, #dc2626, #b91c1c);
+        background: #dc2626;
         box-shadow: 0 4px 16px rgba(239, 68, 68, 0.6);
     }
 }
 
 /* Enhanced Topbar Styling */
 .order-top-bar {
-    background: linear-gradient(135deg, #f8fafc, #ffffff);
+    background: #f8fafc;
     border: 1px solid #e2e8f0;
     border-radius: 12px;
     overflow: hidden;
@@ -1115,7 +1115,7 @@
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+    background: #667eea;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1238,7 +1238,7 @@
     width: 28px;
     height: 28px;
     font-size: 0.65rem;
-    background: linear-gradient(45deg, #38bdf8 0%, #818cf8 100%);
+    background: #38bdf8;
 }
 
 /* Reply Form Styles */
@@ -2380,9 +2380,17 @@
                     <img src="<?= $qr_data['qr_url'] ?>" 
                          alt="QR Code for Order SAL-<?= str_pad($order['id'], 5, '0', STR_PAD_LEFT) ?>" 
                          class="qr-sidebar-image" 
-                         style="width: 200px; height: 200px; border-radius: 12px; cursor: pointer;"
+                         style="width: 200px; height: 200px; border-radius: 12px; cursor: pointer; border: 1px solid #ddd;"
                          onclick="showQRModal()"
-                         title="Click to view larger">
+                         title="Click to view larger"
+                         onerror="handleQRError(this, '<?= $qr_data['short_url'] ?>');">
+                    
+                    <!-- Error fallback -->
+                    <div class="qr-error-placeholder" style="width: 200px; height: 200px; border-radius: 12px; border: 2px dashed #ccc; display: none; flex-direction: column; align-items: center; justify-content: center; color: #666; background-color: #f8f9fa;">
+                        <i data-feather="image" style="width: 40px; height: 40px; margin-bottom: 10px;"></i>
+                        <small>QR Code</small>
+                        <small>Loading...</small>
+                    </div>
                 </div>
                 
                 <!-- Short URL Display -->
@@ -3027,7 +3035,7 @@ function loadComments(reset = true) {
         } else {
                 removeCommentsLoader();
                 // Show error message without resetting the list
-                showToast('error', data.message || 'Error loading more comments');
+                showToast(data.message || 'Error loading more comments', 'error');
             }
         }
     })
@@ -3047,7 +3055,7 @@ function loadComments(reset = true) {
             }
         } else {
             removeCommentsLoader();
-            showToast('error', 'Error loading more comments');
+            showToast('Error loading more comments', 'error');
         }
     })
     .finally(() => {
@@ -3421,7 +3429,7 @@ function loadOrderForEdit(orderId) {
     
     if (!orderId) {
         console.error('No order ID provided');
-        showToast('error', 'No order ID provided');
+        showToast('No order ID provided', 'error');
         return;
     }
     
@@ -3518,7 +3526,7 @@ function loadOrderForEdit(orderId) {
             </div>
         `;
         
-        showToast('error', 'Error loading order for edit');
+        showToast('Error loading order for edit', 'error');
         
         if (typeof feather !== 'undefined') {
             feather.replace();
@@ -3874,7 +3882,7 @@ function submitOrderForm() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            showToast('success', data.message || 'Order saved successfully');
+            showToast(data.message || 'Order saved successfully', 'success');
             
             // Close modal
             const modal = bootstrap.Modal.getInstance(document.getElementById('orderModal'));
@@ -3888,7 +3896,7 @@ function submitOrderForm() {
             }, 1000);
             
         } else {
-            showToast('error', data.message || 'Error saving order');
+            showToast(data.message || 'Error saving order', 'error');
             
             // Show validation errors if any
             if (data.errors) {
@@ -3911,7 +3919,7 @@ function submitOrderForm() {
     })
     .catch(error => {
         console.error('Error submitting form:', error);
-        showToast('error', 'Error submitting form');
+        showToast('Error submitting form', 'error');
     })
     .finally(() => {
         // Restore submit button
@@ -3958,8 +3966,24 @@ function createCommentHtml(comment) {
     
     // Process mentions
     let processedComment = escapedComment;
-    if (comment.mentions && comment.mentions.length > 0) {
-        comment.mentions.forEach(mention => {
+    let mentions = [];
+    
+    // Handle mentions field (could be string, array, or null)
+    if (comment.mentions) {
+        if (typeof comment.mentions === 'string') {
+            try {
+                mentions = JSON.parse(comment.mentions);
+            } catch (e) {
+                console.warn('Failed to parse mentions JSON:', comment.mentions);
+                mentions = [];
+            }
+        } else if (Array.isArray(comment.mentions)) {
+            mentions = comment.mentions;
+        }
+    }
+    
+    if (mentions && mentions.length > 0) {
+        mentions.forEach(mention => {
             const mentionRegex = new RegExp(`@${mention.username}`, 'g');
             processedComment = processedComment.replace(mentionRegex, 
                 `<span class="mention">@${mention.username}</span>`);
@@ -4252,7 +4276,7 @@ function submitReply(commentId) {
     const replyText = input ? input.value.trim() : '';
     
     if (!replyText) {
-        showToast('error', 'Please enter a reply');
+        showToast('Please enter a reply', 'error');
         return;
     }
     
@@ -4273,7 +4297,7 @@ function submitReply(commentId) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            showToast('success', 'Reply added successfully');
+            showToast('Reply added successfully', 'success');
             hideReplyForm(commentId);
             
             // Add the reply directly to the comment instead of reloading all comments
@@ -4294,12 +4318,12 @@ function submitReply(commentId) {
                 loadComments(true);
             }
         } else {
-            showToast('error', data.message || 'Error adding reply');
+            showToast(data.message || 'Error adding reply', 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        showToast('error', 'Error adding reply');
+        showToast('Error adding reply', 'error');
     })
     .finally(() => {
         // Restore button state
@@ -4316,14 +4340,14 @@ function submitReply(commentId) {
 function editComment(commentId) {
     const commentElement = document.getElementById(`comment-${commentId}`);
     if (!commentElement) {
-        showToast('error', 'Comment not found');
+        showToast('Comment not found', 'error');
         return;
     }
     
     // Get the current comment content
     const contentElement = commentElement.querySelector('.comment-content');
     if (!contentElement) {
-        showToast('error', 'Comment content not found');
+        showToast('Comment content not found', 'error');
         return;
     }
     
@@ -4446,13 +4470,13 @@ function deleteComment(commentId) {
 function saveCommentEdit(commentId) {
     const textarea = document.getElementById(`edit-comment-${commentId}`);
     if (!textarea) {
-        showToast('error', 'Edit form not found');
+        showToast('Edit form not found', 'error');
         return;
     }
     
     const newContent = textarea.value.trim();
     if (!newContent) {
-        showToast('error', 'Comment cannot be empty');
+        showToast('Comment cannot be empty', 'error');
         return;
     }
     
@@ -4473,7 +4497,7 @@ function saveCommentEdit(commentId) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            showToast('success', 'Comment updated successfully');
+            showToast('Comment updated successfully', 'success');
             
             // Update the comment content in place
             const commentElement = document.getElementById(`comment-${commentId}`);
@@ -4489,12 +4513,12 @@ function saveCommentEdit(commentId) {
             // Reload activities to show the edit activity
             loadRecentActivity(true);
         } else {
-            showToast('error', data.message || 'Error updating comment');
+            showToast(data.message || 'Error updating comment', 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        showToast('error', 'Error updating comment');
+        showToast('Error updating comment', 'error');
     })
     .finally(() => {
         // Restore button state
@@ -4534,14 +4558,14 @@ function cancelCommentEdit(commentId) {
 function editReply(replyId) {
     const replyElement = document.getElementById(`reply-${replyId}`);
     if (!replyElement) {
-        showToast('error', 'Reply not found');
+        showToast('Reply not found', 'error');
         return;
     }
     
     // Get the current reply content
     const contentElement = replyElement.querySelector('.reply-content');
     if (!contentElement) {
-        showToast('error', 'Reply content not found');
+        showToast('Reply content not found', 'error');
         return;
     }
     
@@ -4595,13 +4619,13 @@ function editReply(replyId) {
 function saveReplyEdit(replyId) {
     const textarea = document.getElementById(`edit-reply-${replyId}`);
     if (!textarea) {
-        showToast('error', 'Edit form not found');
+        showToast('Edit form not found', 'error');
         return;
     }
     
     const newContent = textarea.value.trim();
     if (!newContent) {
-        showToast('error', 'Reply cannot be empty');
+        showToast('Reply cannot be empty', 'error');
         return;
     }
     
@@ -4622,7 +4646,7 @@ function saveReplyEdit(replyId) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            showToast('success', 'Reply updated successfully');
+            showToast('Reply updated successfully', 'success');
             
             // Update the reply content in place
             const replyElement = document.getElementById(`reply-${replyId}`);
@@ -4638,12 +4662,12 @@ function saveReplyEdit(replyId) {
             // Reload activities to show the edit activity
             loadRecentActivity(true);
         } else {
-            showToast('error', data.message || 'Error updating reply');
+            showToast(data.message || 'Error updating reply', 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        showToast('error', 'Error updating reply');
+        showToast('Error updating reply', 'error');
     })
     .finally(() => {
         // Restore button state
@@ -4814,7 +4838,7 @@ function submitComment() {
     const attachments = document.getElementById('commentAttachments').files;
     
     if (!commentText) {
-        showToast('error', 'Please enter a comment');
+        showToast('Please enter a comment', 'error');
         return;
     }
     
@@ -4843,7 +4867,7 @@ function submitComment() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            showToast('success', data.message || 'Comment added successfully');
+            showToast(data.message || 'Comment added successfully', 'success');
             
             // Clear the form
             document.getElementById('commentText').value = '';
@@ -4863,12 +4887,12 @@ function submitComment() {
             // Reload activities to show the comment activity
             loadRecentActivity(true);
         } else {
-            showToast('error', data.message || 'Error adding comment');
+            showToast(data.message || 'Error adding comment', 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        showToast('error', 'Error adding comment');
+        showToast('Error adding comment', 'error');
     })
     .finally(() => {
         // Restore button state
@@ -4891,12 +4915,12 @@ function updateStatus() {
     console.log('🔄 Updating status:', { orderId, newStatus, currentStatus: orderData.status });
 
     if (!newStatus) {
-        showToast('warning', 'Please select a status to update');
+        showToast('Please select a status to update', 'warning');
         return;
     }
 
     if (newStatus === orderData.status) {
-        showToast('info', `Status is already set to ${newStatus}`);
+        showToast(`Status is already set to ${newStatus}`, 'info');
         return;
     }
 
@@ -4926,7 +4950,7 @@ function updateStatus() {
         
         if (data.success) {
             // Show success toast
-            showToast('success', data.message || `Status updated to ${statusConfig.text}`);
+            showToast(data.message || `Status updated to ${statusConfig.text}`, 'success');
             
             // Update global order data
             orderData.status = newStatus;
@@ -4947,7 +4971,7 @@ function updateStatus() {
             console.log('✅ Status update completed successfully');
         } else {
             console.error('❌ Status update failed:', data);
-            showToast('error', data.message || 'Error updating status');
+            showToast(data.message || 'Error updating status', 'error');
             
             // Reset select to previous value
             statusSelect.value = orderData.status;
@@ -4955,7 +4979,7 @@ function updateStatus() {
     })
     .catch(error => {
         console.error('❌ Status update error:', error);
-        showToast('error', 'An error occurred while updating the status');
+        showToast('An error occurred while updating the status', 'error');
         
         // Reset select to previous value
         statusSelect.value = orderData.status;
@@ -5232,7 +5256,7 @@ async function shortenUrl(longUrl) {
             limaPayload.custom = customAlias;
             
             console.log('🔗 Attempting Lima Links shortening...');
-            const limaResponse = await fetch('<?= \App\Helpers\LimaLinksHelper::buildApiUrl() ?>', {
+            const limaResponse = await fetch('<?= \App\Helpers\MDALinksHelper::buildApiUrl() ?>', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${limaApiKey}`,
@@ -5634,7 +5658,7 @@ async function sendSMSMessage() {
     const message = document.getElementById('smsMessage').value.trim();
     
     if (!message) {
-        showToast('error', 'Please enter a message');
+        showToast('Please enter a message', 'error');
         return;
     }
     
@@ -5644,7 +5668,7 @@ async function sendSMSMessage() {
     const estimatedLength = message.length + orderNumber.length + estimatedUrlLength + 4;
     
     if (estimatedLength > 160) {
-        showToast('error', 'Message exceeds 160 character limit. Please shorten your message.');
+        showToast('Message exceeds 160 character limit. Please shorten your message.', 'error');
         return;
     }
     
@@ -5679,7 +5703,7 @@ async function sendSMSMessage() {
         const data = await response.json();
         
         if (data.success) {
-            showToast('success', data.message || 'SMS sent successfully');
+            showToast(data.message || 'SMS sent successfully', 'success');
             
             // Close modal
             const modal = bootstrap.Modal.getInstance(document.getElementById('smsModal'));
@@ -5694,11 +5718,11 @@ async function sendSMSMessage() {
             // Reload activities
             loadRecentActivity(true);
         } else {
-            showToast('error', data.message || 'Error sending SMS');
+            showToast(data.message || 'Error sending SMS', 'error');
         }
     } catch (error) {
         console.error('Error sending SMS:', error);
-        showToast('error', 'Error sending SMS: ' + error.message);
+        showToast('Error sending SMS: ' + error.message, 'error');
     } finally {
         // Restore button
         submitBtn.disabled = false;
@@ -5721,7 +5745,7 @@ async function sendEmailMessage() {
     const includeDetails = document.getElementById('emailIncludeOrderDetails').checked;
     
     if (!toEmail || !subject || !message) {
-        showToast('error', 'Please fill in all required fields');
+        showToast('Please fill in all required fields', 'error');
         return;
     }
     
@@ -5751,7 +5775,7 @@ async function sendEmailMessage() {
         const data = await response.json();
         
         if (data.success) {
-            showToast('success', data.message || 'Email sent successfully');
+            showToast(data.message || 'Email sent successfully', 'success');
             
             // Close modal
             const modal = bootstrap.Modal.getInstance(document.getElementById('emailModal'));
@@ -5768,11 +5792,11 @@ async function sendEmailMessage() {
             // Reload activities
             loadRecentActivity(true);
         } else {
-            showToast('error', data.message || 'Error sending email');
+            showToast(data.message || 'Error sending email', 'error');
         }
     } catch (error) {
         console.error('Error sending email:', error);
-        showToast('error', 'Error sending email: ' + error.message);
+        showToast('Error sending email: ' + error.message, 'error');
     } finally {
         // Restore button
         submitBtn.disabled = false;
@@ -5929,7 +5953,7 @@ const qrCache = {
 function generateQRCode(orderId) {
     console.log('🎯 Generating QR Code for order:', orderId);
     
-    // Just show the existing QR modal if we have QR data
+    // Check if QR data already exists
     <?php if (isset($qr_data) && $qr_data): ?>
     console.log('📱 Opening existing QR Modal...');
     const qrModal = new bootstrap.Modal(document.getElementById('qrModal'));
@@ -5938,9 +5962,67 @@ function generateQRCode(orderId) {
     return;
     <?php endif; ?>
     
-    // If no QR data available, show error message
-    showToast('warning', 'QR Code not available - Lima Links API not configured');
-    console.log('⚠️ No QR data available for order:', orderId);
+    // Generate new QR code via API
+    console.log('🔄 Calling API to generate QR code...');
+    
+    Swal.fire({
+        title: 'Generating QR Code...',
+        text: 'Creating short URL and QR code',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+    
+    fetch(`${window.baseUrl}/sales_orders/generateQRCode/${orderId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        Swal.close();
+        
+        if (data.success) {
+            console.log('✅ QR Code generated successfully:', data.data);
+            
+            Swal.fire({
+                title: 'QR Code Generated!',
+                text: 'Your QR code has been created successfully.',
+                icon: 'success',
+                confirmButtonText: 'View QR Code'
+            }).then(() => {
+                // Reload page to show new QR code
+                window.location.reload();
+            });
+            
+            showToast('success', 'QR Code generated successfully!');
+        } else {
+            console.error('❌ QR Code generation failed:', data.message);
+            Swal.fire({
+                title: 'Generation Failed',
+                text: data.message || 'Failed to generate QR code',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    })
+    .catch(error => {
+        Swal.close();
+        console.error('Error generating QR code:', error);
+        
+        Swal.fire({
+            title: 'Error',
+            text: 'An error occurred while generating the QR code',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+    });
 }
 
 // Display QR Code in modal (DISABLED - using simplified modal)
@@ -6190,7 +6272,7 @@ function copyShortUrl() {
     // Use modern clipboard API if available
     if (navigator.clipboard && window.isSecureContext) {
         navigator.clipboard.writeText(shortUrl).then(() => {
-            showToast('success', '<?= lang('App.url_copied') ?>');
+            showToast('<?= lang('App.url_copied') ?>', 'success');
         }).catch(err => {
             console.error('❌ Clipboard API failed:', err);
             fallbackCopyUrl(shortUrl);
@@ -6199,7 +6281,7 @@ function copyShortUrl() {
         fallbackCopyUrl(shortUrl);
     }
     <?php else: ?>
-    showToast('error', '<?= lang('App.no_url_to_copy') ?>');
+    showToast('<?= lang('App.no_url_to_copy') ?>', 'error');
     <?php endif; ?>
 }
 
@@ -6214,10 +6296,10 @@ function fallbackCopyUrl(url) {
     
     try {
         document.execCommand('copy');
-        showToast('success', '<?= lang('App.url_copied') ?>');
+        showToast('<?= lang('App.url_copied') ?>', 'success');
     } catch (err) {
         console.error('❌ Copy failed:', err);
-        showToast('error', '<?= lang('App.copy_failed') ?>');
+        showToast('<?= lang('App.copy_failed') ?>', 'error');
     } finally {
         document.body.removeChild(textarea);
     }
@@ -6246,13 +6328,13 @@ function downloadQR() {
     link.click();
     document.body.removeChild(link);
     
-    showToast('success', 'QR Code downloaded!');
+    showToast('QR Code downloaded!', 'success');
 }
 
 // Share QR Code
 function shareQR() {
     if (!currentQRData) {
-        showToast('error', 'No QR code to share');
+        showToast('No QR code to share', 'error');
         return;
     }
     
@@ -6268,7 +6350,7 @@ function shareQR() {
         navigator.share(shareData)
             .then(() => {
                 console.log('✅ QR shared successfully');
-                showToast('success', 'QR Code shared!');
+                showToast('QR Code shared!', 'success');
             })
             .catch((error) => {
                 console.error('❌ Share failed:', error);
@@ -6293,10 +6375,10 @@ function fallbackShare() {
     
     try {
         document.execCommand('copy');
-        showToast('success', 'Share link copied to clipboard!');
+        showToast('Share link copied to clipboard!', 'success');
     } catch (err) {
         console.error('❌ Fallback share failed:', err);
-        showToast('error', 'Unable to share');
+        showToast('Unable to share', 'error');
     } finally {
         document.body.removeChild(textarea);
     }
@@ -6305,12 +6387,12 @@ function fallbackShare() {
 // Open QR link in new tab
 function openQRInNewTab() {
     if (!currentQRData || !currentQRData.short_url) {
-        showToast('error', 'No QR link available');
+        showToast('No QR link available', 'error');
         return;
     }
     
     window.open(currentQRData.short_url, '_blank');
-    showToast('info', 'QR link opened in new tab');
+    showToast('QR link opened in new tab', 'info');
 }
 
 // Add QR button to SMS and Email messages
@@ -6332,6 +6414,51 @@ function addQRToEmail() {
 }
 
 // ========================================
+// QR Code fallback handler
+function handleQRError(img, shortUrl) {
+    console.log('🔄 QR Image failed to load, trying alternative service...');
+    
+    // Try different QR code services as fallback
+    const alternatives = [
+        `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(shortUrl)}`,
+        `https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=${encodeURIComponent(shortUrl)}`,
+        `https://qr-code-styling.com/api/qr-code/png?data=${encodeURIComponent(shortUrl)}&size=300`
+    ];
+    
+    let attemptCount = 0;
+    
+    function tryNext() {
+        if (attemptCount < alternatives.length) {
+            const newSrc = alternatives[attemptCount];
+            console.log(`🔄 Trying QR service ${attemptCount + 1}: ${newSrc}`);
+            
+            img.onerror = function() {
+                attemptCount++;
+                setTimeout(tryNext, 1000); // Wait 1 second before next attempt
+            };
+            
+            img.onload = function() {
+                console.log('✅ QR Code loaded successfully with alternative service');
+                img.style.display = 'block';
+                if (img.nextElementSibling) {
+                    img.nextElementSibling.style.display = 'none';
+                }
+            };
+            
+            img.src = newSrc;
+        } else {
+            console.log('❌ All QR services failed');
+            img.style.display = 'none';
+            if (img.nextElementSibling) {
+                img.nextElementSibling.style.display = 'flex';
+                img.nextElementSibling.querySelector('small:last-child').textContent = 'All services failed';
+            }
+        }
+    }
+    
+    tryNext();
+}
+
 // END QR CODE FUNCTIONS
 // ========================================
 
@@ -6357,9 +6484,9 @@ function downloadAutoQR() {
     link.click();
     document.body.removeChild(link);
     
-    showToast('success', 'QR Code downloaded!');
+    showToast('QR Code downloaded!', 'success');
     <?php else: ?>
-    showToast('error', 'No QR code available to download');
+    showToast('No QR code available to download', 'error');
     <?php endif; ?>
 }
 
@@ -6380,7 +6507,7 @@ function shareAutoQR() {
         navigator.share(shareData)
             .then(() => {
                 console.log('✅ Auto QR shared successfully');
-                showToast('success', 'QR Code shared!');
+                showToast('QR Code shared!', 'success');
             })
             .catch((error) => {
                 console.error('❌ Share failed:', error);
@@ -6390,7 +6517,7 @@ function shareAutoQR() {
         fallbackShareAutoQR();
     }
     <?php else: ?>
-    showToast('error', 'No QR code available to share');
+    showToast('No QR code available to share', 'error');
     <?php endif; ?>
 }
 
@@ -6410,10 +6537,10 @@ function fallbackShareAutoQR() {
     
     try {
         document.execCommand('copy');
-        showToast('success', 'Share link copied to clipboard!');
+        showToast('Share link copied to clipboard!', 'success');
     } catch (err) {
         console.error('❌ Fallback share failed:', err);
-        showToast('error', 'Unable to share');
+        showToast('Unable to share', 'error');
     } finally {
         document.body.removeChild(textarea);
     }
@@ -6489,7 +6616,7 @@ function showQRModal() {
     const qrModal = new bootstrap.Modal(document.getElementById('qrModal'));
     qrModal.show();
     <?php else: ?>
-    showToast('warning', 'QR Code not available');
+    showToast('QR Code not available', 'warning');
     <?php endif; ?>
 }
 
@@ -6511,9 +6638,9 @@ function downloadQRSimple() {
     link.click();
     document.body.removeChild(link);
     
-    showToast('success', 'QR Code downloaded!');
+    showToast('QR Code downloaded!', 'success');
     <?php else: ?>
-    showToast('error', 'No QR code available to download');
+    showToast('No QR code available to download', 'error');
     <?php endif; ?>
 }
 
@@ -6534,7 +6661,7 @@ function shareQRSimple() {
         navigator.share(shareData)
             .then(() => {
                 console.log('✅ QR shared successfully');
-                showToast('success', 'QR Code shared!');
+                showToast('QR Code shared!', 'success');
             })
             .catch((error) => {
                 console.error('❌ Share failed:', error);
@@ -6544,7 +6671,7 @@ function shareQRSimple() {
         fallbackShareQR();
     }
     <?php else: ?>
-    showToast('error', 'No QR code available to share');
+    showToast('No QR code available to share', 'error');
     <?php endif; ?>
 }
 
@@ -6564,10 +6691,10 @@ function fallbackShareQR() {
     
     try {
         document.execCommand('copy');
-        showToast('success', 'Share link copied to clipboard!');
+        showToast('Share link copied to clipboard!', 'success');
     } catch (err) {
         console.error('❌ Fallback share failed:', err);
-        showToast('error', 'Unable to share');
+        showToast('Unable to share', 'error');
     } finally {
         document.body.removeChild(textarea);
     }
@@ -6707,12 +6834,12 @@ function updateStatusFromModal() {
     console.log('🔄 Updating status:', { orderId, newStatus, currentStatus: orderData.status });
 
     if (!newStatus) {
-        showToast('error', 'Please select a status');
+        showToast('Please select a status', 'error');
         return;
     }
 
     if (newStatus === orderData.status) {
-        showToast('info', 'Status is already set to ' + newStatus);
+        showToast('Status is already set to ' + newStatus, 'info');
         return;
     }
 
@@ -6750,7 +6877,7 @@ function updateStatusFromModal() {
         console.log('✅ Status update response:', data);
         
         if (data.success) {
-            showToast('success', data.message || `Status updated to ${newStatus}`);
+            showToast(data.message || `Status updated to ${newStatus}`, 'success');
             
             // Update global order data
             orderData.status = newStatus;
@@ -6771,7 +6898,7 @@ function updateStatusFromModal() {
             console.log('✅ Status update completed successfully');
         } else {
             console.error('❌ Status update failed:', data);
-            showToast('error', data.message || 'Error updating status');
+            showToast(data.message || 'Error updating status', 'error');
             
             // Reset select to previous value
             statusSelect.value = orderData.status;
@@ -6779,7 +6906,7 @@ function updateStatusFromModal() {
     })
     .catch(error => {
         console.error('❌ Status update error:', error);
-        showToast('error', 'Error updating status: ' + error.message);
+        showToast('Error updating status: ' + error.message, 'error');
         
         // Reset select to previous value
         statusSelect.value = orderData.status;
@@ -6894,18 +7021,8 @@ function sendNotificationFromModal(orderId) {
 function generateQRCodeFromModal(orderId) {
     console.log('🎯 Generating QR Code for order:', orderId);
     
-    // Just show the existing QR modal if we have QR data
-    <?php if (isset($qr_data) && $qr_data): ?>
-    console.log('📱 Opening existing QR Modal...');
-    const qrModal = new bootstrap.Modal(document.getElementById('qrModal'));
-    qrModal.show();
-    showToast('success', 'QR Code ready!');
-    return;
-    <?php endif; ?>
-    
-    // If no QR data available, show error message
-    showToast('warning', 'QR Code not available - Lima Links API not configured');
-    console.log('⚠️ No QR data available for order:', orderId);
+    // Use the same function as the sidebar button
+    generateQRCode(orderId);
 }
 
 // Internal Notes System
@@ -8164,18 +8281,18 @@ class InternalNotesSystem {
         // Use the system's toast notification system
         switch (type) {
             case 'success':
-                window.showSuccessToast ? window.showSuccessToast(message) : showToast('success', message);
+                window.showSuccessToast ? window.showSuccessToast(message) : showToast(message, 'success');
                 break;
             case 'danger':
             case 'error':
-                window.showErrorToast ? window.showErrorToast(message) : showToast('error', message);
+                window.showErrorToast ? window.showErrorToast(message) : showToast(message, 'error');
                 break;
             case 'warning':
-                window.showWarningToast ? window.showWarningToast(message) : showToast('warning', message);
+                window.showWarningToast ? window.showWarningToast(message) : showToast(message, 'warning');
                 break;
             case 'info':
             default:
-                window.showInfoToast ? window.showInfoToast(message) : showToast('info', message);
+                window.showInfoToast ? window.showInfoToast(message) : showToast(message, 'info');
                 break;
         }
     }
@@ -9164,7 +9281,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('🔧 Initializing Internal Notes System for order:', <?= $order['id'] ?>);
         try {
         window.internalNotes = new InternalNotesSystem(<?= $order['id'] ?>);
-        internalNotes = window.internalNotes; // For backward compatibility
+        var internalNotes = window.internalNotes; // For backward compatibility
             console.log('✅ Internal Notes System initialized successfully');
         } catch (error) {
             console.error('❌ Failed to initialize Internal Notes System:', error);
@@ -9293,7 +9410,16 @@ echo view('sms/enhanced_modal');
                     <img src="<?= $qr_data['qr_url'] ?>" 
                          alt="QR Code for Order SAL-<?= str_pad($order['id'], 5, '0', STR_PAD_LEFT) ?>" 
                          class="img-fluid" 
-                         style="max-width: 300px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
+                         style="max-width: 300px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);"
+                         onerror="handleQRError(this, '<?= $qr_data['short_url'] ?>');">
+                    
+                    <!-- Modal Error fallback -->
+                    <div class="qr-modal-error-placeholder" style="max-width: 300px; height: 300px; border-radius: 12px; border: 2px dashed #ccc; display: none; flex-direction: column; align-items: center; justify-content: center; color: #666; background-color: #f8f9fa; margin: 0 auto;">
+                        <i data-feather="image" style="width: 60px; height: 60px; margin-bottom: 15px;"></i>
+                        <h6>QR Code</h6>
+                        <small>Image could not load</small>
+                        <small class="text-muted mt-2">URL: <?= $qr_data['short_url'] ?></small>
+                    </div>
                 </div>
                 
                 <!-- Short URL Display -->
@@ -9950,13 +10076,13 @@ function loadAvailableUsers() {
         } else {
             console.error('Failed to load available users:', data.message);
             userSelect.innerHTML = '<option value="">Error loading users</option>';
-            showToast('error', data.message || 'Failed to load available users');
+            showToast(data.message || 'Failed to load available users', 'error');
         }
     })
     .catch(error => {
         console.error('Error loading available users:', error);
         userSelect.innerHTML = '<option value="">Error loading users</option>';
-        showToast('error', 'Error loading available users: ' + error.message);
+        showToast('Error loading available users: ' + error.message, 'error');
     });
 }
 
@@ -10009,7 +10135,7 @@ function addFollower() {
     const followerType = document.getElementById('followerType').value;
     
     if (!userId) {
-        showToast('warning', 'Please select a user');
+        showToast('Please select a user', 'warning');
         return;
     }
     
@@ -10040,7 +10166,7 @@ function addFollower() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            showToast('success', data.message || 'Follower added successfully');
+            showToast(data.message || 'Follower added successfully', 'success');
             
             // Close modal
             const modal = bootstrap.Modal.getInstance(document.getElementById('addFollowerModal'));
@@ -10057,12 +10183,12 @@ function addFollower() {
             // Reload followers
             loadFollowers();
         } else {
-            showToast('error', data.message || 'Failed to add follower');
+            showToast(data.message || 'Failed to add follower', 'error');
         }
     })
     .catch(error => {
         console.error('Error adding follower:', error);
-        showToast('error', 'Error adding follower');
+        showToast('Error adding follower', 'error');
     });
 }
 
@@ -10096,15 +10222,15 @@ function removeFollower(userId, userName) {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    showToast('success', data.message || 'Follower removed successfully');
+                    showToast(data.message || 'Follower removed successfully', 'success');
                     loadFollowers();
                 } else {
-                    showToast('error', data.message || 'Failed to remove follower');
+                    showToast(data.message || 'Failed to remove follower', 'error');
                 }
             })
             .catch(error => {
                 console.error('Error removing follower:', error);
-                showToast('error', 'Error removing follower');
+                showToast('Error removing follower', 'error');
             });
         }
     });
@@ -10169,7 +10295,7 @@ function updateFollowerPreferences() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            showToast('success', data.message || 'Preferences updated successfully');
+            showToast(data.message || 'Preferences updated successfully', 'success');
             
             // Close modal
             const modal = bootstrap.Modal.getInstance(document.getElementById('followerPreferencesModal'));
@@ -10178,12 +10304,12 @@ function updateFollowerPreferences() {
             // Reload followers
             loadFollowers();
         } else {
-            showToast('error', data.message || 'Failed to update preferences');
+            showToast(data.message || 'Failed to update preferences', 'error');
         }
     })
     .catch(error => {
         console.error('Error updating preferences:', error);
-        showToast('error', 'Error updating preferences');
+        showToast('Error updating preferences', 'error');
     });
 }
 

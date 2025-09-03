@@ -204,7 +204,7 @@
 
 /* Chart Headers */
 #salesAnalyticsCharts .card-header {
-    background: linear-gradient(135deg, #f8f9fa, #ffffff);
+    background: #f8f9fa;
     border-bottom: 1px solid #e9ecef;
     padding: 1.25rem;
 }

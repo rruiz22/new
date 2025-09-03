@@ -118,6 +118,47 @@
                     </a>
                 </li>
 
+                <!-- Get Ready -->
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="#sidebarGetReady" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarGetReady">
+                        <i data-feather="zap" class="icon-dual"></i> <span><?= lang('GetReady.module_title') ?></span>
+                    </a>
+                    <div class="collapse menu-dropdown" id="sidebarGetReady">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a href="<?= base_url('get-ready') ?>" class="nav-link">
+                                    <i data-feather="activity" class="icon-dual-sm"></i> <?= lang('GetReady.dashboard') ?>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= base_url('get-ready/service-manager') ?>" class="nav-link">
+                                    <i data-feather="users" class="icon-dual-sm"></i> <?= lang('GetReady.service_manager') ?>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= base_url('get-ready/in-transit') ?>" class="nav-link">
+                                    <i data-feather="truck" class="icon-dual-sm"></i> <?= lang('GetReady.in_transit') ?>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= base_url('get-ready/in-detail') ?>" class="nav-link">
+                                    <i data-feather="droplet" class="icon-dual-sm"></i> <?= lang('GetReady.in_detail') ?>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= base_url('get-ready/in-service') ?>" class="nav-link">
+                                    <i data-feather="tool" class="icon-dual-sm"></i> <?= lang('GetReady.in_service') ?>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= base_url('get-ready/in-bodyshop') ?>" class="nav-link">
+                                    <i data-feather="settings" class="icon-dual-sm"></i> <?= lang('GetReady.in_bodyshop') ?>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
                 <!-- Recon Orders -->
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarReconOrders" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarReconOrders">

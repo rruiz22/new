@@ -3191,7 +3191,7 @@ class ReconOrdersController extends BaseController
     {
         // Try to use Lima Links QR endpoint if we have link ID
         if ($linkId) {
-            $qrUrl = \App\Helpers\LimaLinksHelper::buildQrUrl($linkId, $size, $format);
+            $qrUrl = \App\Helpers\MDALinksHelper::buildQrUrl($linkId, $size, $format);
             
             // Verify QR endpoint is accessible
             $ch = curl_init();
@@ -3217,11 +3217,11 @@ class ReconOrdersController extends BaseController
         }
         
         // Fallback: try to extract ID from shorturl if possible
-        $defaultDomain = \App\Helpers\LimaLinksHelper::getDefaultDomain();
+        $defaultDomain = \App\Helpers\MDALinksHelper::getDefaultDomain();
         $escapedDomain = preg_quote($defaultDomain, '/');
         if (preg_match('/' . $escapedDomain . '\/([^\/\?]+)/', $shortUrl, $matches)) {
             $extractedId = $matches[1];
-            $fallbackQrUrl = \App\Helpers\LimaLinksHelper::buildQrUrl($extractedId, $size, $format);
+            $fallbackQrUrl = \App\Helpers\MDALinksHelper::buildQrUrl($extractedId, $size, $format);
             log_message('info', "Generated fallback QR URL from extracted ID: {$fallbackQrUrl}");
             return $fallbackQrUrl;
         }

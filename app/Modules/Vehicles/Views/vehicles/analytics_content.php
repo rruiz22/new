@@ -34,7 +34,7 @@
 
 <div class="row">
     <div class="col-xl-6">
-        <div class="card">
+        <div class="card border-0 shadow-none">
             <div class="card-header d-flex align-items-center">
                 <h4 class="card-title mb-0 flex-grow-1 vehicles-dashboard-card-title">
                     <i data-feather="pie-chart" class="icon-sm me-1"></i>
@@ -48,7 +48,7 @@
     </div>
 
     <div class="col-xl-6">
-        <div class="card">
+        <div class="card border-0 shadow-none">
             <div class="card-header d-flex align-items-center">
                 <h4 class="card-title mb-0 flex-grow-1 vehicles-dashboard-card-title">
                     <i data-feather="bar-chart" class="icon-sm me-1"></i>
@@ -64,7 +64,7 @@
 
 <div class="row">
     <div class="col-xl-8">
-        <div class="card">
+        <div class="card border-0 shadow-none">
             <div class="card-header d-flex align-items-center">
                 <h4 class="card-title mb-0 flex-grow-1 vehicles-dashboard-card-title">
                     <i data-feather="trending-up" class="icon-sm me-1"></i>
@@ -78,7 +78,7 @@
     </div>
 
     <div class="col-xl-4">
-        <div class="card">
+        <div class="card border-0 shadow-none">
             <div class="card-header d-flex align-items-center">
                 <h4 class="card-title mb-0 flex-grow-1 vehicles-dashboard-card-title">
                     <i data-feather="award" class="icon-sm me-1"></i>
@@ -99,7 +99,7 @@
 
 <div class="row">
     <div class="col-12">
-        <div class="card">
+        <div class="card border-0 shadow-none">
             <div class="card-header d-flex align-items-center">
                 <h4 class="card-title mb-0 flex-grow-1 vehicles-dashboard-card-title">
                     <i data-feather="activity" class="icon-sm me-1"></i>

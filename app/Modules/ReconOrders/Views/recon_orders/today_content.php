@@ -234,7 +234,7 @@
 <!-- Quick Order Form -->
 <div class="row mb-4">
     <div class="col-12">
-        <div class="card">
+        <div class="card border-0 shadow-none">
             <div class="card-header">
                 <h5 class="card-title mb-0">
                     <i class="ri-add-line me-2"></i><?= lang('App.quick_order_form') ?>
@@ -326,7 +326,7 @@
 <!-- Today's Orders Content -->
 <div class="row">
     <div class="col-12">
-        <div class="card">
+        <div class="card border-0 shadow-none">
             <div class="card-header d-flex align-items-center">
                 <h4 class="card-title mb-0 flex-grow-1 text-center"><?= lang('App.today_orders') ?></h4>
                 <div class="flex-shrink-0">
@@ -390,7 +390,7 @@
                 </div>
                 <?php endif; ?>
 
-                <div class="table-responsive">
+                <div class="table-container overflow-hidden">
                     <table id="today-table" class="table table-borderless table-hover table-nowrap align-middle mb-0 w-100">
                         <thead class="table-light">
                             <tr>

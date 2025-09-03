@@ -11,8 +11,19 @@ class MDALinksHelper
      */
     public static function getApiBaseUrl()
     {
-        $model = new SettingsModel();
-        $baseUrl = $model->getSetting('lima_api_base_url');
+        // First check environment variable
+        $baseUrl = env('MDA_API_BASE_URL');
+        
+        if (!$baseUrl) {
+            // Fallback to database settings
+            $model = new SettingsModel();
+            $baseUrl = $model->getSetting('mda_api_base_url');
+            
+            // Fallback to old setting name for backward compatibility
+            if (!$baseUrl) {
+                $baseUrl = $model->getSetting('lima_api_base_url');
+            }
+        }
         
         // Default to mda.to if not configured
         return $baseUrl ?: 'https://mda.to';
@@ -33,7 +44,32 @@ class MDALinksHelper
     public static function buildQrUrl($linkId, $size = 300, $format = 'png')
     {
         $baseUrl = rtrim(self::getApiBaseUrl(), '/');
+        
+        // Try different QR URL formats for mda.to
+        // Format 1: /qr/{linkId}?size={size}&format={format}
+        // Format 2: /{linkId}/qr?size={size} 
+        // Format 3: /api/qr/{linkId}?size={size}
+        
+        // First try the standard format
         return "{$baseUrl}/qr/{$linkId}?size={$size}&format={$format}";
+    }
+
+    /**
+     * Build alternative QR URL formats for testing
+     */
+    public static function buildAlternativeQrUrl($linkId, $size = 300, $format = 'png')
+    {
+        $baseUrl = rtrim(self::getApiBaseUrl(), '/');
+        
+        // Alternative formats to try
+        $formats = [
+            "{$baseUrl}/{$linkId}/qr?size={$size}",
+            "{$baseUrl}/api/qr/{$linkId}?size={$size}",
+            "{$baseUrl}/qr?url={$baseUrl}/{$linkId}&size={$size}",
+            "https://api.qrserver.com/v1/create-qr-code/?size={$size}x{$size}&data=" . urlencode("{$baseUrl}/{$linkId}")
+        ];
+        
+        return $formats;
     }
 
     /**
@@ -42,7 +78,12 @@ class MDALinksHelper
     public static function getDefaultDomain()
     {
         $model = new SettingsModel();
-        $brandedDomain = $model->getSetting('lima_branded_domain');
+        $brandedDomain = $model->getSetting('mda_branded_domain');
+        
+        // Fallback to old setting name for backward compatibility
+        if (!$brandedDomain) {
+            $brandedDomain = $model->getSetting('lima_branded_domain');
+        }
         
         if ($brandedDomain) {
             return $brandedDomain;
@@ -59,8 +100,21 @@ class MDALinksHelper
      */
     public static function getApiKey()
     {
-        $model = new SettingsModel();
-        return $model->getSetting('lima_api_key');
+        // First check environment variable
+        $apiKey = env('MDA_API_KEY');
+        
+        if (!$apiKey) {
+            // Fallback to database settings
+            $model = new SettingsModel();
+            $apiKey = $model->getSetting('mda_api_key');
+            
+            // Fallback to old setting name for backward compatibility
+            if (!$apiKey) {
+                $apiKey = $model->getSetting('lima_api_key');
+            }
+        }
+        
+        return $apiKey;
     }
 
     /**
@@ -68,8 +122,21 @@ class MDALinksHelper
      */
     public static function getBrandedDomain()
     {
-        $model = new SettingsModel();
-        return $model->getSetting('lima_branded_domain');
+        // First check environment variable
+        $brandedDomain = env('MDA_BRANDED_DOMAIN');
+        
+        if (!$brandedDomain) {
+            // Fallback to database settings
+            $model = new SettingsModel();
+            $brandedDomain = $model->getSetting('mda_branded_domain');
+            
+            // Fallback to old setting name for backward compatibility
+            if (!$brandedDomain) {
+                $brandedDomain = $model->getSetting('lima_branded_domain');
+            }
+        }
+        
+        return $brandedDomain;
     }
 
     /**
@@ -78,7 +145,7 @@ class MDALinksHelper
     public static function isConfigured()
     {
         $apiKey = self::getApiKey();
-        return !empty($apiKey) && $apiKey !== 'your_lima_links_api_key_here';
+        return !empty($apiKey) && !in_array($apiKey, ['your_lima_links_api_key_here', 'your_mda_api_key_here']);
     }
 
     /**

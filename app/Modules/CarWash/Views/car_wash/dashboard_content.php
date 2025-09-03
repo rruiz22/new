@@ -1,7 +1,7 @@
 <!-- Dashboard Filters -->
 <div class="row mb-4">
     <div class="col-12">
-        <div class="card" style="border-radius: 12px; border: 1px solid #e3e6f0;">
+        <div class="card border-0 shadow-none" style="border-radius: 12px;">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h6 class="mb-0 fw-bold text-primary">
                     <i class="fas fa-filter me-2"></i><?= lang('App.filters') ?>
@@ -89,7 +89,7 @@
 <div class="row mb-4">
     <!-- Today's Orders -->
     <div class="col-xl-2 col-md-4 col-sm-6 mb-3">
-        <div class="card h-100" style="border-radius: 12px; border-left: 4px solid #0066cc;">
+        <div class="card h-100 border-0 shadow-none" style="border-radius: 12px; border-left: 4px solid #0066cc;">
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-grow-1">
@@ -112,7 +112,7 @@
 
     <!-- Tomorrow's Orders -->
     <div class="col-xl-2 col-md-4 col-sm-6 mb-3">
-        <div class="card h-100" style="border-radius: 12px; border-left: 4px solid #17a2b8;">
+        <div class="card h-100 border-0 shadow-none" style="border-radius: 12px; border-left: 4px solid #17a2b8;">
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-grow-1">
@@ -135,7 +135,7 @@
 
     <!-- Pending Orders -->
     <div class="col-xl-2 col-md-4 col-sm-6 mb-3">
-        <div class="card h-100" style="border-radius: 12px; border-left: 4px solid #ffc107;">
+        <div class="card h-100 border-0 shadow-none" style="border-radius: 12px; border-left: 4px solid #ffc107;">
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-grow-1">
@@ -158,7 +158,7 @@
 
     <!-- Completed Orders -->
     <div class="col-xl-2 col-md-4 col-sm-6 mb-3">
-        <div class="card h-100" style="border-radius: 12px; border-left: 4px solid #28a745;">
+        <div class="card h-100 border-0 shadow-none" style="border-radius: 12px; border-left: 4px solid #28a745;">
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-grow-1">
@@ -181,7 +181,7 @@
 
     <!-- In Progress Orders -->
     <div class="col-xl-2 col-md-4 col-sm-6 mb-3">
-        <div class="card h-100" style="border-radius: 12px; border-left: 4px solid #6f42c1;">
+        <div class="card h-100 border-0 shadow-none" style="border-radius: 12px; border-left: 4px solid #6f42c1;">
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-grow-1">
@@ -204,7 +204,7 @@
 
     <!-- Total Orders -->
     <div class="col-xl-2 col-md-4 col-sm-6 mb-3">
-        <div class="card h-100" style="border-radius: 12px; border-left: 4px solid #6c757d;">
+        <div class="card h-100 border-0 shadow-none" style="border-radius: 12px; border-left: 4px solid #6c757d;">
             <div class="card-body">
                 <div class="d-flex align-items-center">
                     <div class="flex-grow-1">
@@ -229,7 +229,7 @@
 <!-- Revenue Cards -->
 <div class="row mb-4">
     <div class="col-xl-4 col-md-6 mb-3">
-        <div class="card h-100" style="border-radius: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <div class="card h-100 border-0 shadow-none" style="border-radius: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
             <div class="card-body text-white">
                 <div class="d-flex align-items-center">
                     <div class="flex-grow-1">
@@ -251,7 +251,7 @@
     </div>
 
     <div class="col-xl-4 col-md-6 mb-3">
-        <div class="card h-100" style="border-radius: 12px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+        <div class="card h-100 border-0 shadow-none" style="border-radius: 12px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
             <div class="card-body text-white">
                 <div class="d-flex align-items-center">
                     <div class="flex-grow-1">
@@ -273,7 +273,7 @@
     </div>
 
     <div class="col-xl-4 col-md-6 mb-3">
-        <div class="card h-100" style="border-radius: 12px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+        <div class="card h-100 border-0 shadow-none" style="border-radius: 12px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
             <div class="card-body text-white">
                 <div class="d-flex align-items-center">
                     <div class="flex-grow-1">
@@ -299,7 +299,7 @@
 <div class="row mb-4">
     <!-- Daily Orders Chart -->
     <div class="col-xl-6 mb-4">
-        <div class="card h-100" style="border-radius: 12px;">
+        <div class="card h-100 border-0 shadow-none" style="border-radius: 12px;">
             <div class="card-header bg-light border-bottom">
                 <h5 class="card-title mb-0 fw-bold text-dark">
                     <i class="fas fa-chart-line me-2 text-primary"></i><?= lang('App.daily_orders_last_7_days') ?>
@@ -313,7 +313,7 @@
 
     <!-- Orders by Status Chart -->
     <div class="col-xl-6 mb-4">
-        <div class="card h-100" style="border-radius: 12px;">
+        <div class="card h-100 border-0 shadow-none" style="border-radius: 12px;">
             <div class="card-header bg-light border-bottom">
                 <h5 class="card-title mb-0 fw-bold text-dark">
                     <i class="fas fa-chart-pie me-2 text-success"></i><?= lang('App.orders_by_status') ?>
@@ -330,7 +330,7 @@
 <div class="row mb-4">
     <!-- Popular Services -->
     <div class="col-xl-6 mb-4">
-        <div class="card h-100" style="border-radius: 12px;">
+        <div class="card h-100 border-0 shadow-none" style="border-radius: 12px;">
             <div class="card-header bg-light border-bottom">
                 <h5 class="card-title mb-0 fw-bold text-dark">
                     <i class="fas fa-star me-2 text-warning"></i><?= lang('App.popular_services') ?>
@@ -368,7 +368,7 @@
 
     <!-- Top Clients -->
     <div class="col-xl-6 mb-4">
-        <div class="card h-100" style="border-radius: 12px;">
+        <div class="card h-100 border-0 shadow-none" style="border-radius: 12px;">
             <div class="card-header bg-light border-bottom">
                 <h5 class="card-title mb-0 fw-bold text-dark">
                     <i class="fas fa-users me-2 text-info"></i><?= lang('App.top_clients') ?>
@@ -408,7 +408,7 @@
 <!-- Recent Orders Table -->
 <div class="row">
     <div class="col-12">
-        <div class="card" style="border-radius: 12px;">
+        <div class="card border-0 shadow-none" style="border-radius: 12px;">
             <div class="card-header bg-light border-bottom">
                 <h5 class="card-title fw-bold mb-0 text-dark">
                     <i class="fas fa-table me-2 text-primary"></i>
@@ -546,6 +546,8 @@ function initializeDashboardTable() {
     $('#dashboardOrdersTable').DataTable({
         "processing": true,
         "serverSide": false,
+        "scrollX": false,
+        "autoWidth": false,
         "ajax": {
             "url": "<?= base_url('car_wash/getAllOrders') ?>",
             "type": "GET",

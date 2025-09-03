@@ -275,7 +275,7 @@
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<div class="card">
+<div class="card border-0 shadow-none">
     <div class="card-header d-flex align-items-center">
         <h4 class="card-title mb-0 flex-grow-1 vehicles-dashboard-card-title">
             <i data-feather="truck" class="icon-sm me-1"></i>

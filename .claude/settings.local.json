@@ -2,7 +2,27 @@
   "permissions": {
     "allow": [
       "Read(/C:\\Users\\rudyr\\.claude/**)",
-      "Read(/C:\\Users\\rudyr/**)"
+      "Read(/C:\\Users\\rudyr/**)",
+      "Bash(grep:*)",
+      "Bash(php -l:*)",
+      "Read(/C:\\Users\\rudyr\\Downloads/**)",
+      "Read(/C:\\Users\\rudyr\\Downloads/**)",
+      "Bash(find:*)",
+      "Bash(sed:*)",
+      "Bash(for:*)",
+      "Bash(do sed -i 's|<div class=\"\"table-responsive\"\">|<div class=\"\"table-container overflow-hidden\"\">|g' \"$file\")",
+      "Bash(done)",
+      "Bash(do sed -i 's|<div class=\"\"card-body\"\">|<div class=\"\"card-body p-0\"\">|g' \"$file\")",
+      "Read(/C:\\Users\\rudyr\\Pictures\\Screenshots/**)",
+      "Bash(awk:*)",
+      "Bash(composer:*)",
+      "Bash(php spark cache:clear:*)",
+      "Bash(php:*)",
+      "Read(/C:\\Users\\rudyr\\Downloads/**)",
+      "Read(/C:\\Users\\rudyr\\Downloads/**)",
+      "Read(/C:\\Users\\rudyr\\Downloads/**)",
+      "Read(/C:\\Users\\rudyr\\Downloads/**)",
+      "WebSearch"
     ],
     "deny": [],
     "ask": []

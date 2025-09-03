@@ -8,7 +8,7 @@
     <!-- Dealer Inventory Section -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card">
+            <div class="card border-0 shadow-none">
                 <div style="margin: 1rem 3rem 3rem 3rem!important;" class="card-header">
                 <div class="row align-items-center">
                 <div class="col">
@@ -53,7 +53,7 @@
     <!-- Filter Widgets Row -->
     <div  class="row mb-4">
         <div class="col-12">
-            <div class="card">
+            <div class="card border-0 shadow-none">
                 <div style="margin: 0px 10px 0px 10px!important;" class="card-header">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
@@ -144,7 +144,7 @@
     <!-- Inventory Table Row -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card">
+            <div class="card border-0 shadow-none">
                 <div class="card-header">
                     <div class="row align-items-center">
                         <div class="col">
@@ -170,7 +170,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive">
+                    <div class="table-container overflow-hidden">
                         <table id="inventoryTable" class="table table-hover align-middle" style="width:100%">
                             <thead class="table-light">
                                 <tr>
@@ -205,7 +205,7 @@
     <!-- Staff Management Container -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card">
+            <div class="card border-0 shadow-none">
                 <div class="card-header">
             <div class="row align-items-center">
                 <div class="col">
@@ -222,7 +222,7 @@
     <!-- Orders from Inventory Section -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card">
+            <div class="card border-0 shadow-none">
                 <div class="card-header">
                     <div class="row align-items-center">
                         <div class="col">
@@ -241,7 +241,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive">
+                    <div class="table-container overflow-hidden">
                         <table id="inventoryOrdersTable" class="table table-hover align-middle" style="width:100%">
                             <thead class="table-light">
                                 <tr>
@@ -1273,6 +1273,8 @@ document.addEventListener('DOMContentLoaded', function() {
         window.inventoryTable = $('#inventoryTable').DataTable({
             "scrollY":        "510px",
             "scrollCollapse": true,
+            "scrollX": false,
+            "autoWidth": false,
             processing: true,
             serverSide: false, // We'll load data from the endpoint directly
             ajax: {
@@ -1564,6 +1566,8 @@ document.addEventListener('DOMContentLoaded', function() {
         window.inventoryOrdersTable = $('#inventoryOrdersTable').DataTable({
         processing: true,
         serverSide: true,
+        scrollX: false,
+        autoWidth: false,
         ajax: {
                 url: '<?= base_url('recon_orders/inventory_orders_data') ?>',
                 type: 'POST',
@@ -1752,6 +1756,8 @@ document.addEventListener('DOMContentLoaded', function() {
         window.allOrdersTable = $('#allOrdersTable').DataTable({
             processing: true,
             serverSide: true,
+            scrollX: false,
+            autoWidth: false,
             ajax: {
                 url: '<?= base_url('recon_orders/all_orders_content') ?>',
                 type: 'POST',

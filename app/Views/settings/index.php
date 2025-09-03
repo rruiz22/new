@@ -708,7 +708,7 @@
                                         <p class="settings-section-desc">Configure professional URL shortening services for SMS and email communications</p>
                         </div>
                                     
-                                    <!-- Lima Links Configuration -->
+                                    <!-- MDA Links Configuration -->
                                     <div class="row g-4 mb-4">
                                         <div class="col-12">
                                             <div class="card border-0 bg-light">
@@ -734,7 +734,7 @@
                                                                     </button>
                                 </div>
                                                                 <div class="form-text">
-                                                                    Get your API key from <a href="<?= \App\Helpers\LimaLinksHelper::getApiBaseUrl() ?>/developers" target="_blank">MDA Links Dashboard</a>
+                                                                    Get your API key from <a href="<?= \App\Helpers\MDALinksHelper::getApiBaseUrl() ?>/developers" target="_blank">MDA Links Dashboard</a>
                             </div>
                                 </div>
                             </div>
@@ -1481,10 +1481,10 @@ function enableAutoSave() {
     });
 }
 
-// Test Lima Links connection
-function testLimaLinks() {
-    const apiKey = document.getElementById('lima_api_key').value;
-    const brandedDomain = document.getElementById('lima_branded_domain').value;
+// Test MDA Links connection
+function testMDALinks() {
+    const apiKey = document.getElementById('mda_api_key').value || document.getElementById('lima_api_key').value;
+    const brandedDomain = document.getElementById('mda_branded_domain').value || document.getElementById('lima_branded_domain').value;
     const status = document.getElementById('lima-status');
     
     if (!apiKey) {
@@ -1503,7 +1503,7 @@ function testLimaLinks() {
     formData.append('<?= csrf_token() ?>', '<?= csrf_hash() ?>');
     
     // Call backend endpoint instead of direct API call
-    fetch('<?= base_url('settings/testLimaLinks') ?>', {
+    fetch('<?= base_url('settings/testMDALinks') ?>', {
             method: 'POST',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
@@ -1603,7 +1603,7 @@ function testLimaLinks() {
         }
     })
     .catch(error => {
-        console.error('Lima Links test error:', error);
+        console.error('MDA Links test error:', error);
         status.innerHTML = '<i class="ri-close-line text-danger"></i> Connection failed';
         showToast('error', 'Connection failed: ' + error.message);
         
@@ -1616,8 +1616,8 @@ function testLimaLinks() {
     });
 }
 
-// Show Lima Links service information
-function showLimaLinksInfo() {
+// Show MDA Links service information
+function showMDALinksInfo() {
     Swal.fire({
         title: 'MDA Links Service Information',
         html: `
@@ -1640,7 +1640,7 @@ function showLimaLinksInfo() {
                 
                 <h6><i class="ri-links-line text-info"></i> Setup:</h6>
                 <ol>
-                                                            <li>Visit <a href="<?= \App\Helpers\LimaLinksHelper::getApiBaseUrl() ?>" target="_blank">MDA Links</a></li>
+                                                            <li>Visit <a href="<?= \App\Helpers\MDALinksHelper::getApiBaseUrl() ?>" target="_blank">MDA Links</a></li>
                     <li>Create account and get API key</li>
                     <li>Optional: Setup branded domain</li>
                     <li>Configure API key above and test</li>

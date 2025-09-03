@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-12">
-        <div class="card" style="border-radius: 16px;">
+        <div class="card border-0 shadow-none" style="border-radius: 16px;">
             <div class="card-header d-flex align-items-center">
                 <h4 class="card-title mb-0 flex-grow-1 text-center fw-bold"><?= lang('App.services') ?></h4>
                 <div class="flex-shrink-0">

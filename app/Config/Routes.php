@@ -551,4 +551,22 @@ if (file_exists($vehiclesRoutes)) {
     }
 }
 
+// Sales Orders module routes (load manually for now)
+$salesOrdersRoutes = APPPATH . 'Modules/SalesOrders/Config/Routes.php';
+if (file_exists($salesOrdersRoutes)) {
+    $routesLoader = include $salesOrdersRoutes;
+    if (is_callable($routesLoader)) {
+        $routesLoader($routes);
+    }
+}
+
+// Get Ready module routes (load manually for now)
+$getReadyRoutes = APPPATH . 'Modules/GetReady/Config/Routes.php';
+if (file_exists($getReadyRoutes)) {
+    $routesLoader = include $getReadyRoutes;
+    if (is_callable($routesLoader)) {
+        $routesLoader($routes);
+    }
+}
+
 // Installation completed - route removed

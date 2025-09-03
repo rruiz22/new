@@ -85,9 +85,8 @@ if (!$hasEscapeSupport) {
     </div>
 
     <!-- Services Table -->
-    <div class="notion-card-body">
-        <div class="notion-table-container">
-            <div class="table-responsive">
+    <div class="notion-card-body p-0">
+        <div class="table-container overflow-hidden">
                 <table class="notion-table" id="servicesTable">
                     <thead class="notion-table-header">
                         <tr>
@@ -175,8 +174,8 @@ if (!$hasEscapeSupport) {
                         <?php endif; ?>
                     </tbody>
                 </table>
-            </div>
         </div>
+    </div>
 
         <!-- Services Pagination -->
         <?php if (isset($services) && count($services) > 25): ?>
@@ -338,3 +337,13 @@ document.addEventListener('DOMContentLoaded', () => {
     new ServicesManager();
 });
 </script>
+
+<style>
+/* Table Container Styling */
+.table-container {
+    width: 100%;
+    max-width: 100%;
+    position: relative;
+    padding: 1rem;
+}
+</style>

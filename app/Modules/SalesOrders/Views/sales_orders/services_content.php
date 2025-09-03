@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-12">
-        <div class="card">
+        <div class="card border-0 shadow-none">
             <div class="card-header d-flex align-items-center">
                 <h4 class="card-title mb-0 flex-grow-1 text-center"><?= lang('App.services') ?></h4>
                 <div class="flex-shrink-0">
@@ -57,8 +57,9 @@
                 </div>
             </div>
 
-            <div class="card-body">
-                <table id="services-table" class="table table-borderless table-hover table-nowrap align-middle mb-0 w-100">
+            <div class="card-body p-0">
+                <div class="table-container overflow-hidden">
+                    <table id="services-table" class="table table-borderless table-hover table-nowrap align-middle mb-0">
                     <thead class="table-light">
                         <tr>
                             <th scope="col"><?= lang('App.service_name') ?></th>
@@ -74,10 +75,12 @@
                         <!-- Los datos se cargarán vía AJAX -->
                     </tbody>
                 </table>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
 
 <style>
 /* Clean Velzon card title styling */
@@ -102,32 +105,59 @@
     }
 }
 
-/* Force DataTable to use full width on initialization */
+/* Table Container Styling */
+.table-container {
+    width: 100%;
+    max-width: 100%;
+    position: relative;
+    padding: 1rem;
+}
+
+/* Force DataTable to use full width and prevent overflow */
 #services-table {
     width: 100% !important;
+    max-width: 100% !important;
+    table-layout: auto !important;
 }
 
 #services-table_wrapper {
     width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
 }
 
 #services-table thead th {
     width: auto !important;
+    max-width: none !important;
+    white-space: nowrap;
 }
 
 .dataTables_wrapper {
-    overflow: visible !important;
+    width: 100% !important;
+    max-width: 100% !important;
 }
 
-/* Fix DataTable controls hover effects */
-.dataTables_wrapper .dataTables_length select,
+/* Fix dropdown width */
+.dataTables_wrapper .dataTables_length select {
+    border: 1px solid #e3ebf0 !important;
+    border-radius: 6px !important;
+    padding: 8px 12px !important;
+    transition: all 0.15s ease-in-out !important;
+    background-color: #fff !important;
+    min-width: 80px !important;
+    width: auto !important;
+}
+
 .dataTables_wrapper .dataTables_filter input {
     border: 1px solid #e3ebf0 !important;
     border-radius: 6px !important;
     padding: 8px 12px !important;
     transition: all 0.15s ease-in-out !important;
     background-color: #fff !important;
+    min-width: 200px !important;
 }
+
+/* Fix DataTable controls hover effects */
 
 .dataTables_wrapper .dataTables_length select:hover,
 .dataTables_wrapper .dataTables_filter input:hover {
@@ -165,11 +195,43 @@
     color: #fff !important;
 }
 
+/* Remove button styling from pagination numbers */
 .dataTables_wrapper .dataTables_paginate .paginate_button.current {
-    border-color: #405189 !important;
-    background-color: #405189 !important;
-    color: #fff !important;
+    border: none !important;
+    background: none !important;
+    color: #405189 !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    cursor: default !important;
+    padding: 0.375rem 0.75rem !important;
 }
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:not(.previous):not(.next):not(.first):not(.last) {
+    border: none !important;
+    background: none !important;
+    color: #64748b !important;
+    cursor: default !important;
+    text-decoration: none !important;
+    padding: 0.375rem 0.75rem !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:not(.previous):not(.next):not(.first):not(.last):hover {
+    border: none !important;
+    background: none !important;
+    color: #405189 !important;
+    cursor: default !important;
+}
+
+/* Keep Previous/Next as buttons */
+.dataTables_wrapper .dataTables_paginate .paginate_button.previous,
+.dataTables_wrapper .dataTables_paginate .paginate_button.next,
+.dataTables_wrapper .dataTables_paginate .paginate_button.first,
+.dataTables_wrapper .dataTables_paginate .paginate_button.last {
+    border: 1px solid #e3ebf0 !important;
+    background-color: #fff !important;
+    color: #64748b !important;
+}
+
 
 /* Action Links */
 .link-primary {
@@ -218,6 +280,66 @@
 
 .flex-wrap {
     flex-wrap: wrap !important;
+}
+
+/* Elegant DataTable Loading Styling - Contained within table */
+.dataTables_processing {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 12px !important;
+    z-index: 100 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+    color: #405189 !important;
+    font-size: 1.1rem !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.5px !important;
+    animation: elegantFadeIn 0.4s ease-out !important;
+}
+
+/* Only show as flex when DataTables makes it visible */
+.dataTables_processing[style*="display: block"] {
+    display: flex !important;
+}
+
+.dataTables_processing::before {
+    content: '';
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(64, 81, 137, 0.1);
+    border-top: 3px solid #405189;
+    border-radius: 50%;
+    animation: elegantSpin 1s linear infinite;
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+@keyframes elegantFadeIn {
+    from {
+        opacity: 0;
+        backdrop-filter: blur(0px);
+        -webkit-backdrop-filter: blur(0px);
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        transform: scale(1);
+    }
+}
+
+@keyframes elegantSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 /* Center table headers */
@@ -492,7 +614,8 @@ waitForDataTables(function() {
             }
 
             // Force table width before initialization
-            $('#services-table').css('width', '100%');
+            $('#services-table').css({'width': '100%', 'max-width': '100%'});
+            $('.table-container').css({'width': '100%', 'max-width': '100%', 'overflow': 'hidden'});
 
             servicesTable = $('#services-table').DataTable({
                 processing: true,
@@ -502,13 +625,9 @@ waitForDataTables(function() {
                 scrollCollapse: false,
                 autoWidth: false,
                 columnDefs: [
-                    { width: "20%", targets: 0, className: "text-center" }, // Service Name
-                    { width: "25%", targets: 1, className: "text-left" },   // Description
-                    { width: "10%", targets: 2, className: "text-center" }, // Price
-                    { width: "15%", targets: 3, className: "text-center" }, // Client
-                    { width: "10%", targets: 4, className: "text-center" }, // Status
-                    { width: "10%", targets: 5, className: "text-center" }, // Show in Orders
-                    { width: "10%", targets: 6, orderable: false, searchable: false, className: "text-center" } // Actions
+                    { className: "text-center", targets: [0, 2, 3, 4, 5, 6] },
+                    { className: "text-left", targets: 1 },
+                    { orderable: false, searchable: false, targets: 6 }
                 ],
                 ajax: {
                     url: '<?= base_url('sales_orders_services/list_data') ?>',
@@ -522,6 +641,7 @@ waitForDataTables(function() {
                         d.<?= csrf_token() ?> = '<?= csrf_hash() ?>';
                     },
                     error: function(xhr, error, thrown) {
+                        
                         console.error('Error loading services data:', error, xhr.responseText);
                         showToast('error', '<?= lang('App.error_loading_data') ?>');
                     }
@@ -610,14 +730,7 @@ waitForDataTables(function() {
                                             
                         return langMap[currentLang] || langMap['en'];
                     }(),
-                    processing: `
-                        <div class="d-flex justify-content-center align-items-center p-4">
-                            <div class="spinner-border text-primary me-2" role="status">
-                                <span class="visually-hidden"><?= lang('App.loading') ?>...</span>
-                            </div>
-                            <span><?= lang('App.loading') ?> <?= lang('App.services') ?>...</span>
-                        </div>
-                    `,
+                    processing: "<?= lang('App.loading') ?>...",
                     lengthMenu: "<?= lang('App.show') ?> _MENU_ <?= lang('App.entries') ?>",
                     zeroRecords: `
                         <div class="text-center py-5">
@@ -644,100 +757,27 @@ waitForDataTables(function() {
                 },
                 dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rt<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
                 initComplete: function(settings, json) {
-                    // Force multiple adjustments after initialization
-                    const table = this.api();
-
+                    // Single column adjustment without redraw
                     setTimeout(() => {
-                        table.columns.adjust();
-                        $('#services-table').css('width', '100%');
-                        
-                        // Force horizontal scroll to work
-                        $('.dataTables_scrollBody').css({
-                            'overflow-x': 'auto',
-                            '-webkit-overflow-scrolling': 'touch'
-                        });
-                    }, 50);
-
-                    setTimeout(() => {
-                        table.columns.adjust().draw();
-                        $('#services-table').css('width', '100%');
-                    }, 150);
-
-                    setTimeout(() => {
-                        table.columns.adjust();
-                        $('#services-table').css('width', '100%');
-                        $('.dataTables_wrapper').css('width', '100%');
-                        
-                        // Ensure horizontal scroll is working properly
-                        $('.dataTables_scrollBody').css({
-                            'overflow-x': 'auto',
-                            '-webkit-overflow-scrolling': 'touch',
-                            'scroll-behavior': 'smooth'
-                        });
-                        
-                        // Set minimum table width based on screen size
-                        const screenWidth = $(window).width();
-                        let minWidth = '100%';
-                        if (screenWidth < 576) minWidth = '600px';
-                        else if (screenWidth < 768) minWidth = '700px';
-                        else if (screenWidth < 992) minWidth = '800px';
-                        else if (screenWidth < 1200) minWidth = '900px';
-                        
-                        $('#services-table').css('min-width', minWidth);
-                    }, 300);
-
-                    // Initialize Feather icons after each redraw
-                    if (typeof feather !== 'undefined') {
-                        setTimeout(() => {
-                            feather.replace();
-                        }, 50);
-                    }
-
-                    // Initialize tooltips on first load
-                    if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
-                        setTimeout(() => {
-                            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-                            tooltipTriggerList.map(function (tooltipTriggerEl) {
-                                return new bootstrap.Tooltip(tooltipTriggerEl, {
-                                    html: true,
-                                    trigger: 'hover focus',
-                                    delay: { show: 500, hide: 100 }
-                                });
-                            });
-                        }, 100);
-                    }
-
+                        this.api().columns.adjust();
+                    }, 100);
+                    
                     isInitializing = false;
                 },
                 drawCallback: function(settings) {
-                    // Initialize Feather icons after each redraw
-                    if (typeof feather !== 'undefined') {
-                        setTimeout(() => {
+                    // Only refresh icons and tooltips - avoid operations that trigger redraws
+                    setTimeout(() => {
+                        if (typeof feather !== 'undefined') {
                             feather.replace();
-                        }, 50);
-                    }
-
-                    // Initialize tooltips
-                    if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
-                        // Dispose of existing tooltips first
-                        const existingTooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-                        existingTooltips.forEach(element => {
-                            const tooltip = bootstrap.Tooltip.getInstance(element);
-                            if (tooltip) {
-                                tooltip.dispose();
-                            }
-                        });
+                        }
                         
-                        // Initialize new tooltips
-                        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-                        tooltipTriggerList.map(function (tooltipTriggerEl) {
-                            return new bootstrap.Tooltip(tooltipTriggerEl, {
-                                html: true,
-                                trigger: 'hover focus',
-                                delay: { show: 500, hide: 100 }
+                        if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+                            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                                return new bootstrap.Tooltip(tooltipTriggerEl);
                             });
-                        });
-                    }
+                        }
+                    }, 10);
 
                     // Ensure table uses full width on every draw and maintain horizontal scroll
                     $('#services-table').css('width', '100%');

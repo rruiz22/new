@@ -95,6 +95,7 @@ return function (RouteCollection $routes) {
         $routes->match(['GET', 'POST'], 'debug_instructions', 'SalesOrdersController::debug_instructions');
         $routes->get('debug_qr', 'SalesOrdersController::debug_qr');
         $routes->match(['GET', 'POST'], 'regenerateQR/(:num)', 'SalesOrdersController::regenerateQR/$1');
+        $routes->match(['GET', 'POST'], 'generateQRCode/(:num)', 'SalesOrdersController::generateQRCode/$1');
         // File attachments (token or session-based security)
         $routes->get('downloadAttachment/(.*)', 'SalesOrdersController::downloadAttachment/$1');
     });

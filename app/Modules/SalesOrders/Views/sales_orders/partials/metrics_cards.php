@@ -250,19 +250,19 @@
 
 /* Hover Effects for Cards */
 #salesOrdersMetrics .bg-primary:hover {
-    background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+    background: #3b82f6 !important;
 }
 
 #salesOrdersMetrics .bg-warning:hover {
-    background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+    background: #f59e0b !important;
 }
 
 #salesOrdersMetrics .bg-info:hover {
-    background: linear-gradient(135deg, #06b6d4, #0891b2) !important;
+    background: #06b6d4 !important;
 }
 
 #salesOrdersMetrics .bg-success:hover {
-    background: linear-gradient(135deg, #10b981, #059669) !important;
+    background: #10b981 !important;
 }
 </style>
 
@@ -380,9 +380,8 @@ function loadSparklines(sparklineData) {
                 width: 2
             },
             fill: {
-                type: 'gradient',
-                gradient: {
-                    shadeIntensity: 1,
+                type: 'solid',
+                    /* Solid color fill */
                     opacityFrom: 0.4,
                     opacityTo: 0.1,
                     stops: [0, 90, 100]

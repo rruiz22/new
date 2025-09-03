@@ -1,0 +1,428 @@
+/*
+ * MDA Unified Theme System
+ * Compact, clean design system for productivity applications
+ * Author: MDA System
+ * Version: 2.0
+ */
+
+/* ================================================
+   MDA THEME VARIABLES
+   ================================================ */
+
+// MDA Typography Scale (15% smaller than standard)
+$mda-font-scale-factor: 0.85;
+
+// Base font sizes (reduced by 15%)
+$mda-font-size-xs: #{0.75rem * $mda-font-scale-factor};     // ~10.2px
+$mda-font-size-sm: #{0.875rem * $mda-font-scale-factor};    // ~12.4px  
+$mda-font-size-base: #{1rem * $mda-font-scale-factor};      // ~13.6px
+$mda-font-size-lg: #{1.125rem * $mda-font-scale-factor};    // ~15.3px
+$mda-font-size-xl: #{1.25rem * $mda-font-scale-factor};     // ~17px
+$mda-font-size-2xl: #{1.5rem * $mda-font-scale-factor};     // ~20.4px
+$mda-font-size-3xl: #{1.875rem * $mda-font-scale-factor};   // ~25.5px
+$mda-font-size-4xl: #{2.25rem * $mda-font-scale-factor};    // ~30.6px
+
+// MDA Font Family Stack (modern, clean fonts)
+$mda-font-family-primary: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+$mda-font-family-mono: ui-monospace, "SF Mono", "Consolas", "Liberation Mono", "Menlo", monospace;
+
+// MDA Color Palette (Light, neutral tones - NO gradients)
+$mda-white: #ffffff;
+$mda-gray-50: #fafafa;
+$mda-gray-100: #f5f5f5;
+$mda-gray-150: #f0f0f0;
+$mda-gray-200: #eeeeee;
+$mda-gray-300: #e0e0e0;
+$mda-gray-400: #bdbdbd;
+$mda-gray-500: #9e9e9e;
+$mda-gray-600: #757575;
+$mda-gray-700: #616161;
+$mda-gray-800: #424242;
+$mda-gray-900: #212121;
+
+// MDA Text Colors
+$mda-text-primary: $mda-gray-900;
+$mda-text-secondary: $mda-gray-600;
+$mda-text-muted: $mda-gray-500;
+$mda-text-light: $mda-gray-400;
+
+// MDA Background Colors (very light, no dark themes)
+$mda-bg-primary: $mda-white;
+$mda-bg-secondary: $mda-gray-50;
+$mda-bg-tertiary: $mda-gray-100;
+$mda-bg-hover: $mda-gray-150;
+
+// MDA Border Colors
+$mda-border-light: $mda-gray-200;
+$mda-border-medium: $mda-gray-300;
+$mda-border-strong: $mda-gray-400;
+
+// MDA Shadows (Soft and subtle - no harsh shadows)
+$mda-shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+$mda-shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px 0 rgba(0, 0, 0, 0.02);
+$mda-shadow-base: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+$mda-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.06), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+$mda-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.06), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+
+// MDA Spacing Scale (Compact for better space usage)
+$mda-space-0: 0;
+$mda-space-1: 0.25rem;   // 4px
+$mda-space-2: 0.5rem;    // 8px
+$mda-space-3: 0.75rem;   // 12px
+$mda-space-4: 1rem;      // 16px
+$mda-space-5: 1.25rem;   // 20px
+$mda-space-6: 1.5rem;    // 24px
+$mda-space-8: 2rem;      // 32px
+$mda-space-10: 2.5rem;   // 40px
+$mda-space-12: 3rem;     // 48px
+$mda-space-16: 4rem;     // 64px
+
+// MDA Border Radius (Soft, consistent)
+$mda-radius-sm: 0.25rem;   // 4px
+$mda-radius-base: 0.375rem; // 6px
+$mda-radius-md: 0.5rem;    // 8px
+$mda-radius-lg: 0.75rem;   // 12px
+$mda-radius-xl: 1rem;      // 16px
+
+// MDA Transitions (Smooth and refined)
+$mda-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+$mda-transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+$mda-transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+
+// MDA Line Heights (Compact for better space usage)
+$mda-leading-none: 1;
+$mda-leading-tight: 1.25;
+$mda-leading-snug: 1.375;
+$mda-leading-normal: 1.4;
+$mda-leading-relaxed: 1.5;
+
+/* ================================================
+   MDA CSS CUSTOM PROPERTIES (CSS Variables)
+   ================================================ */
+
+:root {
+  // Font Scale Variables
+  --mda-font-size-xs: #{$mda-font-size-xs};
+  --mda-font-size-sm: #{$mda-font-size-sm};
+  --mda-font-size-base: #{$mda-font-size-base};
+  --mda-font-size-lg: #{$mda-font-size-lg};
+  --mda-font-size-xl: #{$mda-font-size-xl};
+  --mda-font-size-2xl: #{$mda-font-size-2xl};
+  --mda-font-size-3xl: #{$mda-font-size-3xl};
+  --mda-font-size-4xl: #{$mda-font-size-4xl};
+
+  // Font Families
+  --mda-font-family-primary: #{$mda-font-family-primary};
+  --mda-font-family-mono: #{$mda-font-family-mono};
+
+  // Color Variables
+  --mda-text-primary: #{$mda-text-primary};
+  --mda-text-secondary: #{$mda-text-secondary};
+  --mda-text-muted: #{$mda-text-muted};
+  --mda-text-light: #{$mda-text-light};
+  
+  --mda-bg-primary: #{$mda-bg-primary};
+  --mda-bg-secondary: #{$mda-bg-secondary};
+  --mda-bg-tertiary: #{$mda-bg-tertiary};
+  --mda-bg-hover: #{$mda-bg-hover};
+  
+  --mda-border-light: #{$mda-border-light};
+  --mda-border-medium: #{$mda-border-medium};
+  --mda-border-strong: #{$mda-border-strong};
+
+  // Shadow Variables
+  --mda-shadow-xs: #{$mda-shadow-xs};
+  --mda-shadow-sm: #{$mda-shadow-sm};
+  --mda-shadow-base: #{$mda-shadow-base};
+  --mda-shadow-lg: #{$mda-shadow-lg};
+  --mda-shadow-xl: #{$mda-shadow-xl};
+
+  // Spacing Variables
+  --mda-space-1: #{$mda-space-1};
+  --mda-space-2: #{$mda-space-2};
+  --mda-space-3: #{$mda-space-3};
+  --mda-space-4: #{$mda-space-4};
+  --mda-space-5: #{$mda-space-5};
+  --mda-space-6: #{$mda-space-6};
+  --mda-space-8: #{$mda-space-8};
+  --mda-space-10: #{$mda-space-10};
+  --mda-space-12: #{$mda-space-12};
+  --mda-space-16: #{$mda-space-16};
+
+  // Border Radius Variables
+  --mda-radius-sm: #{$mda-radius-sm};
+  --mda-radius-base: #{$mda-radius-base};
+  --mda-radius-md: #{$mda-radius-md};
+  --mda-radius-lg: #{$mda-radius-lg};
+  --mda-radius-xl: #{$mda-radius-xl};
+
+  // Transition Variables
+  --mda-transition-fast: #{$mda-transition-fast};
+  --mda-transition-base: #{$mda-transition-base};
+  --mda-transition-slow: #{$mda-transition-slow};
+
+  // Line Height Variables
+  --mda-leading-tight: #{$mda-leading-tight};
+  --mda-leading-normal: #{$mda-leading-normal};
+  --mda-leading-relaxed: #{$mda-leading-relaxed};
+}
+
+/* ================================================
+   MDA BASE TYPOGRAPHY & LAYOUT SYSTEM
+   ================================================ */
+
+.mda-theme {
+  // Base font and layout properties
+  font-family: var(--mda-font-family-primary);
+  font-size: var(--mda-font-size-base);
+  line-height: var(--mda-leading-normal);
+  color: var(--mda-text-primary);
+  background-color: var(--mda-bg-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  // Typography Scale Classes
+  .mda-text-xs { font-size: var(--mda-font-size-xs) !important; }
+  .mda-text-sm { font-size: var(--mda-font-size-sm) !important; }
+  .mda-text-base { font-size: var(--mda-font-size-base) !important; }
+  .mda-text-lg { font-size: var(--mda-font-size-lg) !important; }
+  .mda-text-xl { font-size: var(--mda-font-size-xl) !important; }
+  .mda-text-2xl { font-size: var(--mda-font-size-2xl) !important; }
+  .mda-text-3xl { font-size: var(--mda-font-size-3xl) !important; }
+  .mda-text-4xl { font-size: var(--mda-font-size-4xl) !important; }
+
+  // Text Color Classes
+  .mda-text-primary { color: var(--mda-text-primary) !important; }
+  .mda-text-secondary { color: var(--mda-text-secondary) !important; }
+  .mda-text-muted { color: var(--mda-text-muted) !important; }
+  .mda-text-light { color: var(--mda-text-light) !important; }
+
+  // Font Weight Classes
+  .mda-font-normal { font-weight: 400 !important; }
+  .mda-font-medium { font-weight: 500 !important; }
+  .mda-font-semibold { font-weight: 600 !important; }
+  .mda-font-bold { font-weight: 700 !important; }
+
+  // Line Height Classes
+  .mda-leading-tight { line-height: var(--mda-leading-tight) !important; }
+  .mda-leading-normal { line-height: var(--mda-leading-normal) !important; }
+  .mda-leading-relaxed { line-height: var(--mda-leading-relaxed) !important; }
+}
+
+/* ================================================
+   MDA GLOBAL OVERRIDES (15% smaller fonts)
+   ================================================ */
+
+// Apply MDA theme globally when class is present
+body.mda-theme,
+.mda-theme {
+
+  // Override Bootstrap's base font size
+  font-size: var(--mda-font-size-base);
+  
+  // === HEADINGS (15% smaller) ===
+  h1, .h1 {
+    font-size: var(--mda-font-size-3xl);
+    font-weight: 700;
+    line-height: var(--mda-leading-tight);
+    margin-bottom: var(--mda-space-4);
+    color: var(--mda-text-primary);
+    font-family: var(--mda-font-family-primary);
+  }
+
+  h2, .h2 {
+    font-size: var(--mda-font-size-2xl);
+    font-weight: 600;
+    line-height: var(--mda-leading-tight);
+    margin-bottom: var(--mda-space-3);
+    color: var(--mda-text-primary);
+    font-family: var(--mda-font-family-primary);
+  }
+
+  h3, .h3 {
+    font-size: var(--mda-font-size-xl);
+    font-weight: 600;
+    line-height: var(--mda-leading-tight);
+    margin-bottom: var(--mda-space-3);
+    color: var(--mda-text-primary);
+    font-family: var(--mda-font-family-primary);
+  }
+
+  h4, .h4 {
+    font-size: var(--mda-font-size-lg);
+    font-weight: 600;
+    line-height: var(--mda-leading-normal);
+    margin-bottom: var(--mda-space-2);
+    color: var(--mda-text-primary);
+    font-family: var(--mda-font-family-primary);
+  }
+
+  h5, .h5 {
+    font-size: var(--mda-font-size-base);
+    font-weight: 600;
+    line-height: var(--mda-leading-normal);
+    margin-bottom: var(--mda-space-2);
+    color: var(--mda-text-primary);
+    font-family: var(--mda-font-family-primary);
+  }
+
+  h6, .h6 {
+    font-size: var(--mda-font-size-sm);
+    font-weight: 600;
+    line-height: var(--mda-leading-normal);
+    margin-bottom: var(--mda-space-2);
+    color: var(--mda-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-family: var(--mda-font-family-primary);
+  }
+
+  // === BODY TEXT (15% smaller) ===
+  p, .lead, .text-body {
+    font-size: var(--mda-font-size-base);
+    line-height: var(--mda-leading-relaxed);
+    margin-bottom: var(--mda-space-3);
+    color: var(--mda-text-primary);
+  }
+
+  small, .small {
+    font-size: var(--mda-font-size-sm);
+    color: var(--mda-text-secondary);
+  }
+
+  .text-muted {
+    color: var(--mda-text-muted) !important;
+  }
+
+  // === LINKS ===
+  a {
+    color: var(--mda-text-primary);
+    text-decoration: none;
+    transition: color var(--mda-transition-fast);
+    
+    &:hover, &:focus {
+      color: var(--mda-text-secondary);
+      text-decoration: none;
+    }
+  }
+}
+
+/* ================================================
+   MDA UTILITY CLASSES
+   ================================================ */
+
+// Shadow utilities (soft shadows only)
+.mda-shadow-xs { box-shadow: var(--mda-shadow-xs) !important; }
+.mda-shadow-sm { box-shadow: var(--mda-shadow-sm) !important; }
+.mda-shadow-base { box-shadow: var(--mda-shadow-base) !important; }
+.mda-shadow-lg { box-shadow: var(--mda-shadow-lg) !important; }
+.mda-shadow-xl { box-shadow: var(--mda-shadow-xl) !important; }
+.mda-shadow-none { box-shadow: none !important; }
+
+// Border radius utilities
+.mda-rounded-sm { border-radius: var(--mda-radius-sm) !important; }
+.mda-rounded { border-radius: var(--mda-radius-base) !important; }
+.mda-rounded-md { border-radius: var(--mda-radius-md) !important; }
+.mda-rounded-lg { border-radius: var(--mda-radius-lg) !important; }
+.mda-rounded-xl { border-radius: var(--mda-radius-xl) !important; }
+
+// Background color utilities (light colors only)
+.mda-bg-primary { background-color: var(--mda-bg-primary) !important; }
+.mda-bg-secondary { background-color: var(--mda-bg-secondary) !important; }
+.mda-bg-tertiary { background-color: var(--mda-bg-tertiary) !important; }
+.mda-bg-hover { background-color: var(--mda-bg-hover) !important; }
+
+// Border utilities
+.mda-border { border: 1px solid var(--mda-border-light) !important; }
+.mda-border-light { border-color: var(--mda-border-light) !important; }
+.mda-border-medium { border-color: var(--mda-border-medium) !important; }
+.mda-border-strong { border-color: var(--mda-border-strong) !important; }
+
+// Spacing utilities (compact spacing)
+.mda-p-1 { padding: var(--mda-space-1) !important; }
+.mda-p-2 { padding: var(--mda-space-2) !important; }
+.mda-p-3 { padding: var(--mda-space-3) !important; }
+.mda-p-4 { padding: var(--mda-space-4) !important; }
+.mda-p-5 { padding: var(--mda-space-5) !important; }
+.mda-p-6 { padding: var(--mda-space-6) !important; }
+
+.mda-m-1 { margin: var(--mda-space-1) !important; }
+.mda-m-2 { margin: var(--mda-space-2) !important; }
+.mda-m-3 { margin: var(--mda-space-3) !important; }
+.mda-m-4 { margin: var(--mda-space-4) !important; }
+.mda-m-5 { margin: var(--mda-space-5) !important; }
+.mda-m-6 { margin: var(--mda-space-6) !important; }
+
+// Transition utilities (smooth transitions)
+.mda-transition { transition: all var(--mda-transition-base) !important; }
+.mda-transition-fast { transition: all var(--mda-transition-fast) !important; }
+.mda-transition-slow { transition: all var(--mda-transition-slow) !important; }
+
+/* ================================================
+   RESPONSIVE DESIGN
+   ================================================ */
+
+@media (max-width: 768px) {
+  .mda-theme {
+    // Reduce font sizes slightly more on mobile devices
+    --mda-font-size-4xl: #{$mda-font-size-3xl * 0.9};
+    --mda-font-size-3xl: #{$mda-font-size-2xl * 0.9};
+    --mda-font-size-2xl: #{$mda-font-size-xl * 0.9};
+  }
+}
+
+/* ================================================
+   PRINT STYLES
+   ================================================ */
+
+@media print {
+  .mda-theme {
+    font-family: Georgia, "Times New Roman", serif;
+    color: black !important;
+    background: white !important;
+    
+    h1, h2, h3, h4, h5, h6 {
+      color: black !important;
+      page-break-after: avoid;
+    }
+    
+    p {
+      orphans: 3;
+      widows: 3;
+    }
+  }
+}
+
+/* ================================================
+   ACCESSIBILITY & USER PREFERENCES
+   ================================================ */
+
+// Respect user's reduced motion preferences
+@media (prefers-reduced-motion: reduce) {
+  .mda-theme * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .mda-theme {
+    --mda-text-primary: #000000;
+    --mda-text-secondary: #333333;
+    --mda-text-muted: #666666;
+    --mda-border-light: #999999;
+    --mda-border-medium: #666666;
+    --mda-border-strong: #333333;
+  }
+}
+
+// Focus styles for accessibility
+.mda-theme {
+  *:focus-visible {
+    outline: 2px solid #005fcc;
+    outline-offset: 2px;
+    border-radius: var(--mda-radius-sm);
+  }
+}

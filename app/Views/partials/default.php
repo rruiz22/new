@@ -17,7 +17,7 @@
     <?= $this->renderSection('styles') ?>
 </head>
 
-<body>
+<body class="mda-theme">
     <!-- Begin page -->
     <div id="layout-wrapper">
         

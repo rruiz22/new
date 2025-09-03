@@ -2,7 +2,7 @@
 
 <div class="row">
     <div class="col-12">
-        <div class="card">
+        <div class="card border-0 shadow-none">
             <div class="card-header d-flex align-items-center">
                 <h4 class="card-title mb-0 flex-grow-1 text-center">
                     <i data-feather="clock" class="icon-sm me-1"></i>
@@ -16,8 +16,8 @@
                 </div>
             </div>
 
-            <div class="card-body">
-                <div class="table-responsive">
+            <div class="card-body p-0">
+                <div class="table-container overflow-hidden">
                     <table id="pending-service-orders-table" class="table table-borderless table-hover align-middle mb-0 service-orders-table dt-responsive">
                         <thead class="table-light">
                             <tr>
@@ -276,7 +276,7 @@ function initPendingServiceOrdersTable() {
         },
         scrollX: false,
         autoWidth: false,
-        dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rt<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+        dom: '<"row align-items-center mb-3"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-end"f>>rt<"row align-items-center mt-3"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7 d-flex justify-content-end"p>>',
         language: {
             search: "Search pending orders:",
             lengthMenu: "Show _MENU_ orders per page",
@@ -285,7 +285,7 @@ function initPendingServiceOrdersTable() {
             infoFiltered: "(filtered from _MAX_ total pending orders)",
             emptyTable: "No pending service orders",
             zeroRecords: "No matching pending orders found",
-            processing: "Loading pending orders..."
+            processing: "<?= lang('App.loading') ?>..."
         },
         drawCallback: function(settings) {
             // Standard callback

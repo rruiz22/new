@@ -14,7 +14,7 @@
 <?php else: ?>
     <div class="row">
         <div class="col-12">
-            <div class="card">
+            <div class="card border-0 shadow-none">
                 <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0">
@@ -33,8 +33,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-body">
-                    <div class="table-responsive">
+                <div class="card-body p-0">
+                    <div class="table-container overflow-hidden">
                         <table class="table table-hover">
                             <thead>
                                 <tr>
@@ -108,6 +108,14 @@
 <?php endif; ?>
 
 <style>
+/* Table Container Styling */
+.table-container {
+    width: 100%;
+    max-width: 100%;
+    position: relative;
+    padding: 1rem;
+}
+
 /* Ensure proper icon sizing for deleted orders table */
 .deleted-orders-actions .icon-sm {
     width: 14px;

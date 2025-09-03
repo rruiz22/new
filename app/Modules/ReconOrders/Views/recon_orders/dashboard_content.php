@@ -1,7 +1,7 @@
 <!-- Dashboard Content -->
 <div class="row">
     <div class="col-12">
-        <div class="card">
+        <div class="card border-0 shadow-none">
             <div class="card-header d-flex align-items-center">
                 <h4 class="card-title mb-0 flex-grow-1 text-center"><?= lang('App.dashboard') ?></h4>
                 <div class="flex-shrink-0">
@@ -72,7 +72,7 @@
                 </div>
                 <?php endif; ?>
 
-                <div class="table-responsive">
+                <div class="table-container overflow-hidden">
                     <table id="dashboard-table" class="table table-borderless table-hover table-nowrap align-middle mb-0 w-100">
                         <thead class="table-light">
                             <tr>

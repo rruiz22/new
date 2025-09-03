@@ -2,7 +2,7 @@
 
 <div class="row">
     <div class="col-12">
-        <div class="card">
+        <div class="card border-0 shadow-none">
             <div class="card-header d-flex align-items-center">
                 <div class="flex-grow-1">
                     <h4 class="service-orders-card-title mb-0"><?= lang('App.services_management') ?></h4>
@@ -58,8 +58,8 @@
                 </div>
             </div>
 
-            <div class="card-body">
-                <div class="table-responsive">
+            <div class="card-body p-0">
+                <div class="table-container overflow-hidden">
                     <table id="services-table" class="table table-bordered table-hover align-middle mb-0 service-orders-table dt-responsive">
                         <thead class="table-light">
                             <tr>
@@ -122,6 +122,8 @@ function initServicesTable() {
         processing: true,
         serverSide: true,
         responsive: true,
+        scrollX: false,
+        autoWidth: false,
         ajax: {
             url: '<?= base_url('service_orders_services/list_data') ?>',
             type: 'POST',
@@ -195,7 +197,7 @@ function initServicesTable() {
             }
         ],
         language: {
-            processing: "Loading services...",
+            processing: "<?= lang('App.loading') ?>...",
             emptyTable: "No services found",
             search: "Search services:"
         },

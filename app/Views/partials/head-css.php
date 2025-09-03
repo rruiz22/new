@@ -54,6 +54,9 @@
 <!-- custom Css-->
 <link href="<?= base_url('assets/css/custom.min.css') ?>" rel="stylesheet" type="text/css" />
 
+<!-- MDA Unified Theme CSS -->
+<link href="<?= base_url('assets/css/mda-theme.css') ?>" rel="stylesheet" type="text/css" />
+
 <!-- Custom fixes CSS -->
 <link href="<?= base_url('assets/css/custom-fixes.css') ?>" rel="stylesheet" type="text/css" />
 
