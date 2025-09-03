@@ -26,11 +26,13 @@ class SalesOrderQueryService
         return $this->db->table('sales_orders')
             ->select('sales_orders.*, 
                       clients.name as client_name,
-                      CONCAT(COALESCE(users.first_name, ""), " ", COALESCE(users.last_name, "")) as salesperson_name,
+                      CONCAT(COALESCE(contact_user.first_name, ""), " ", COALESCE(contact_user.last_name, "")) as contact_name,
+                      CONCAT(COALESCE(creator_user.first_name, ""), " ", COALESCE(creator_user.last_name, "")) as salesperson_name,
                       sales_orders_services.service_name,
                       sales_orders_services.service_price')
             ->join('clients', 'clients.id = sales_orders.client_id', 'left')
-            ->join('users', 'users.id = sales_orders.contact_id', 'left')
+            ->join('users as contact_user', 'contact_user.id = sales_orders.contact_id', 'left')
+            ->join('users as creator_user', 'creator_user.id = sales_orders.created_by', 'left')
             ->join('sales_orders_services', 'sales_orders_services.id = sales_orders.service_id', 'left')
             ->where('sales_orders.deleted', 0);
     }
@@ -43,7 +45,8 @@ class SalesOrderQueryService
         return $this->db->table('sales_orders')
             ->select('sales_orders.*, 
                       clients.name as client_name,
-                      CONCAT(COALESCE(users.first_name, ""), " ", COALESCE(users.last_name, "")) as salesperson_name,
+                      CONCAT(COALESCE(contact_user.first_name, ""), " ", COALESCE(contact_user.last_name, "")) as contact_name,
+                      CONCAT(COALESCE(creator_user.first_name, ""), " ", COALESCE(creator_user.last_name, "")) as salesperson_name,
                       sales_orders_services.service_name,
                       sales_orders_services.service_price,
                       COALESCE(comments_count.comment_count, 0) as comments_count,
@@ -52,7 +55,8 @@ class SalesOrderQueryService
                       COALESCE(client_duplicates.client_count, 0) as client_duplicates,
                       COALESCE(vin_duplicates.vin_count, 0) as vin_duplicates')
             ->join('clients', 'clients.id = sales_orders.client_id', 'left')
-            ->join('users', 'users.id = sales_orders.contact_id', 'left')
+            ->join('users as contact_user', 'contact_user.id = sales_orders.contact_id', 'left')
+            ->join('users as creator_user', 'creator_user.id = sales_orders.created_by', 'left')
             ->join('sales_orders_services', 'sales_orders_services.id = sales_orders.service_id', 'left')
             ->join('(SELECT order_id, COUNT(*) as comment_count FROM sales_orders_comments GROUP BY order_id) as comments_count', 
                     'comments_count.order_id = sales_orders.id', 'left')
@@ -111,13 +115,36 @@ class SalesOrderQueryService
     {
         if (!empty($searchValue)) {
             $builder->groupStart()
+                // Primary identification fields
                 ->like('sales_orders.stock', $searchValue)
                 ->orLike('sales_orders.vin', $searchValue)
                 ->orLike('sales_orders.vehicle', $searchValue)
+                
+                // Order numbers - both generated and stored
+                ->orLike('sales_orders.order_number', $searchValue)
+                ->orLike('CONCAT("SAL-", LPAD(sales_orders.id, 5, "0"))', $searchValue, false)
+                
+                // Client and contact information
                 ->orLike('clients.name', $searchValue)
                 ->orLike('CONCAT(COALESCE(users.first_name, ""), " ", COALESCE(users.last_name, ""))', $searchValue, false)
+                
+                // Service information
                 ->orLike('sales_orders_services.service_name', $searchValue)
-                ->orLike('CONCAT("SAL-", LPAD(sales_orders.id, 5, "0"))', $searchValue, false)
+                
+                // Order details
+                ->orLike('sales_orders.instructions', $searchValue)
+                ->orLike('sales_orders.notes', $searchValue)
+                ->orLike('sales_orders.status', $searchValue)
+                
+                // Date fields (formatted for better searchability)
+                ->orLike('sales_orders.date', $searchValue)
+                ->orLike('sales_orders.time', $searchValue)
+                ->orLike('DATE_FORMAT(sales_orders.date, "%Y-%m-%d")', $searchValue, false)
+                ->orLike('DATE_FORMAT(sales_orders.date, "%M %d, %Y")', $searchValue, false)
+                
+                // Additional searchable fields
+                ->orLike('CAST(sales_orders.id AS CHAR)', $searchValue, false)
+                
                 ->groupEnd();
         }
         

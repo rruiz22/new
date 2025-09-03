@@ -174,6 +174,72 @@
                     </div>
                 </div>
 
+                <!-- Quick Access Dropdown for Creating Orders -->
+                <div class="dropdown topbar-head-dropdown ms-1 header-item">
+                    <button type="button" class="btn btn-icon btn-topbar material-shadow-none btn-ghost-secondary rounded-circle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Quick Create Order">
+                        <i class='bx bx-plus-circle fs-22'></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-lg p-0 dropdown-menu-end">
+                        <div class="p-3 border-top-0 border-start-0 border-end-0 border-dashed border">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <h6 class="m-0 fw-semibold fs-15"> Quick Create </h6>
+                                </div>
+                                <div class="col-auto">
+                                    <small class="text-muted">Create new orders</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-2">
+                            <div class="row g-0">
+                                <div class="col-6">
+                                    <a class="dropdown-icon-item" href="javascript:void(0)" onclick="openGlobalModal('sales_order')">
+                                        <div class="avatar-sm mx-auto mb-2">
+                                            <div class="avatar-title bg-success-subtle text-success rounded-circle fs-18">
+                                                <i class='bx bx-shopping-bag'></i>
+                                            </div>
+                                        </div>
+                                        <span class="text-center d-block">Sales Order</span>
+                                    </a>
+                                </div>
+                                <div class="col-6">
+                                    <a class="dropdown-icon-item" href="javascript:void(0)" onclick="openGlobalModal('service_order')">
+                                        <div class="avatar-sm mx-auto mb-2">
+                                            <div class="avatar-title bg-info-subtle text-info rounded-circle fs-18">
+                                                <i class='bx bx-wrench'></i>
+                                            </div>
+                                        </div>
+                                        <span class="text-center d-block">Service Order</span>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="row g-0">
+                                <div class="col-6">
+                                    <a class="dropdown-icon-item" href="javascript:void(0)" onclick="openGlobalModal('car_wash')">
+                                        <div class="avatar-sm mx-auto mb-2">
+                                            <div class="avatar-title bg-primary-subtle text-primary rounded-circle fs-18">
+                                                <i class='bx bx-car'></i>
+                                            </div>
+                                        </div>
+                                        <span class="text-center d-block">Car Wash</span>
+                                    </a>
+                                </div>
+                                <div class="col-6">
+                                    <a class="dropdown-icon-item" href="javascript:void(0)" onclick="openGlobalModal('recon_order')">
+                                        <div class="avatar-sm mx-auto mb-2">
+                                            <div class="avatar-title bg-warning-subtle text-warning rounded-circle fs-18">
+                                                <i class='bx bx-search-alt'></i>
+                                            </div>
+                                        </div>
+                                        <span class="text-center d-block">Recon Order</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="dropdown topbar-head-dropdown ms-1 header-item">
                     <button type="button" class="btn btn-icon btn-topbar material-shadow-none btn-ghost-secondary rounded-circle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class='bx bx-category-alt fs-22'></i>

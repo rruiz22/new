@@ -60,9 +60,35 @@
     
     <!-- Toast notifications -->
     <?= $this->include('partials/toasts') ?>
+    
+    <!-- Global Sales Order Modal -->
+    <?= $this->include('partials/global_sales_order_modal') ?>
+    
+    <!-- Global Sales Order View Modal -->
+    <?= $this->include('partials/global_sales_order_view_modal') ?>
 
     <!-- DataTables Scripts -->
      <?= $this->include('partials/datatables-scripts') ?>
+     
+    <!-- Global Modal Scripts -->
+    <script>
+        // Set global variables for JavaScript
+        window.base_url = '<?= base_url() ?>';
+    </script>
+    <script src="<?= base_url('assets/js/global-vin-decoder.js') ?>?v=<?= time() ?>"></script>
+    <script src="<?= base_url('assets/js/global-sales-order-modal.js') ?>?v=<?= time() ?>"></script>
+    <script src="<?= base_url('assets/js/global-sales-order-view-modal.js') ?>?v=<?= time() ?>"></script>
+    <script>
+        // Global function to open modal from topbar dropdown
+        function openGlobalModal(orderType) {
+            if (typeof GlobalSalesOrderModal !== 'undefined') {
+                const modal = new GlobalSalesOrderModal();
+                modal.open(); // Use open() method, not show()
+            } else {
+                console.error('GlobalSalesOrderModal not loaded');
+            }
+        }
+    </script>
 
     <!-- Custom scripts for this page -->
     <?= $this->renderSection('scripts') ?>

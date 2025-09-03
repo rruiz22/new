@@ -2038,4 +2038,28 @@ return [
     'close_scanner' => 'Cerrar Escáner',
 
     'monitor_and_track_all_vehicles' => 'Monitoriza y rastrea todos los vehículos en tu Concesionario con datos en tiempo real y análisis exhaustivos',
+    
+    // Global Sales Order Modal Translations - Español
+    'create_sales_order' => 'Crear Orden de Venta',
+    'edit_sales_order' => 'Editar Orden de Venta', 
+    'create_order' => 'Crear Orden',
+    'save_draft' => 'Guardar Borrador',
+    'enter_stock_number' => 'Ingresa número de stock',
+    'enter_vin' => 'Ingresa VIN',
+    'vin_17_characters' => 'VIN debe tener 17 caracteres',
+    'scan_barcode' => 'Escanear Código',
+    'enter_vehicle_info' => 'Información del vehículo',
+    'year_make_model' => 'Año, Marca, Modelo',
+    'select_time' => 'Seleccionar Hora',
+    'special_instructions' => 'Instrucciones Especiales',
+    'enter_special_instructions' => 'Ingresa instrucciones especiales...',
+    'visible_to_service_team' => 'Visible al equipo de servicio',
+    'date_required' => 'La fecha es requerida',
+    'pending' => 'Pendiente',
+    'processing' => 'Procesando', 
+    'in_progress' => 'En Progreso',
+    'completed' => 'Completado',
+    'normal' => 'Normal',
+    'high' => 'Alta',
+    'urgent' => 'Urgente',
 ];

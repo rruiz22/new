@@ -258,6 +258,7 @@ class SalesOrderService
         return [
             'client_id' => $data['client_id'],
             'contact_id' => $data['contact_id'] ?? null,
+            'salesperson_id' => $data['salesperson_id'] ?? auth()->id(),
             'service_id' => $data['service_id'],
             'date' => $data['date'],
             'time' => $data['time'] ?? null,
@@ -302,26 +303,97 @@ class SalesOrderService
 
     private function formatOrderForDataTable(array $order): array
     {
+        // Return associative array with both indexed and named keys for DataTables
+        $orderNumber = $order['order_number'] ?: 'SAL-' . str_pad($order['id'], 4, '0', STR_PAD_LEFT);
+        $stock = $order['stock'] ?: 'N/A';
+        $clientName = $order['client_name'] ?: 'N/A';
+        $dueDate = $order['date'] . ($order['time'] ? ' ' . $order['time'] : '');
+        $status = $order['status'] ?: 'pending';
+        $actions = $this->generateActionButtons($order['id'], $order['status']);
+        
         return [
+            // Indexed array for DataTables columns
+            0 => $orderNumber,
+            1 => $stock, 
+            2 => $clientName,
+            3 => $dueDate,
+            4 => $status,
+            5 => $actions,
+            
+            // Named keys for JavaScript access
             'id' => $order['id'],
-            'order_number' => 'SAL-' . str_pad($order['id'], 5, '0', STR_PAD_LEFT),
-            'stock' => $order['stock'] ?? 'N/A',
-            'client_name' => $order['client_name'] ?? 'N/A',
-            'contact_name' => $order['salesperson_name'] ?? 'N/A',
-            'service_name' => $order['service_name'] ?? 'N/A',
+            'order_id' => $orderNumber,
+            'order_number' => $orderNumber,
+            'stock' => $stock,
+            'client_name' => $clientName,
+            'contact_name' => $order['contact_name'] ?: 'N/A',
+            'vehicle' => $order['vehicle'] ?: 'N/A',
+            'vin' => $order['vin'] ?: '',
             'date' => $order['date'],
-            'time' => $order['time'] ?? 'N/A',
-            'status' => $order['status'],
-            'vehicle' => $order['vehicle'] ?? 'N/A',
-            'vin' => $order['vin'] ?? 'N/A',
+            'time' => $order['time'] ?: '',
+            'due' => $dueDate,
+            'status' => $status,
+            'instructions' => $order['instructions'] ?: '',
+            'salesperson_name' => $order['salesperson_name'] ?: 'N/A',
+            'service_name' => $order['service_name'] ?: 'N/A',
             'comments_count' => $order['comments_count'] ?? 0,
-            'notes_count' => $order['internal_notes_count'] ?? 0,
-            'duplicates' => [
-                'stock' => $order['stock_duplicates'] ?? 0,
-                'client' => $order['client_duplicates'] ?? 0,
-                'vin' => $order['vin_duplicates'] ?? 0
-            ]
+            'internal_notes_count' => $order['internal_notes_count'] ?? 0
         ];
+    }
+    
+    private function formatStatusBadge(string $status): string
+    {
+        $statusMap = [
+            'pending' => ['class' => 'bg-warning', 'text' => 'Pending'],
+            'processing' => ['class' => 'bg-info', 'text' => 'Processing'],
+            'in_progress' => ['class' => 'bg-primary', 'text' => 'In Progress'],
+            'completed' => ['class' => 'bg-success', 'text' => 'Completed'],
+            'cancelled' => ['class' => 'bg-danger', 'text' => 'Cancelled']
+        ];
+        
+        $config = $statusMap[$status] ?? ['class' => 'bg-secondary', 'text' => ucfirst($status)];
+        return '<span class="badge ' . $config['class'] . '">' . $config['text'] . '</span>';
+    }
+    
+    private function generateActionButtons(int $orderId, string $status): string
+    {
+        $buttons = [];
+        
+        // View button - always available
+        $buttons[] = '<button class="btn btn-soft-info btn-sm btn-view" data-id="' . $orderId . '" title="View Order">
+                        <i class="ri-eye-line"></i>
+                      </button>';
+        
+        // Edit button - only for non-completed/cancelled orders
+        if (!in_array($status, ['completed', 'cancelled'])) {
+            $buttons[] = '<button class="btn btn-soft-primary btn-sm btn-edit" data-id="' . $orderId . '" title="Edit Order">
+                            <i class="ri-pencil-line"></i>
+                          </button>';
+        }
+        
+        // Delete button - only for pending orders
+        if ($status === 'pending') {
+            $buttons[] = '<button class="btn btn-soft-danger btn-sm btn-delete" data-id="' . $orderId . '" title="Delete Order">
+                            <i class="ri-delete-bin-line"></i>
+                          </button>';
+        }
+        
+        // More actions dropdown
+        $buttons[] = '<div class="dropdown">
+                        <button class="btn btn-soft-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="ri-more-2-fill"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="printCurrentOrder(' . $orderId . ')">
+                                <i class="ri-printer-line me-2"></i>Print
+                            </a></li>
+                            <li><a class="dropdown-item" href="#" onclick="downloadCurrentOrderPDF(' . $orderId . ')">
+                                <i class="ri-download-line me-2"></i>Download PDF
+                            </a></li>
+                        </ul>
+                      </div>';
+        
+        return '<div class="d-flex gap-1 justify-content-center">' . implode('', $buttons) . '</div>';
     }
 
     /**

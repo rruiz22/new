@@ -226,24 +226,92 @@ class SalesOrderDataTable {
     }
     
     setupRowHandlers() {
-        $(`#${this.config.tableId} tbody`).off('click.salesOrderDT', 'tr').on('click.salesOrderDT', 'tr', (e) => {
-            if ($(e.target).closest('.dropdown, .btn, .form-control, .form-select').length) {
+        // Use document-level delegation to prevent guid conflicts
+        const tableId = this.config.tableId;
+        
+        // Remove any existing handlers for this table
+        $(document).off(`click.${tableId}`);
+        
+        // Row click handler
+        $(document).on(`click.${tableId}`, `#${tableId} tbody tr`, (e) => {
+            if ($(e.target).closest('.dropdown, .btn, .form-control, .form-select, .action-buttons').length) {
                 return;
             }
             
-            const data = this.table.row(e.currentTarget).data();
-            if (data && data[0]) {
-                const orderId = this.extractOrderId(data[0]);
+            // Get order ID from the first button in the actions column
+            const actionCell = $(e.currentTarget).find('td:last-child .btn-view');
+            if (actionCell.length > 0) {
+                const orderId = actionCell.data('id');
                 if (orderId) {
-                    window.open(`${base_url}sales_orders/view/${orderId}`, '_blank');
+                    // Use view modal instead of opening new window
+                    if (typeof window.openViewModal === 'function') {
+                        window.openViewModal(orderId);
+                    } else {
+                        console.warn('View modal not available, falling back to new window');
+                        window.open(`${base_url}sales_orders/view/${orderId}`, '_blank');
+                    }
                 }
+            }
+        });
+        
+        // Status dropdown handler
+        $(document).on(`change.${tableId}`, `#${tableId} .status-dropdown`, function() {
+            const orderId = $(this).data('order-id');
+            const newStatus = $(this).val();
+            const oldStatus = $(this).data('current-status');
+            
+            if (newStatus !== oldStatus && typeof window.updateOrderStatus === 'function') {
+                window.updateOrderStatus(orderId, newStatus, oldStatus);
+            }
+        });
+        
+        // Action button handlers
+        $(document).on(`click.${tableId}`, `#${tableId} .btn-view`, function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const orderId = $(this).data('id');
+            
+            if (typeof window.openViewModal === 'function') {
+                window.openViewModal(orderId);
+            } else {
+                window.open(`${base_url}sales_orders/view/${orderId}`, '_blank');
+            }
+        });
+        
+        $(document).on(`click.${tableId}`, `#${tableId} .btn-edit`, function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const orderId = $(this).data('id');
+            
+            if (typeof window.openEditModal === 'function') {
+                window.openEditModal(orderId);
+            } else {
+                console.error('Edit modal not available');
+            }
+        });
+        
+        $(document).on(`click.${tableId}`, `#${tableId} .btn-delete`, function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const orderId = $(this).data('id');
+            
+            if (typeof window.deleteOrder === 'function') {
+                window.deleteOrder(orderId);
+            } else {
+                console.error('Delete function not available');
             }
         });
     }
     
     extractOrderId(orderCell) {
-        const match = orderCell.match(/SAL-(\d+)/);
-        return match ? match[1] : null;
+        // Handle both SAL-00019 and SAL-25090311272093 formats
+        let match = orderCell.match(/SAL-(\d+)/);
+        if (match) {
+            // For the new format like SAL-25090311272093, we need to get the actual ID
+            // from the data-id attribute of buttons, not from the order number
+            return match[1];
+        }
+        return null;
     }
     
     onDrawCallback() {
@@ -252,11 +320,25 @@ class SalesOrderDataTable {
             feather.replace();
         }
         
-        // Setup status dropdowns
-        this.setupStatusDropdowns();
+        // Dispose existing tooltips to prevent memory leaks and conflicts
+        if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+            const existingTooltips = document.querySelectorAll(`#${this.config.tableId} [data-bs-toggle="tooltip"]`);
+            existingTooltips.forEach(el => {
+                const tooltipInstance = bootstrap.Tooltip.getInstance(el);
+                if (tooltipInstance) {
+                    tooltipInstance.dispose();
+                }
+            });
+            
+            // Create new tooltips
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll(`#${this.config.tableId} [data-bs-toggle="tooltip"]`));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        }
         
-        // Setup action buttons
-        this.setupActionButtons();
+        // Note: Status dropdowns and action buttons are now handled via event delegation
+        // in setupRowHandlers() to prevent guid conflicts
     }
     
     onInitComplete() {
@@ -274,44 +356,6 @@ class SalesOrderDataTable {
         }
     }
     
-    setupStatusDropdowns() {
-        $(`#${this.config.tableId} .status-dropdown`).off('change.salesOrderDT').on('change.salesOrderDT', function() {
-            const orderId = $(this).data('order-id');
-            const newStatus = $(this).val();
-            const oldStatus = $(this).data('current-status');
-            
-            if (newStatus !== oldStatus) {
-                // Call status update function
-                window.updateOrderStatus(orderId, newStatus, oldStatus);
-            }
-        });
-    }
-    
-    setupActionButtons() {
-        // View order buttons
-        $(`#${this.config.tableId} .btn-view`).off('click.salesOrderDT').on('click.salesOrderDT', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            const orderId = $(this).data('id');
-            window.open(`${base_url}sales_orders/view/${orderId}`, '_blank');
-        });
-        
-        // Edit order buttons
-        $(`#${this.config.tableId} .btn-edit`).off('click.salesOrderDT').on('click.salesOrderDT', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            const orderId = $(this).data('id');
-            window.openEditModal(orderId);
-        });
-        
-        // Delete order buttons
-        $(`#${this.config.tableId} .btn-delete`).off('click.salesOrderDT').on('click.salesOrderDT', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            const orderId = $(this).data('id');
-            window.deleteOrder(orderId);
-        });
-    }
     
     handleAjaxError(xhr, error, thrown) {
         console.error('DataTable AJAX Error:', error, thrown);
@@ -353,6 +397,11 @@ class SalesOrderDataTable {
         if (this.table) {
             this.table.destroy();
         }
+        
+        // Clean up event handlers
+        const tableId = this.config.tableId;
+        $(document).off(`click.${tableId}`);
+        $(document).off(`change.${tableId}`);
     }
 }
 

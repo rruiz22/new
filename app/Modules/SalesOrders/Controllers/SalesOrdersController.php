@@ -337,6 +337,277 @@ class SalesOrdersController extends BaseController
     }
 
     /**
+     * Get active clients for dropdown
+     */
+    public function getActiveClients()
+    {
+        try {
+            $clientsModel = model('App\Models\ClientModel');
+            $clients = $clientsModel->where('status', 'active')
+                                  ->where('deleted', 0)
+                                  ->orderBy('name', 'ASC')
+                                  ->findAll();
+            
+            // Format for select dropdown
+            $formatted = [];
+            foreach ($clients as $client) {
+                $formatted[] = [
+                    'id' => $client['id'],
+                    'name' => $client['name'],
+                    'email' => $client['email'] ?? '',
+                    'phone' => $client['phone'] ?? '',
+                    'address' => $client['address'] ?? ''
+                ];
+            }
+            
+            return $this->response->setJSON([
+                'success' => true,
+                'data' => $formatted
+            ]);
+            
+        } catch (Exception $e) {
+            log_message('error', 'Error loading active clients: ' . $e->getMessage());
+            return $this->response->setJSON(['success' => false, 'message' => 'Error loading clients']);
+        }
+    }
+
+    /**
+     * Get contacts for a specific client
+     */
+    public function getContactsForClient($clientId = null)
+    {
+        if (!$clientId) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Client ID required']);
+        }
+
+        try {
+            $contactsModel = model('App\Models\ContactModel');
+            $contacts = $contactsModel->where('client_id', $clientId)
+                                   ->where('status', 'active')
+                                   ->orderBy('name', 'ASC')
+                                   ->findAll();
+            
+            // Format for select dropdown
+            $formatted = [];
+            foreach ($contacts as $contact) {
+                $formatted[] = [
+                    'id' => $contact['id'],
+                    'name' => $contact['name'],
+                    'email' => $contact['email'] ?? '',
+                    'phone' => $contact['phone'] ?? '',
+                    'position' => $contact['position'] ?? ''
+                ];
+            }
+            
+            return $this->response->setJSON([
+                'success' => true,
+                'data' => $formatted
+            ]);
+            
+        } catch (Exception $e) {
+            log_message('error', 'Error loading contacts: ' . $e->getMessage());
+            return $this->response->setJSON(['success' => false, 'message' => 'Error loading contacts']);
+        }
+    }
+
+    /**
+     * Get services for a specific client
+     */
+    public function getServicesForClient($clientId = null)
+    {
+        if (!$clientId) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Client ID required']);
+        }
+
+        try {
+            $servicesModel = model('Modules\SalesOrders\Models\SalesOrderServiceModel');
+            $services = $servicesModel->where('deleted', 0)
+                                    ->where('service_status', 'active')
+                                    ->where('show_in_orders', 1)
+                                    ->where('client_id', $clientId)
+                                    ->orderBy('service_name', 'ASC')
+                                    ->findAll();
+            
+            // Format for select dropdown
+            $formatted = [];
+            foreach ($services as $service) {
+                $formatted[] = [
+                    'id' => $service['id'],
+                    'name' => $service['service_name'],
+                    'description' => $service['service_description'] ?? '',
+                    'price' => number_format($service['service_price'] ?? 0, 2),
+                    'notes' => $service['notes'] ?? ''
+                ];
+            }
+            
+            return $this->response->setJSON([
+                'success' => true,
+                'data' => $formatted
+            ]);
+            
+        } catch (Exception $e) {
+            log_message('error', 'Error loading services: ' . $e->getMessage());
+            return $this->response->setJSON(['success' => false, 'message' => 'Error loading services']);
+        }
+    }
+
+    /**
+     * VIN Decoder - decode VIN using NHTSA API with caching
+     */
+    public function decodeVin()
+    {
+        $vin = $this->request->getPost('vin');
+        
+        if (empty($vin)) {
+            return $this->response->setJSON(['success' => false, 'message' => 'VIN required']);
+        }
+
+        try {
+            // Check cache first
+            $cache = \Config\Services::cache();
+            $cacheKey = 'vin_decode_' . md5($vin);
+            $cachedData = $cache->get($cacheKey);
+            
+            if ($cachedData) {
+                return $this->response->setJSON([
+                    'success' => true,
+                    'data' => $cachedData,
+                    'cached' => true
+                ]);
+            }
+
+            // Call NHTSA API
+            $apiUrl = "https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues/{$vin}?format=json";
+            
+            $ch = curl_init();
+            curl_setopt_array($ch, [
+                CURLOPT_URL => $apiUrl,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_TIMEOUT => 15,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_USERAGENT => 'MDA Sales Orders System'
+            ]);
+            
+            $response = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $curlError = curl_error($ch);
+            curl_close($ch);
+            
+            if ($curlError || $httpCode !== 200) {
+                throw new Exception('API request failed: ' . ($curlError ?: "HTTP {$httpCode}"));
+            }
+            
+            $result = json_decode($response, true);
+            
+            if (!$result || !isset($result['Results'][0])) {
+                throw new Exception('Invalid API response');
+            }
+            
+            $vinData = $result['Results'][0];
+            
+            // Format response
+            $formattedData = [
+                'vin' => $vin,
+                'make' => $vinData['Make'] ?? '',
+                'model' => $vinData['Model'] ?? '',
+                'year' => $vinData['ModelYear'] ?? '',
+                'trim' => $vinData['Trim'] ?? '',
+                'engine' => $vinData['EngineConfiguration'] ?? '',
+                'body_class' => $vinData['BodyClass'] ?? '',
+                'fuel_type' => $vinData['FuelTypePrimary'] ?? '',
+                'manufacturer' => $vinData['Manufacturer'] ?? '',
+                'plant_country' => $vinData['PlantCountry'] ?? '',
+                'error_code' => $vinData['ErrorCode'] ?? '0',
+                'error_text' => $vinData['ErrorText'] ?? ''
+            ];
+            
+            // Cache for 7 days if successful decode
+            if ($formattedData['error_code'] === '0' || empty($formattedData['error_text'])) {
+                $cache->save($cacheKey, $formattedData, 7 * 24 * 60 * 60);
+            }
+            
+            return $this->response->setJSON([
+                'success' => true,
+                'data' => $formattedData,
+                'cached' => false
+            ]);
+            
+        } catch (Exception $e) {
+            log_message('error', 'Error decoding VIN: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false, 
+                'message' => 'VIN decode failed: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Check for duplicate orders
+     */
+    public function checkDuplicateOrder()
+    {
+        $vin = $this->request->getPost('vin');
+        $clientId = $this->request->getPost('client_id');
+        $excludeOrderId = $this->request->getPost('exclude_order_id');
+        
+        if (empty($vin) && empty($clientId)) {
+            return $this->response->setJSON(['success' => true, 'duplicates' => []]);
+        }
+
+        try {
+            $builder = $this->salesOrderModel->builder();
+            $builder->select('sales_orders.*, clients.name as client_name');
+            $builder->join('clients', 'clients.id = sales_orders.client_id', 'left');
+            $builder->where('sales_orders.deleted', 0);
+            
+            if (!empty($excludeOrderId)) {
+                $builder->where('sales_orders.id !=', $excludeOrderId);
+            }
+            
+            // Check by VIN if provided
+            if (!empty($vin)) {
+                $builder->where('sales_orders.vin', $vin);
+            }
+            
+            // Check by client if provided (last 30 days to avoid too many results)
+            if (!empty($clientId)) {
+                $builder->where('sales_orders.client_id', $clientId);
+                $builder->where('sales_orders.created_at >=', date('Y-m-d', strtotime('-30 days')));
+            }
+            
+            $builder->orderBy('sales_orders.created_at', 'DESC');
+            $builder->limit(10); // Limit results
+            
+            $duplicates = $builder->get()->getResultArray();
+            
+            $formatted = [];
+            foreach ($duplicates as $order) {
+                $formatted[] = [
+                    'id' => $order['id'],
+                    'order_number' => 'SAL-' . str_pad($order['id'], 5, '0', STR_PAD_LEFT),
+                    'vehicle' => ($order['vehicle_year'] ?? '') . ' ' . ($order['vehicle_make'] ?? '') . ' ' . ($order['vehicle_model'] ?? ''),
+                    'vin' => $order['vin'] ?? 'N/A',
+                    'status' => $order['status'] ?? 'unknown',
+                    'created_at' => $order['created_at'] ?? '',
+                    'client_name' => $order['client_name'] ?? 'Unknown Client',
+                    'contact_name' => $order['contact_name'] ?? ''
+                ];
+            }
+            
+            return $this->response->setJSON([
+                'success' => true,
+                'duplicates' => $formatted,
+                'count' => count($formatted)
+            ]);
+            
+        } catch (Exception $e) {
+            log_message('error', 'Error checking duplicates: ' . $e->getMessage());
+            return $this->response->setJSON(['success' => false, 'duplicates' => [], 'message' => 'Error checking duplicates']);
+        }
+    }
+
+    /**
      * Get order duplicates
      */
     public function getDuplicates()
@@ -436,6 +707,49 @@ class SalesOrdersController extends BaseController
     }
 
     /**
+     * Save order (create or update) - used by optimized modal
+     */
+    public function save()
+    {
+        $orderId = $this->request->getPost('id');
+        
+        if (!empty($orderId)) {
+            // Update existing order
+            return $this->edit($orderId);
+        } else {
+            // Create new order
+            return $this->create();
+        }
+    }
+
+    /**
+     * Get order data for editing - used by optimized modal
+     */
+    public function get($id = null)
+    {
+        if (!$id) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Order ID required']);
+        }
+
+        try {
+            $order = $this->salesOrderModel->getOrderWithDetails($id);
+            
+            if (!$order) {
+                return $this->response->setJSON(['success' => false, 'message' => 'Order not found']);
+            }
+
+            return $this->response->setJSON([
+                'success' => true,
+                'data' => $order
+            ]);
+
+        } catch (Exception $e) {
+            log_message('error', 'Error getting order: ' . $e->getMessage());
+            return $this->response->setJSON(['success' => false, 'message' => 'Error loading order data']);
+        }
+    }
+
+    /**
      * Get statistics
      */
     public function getStatistics()
@@ -532,6 +846,74 @@ class SalesOrdersController extends BaseController
         } catch (Exception $e) {
             log_message('error', 'Error force deleting order: ' . $e->getMessage());
             return $this->response->setJSON(['success' => false, 'message' => 'Internal error']);
+        }
+    }
+
+    /**
+     * Validate date and time for orders
+     */
+    public function validateDateTime()
+    {
+        $date = $this->request->getPost('date');
+        $time = $this->request->getPost('time');
+        $isEdit = $this->request->getPost('is_edit') === 'true';
+        
+        if (empty($date) || empty($time)) {
+            return $this->response->setJSON([
+                'success' => false, 
+                'message' => 'Date and time are required'
+            ]);
+        }
+
+        try {
+            $selectedDateTime = new \DateTime($date . ' ' . $time);
+            $now = new \DateTime();
+            $today = new \DateTime('today');
+            
+            // For new orders: only today and future dates
+            if (!$isEdit) {
+                if ($selectedDateTime->format('Y-m-d') < $today->format('Y-m-d')) {
+                    return $this->response->setJSON([
+                        'success' => false,
+                        'message' => 'Cannot create orders for past dates'
+                    ]);
+                }
+                
+                // If today, time must be at least 1 hour from now
+                if ($selectedDateTime->format('Y-m-d') === $today->format('Y-m-d')) {
+                    $minTime = clone $now;
+                    $minTime->add(new \DateInterval('PT1H'));
+                    
+                    if ($selectedDateTime <= $minTime) {
+                        return $this->response->setJSON([
+                            'success' => false,
+                            'message' => 'Time must be at least 1 hour from now'
+                        ]);
+                    }
+                }
+            }
+            
+            // Check business hours (8 AM - 6 PM)
+            $hour = intval($selectedDateTime->format('H'));
+            if ($hour < 8 || $hour >= 18) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Orders can only be scheduled between 8:00 AM and 6:00 PM'
+                ]);
+            }
+            
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Date and time are valid',
+                'formatted_datetime' => $selectedDateTime->format('Y-m-d H:i:s')
+            ]);
+            
+        } catch (Exception $e) {
+            log_message('error', 'Error validating date/time: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false, 
+                'message' => 'Invalid date or time format'
+            ]);
         }
     }
 

@@ -2544,4 +2544,28 @@ return [
     'detailed_inventory_view_empty_description_3' => 'There is no detailed inventory for this order',
     'detailed_inventory_view_empty_description_4' => 'There is no detailed inventory for this order',
     
+    // Global Sales Order Modal Translations
+    'create_sales_order' => 'Create Sales Order',
+    'edit_sales_order' => 'Edit Sales Order', 
+    'create_order' => 'Create Order',
+    'save_draft' => 'Save Draft',
+    'enter_stock_number' => 'Enter stock number',
+    'enter_vin' => 'Enter VIN',
+    'vin_17_characters' => 'VIN must be 17 characters',
+    'scan_barcode' => 'Scan Barcode',
+    'enter_vehicle_info' => 'Enter vehicle info',
+    'year_make_model' => 'Year, Make, Model',
+    'select_time' => 'Select Time',
+    'special_instructions' => 'Special Instructions',
+    'enter_special_instructions' => 'Enter any special instructions...',
+    'visible_to_service_team' => 'Visible to service team',
+    'date_required' => 'Date is required',
+    'pending' => 'Pending',
+    'processing' => 'Processing', 
+    'in_progress' => 'In Progress',
+    'completed' => 'Completed',
+    'normal' => 'Normal',
+    'high' => 'High',
+    'urgent' => 'Urgent',
+    
 ]; 

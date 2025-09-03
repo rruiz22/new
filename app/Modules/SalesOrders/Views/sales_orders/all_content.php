@@ -18,7 +18,7 @@
                             <tr>
                                 <th scope="col"><?= lang('App.order_id') ?></th>
                                 <th scope="col"><?= lang('App.stock') ?></th>
-                                <th scope="col"><?= lang('App.client') ?></th>
+                                <th scope="col"><?= lang('App.vehicle') ?></th>
                                 <th scope="col"><?= lang('App.due') ?></th>
                                 <th scope="col"><?= lang('App.status') ?></th>
                                 <th scope="col"><?= lang('App.actions') ?></th>
@@ -833,7 +833,10 @@ waitForDataTables(function() {
             };
             
             const statusDisplayClass = statusClass[order.status] || 'status-pending';
-            const statusDisplayText = order.status.charAt(0).toUpperCase() + order.status.slice(1).replace('_', ' ');
+            // Add null/undefined check to prevent charAt error
+            const statusDisplayText = (order.status && typeof order.status === 'string') 
+                ? order.status.charAt(0).toUpperCase() + order.status.slice(1).replace('_', ' ')
+                : 'N/A';
             
             html += `
                 <tr class="${rowClass}">
@@ -1118,10 +1121,78 @@ waitForDataTables(function() {
                     {
                         data: 'due',
                         render: function(data, type, row) {
-                            if (data && data !== 'N/A') {
-                                return data; // Return the HTML directly since it's already formatted
+                            // For display, create styled due date with subtle colors
+                            if (type === 'display') {
+                                let dateValue = row.date;
+                                let timeValue = row.time;
+                                
+                                if (!dateValue || dateValue === 'N/A') {
+                                    return '<div class="text-center"><span class="text-muted small">No date set</span></div>';
+                                }
+                                
+                                // Parse the date and time
+                                const today = new Date();
+                                today.setHours(0, 0, 0, 0);
+                                
+                                const orderDate = new Date(dateValue + (timeValue ? ' ' + timeValue : ''));
+                                const isToday = orderDate.toDateString() === today.toDateString();
+                                const isTomorrow = orderDate.toDateString() === new Date(today.getTime() + 24 * 60 * 60 * 1000).toDateString();
+                                const isPast = orderDate < today;
+                                const isUrgent = !isPast && orderDate.getTime() - today.getTime() < 2 * 60 * 60 * 1000;
+                                
+                                let html = '<div class="text-center">';
+                                
+                                // Format date part with subtle styling
+                                const formattedDate = orderDate.toLocaleDateString('en-US', { 
+                                    month: 'short', 
+                                    day: 'numeric',
+                                    year: orderDate.getFullYear() !== today.getFullYear() ? 'numeric' : undefined
+                                });
+                                
+                                // Format time part
+                                const formattedTime = timeValue ? 
+                                    orderDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) : 
+                                    '';
+                                
+                                // Date with subtle color coding
+                                if (isPast) {
+                                    html += `<div class="text-danger-emphasis fw-medium small">${formattedDate}</div>`;
+                                } else if (isToday) {
+                                    html += `<div class="text-warning-emphasis fw-medium small">${formattedDate}</div>`;
+                                } else if (isTomorrow) {
+                                    html += `<div class="text-info-emphasis fw-medium small">${formattedDate}</div>`;
+                                } else {
+                                    html += `<div class="text-body-emphasis fw-medium small">${formattedDate}</div>`;
+                                }
+                                
+                                // Time with icon
+                                if (formattedTime) {
+                                    let timeColor = 'text-muted';
+                                    if (isPast) timeColor = 'text-danger-emphasis';
+                                    else if (isUrgent) timeColor = 'text-warning-emphasis';
+                                    
+                                    html += `<div class="${timeColor} small" style="font-size: 0.75rem;">
+                                        <i class="ri-time-line" style="font-size: 0.7rem;"></i> ${formattedTime}
+                                    </div>`;
+                                }
+                                
+                                // Status indicator with subtle text
+                                if (isPast) {
+                                    html += '<div class="text-danger small" style="font-size: 0.65rem; font-weight: 500;">Overdue</div>';
+                                } else if (isUrgent) {
+                                    html += '<div class="text-warning small" style="font-size: 0.65rem; font-weight: 500;">Urgent</div>';
+                                } else if (isToday) {
+                                    html += '<div class="text-warning small" style="font-size: 0.65rem; font-weight: 500;">Today</div>';
+                                } else if (isTomorrow) {
+                                    html += '<div class="text-info small" style="font-size: 0.65rem; font-weight: 500;">Tomorrow</div>';
+                                }
+                                
+                                html += '</div>';
+                                return html;
                             }
-                            return '<div class="text-center"><span class="text-muted">N/A</span></div>';
+                            
+                            // For sorting and other operations, return the raw data
+                            return data || '';
                         }
                     },
                     {
@@ -1159,13 +1230,13 @@ waitForDataTables(function() {
                         render: function(data, type, row) {
                             return `
                                 <div class="d-flex justify-content-center gap-2 action-buttons">
-                                    <a href="<?= base_url('sales_orders/view/') ?>${data}" class="link-primary fs-15" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= lang('App.view_sales_order') ?>">
+                                    <a href="#" class="link-primary fs-15 btn-view" data-id="${data}" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= lang('App.view_sales_order') ?>">
                                         <i class="ri-eye-fill"></i>
                                     </a>
-                                    <a href="#" class="link-success fs-15 edit-order-btn" data-id="${data}" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= lang('App.edit_sales_order') ?>">
+                                    <a href="#" class="link-success fs-15 btn-edit" data-id="${data}" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= lang('App.edit_sales_order') ?>">
                                         <i class="ri-edit-fill"></i>
                                     </a>
-                                    <a href="#" class="link-danger fs-15 delete-order-btn" data-id="${data}" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= lang('App.delete') ?>">
+                                    <a href="#" class="link-danger fs-15 btn-delete" data-id="${data}" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= lang('App.delete') ?>">
                                         <i class="ri-delete-bin-line"></i>
                                     </a>
                                 </div>
@@ -1351,6 +1422,64 @@ waitForDataTables(function() {
             isInitializing = false;
         }
     }
+
+    // Setup action button event handlers using document delegation (for Service class buttons)
+    $(document).off('click.allTable', '#all-orders-table .btn-view').on('click.allTable', '#all-orders-table .btn-view', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const orderId = $(this).data('id');
+        if (typeof window.openViewModal === 'function') {
+            window.openViewModal(orderId);
+        } else {
+            window.location.href = `<?= base_url('sales_orders/view/') ?>${orderId}`;
+        }
+    });
+    
+    $(document).off('click.allTable', '#all-orders-table .btn-edit').on('click.allTable', '#all-orders-table .btn-edit', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const orderId = $(this).data('id');
+        if (typeof window.openEditModal === 'function') {
+            window.openEditModal(orderId);
+        } else {
+            console.error('Edit modal not available');
+        }
+    });
+    
+    $(document).off('click.allTable', '#all-orders-table .btn-delete').on('click.allTable', '#all-orders-table .btn-delete', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const orderId = $(this).data('id');
+        if (typeof window.deleteOrder === 'function') {
+            window.deleteOrder(orderId);
+        } else {
+            console.error('Delete function not available');
+        }
+    });
+    
+    // Row click event listeners for view modal
+    $(document).off('click.allTable', '#all-orders-table tbody tr').on('click.allTable', '#all-orders-table tbody tr', function(e) {
+        // Don't trigger row click if clicking on action buttons, links, or dropdowns
+        if ($(e.target).closest('.action-buttons').length > 0 || 
+            $(e.target).closest('button').length > 0 || 
+            $(e.target).closest('a').length > 0 || 
+            $(e.target).hasClass('badge') ||
+            $(e.target).hasClass('status-dropdown') ||
+            $(e.target).closest('select').length > 0) {
+            return;
+        }
+        
+        // Get the order ID from the row data and open view modal
+        const table = $('#all-orders-table').DataTable();
+        const rowData = table.row(this).data();
+        if (rowData && rowData.id) {
+            if (typeof window.openViewModal === 'function') {
+                window.openViewModal(rowData.id);
+            } else {
+                window.location.href = `<?= base_url('sales_orders/view/') ?>${rowData.id}`;
+            }
+        }
+    });
 
     // Refresh function
     $('#refreshTable').on('click', function() {

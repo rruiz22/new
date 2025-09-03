@@ -1351,12 +1351,16 @@ function updateWidgetProgress(widgetId, percentage) {
 function updateStatusProgress() {
     const statusElements = ['pending', 'processing', 'completed', 'cancelled'];
     const total = statusElements.reduce((sum, status) => {
+        // Add safety check for status string
+        if (!status || typeof status !== 'string') return sum;
         const element = document.getElementById('status' + status.charAt(0).toUpperCase() + status.slice(1));
         return sum + (element ? parseInt(element.textContent) || 0 : 0);
     }, 0);
     
     if (total > 0) {
         statusElements.forEach(status => {
+            // Add safety check for status string
+            if (!status || typeof status !== 'string') return;
             const element = document.getElementById('status' + status.charAt(0).toUpperCase() + status.slice(1));
             const progressBar = document.getElementById(status + 'StatusProgress');
             if (element && progressBar) {
@@ -1397,7 +1401,11 @@ function navigateToTab(tabName) {
     if (tabButton) {
         const tab = new bootstrap.Tab(tabButton);
         tab.show();
-        showToast('info', `Switched to ${tabName.charAt(0).toUpperCase() + tabName.slice(1)} Orders`);
+        // Add safety check for tabName
+        const displayName = (tabName && typeof tabName === 'string') 
+            ? tabName.charAt(0).toUpperCase() + tabName.slice(1) 
+            : 'Unknown';
+        showToast('info', `Switched to ${displayName} Orders`);
     } else {
         console.warn(`Tab button for ${tabName} not found`);
     }
@@ -1421,7 +1429,11 @@ function navigateToAllOrdersWithStatus(status) {
                 statusFilter.value = status;
                 statusFilter.dispatchEvent(new Event('change'));
             }
-            showToast('info', `Filtered orders by status: ${status.charAt(0).toUpperCase() + status.slice(1)}`);
+            // Add safety check for status
+            const displayStatus = (status && typeof status === 'string') 
+                ? status.charAt(0).toUpperCase() + status.slice(1) 
+                : 'Unknown';
+            showToast('info', `Filtered orders by status: ${displayStatus}`);
         }, 500);
     }
 }

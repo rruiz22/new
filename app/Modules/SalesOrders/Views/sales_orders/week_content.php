@@ -21,7 +21,7 @@
                             <tr>
                                 <th scope="col"><?= lang('App.order_id') ?></th>
                                 <th scope="col"><?= lang('App.stock') ?></th>
-                                <th scope="col"><?= lang('App.client') ?></th>
+                                <th scope="col"><?= lang('App.vehicle') ?></th>
                                 <th scope="col"><?= lang('App.due') ?></th>
                                 <th scope="col"><?= lang('App.status') ?></th>
                                 <th scope="col"><?= lang('App.actions') ?></th>
@@ -593,6 +593,11 @@ waitForDataTablesOnWeek(function() {
                     {
                         data: 'order_id',
                         render: function(data, type, row) {
+                            // Add safety check for data
+                            if (!data) {
+                                data = 'N/A';
+                            }
+                            
                             let html = `<div>`;
                             html += `<a href="<?= base_url('sales_orders/view/') ?>${row.id}" class="fw-medium text-primary text-decoration-none">${data}</a>`;
                             
@@ -671,6 +676,11 @@ waitForDataTablesOnWeek(function() {
                     {
                         data: 'stock',
                         render: function(data, type, row) {
+                            // Add safety check for data
+                            if (!data) {
+                                data = 'N/A';
+                            }
+                            
                             let html = `<div><span class="fw-medium">${data}</span>`;
                             if (row.salesperson_name && row.salesperson_name !== 'N/A') {
                                 html += `<div class="text-muted small"><?= lang('App.sales') ?>: ${row.salesperson_name}</div>`;
@@ -682,9 +692,21 @@ waitForDataTablesOnWeek(function() {
                     {
                         data: 'client_name',
                         render: function(data, type, row) {
+                            // Add safety check for data
+                            if (!data) {
+                                data = 'N/A';
+                            }
+                            
                             let html = `<div><span class="fw-medium">${row.vehicle || data}</span>`;
                             if (row.vin) {
                                 html += `<div class="text-muted small">VIN: ${row.vin}</div>`;
+                            }
+                            
+                            // Add contact information
+                            if (row.contact_name && row.contact_name !== 'N/A' && row.contact_name.trim() !== '') {
+                                html += `<div class="text-muted small">
+                                    <i class="ri-user-line me-1"></i>Contact: ${row.contact_name}
+                                </div>`;
                             }
                             
                             // Add tooltip for instructions if available (removed client info)
@@ -710,15 +732,88 @@ waitForDataTablesOnWeek(function() {
                     {
                         data: 'due',
                         render: function(data, type, row) {
-                            if (data && data !== 'N/A') {
-                                return data; // Return the HTML directly since it's already formatted
+                            // For display, create styled due date with subtle colors
+                            if (type === 'display') {
+                                let dateValue = row.date;
+                                let timeValue = row.time;
+                                
+                                if (!dateValue || dateValue === 'N/A') {
+                                    return '<div class="text-center"><span class="text-muted small">No date set</span></div>';
+                                }
+                                
+                                // Parse the date and time
+                                const today = new Date();
+                                today.setHours(0, 0, 0, 0);
+                                
+                                const orderDate = new Date(dateValue + (timeValue ? ' ' + timeValue : ''));
+                                const isToday = orderDate.toDateString() === today.toDateString();
+                                const isTomorrow = orderDate.toDateString() === new Date(today.getTime() + 24 * 60 * 60 * 1000).toDateString();
+                                const isPast = orderDate < today;
+                                const isUrgent = !isPast && orderDate.getTime() - today.getTime() < 2 * 60 * 60 * 1000;
+                                
+                                let html = '<div class="text-center">';
+                                
+                                // Format date part with subtle styling
+                                const formattedDate = orderDate.toLocaleDateString('en-US', { 
+                                    month: 'short', 
+                                    day: 'numeric',
+                                    year: orderDate.getFullYear() !== today.getFullYear() ? 'numeric' : undefined
+                                });
+                                
+                                // Format time part
+                                const formattedTime = timeValue ? 
+                                    orderDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) : 
+                                    '';
+                                
+                                // Date with subtle color coding
+                                if (isPast) {
+                                    html += `<div class="text-danger-emphasis fw-medium small">${formattedDate}</div>`;
+                                } else if (isToday) {
+                                    html += `<div class="text-warning-emphasis fw-medium small">${formattedDate}</div>`;
+                                } else if (isTomorrow) {
+                                    html += `<div class="text-info-emphasis fw-medium small">${formattedDate}</div>`;
+                                } else {
+                                    html += `<div class="text-body-emphasis fw-medium small">${formattedDate}</div>`;
+                                }
+                                
+                                // Time with icon
+                                if (formattedTime) {
+                                    let timeColor = 'text-muted';
+                                    if (isPast) timeColor = 'text-danger-emphasis';
+                                    else if (isUrgent) timeColor = 'text-warning-emphasis';
+                                    
+                                    html += `<div class="${timeColor} small" style="font-size: 0.75rem;">
+                                        <i class="ri-time-line" style="font-size: 0.7rem;"></i> ${formattedTime}
+                                    </div>`;
+                                }
+                                
+                                // Status indicator with subtle text
+                                if (isPast) {
+                                    html += '<div class="text-danger small" style="font-size: 0.65rem; font-weight: 500;">Overdue</div>';
+                                } else if (isUrgent) {
+                                    html += '<div class="text-warning small" style="font-size: 0.65rem; font-weight: 500;">Urgent</div>';
+                                } else if (isToday) {
+                                    html += '<div class="text-warning small" style="font-size: 0.65rem; font-weight: 500;">Today</div>';
+                                } else if (isTomorrow) {
+                                    html += '<div class="text-info small" style="font-size: 0.65rem; font-weight: 500;">Tomorrow</div>';
+                                }
+                                
+                                html += '</div>';
+                                return html;
                             }
-                            return '<div class="text-center"><span class="text-muted">N/A</span></div>';
+                            
+                            // For sorting and other operations, return the raw data
+                            return data || '';
                         }
                     },
                     {
                         data: 'status',
                         render: function(data, type, row) {
+                            // Add null/undefined check to prevent charAt error
+                            if (!data || typeof data !== 'string') {
+                                return '<span class="status-indicator">N/A</span>';
+                            }
+
                             const statusClasses = {
                                 'completed': 'status-indicator status-completed',
                                 'pending': 'status-indicator status-pending',
@@ -739,13 +834,13 @@ waitForDataTablesOnWeek(function() {
                         render: function(data, type, row) {
                             return `
                                 <div class="d-flex justify-content-center gap-2 action-buttons">
-                                    <a href="<?= base_url('sales_orders/view/') ?>${data}" class="link-primary fs-15" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= lang('App.view_sales_order') ?>">
+                                    <a href="#" class="link-primary fs-15 btn-view" data-id="${data}" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= lang('App.view_sales_order') ?>">
                                         <i class="ri-eye-fill"></i>
                                     </a>
-                                    <a href="#" class="link-success fs-15 edit-order-btn" data-id="${data}" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= lang('App.edit_sales_order') ?>">
+                                    <a href="#" class="link-success fs-15 btn-edit" data-id="${data}" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= lang('App.edit_sales_order') ?>">
                                         <i class="ri-edit-fill"></i>
                                     </a>
-                                    <a href="#" class="link-danger fs-15 delete-order-btn" data-id="${data}" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= lang('App.delete') ?>">
+                                    <a href="#" class="link-danger fs-15 btn-delete" data-id="${data}" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= lang('App.delete') ?>">
                                         <i class="ri-delete-bin-line"></i>
                                     </a>
                                 </div>
@@ -829,7 +924,18 @@ waitForDataTablesOnWeek(function() {
                             feather.replace();
                         }
                         
+                        // Dispose existing tooltips before creating new ones to prevent memory leaks
                         if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+                            // First dispose existing tooltips
+                            const existingTooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+                            existingTooltips.forEach(el => {
+                                const tooltipInstance = bootstrap.Tooltip.getInstance(el);
+                                if (tooltipInstance) {
+                                    tooltipInstance.dispose();
+                                }
+                            });
+                            
+                            // Create new tooltips
                             const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
                             tooltipTriggerList.map(function (tooltipTriggerEl) {
                                 return new bootstrap.Tooltip(tooltipTriggerEl);
@@ -837,28 +943,15 @@ waitForDataTablesOnWeek(function() {
                         }
                     }, 10);
 
-                    // Add row click event listeners
-                    $('#week-orders-table tbody tr').off('click').on('click', function(e) {
-                        // Don't trigger row click if clicking on action buttons or links
-                        if ($(e.target).closest('.action-buttons').length > 0 || 
-                            $(e.target).closest('a').length > 0 || 
-                            $(e.target).hasClass('badge')) {
-                            return;
-                        }
-                        
-                        // Get the order ID from the row data
-                        const table = $('#week-orders-table').DataTable();
-                        const rowData = table.row(this).data();
-                        if (rowData && rowData.id) {
-                            window.location.href = `<?= base_url('sales_orders/view/') ?>${rowData.id}`;
-                        }
-                    });
-
                     // Ensure table uses full width on every draw
                     $('#week-orders-table').css({'width': '100%', 'max-width': '100%'});
                     $('.dataTables_wrapper').css({'width': '100%', 'max-width': '100%'});
                 }
             });
+
+            // Setup event handlers ONCE after DataTable initialization
+            // Use event delegation to handle dynamic content without rebinding on each draw
+            setupWeekTableEventHandlers();
 
             isInitializing = false;
 
@@ -866,6 +959,67 @@ waitForDataTablesOnWeek(function() {
             console.error('❌ Error initializing Week DataTable:', error);
             isInitializing = false;
         }
+    }
+
+    // Event handlers setup function (called once after table initialization)
+    function setupWeekTableEventHandlers() {
+        // Remove any existing delegated handlers first
+        $(document).off('click.weekTable');
+        
+        // Row click handler using delegation
+        $(document).on('click.weekTable', '#week-orders-table tbody tr', function(e) {
+            // Don't trigger row click if clicking on action buttons or links
+            if ($(e.target).closest('.action-buttons').length > 0 || 
+                $(e.target).closest('a').length > 0 || 
+                $(e.target).hasClass('badge')) {
+                return;
+            }
+            
+            // Get the order ID from the row data and open view modal
+            const table = $('#week-orders-table').DataTable();
+            const rowData = table.row(this).data();
+            if (rowData && rowData.id) {
+                if (typeof window.openViewModal === 'function') {
+                    window.openViewModal(rowData.id);
+                } else {
+                    window.location.href = `<?= base_url('sales_orders/view/') ?>${rowData.id}`;
+                }
+            }
+        });
+
+        // Action button handlers using delegation
+        $(document).on('click.weekTable', '#week-orders-table .btn-view', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const orderId = $(this).data('id');
+            if (typeof window.openViewModal === 'function') {
+                window.openViewModal(orderId);
+            } else {
+                window.location.href = `<?= base_url('sales_orders/view/') ?>${orderId}`;
+            }
+        });
+        
+        $(document).on('click.weekTable', '#week-orders-table .btn-edit', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const orderId = $(this).data('id');
+            if (typeof window.openEditModal === 'function') {
+                window.openEditModal(orderId);
+            } else {
+                console.error('Edit modal not available');
+            }
+        });
+        
+        $(document).on('click.weekTable', '#week-orders-table .btn-delete', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const orderId = $(this).data('id');
+            if (typeof window.deleteOrder === 'function') {
+                window.deleteOrder(orderId);
+            } else {
+                console.error('Delete function not available');
+            }
+        });
     }
 
     // Refresh function

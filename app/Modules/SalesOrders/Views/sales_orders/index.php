@@ -2247,7 +2247,16 @@ function initializeOrderModal() {
     
     if (addOrderBtn) {
         addOrderBtn.addEventListener('click', function() {
-            openModalForNewOrder();
+            if (window.globalSalesOrderModal) {
+                window.globalSalesOrderModal.open();
+            } else if (typeof GlobalSalesOrderModal !== 'undefined') {
+                // Fallback: create new instance if global one doesn't exist
+                const modal = new GlobalSalesOrderModal();
+                modal.open();
+            } else {
+                // Final fallback to original modal
+                openModalForNewOrder();
+            }
         });
     }
     

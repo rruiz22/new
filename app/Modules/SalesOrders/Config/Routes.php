@@ -25,6 +25,8 @@ return function (RouteCollection $routes) {
         // CRUD operations
         $routes->get('modal_form', 'SalesOrdersController::modal_form');
         $routes->post('store', 'SalesOrdersController::store');
+        $routes->post('save', 'SalesOrdersController::save');
+        $routes->get('get/(:num)', 'SalesOrdersController::get/$1');
         $routes->get('view/(:num)', 'SalesOrdersController::view/$1');
         $routes->get('print/(:num)', 'SalesOrdersController::print/$1');
         $routes->get('downloadPdf/(:num)', 'SalesOrdersController::downloadPdf/$1');
@@ -67,6 +69,7 @@ return function (RouteCollection $routes) {
         $routes->post('deleteComment/(:num)', 'SalesOrdersController::deleteComment/$1');
         
         // Data fetching endpoints
+        $routes->get('getActiveClients', 'SalesOrdersController::getActiveClients');
         $routes->get('getServicesForClient/(:num)', 'SalesOrdersController::getServicesForClient/$1');
         $routes->get('getServicesForClient', 'SalesOrdersController::getServicesForClient');
         $routes->get('getServicesForOrderForm/(:num)', 'SalesOrdersController::getServicesForOrderForm/$1');
@@ -74,6 +77,10 @@ return function (RouteCollection $routes) {
         $routes->get('getContactsForClient/(:num)', 'SalesOrdersController::getContactsForClient/$1');
         $routes->get('getContactsForClient', 'SalesOrdersController::getContactsForClient');
         $routes->get('getOrderData/(:num)', 'SalesOrdersController::getOrderData/$1');
+        
+        // Global Modal endpoints
+        $routes->post('decodeVin', 'SalesOrdersController::decodeVin');
+        $routes->post('validateDateTime', 'SalesOrdersController::validateDateTime');
         
         // Followers routes
         $routes->get('getFollowers/(:num)', 'SalesOrdersController::getFollowers/$1');

@@ -22,7 +22,11 @@
       "Read(/C:\\Users\\rudyr\\Downloads/**)",
       "Read(/C:\\Users\\rudyr\\Downloads/**)",
       "Read(/C:\\Users\\rudyr\\Downloads/**)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(curl:*)",
+      "Read(/C:\\Users\\rudyr\\Pictures\\Screenshots/**)",
+      "Bash(mysql:*)",
+      "Read(/C:\\Users\\rudyr\\Pictures\\Screenshots/**)"
     ],
     "deny": [],
     "ask": []

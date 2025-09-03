@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Sales Orders Endpoints</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        button { margin: 10px; padding: 10px; }
+        .result { margin: 10px 0; padding: 10px; border: 1px solid #ccc; background: #f9f9f9; }
+        .error { border-color: red; background: #ffe6e6; }
+        .success { border-color: green; background: #e6ffe6; }
+    </style>
+</head>
+<body>
+    <h1>Test Sales Orders Endpoints</h1>
+    
+    <button onclick="testGetContacts()">Test Get Contacts for Client 2</button>
+    <button onclick="testGetServices()">Test Get Services for Client 2</button>
+    <button onclick="testCheckDuplicates()">Test Check Duplicates</button>
+    
+    <div id="results"></div>
+
+    <script>
+        const baseUrl = 'http://localhost/mda_nuevo/sales_orders/';
+        
+        function addResult(title, data, isError = false) {
+            const resultsDiv = document.getElementById('results');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `result ${isError ? 'error' : 'success'}`;
+            resultDiv.innerHTML = `<h3>${title}</h3><pre>${JSON.stringify(data, null, 2)}</pre>`;
+            resultsDiv.appendChild(resultDiv);
+        }
+        
+        async function testGetContacts() {
+            try {
+                const response = await fetch(baseUrl + 'getContactsForClient/2');
+                const data = await response.json();
+                addResult('Get Contacts for Client 2', data, !response.ok);
+            } catch (error) {
+                addResult('Get Contacts Error', { error: error.message }, true);
+            }
+        }
+        
+        async function testGetServices() {
+            try {
+                const response = await fetch(baseUrl + 'getServicesForClient/2');
+                const data = await response.json();
+                addResult('Get Services for Client 2', data, !response.ok);
+            } catch (error) {
+                addResult('Get Services Error', { error: error.message }, true);
+            }
+        }
+        
+        async function testCheckDuplicates() {
+            try {
+                const formData = new FormData();
+                formData.append('client_id', '2');
+                formData.append('vin', 'TEST123');
+                
+                const response = await fetch(baseUrl + 'checkDuplicateOrder', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                addResult('Check Duplicates', data, !response.ok);
+            } catch (error) {
+                addResult('Check Duplicates Error', { error: error.message }, true);
+            }
+        }
+    </script>
+</body>
+</html>
