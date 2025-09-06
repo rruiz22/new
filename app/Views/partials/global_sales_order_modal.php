@@ -16,7 +16,9 @@
     --notion-success: #0f7b0f;
     --notion-danger: #e03e3e;
     --notion-focus: #2383e2;
-    --modal-z-index: 9999;
+    --modal-z-index: 1055;
+    /* Remove !important to prevent Bootstrap conflicts */
+    z-index: 1055;
 }
 
 /* Base Modal Styling - 3 Columns Desktop */
@@ -24,6 +26,8 @@
     max-width: 1200px;
     margin: 2rem auto;
     width: calc(100% - 2rem);
+    /* Remove !important to prevent Bootstrap conflicts */
+    position: relative;
 }
 
 #global-sales-order-modal .modal-content {
@@ -32,6 +36,9 @@
     box-shadow: rgba(15, 15, 15, 0.05) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 3px 6px, rgba(15, 15, 15, 0.2) 0px 9px 24px;
     overflow: hidden;
     background: var(--notion-bg);
+    /* Remove !important declarations that can conflict with Bootstrap */
+    background-color: #ffffff;
+    position: relative;
 }
 
 #global-sales-order-modal .modal-header {

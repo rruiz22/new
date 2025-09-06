@@ -1,0 +1,669 @@
+/**
+ * Enhanced Table Indicators CSS
+ * Notion-style clean design with improved UX
+ */
+
+/* Base Indicator Badge Styles */
+.indicator-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.125rem 0.375rem;
+    font-size: 0.65rem;
+    font-weight: 500;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    text-decoration: none;
+    vertical-align: middle;
+    margin-left: 0.25rem;
+}
+
+/* Comments Indicator */
+.comments-indicator {
+    background: transparent;
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.comments-indicator:hover {
+    background: rgba(16, 185, 129, 0.1);
+    border-color: rgba(16, 185, 129, 0.3);
+    transform: translateY(-1px);
+    text-decoration: none;
+    color: #059669;
+}
+
+.comments-indicator.has-comments {
+    background: rgba(16, 185, 129, 0.1);
+    border-color: rgba(16, 185, 129, 0.2);
+    color: #059669;
+}
+
+.comments-indicator.has-comments:hover {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: rgba(16, 185, 129, 0.4);
+    color: #047857;
+}
+
+/* Internal Notes Indicator */
+.notes-indicator {
+    background: transparent;
+    color: #dc2626;
+    border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+.notes-indicator:hover {
+    background: rgba(220, 38, 38, 0.1);
+    border-color: rgba(220, 38, 38, 0.3);
+    transform: translateY(-1px);
+    text-decoration: none;
+    color: #b91c1c;
+}
+
+.notes-indicator.has-notes {
+    background: rgba(220, 38, 38, 0.1);
+    border-color: rgba(220, 38, 38, 0.2);
+    color: #b91c1c;
+}
+
+.notes-indicator.has-notes:hover {
+    background: rgba(220, 38, 38, 0.15);
+    border-color: rgba(220, 38, 38, 0.4);
+    color: #991b1b;
+}
+
+/* Duplicate Indicators */
+.duplicate-indicator {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.125rem 0.375rem;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    vertical-align: middle;
+    cursor: pointer;
+    margin-left: 0.25rem;
+}
+
+.stock-duplicate {
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    color: #d97706;
+}
+
+.stock-duplicate:hover {
+    background: rgba(245, 158, 11, 0.2);
+    border-color: rgba(245, 158, 11, 0.4);
+    color: #b45309;
+    transform: translateY(-1px);
+}
+
+.vin-duplicate {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #dc2626;
+}
+
+.vin-duplicate:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.4);
+    color: #b91c1c;
+    transform: translateY(-1px);
+}
+
+/* Icons inside badges */
+.indicator-badge i {
+    font-size: 0.6rem;
+    margin-right: 0.25rem;
+}
+
+.duplicate-indicator i {
+    font-size: 0.6rem;
+    margin-right: 0.125rem;
+}
+
+.duplicate-indicator small {
+    font-size: 0.6rem;
+    font-weight: 600;
+    margin-left: 0.125rem;
+}
+
+/* New/Unread Indicator */
+.has-new::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 6px;
+    height: 6px;
+    background: #ef4444;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+}
+
+@keyframes pulse {
+    0% { 
+        opacity: 1; 
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+    }
+    50% { 
+        opacity: 0.7; 
+        transform: scale(1.1);
+        box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+    }
+    100% { 
+        opacity: 1; 
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+    }
+}
+
+/* Custom Popover Styles - Notion-inspired */
+.custom-popover {
+    max-width: 320px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 
+                0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    background: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    z-index: 1080;
+}
+
+.custom-popover .popover-body {
+    padding: 0;
+}
+
+/* Popover Header */
+.popover-header-custom {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f3f4f6;
+    background: #fafafa;
+    border-radius: 8px 8px 0 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    color: #374151;
+}
+
+.popover-header-custom i {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+/* Popover Body */
+.popover-body-custom {
+    padding: 0.5rem;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+/* Comment Items */
+.comment-item, .note-item {
+    padding: 0.75rem;
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    transition: background-color 0.2s ease;
+}
+
+.comment-item:hover, .note-item:hover {
+    background: #f3f4f6;
+}
+
+.comment-item:last-child, .note-item:last-child {
+    margin-bottom: 0;
+}
+
+/* Author Info */
+.comment-author, .note-author {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-bottom: 0.5rem;
+}
+
+.author-name {
+    font-weight: 500;
+    color: #374151;
+}
+
+.comment-time, .note-time {
+    margin-left: auto;
+    font-size: 0.65rem;
+    color: #9ca3af;
+}
+
+/* Avatar */
+.avatar-circle {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.625rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    flex-shrink: 0;
+}
+
+.avatar-placeholder {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #e5e7eb;
+    flex-shrink: 0;
+}
+
+/* Content Text */
+.comment-text, .note-text {
+    font-size: 0.8rem;
+    color: #374151;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-wrap: break-word;
+}
+
+/* More Items Indicator */
+.more-items {
+    text-align: center;
+    padding: 0.5rem;
+    color: #6b7280;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-top: 1px solid #e5e7eb;
+    margin-top: 0.5rem;
+    background: #f9fafb;
+    border-radius: 0 0 6px 6px;
+}
+
+/* Duplicate Popover Specific */
+.duplicate-value {
+    padding: 0.75rem;
+    background: #f9fafb;
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+    font-size: 0.8rem;
+    color: #374151;
+}
+
+.value-highlight {
+    font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+    background: #e5e7eb;
+    padding: 0.125rem 0.375rem;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.duplicate-preview {
+    padding: 0.5rem 0;
+}
+
+.preview-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+    color: #6b7280;
+}
+
+.item-icon {
+    color: #9ca3af;
+    font-size: 0.875rem;
+}
+
+/* Popover Actions */
+.popover-actions {
+    padding: 0.75rem;
+    border-top: 1px solid #e5e7eb;
+    background: #f9fafb;
+    border-radius: 0 0 6px 6px;
+}
+
+.popover-actions .btn {
+    font-size: 0.75rem;
+    padding: 0.375rem 0.75rem;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+/* Empty State */
+.popover-empty {
+    padding: 1.5rem;
+    text-align: center;
+    color: #9ca3af;
+    font-size: 0.8rem;
+    font-style: italic;
+}
+
+/* Scrollbar Styling for Popover Body */
+.popover-body-custom::-webkit-scrollbar {
+    width: 4px;
+}
+
+.popover-body-custom::-webkit-scrollbar-track {
+    background: #f3f4f6;
+    border-radius: 4px;
+}
+
+.popover-body-custom::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 4px;
+}
+
+.popover-body-custom::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+}
+
+/* Popover Arrow Styling */
+.custom-popover .popover-arrow::before {
+    border-color: #e5e7eb;
+}
+
+.custom-popover .popover-arrow::after {
+    border-color: #ffffff;
+}
+
+/* Specific popover type styling */
+.comments-popover .popover-header-custom {
+    background: linear-gradient(135deg, #ecfdf5, #f0fdf4);
+    color: #059669;
+}
+
+.notes-popover .popover-header-custom {
+    background: linear-gradient(135deg, #fef2f2, #fef7f7);
+    color: #dc2626;
+}
+
+.duplicate-popover .popover-header-custom {
+    background: linear-gradient(135deg, #fef3c7, #fefce8);
+    color: #d97706;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .custom-popover {
+        max-width: 280px;
+        font-size: 0.875rem;
+    }
+    
+    .popover-header-custom {
+        padding: 0.625rem 0.75rem;
+        font-size: 0.8rem;
+    }
+    
+    .popover-body-custom {
+        padding: 0.375rem;
+    }
+    
+    .comment-item, .note-item {
+        padding: 0.5rem;
+    }
+    
+    .comment-text, .note-text {
+        font-size: 0.75rem;
+        -webkit-line-clamp: 2;
+    }
+}
+
+/* Focus and accessibility */
+.indicator-badge:focus {
+    outline: 2px solid rgba(59, 130, 246, 0.5);
+    outline-offset: 2px;
+}
+
+.indicator-badge:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* Loading state */
+.indicator-badge.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.indicator-badge.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    margin: -5px 0 0 -5px;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ================================
+ * DATATABLES - SIN PROCESSING NI OVERLAYS
+ * ================================ */
+
+/* Ocultar completamente cualquier processing */
+.dataTables_processing {
+    display: none !important;
+}
+
+/* Asegurar que no hay efectos glass o overlays */
+.dataTables_wrapper.processing {
+    pointer-events: all !important;
+}
+
+.dataTables_wrapper.processing::before,
+.dataTables_wrapper.processing::after {
+    display: none !important;
+}
+
+/* Eliminar todos los backdrop-filter y glass effects */
+* {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* Asegurar que modal backdrops no se atasquen */
+.modal-backdrop {
+    transition: opacity 0.15s linear !important;
+}
+
+.modal-backdrop.fade {
+    opacity: 0;
+}
+
+.modal-backdrop.show {
+    opacity: 0.5;
+}
+
+/* Prevenir overlays atorados */
+body.modal-open .modal-backdrop + .modal-backdrop {
+    display: none !important;
+}
+
+/* ================================
+ * MODAL OVERLAY FIXES
+ * ================================ */
+
+/* Fix modal content visibility over backdrop */
+.modal.show .modal-dialog {
+    z-index: 1060 !important;
+    position: relative;
+}
+
+.modal .modal-content {
+    z-index: 1061 !important;
+    position: relative;
+    background: #fff !important;
+    border: none !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Ensure modal is properly displayed */
+.modal.show {
+    z-index: 1050 !important;
+    display: block !important;
+}
+
+/* Modal backdrop */
+.modal-backdrop {
+    z-index: 1040 !important;
+}
+
+/* Remove any blur or glass effects from modals */
+.modal, .modal-backdrop, .modal-dialog, .modal-content {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    filter: none !important;
+}
+
+/* Prevent multiple modal-backdrop stacking */
+.modal-backdrop.show ~ .modal-backdrop {
+    display: none !important;
+}
+
+/* Ensure modal content is clickable */
+.modal-content {
+    pointer-events: auto !important;
+    position: relative !important;
+}
+
+/* Fix for modals not displaying content properly */
+.modal .modal-body {
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+/* Removed conflicting modal styles - now handled by dedicated CSS file */
+
+/* ================================
+ * STATUS DROPDOWN MEJORADO
+ * ================================ */
+
+/* Base status dropdown styling */
+.status-dropdown {
+    border: 1px solid #e9ecef !important;
+    border-radius: 6px !important;
+    padding: 6px 10px !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    text-align: center !important;
+    text-align-last: center !important;
+    transition: all 0.2s ease !important;
+    background-color: #fff !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+.status-dropdown:hover {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+    transform: translateY(-1px) !important;
+}
+
+.status-dropdown:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3) !important;
+    border-color: #3b82f6 !important;
+}
+
+/* Status color variants */
+.status-dropdown.status-pending {
+    background-color: #fef3c7 !important;
+    border-color: #f59e0b !important;
+    color: #d97706 !important;
+}
+
+.status-dropdown.status-in_progress {
+    background-color: #dbeafe !important;
+    border-color: #3b82f6 !important;
+    color: #2563eb !important;
+}
+
+.status-dropdown.status-completed {
+    background-color: #d1fae5 !important;
+    border-color: #10b981 !important;
+    color: #059669 !important;
+}
+
+.status-dropdown.status-cancelled {
+    background-color: #fee2e2 !important;
+    border-color: #ef4444 !important;
+    color: #dc2626 !important;
+}
+
+/* Disabled state */
+.status-dropdown:disabled {
+    opacity: 0.7 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+}
+
+/* ================================
+ * ROW BACKGROUND COLORS SUAVES
+ * ================================ */
+
+/* Fondo suave para filas según status */
+tr.order-row-pending {
+    background-color: rgba(252, 211, 77, 0.08) !important;
+}
+
+tr.order-row-pending:hover {
+    background-color: rgba(252, 211, 77, 0.12) !important;
+}
+
+tr.order-row-in-progress {
+    background-color: rgba(59, 130, 246, 0.06) !important;
+}
+
+tr.order-row-in-progress:hover {
+    background-color: rgba(59, 130, 246, 0.1) !important;
+}
+
+tr.order-row-completed {
+    background-color: rgba(16, 185, 129, 0.06) !important;
+}
+
+tr.order-row-completed:hover {
+    background-color: rgba(16, 185, 129, 0.1) !important;
+}
+
+tr.order-row-cancelled {
+    background-color: rgba(239, 68, 68, 0.06) !important;
+}
+
+tr.order-row-cancelled:hover {
+    background-color: rgba(239, 68, 68, 0.1) !important;
+}
+
+/* Zebra striping con colores de status */
+.table-striped > tbody > tr.order-row-pending:nth-of-type(odd) > td {
+    background-color: rgba(252, 211, 77, 0.05) !important;
+}
+
+.table-striped > tbody > tr.order-row-in-progress:nth-of-type(odd) > td {
+    background-color: rgba(59, 130, 246, 0.04) !important;
+}
+
+.table-striped > tbody > tr.order-row-completed:nth-of-type(odd) > td {
+    background-color: rgba(16, 185, 129, 0.04) !important;
+}
+
+.table-striped > tbody > tr.order-row-cancelled:nth-of-type(odd) > td {
+    background-color: rgba(239, 68, 68, 0.04) !important;
+}

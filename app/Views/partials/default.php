@@ -64,8 +64,6 @@
     <!-- Global Sales Order Modal -->
     <?= $this->include('partials/global_sales_order_modal') ?>
     
-    <!-- Global Sales Order View Modal -->
-    <?= $this->include('partials/global_sales_order_view_modal') ?>
 
     <!-- DataTables Scripts -->
      <?= $this->include('partials/datatables-scripts') ?>
@@ -77,7 +75,6 @@
     </script>
     <script src="<?= base_url('assets/js/global-vin-decoder.js') ?>?v=<?= time() ?>"></script>
     <script src="<?= base_url('assets/js/global-sales-order-modal.js') ?>?v=<?= time() ?>"></script>
-    <script src="<?= base_url('assets/js/global-sales-order-view-modal.js') ?>?v=<?= time() ?>"></script>
     <script>
         // Global function to open modal from topbar dropdown
         function openGlobalModal(orderType) {
@@ -88,6 +85,49 @@
                 console.error('GlobalSalesOrderModal not loaded');
             }
         }
+        
+    </script>
+    
+    <!-- Digital Clock Script -->
+    <script>
+        // Digital Clock functionality
+        function updateDigitalClock() {
+            const now = new Date();
+            
+            // Format date: "Friday, Dec 6, 2024"
+            const dateOptions = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            };
+            const formattedDate = now.toLocaleDateString('en-US', dateOptions);
+            
+            // Format time: "10:24:35 PM"
+            const timeOptions = { 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit',
+                hour12: true 
+            };
+            const formattedTime = now.toLocaleTimeString('en-US', timeOptions);
+            
+            // Update the display
+            const dateElement = document.getElementById('current-date');
+            const timeElement = document.getElementById('current-time');
+            
+            if (dateElement) dateElement.textContent = formattedDate;
+            if (timeElement) timeElement.textContent = formattedTime;
+        }
+        
+        // Initialize digital clock when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update immediately
+            updateDigitalClock();
+            
+            // Update every second
+            setInterval(updateDigitalClock, 1000);
+        });
     </script>
 
     <!-- Custom scripts for this page -->

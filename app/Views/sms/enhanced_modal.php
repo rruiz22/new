@@ -372,9 +372,9 @@ class EnhancedSMSModal {
         document.getElementById('smsPhone').value = orderData.phone;
         document.getElementById('smsContactName').value = orderData.contact_name;
         
-        // Show modal
-        const modalInstance = new bootstrap.Modal(this.modal);
-        modalInstance.show();
+        // Show modal safely
+        const modal = new bootstrap.Modal(document.getElementById('enhancedSmsModal'));
+        modal.show();
     }
     
     onModalShown() {

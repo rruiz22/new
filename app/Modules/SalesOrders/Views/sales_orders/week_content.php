@@ -244,8 +244,6 @@
     width: 100% !important;
     height: 100% !important;
     background: rgba(255, 255, 255, 0.1) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
     border: 1px solid rgba(255, 255, 255, 0.2) !important;
     border-radius: 12px !important;
     z-index: 100 !important;
@@ -264,29 +262,128 @@
     display: flex !important;
 }
 
-.dataTables_processing::before {
-    content: '';
-    width: 50px;
-    height: 50px;
-    border: 3px solid rgba(64, 81, 137, 0.1);
-    border-top: 3px solid #405189;
-    border-radius: 50%;
-    animation: elegantSpin 1s linear infinite;
-    margin-right: 1rem;
-    flex-shrink: 0;
+/* OCULTAR COMPLETAMENTE EL PROCESSING */
+.dataTables_processing {
+    display: none !important;
+}
+
+.dataTables_wrapper.processing {
+    pointer-events: all !important;
+}
+
+.dataTables_wrapper.processing::before,
+.dataTables_wrapper.processing::after {
+    display: none !important;
+}
+
+/* Eliminar todos los backdrop-filter y glass effects */
+* {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* ================================
+ * STATUS DROPDOWN STYLES
+ * ================================ */
+
+/* Base status dropdown styling */
+.status-dropdown {
+    border: 1px solid #e9ecef !important;
+    border-radius: 6px !important;
+    padding: 6px 10px !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    text-align: center !important;
+    text-align-last: center !important;
+    transition: all 0.2s ease !important;
+    background-color: #fff !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+.status-dropdown:hover {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+    transform: translateY(-1px) !important;
+}
+
+.status-dropdown:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3) !important;
+    border-color: #3b82f6 !important;
+}
+
+/* Status color variants */
+.status-dropdown.status-pending {
+    background-color: #fef3c7 !important;
+    border-color: #f59e0b !important;
+    color: #d97706 !important;
+}
+
+.status-dropdown.status-in_progress {
+    background-color: #dbeafe !important;
+    border-color: #3b82f6 !important;
+    color: #2563eb !important;
+}
+
+.status-dropdown.status-completed {
+    background-color: #d1fae5 !important;
+    border-color: #10b981 !important;
+    color: #059669 !important;
+}
+
+.status-dropdown.status-cancelled {
+    background-color: #fee2e2 !important;
+    border-color: #ef4444 !important;
+    color: #dc2626 !important;
+}
+
+/* ================================
+ * ROW BACKGROUND COLORS
+ * ================================ */
+
+/* Fondo suave para filas según status */
+tr.order-row-pending {
+    background-color: rgba(252, 211, 77, 0.08) !important;
+}
+
+tr.order-row-pending:hover {
+    background-color: rgba(252, 211, 77, 0.12) !important;
+}
+
+tr.order-row-in_progress {
+    background-color: rgba(59, 130, 246, 0.06) !important;
+}
+
+tr.order-row-in_progress:hover {
+    background-color: rgba(59, 130, 246, 0.1) !important;
+}
+
+tr.order-row-completed {
+    background-color: rgba(16, 185, 129, 0.06) !important;
+}
+
+tr.order-row-completed:hover {
+    background-color: rgba(16, 185, 129, 0.1) !important;
+}
+
+tr.order-row-cancelled {
+    background-color: rgba(239, 68, 68, 0.06) !important;
+}
+
+tr.order-row-cancelled:hover {
+    background-color: rgba(239, 68, 68, 0.1) !important;
 }
 
 @keyframes elegantFadeIn {
     from {
         opacity: 0;
-        backdrop-filter: blur(0px);
-        -webkit-backdrop-filter: blur(0px);
+        
+        -webkit-
         transform: scale(0.95);
     }
     to {
         opacity: 1;
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
+        
+        -webkit-
         transform: scale(1);
     }
 }
@@ -544,7 +641,7 @@ waitForDataTablesOnWeek(function() {
             const weekRange = getCurrentWeekRange();
 
             weekOrdersTable = $('#week-orders-table').DataTable({
-                processing: true,
+                processing: false,
                 serverSide: true,
                 responsive: false,
                 scrollX: false,
@@ -557,6 +654,27 @@ waitForDataTablesOnWeek(function() {
                     url: '<?= base_url('sales_orders/all_content') ?>',
                     type: 'POST',
                     data: function(d) {
+                        // Validate and sanitize search value
+                        if (d.search && d.search.value) {
+                            let searchValue = d.search.value.trim();
+                            
+                            // Limit search length to prevent performance issues
+                            if (searchValue.length > 50) {
+                                searchValue = searchValue.substring(0, 50);
+                            }
+                            
+                            // Remove potentially problematic characters
+                            searchValue = searchValue.replace(/[<>'"&\\]/g, '');
+                            
+                            // Update the search value
+                            d.search.value = searchValue;
+                            
+                            // Skip search if too short or contains only special chars
+                            if (searchValue.length === 0) {
+                                d.search.value = '';
+                            }
+                        }
+                        
                         // Filter for current week's orders
                         d.date_from_filter = weekRange.start;
                         d.date_to_filter = weekRange.end;
@@ -572,6 +690,7 @@ waitForDataTablesOnWeek(function() {
                         // Add CSRF token
                         d.<?= csrf_token() ?> = '<?= csrf_hash() ?>';
                         
+                        return d;
                     },
                     error: function(xhr, error, thrown) {
                         
@@ -767,13 +886,13 @@ waitForDataTablesOnWeek(function() {
                                 
                                 // Date with subtle color coding
                                 if (isPast) {
-                                    html += `<div class="text-danger-emphasis fw-medium small">${formattedDate}</div>`;
+                                    html += `<div class="text-danger-emphasis fw-medium" style="font-size: 0.9rem;">${formattedDate}</div>`;
                                 } else if (isToday) {
-                                    html += `<div class="text-warning-emphasis fw-medium small">${formattedDate}</div>`;
+                                    html += `<div class="text-warning-emphasis fw-medium" style="font-size: 0.9rem;">${formattedDate}</div>`;
                                 } else if (isTomorrow) {
-                                    html += `<div class="text-info-emphasis fw-medium small">${formattedDate}</div>`;
+                                    html += `<div class="text-info-emphasis fw-medium" style="font-size: 0.9rem;">${formattedDate}</div>`;
                                 } else {
-                                    html += `<div class="text-body-emphasis fw-medium small">${formattedDate}</div>`;
+                                    html += `<div class="text-body-emphasis fw-medium" style="font-size: 0.9rem;">${formattedDate}</div>`;
                                 }
                                 
                                 // Time with icon
@@ -782,20 +901,20 @@ waitForDataTablesOnWeek(function() {
                                     if (isPast) timeColor = 'text-danger-emphasis';
                                     else if (isUrgent) timeColor = 'text-warning-emphasis';
                                     
-                                    html += `<div class="${timeColor} small" style="font-size: 0.75rem;">
-                                        <i class="ri-time-line" style="font-size: 0.7rem;"></i> ${formattedTime}
+                                    html += `<div class="${timeColor}" style="font-size: 1rem; font-weight: 500; line-height: 1.2;">
+                                        <i class="ri-time-line" style="font-size: 0.9rem;"></i> ${formattedTime}
                                     </div>`;
                                 }
                                 
                                 // Status indicator with subtle text
                                 if (isPast) {
-                                    html += '<div class="text-danger small" style="font-size: 0.65rem; font-weight: 500;">Overdue</div>';
+                                    html += '<div class="text-danger" style="font-size: 0.85rem; font-weight: 600;">Overdue</div>';
                                 } else if (isUrgent) {
-                                    html += '<div class="text-warning small" style="font-size: 0.65rem; font-weight: 500;">Urgent</div>';
+                                    html += '<div class="text-warning" style="font-size: 0.85rem; font-weight: 600;">Urgent</div>';
                                 } else if (isToday) {
-                                    html += '<div class="text-warning small" style="font-size: 0.65rem; font-weight: 500;">Today</div>';
+                                    html += '<div class="text-warning" style="font-size: 0.85rem; font-weight: 600;">Today</div>';
                                 } else if (isTomorrow) {
-                                    html += '<div class="text-info small" style="font-size: 0.65rem; font-weight: 500;">Tomorrow</div>';
+                                    html += '<div class="text-info" style="font-size: 0.85rem; font-weight: 600;">Tomorrow</div>';
                                 }
                                 
                                 html += '</div>';
@@ -809,23 +928,29 @@ waitForDataTablesOnWeek(function() {
                     {
                         data: 'status',
                         render: function(data, type, row) {
-                            // Add null/undefined check to prevent charAt error
-                            if (!data || typeof data !== 'string') {
-                                return '<span class="status-indicator">N/A</span>';
+                            if (type === 'display') {
+                                const statusOptions = [
+                                    {value: 'pending', label: 'Pending', class: 'warning'},
+                                    {value: 'in_progress', label: 'In Progress', class: 'primary'},
+                                    {value: 'completed', label: 'Completed', class: 'success'},
+                                    {value: 'cancelled', label: 'Cancelled', class: 'danger'}
+                                ];
+
+                                let options = '';
+                                statusOptions.forEach(option => {
+                                    const selected = option.value === data ? 'selected' : '';
+                                    options += `<option value="${option.value}" ${selected}>${option.label}</option>`;
+                                });
+
+                                return `
+                                    <select class="form-select form-select-sm status-dropdown status-${data}" 
+                                            data-order-id="${row.id}" 
+                                            style="width: 120px; font-size: 11px;">
+                                        ${options}
+                                    </select>
+                                `;
                             }
-
-                            const statusClasses = {
-                                'completed': 'status-indicator status-completed',
-                                'pending': 'status-indicator status-pending',
-                                'cancelled': 'status-indicator status-cancelled',
-                                'processing': 'status-indicator status-processing',
-                                'in_progress': 'status-indicator status-processing'
-                            };
-
-                            const cssClass = statusClasses[data] || 'status-indicator';
-                            const displayText = data.charAt(0).toUpperCase() + data.slice(1).replace('_', ' ');
-
-                            return `<span class="${cssClass}">${displayText}</span>`;
+                            return data;
                         },
                         orderable: false
                     },
@@ -923,6 +1048,20 @@ waitForDataTablesOnWeek(function() {
                         if (typeof feather !== 'undefined') {
                             feather.replace();
                         }
+                        
+                        // Apply row status classes
+                        $('#week-orders-table tbody tr').each(function() {
+                            const $row = $(this);
+                            const $statusDropdown = $row.find('.status-dropdown');
+                            
+                            if ($statusDropdown.length > 0) {
+                                const status = $statusDropdown.val();
+                                $row.removeClass('order-row-pending order-row-in-progress order-row-completed order-row-cancelled');
+                                if (status) {
+                                    $row.addClass(`order-row-${status.replace('_', '-')}`);
+                                }
+                            }
+                        });
                         
                         // Dispose existing tooltips before creating new ones to prevent memory leaks
                         if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
@@ -1081,6 +1220,14 @@ function showToast(type, message) {
             feather.replace();
         }
     }, 1200);
+
+    // Initialize enhanced table indicators after DataTable is ready
+    setTimeout(() => {
+        if (typeof EnhancedTableIndicators !== 'undefined') {
+            EnhancedTableIndicators.initializeForContainer(document);
+            console.log('✨ Enhanced table indicators initialized for week orders');
+        }
+    }, 1000);
 
 });
 </script>

@@ -51,11 +51,67 @@
 <!-- Sales Orders CSS -->
 <link href="<?= base_url('assets/css/sales-orders.css') ?>" rel="stylesheet" type="text/css" />
 
+
 <!-- custom Css-->
 <link href="<?= base_url('assets/css/custom.min.css') ?>" rel="stylesheet" type="text/css" />
 
 <!-- MDA Unified Theme CSS -->
 <link href="<?= base_url('assets/css/mda-theme.css') ?>" rel="stylesheet" type="text/css" />
+
+<!-- Modal Fixes - Clean and Minimal -->
+<style>
+/* ================================================ */
+/* BOOTSTRAP MODAL FIXES - CLEAN IMPLEMENTATION */
+/* ================================================ */
+
+/* Basic z-index layering - let Bootstrap handle the rest */
+.modal-backdrop {
+    z-index: 1040;
+}
+
+.modal {
+    z-index: 1050;
+}
+
+/* Global modal dialog sizing */
+#global-sales-order-modal .modal-dialog {
+    max-width: 1200px;
+    width: 90vw;
+    margin: 1.5rem auto;
+}
+
+/* Enhanced SMS modal keeps its custom width */
+#enhancedSmsModal .modal-dialog {
+    max-width: 80vw;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 991px) {
+    #global-sales-order-modal .modal-dialog {
+        width: 95vw;
+        margin: 1rem auto;
+    }
+}
+
+@media (max-width: 576px) {
+    .modal-dialog {
+        margin: 0.5rem;
+        max-width: calc(100% - 1rem);
+    }
+    
+    #global-sales-order-modal .modal-dialog {
+        width: 100vw;
+        margin: 0;
+        height: 100vh;
+        max-width: 100%;
+    }
+    
+    #global-sales-order-modal .modal-content {
+        height: 100vh;
+        border-radius: 0;
+    }
+}
+</style>
 
 <!-- Custom fixes CSS -->
 <link href="<?= base_url('assets/css/custom-fixes.css') ?>" rel="stylesheet" type="text/css" />

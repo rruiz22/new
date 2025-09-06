@@ -7,6 +7,14 @@
 <?= $this->section('page_title_breadcrumb') ?><?= lang('App.sales_orders') ?><?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
+<?php
+// Access restrictions for client and staff users
+$currentUser = auth()->user();
+$userType = $currentUser->user_type ?? 'client';
+$canAccessServices = in_array($userType, ['admin', 'superadmin']); // Only admin/superadmin can access Services
+$canAccessDeleted = in_array($userType, ['admin', 'superadmin']); // Only admin/superadmin can access Deleted
+$canViewPrices = in_array($userType, ['admin', 'superadmin']); // Only admin/superadmin can see prices
+?>
 <div class="card border-0 shadow-none">
                         <div class="card-header d-flex align-items-center">
                             <h4 class="card-title mb-0 flex-grow-1"><?= lang('App.sales_orders') ?></h4>
@@ -73,7 +81,6 @@
                                 <select id="globalStatusFilter" class="form-select form-select-sm">
                                     <option value=""><?= lang('App.all_status') ?></option>
                                     <option value="pending"><?= lang('App.pending') ?></option>
-                                    <option value="processing"><?= lang('App.processing') ?></option>
                                     <option value="in_progress"><?= lang('App.in_progress') ?></option>
                                     <option value="completed"><?= lang('App.completed') ?></option>
                                     <option value="cancelled"><?= lang('App.cancelled') ?></option>
@@ -165,16 +172,20 @@
                                         <span><i data-feather="list" class="icon-sm me-1"></i> <?= lang('App.all_orders') ?></span>
                                     </a>
                                 </li>
+                                <?php if ($canAccessServices): ?>
                                 <li class="nav-item">
                                     <a class="nav-link" data-bs-toggle="tab" href="#services-tab" role="tab">
                                         <span><i data-feather="package" class="icon-sm me-1"></i> <?= lang('App.services') ?></span>
                                     </a>
                                 </li>
+                                <?php endif; ?>
+                                <?php if ($canAccessDeleted): ?>
                                 <li class="nav-item">
                                     <a class="nav-link" data-bs-toggle="tab" href="#deleted-orders-tab" role="tab">
                                         <span><i data-feather="trash-2" class="icon-sm me-1"></i> Deleted Orders</span>
                                     </a>
                                 </li>
+                                <?php endif; ?>
                             </ul>
 
                             <div class="tab-content py-4">
@@ -196,6 +207,7 @@
                                 <div class="tab-pane" id="all-orders-tab" role="tabpanel">
                                     <?= $this->include('Modules\SalesOrders\Views\sales_orders/all_content') ?>
                                 </div>
+                                <?php if ($canAccessServices): ?>
                                 <div class="tab-pane" id="services-tab" role="tabpanel">
                                     <!-- Services Management Content -->
                                     <div class="row">
@@ -208,7 +220,7 @@
                                                             <i data-feather="refresh-cw" class="icon-sm me-1"></i>
                                                             <?= lang('App.refresh') ?>
                                                         </button>
-                                                        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#serviceModal">
+                                                        <a href="<?= base_url('sales_orders_services') ?>" class="btn btn-primary">
                                                             <i data-feather="plus" class="icon-sm me-1"></i> <?= lang('App.add_service') ?>
                                                         </a>
                                                     </div>
@@ -238,6 +250,8 @@
                                         </div>
                                     </div>
                                 </div>
+                                <?php endif; ?>
+                                <?php if ($canAccessDeleted): ?>
                                 <div class="tab-pane" id="deleted-orders-tab" role="tabpanel">
                                     <?php if (isset($error)): ?>
                                         <div class="alert alert-danger" role="alert">
@@ -350,764 +364,12 @@
                                         </div>
                                     <?php endif; ?>
                                 </div>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
 
-<!-- Universal Order Modal -->
-<div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content" id="orderModalContent">
-            <style>
-
-                .form-label {
-                    font-weight: 500;
-                    font-size: 0.788rem;
-                    margin-bottom: 0.5rem;
-                }
-
-                .form-control,
-                .form-select {
-                    font-size: 0.788rem;
-                    padding: 0.5rem 0.75rem;
-                    min-height: 38px;
-                    border: 1px solid #ced4da;
-                    border-radius: 0.375rem;
-                    background-color: #fff;
-                    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-                }
-
-                .form-select:focus,
-                .form-control:focus {
-                    border-color: #86b7fe;
-                    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-                    outline: 0;
-                }
-
-                .form-select:disabled,
-                .form-control:disabled {
-                    background-color: #e9ecef;
-                    opacity: 0.65;
-                    cursor: not-allowed;
-                }
-
-                .form-select option {
-                    padding: 0.5rem;
-                }
-
-                .form-select option:disabled {
-                    color: #6c757d;
-                    background-color: #f8f9fa;
-                }
-
-                .form-section {
-                    margin-bottom: 1.5rem;
-                }
-
-                .form-section:last-child {
-                    margin-bottom: 0;
-                }
-
-                .form-select.loading {
-                    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e"), url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-arrow-repeat' viewBox='0 0 16 16'%3e%3cpath d='M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z'/%3e%3cpath fill-rule='evenodd' d='M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z'/%3e%3c/svg%3e");
-                    background-position: right 0.75rem center, right 2.25rem center;
-                    background-size: 16px 12px, 16px 16px;
-                    background-repeat: no-repeat;
-                }
-
-                .form-select.success {
-                    border-color: #198754;
-                }
-
-                .form-select.error {
-                    border-color: #dc3545;
-                }
-
-                /* Navigation badge styles */
-                #todayOrdersBadge {
-                    font-size: 0.585rem;
-                    padding: 0.25em 0.5em;
-                    line-height: 1;
-                    border-radius: 50rem;
-                    min-width: 1.5rem;
-                    text-align: center;
-                    animation: pulse 2s infinite;
-                }
-
-                #todayOrdersBadge.show {
-                    display: inline-block !important;
-                }
-
-                @keyframes pulse {
-                    0% { transform: scale(1); }
-                    50% { transform: scale(1.1); }
-                    100% { transform: scale(1); }
-                }
-
-                /* Global Client Filter Styles */
-                .global-filter-container {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.5rem;
-                }
-
-                .global-filter-container .form-label {
-                    white-space: nowrap;
-                    margin-bottom: 0;
-                    font-size: 0.788rem;
-                    font-weight: 500;
-                }
-
-                #globalClientFilter {
-                    min-width: 180px;
-                    max-width: 250px;
-                    font-size: 0.788rem;
-                }
-
-
-
-                /* Responsive adjustments */
-                @media (max-width: 992px) {
-                    .global-filter-container .form-label {
-                        display: none;
-                    }
-                    
-                    #globalClientFilter {
-                        min-width: 140px;
-                        max-width: 180px;
-                    }
-                }
-
-                @media (max-width: 768px) {
-                    .global-filter-container {
-                        flex-direction: column;
-                        gap: 0.25rem;
-                        align-items: stretch;
-                    }
-                    
-                    #globalClientFilter {
-                        min-width: auto;
-                        max-width: none;
-                        width: 100%;
-                    }
-                }
-
-                /* VIN Decoding Styles */
-                .vin-decoding {
-                    background-color: #e3f2fd !important;
-                    border-color: #2196f3 !important;
-                    position: relative;
-                }
-
-                .vin-success {
-                    background-color: #d4edda !important;
-                    border-color: #28a745 !important;
-                }
-
-                .vin-error {
-                    background-color: #f8d7da !important;
-                    border-color: #dc3545 !important;
-                }
-
-                .vin-input-container {
-                    position: relative;
-                }
-
-                .vin-status {
-                    position: absolute;
-                    right: 10px;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    font-size: 0.675rem;
-                    color: #6c757d;
-                    pointer-events: none;
-                }
-
-                /* Validation error styles */
-                .form-control.is-invalid,
-                .form-select.is-invalid {
-                    border-color: #dc3545;
-                    padding-right: calc(1.5em + 0.75rem);
-                    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath d='m5.8 4.6 1.4 1.4'/%3e%3c/svg%3e");
-                    background-repeat: no-repeat;
-                    background-position: right calc(0.375em + 0.1875rem) center;
-                    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
-                }
-
-                .form-control.is-invalid:focus,
-                .form-select.is-invalid:focus {
-                    border-color: #dc3545;
-                    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
-                }
-
-                .invalid-feedback {
-                    display: none;
-                    width: 100%;
-                    margin-top: 0.25rem;
-                    font-size: 0.788rem;
-                    color: #dc3545;
-                }
-
-                .invalid-feedback.d-block {
-                    display: block !important;
-                }
-
-                /* Status Dropdown Styles */
-                .status-dropdown {
-                    border: 1px solid #dee2e6;
-                    background-color: #fff;
-                    font-size: 9.9px !important;
-                    padding: 0.25rem 0.5rem !important;
-                    min-height: 28px !important;
-                    line-height: 1.2;
-                    transition: all 0.15s ease-in-out;
-                    font-weight: 500;
-                    text-align: center;
-                    appearance: none;
-                    -webkit-appearance: none;
-                    -moz-appearance: none;
-                    background-image: none !important;
-                    cursor: pointer;
-                }
-
-                .status-dropdown:focus {
-                    border-color: #86b7fe;
-                    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
-                    outline: 0;
-                }
-
-                .status-dropdown:disabled {
-                    background-color: #f8f9fa;
-                    opacity: 0.7;
-                    cursor: not-allowed;
-                }
-
-                .status-dropdown:hover:not(:disabled) {
-                    border-color: #adb5bd;
-                }
-
-                /* Status dropdown in table cells - STRONGER SPECIFICITY */
-                .dataTables_wrapper .status-dropdown,
-                .dataTables_wrapper tbody td .status-dropdown,
-                table.dataTable tbody td .status-dropdown {
-                    width: 120px !important;
-                    margin: 0 auto !important;
-                    text-align: center !important;
-                    text-align-last: center !important;
-                    display: block !important;
-                }
-
-                /* Status column centering - FORCE CENTER ALIGNMENT */
-                .dataTables_wrapper tbody td.status-column,
-                .dataTables_wrapper tbody td[data-column="status"],
-                .dataTables_wrapper tbody td:has(.status-dropdown),
-                table.dataTable tbody td.status-column,
-                table.dataTable tbody td[data-column="status"],
-                table.dataTable tbody td:has(.status-dropdown) {
-                    text-align: center !important;
-                    vertical-align: middle !important;
-                    padding: 8px !important;
-                }
-
-                /* Hide sorting icons on status columns - FORCE HIDE */
-                .dataTables_wrapper thead th.status-column .sorting,
-                .dataTables_wrapper thead th.status-column .sorting_asc,
-                .dataTables_wrapper thead th.status-column .sorting_desc,
-                .dataTables_wrapper thead th[data-column="status"] .sorting,
-                .dataTables_wrapper thead th[data-column="status"] .sorting_asc,
-                .dataTables_wrapper thead th[data-column="status"] .sorting_desc,
-                table.dataTable thead th.status-column::after,
-                table.dataTable thead th[data-column="status"]::after {
-                    display: none !important;
-                }
-
-                /* Status header centering - FORCE CENTER */
-                .dataTables_wrapper thead th.status-column,
-                .dataTables_wrapper thead th[data-column="status"],
-                table.dataTable thead th.status-column,
-                table.dataTable thead th[data-column="status"] {
-                    text-align: center !important;
-                    vertical-align: middle !important;
-                    cursor: default !important;
-                }
-
-                /* Remove any background images or icons */
-                .status-dropdown::-ms-expand {
-                    display: none !important;
-                }
-
-                .status-dropdown option {
-                    text-align: center !important;
-                }
-
-                /* ULTRA SPECIFIC CSS FOR STATUS COLUMNS WITH BADGES - MAXIMUM PRIORITY */
-                .dataTables_wrapper tbody tr td:nth-child(6),
-                .dataTables_wrapper tbody tr td:nth-child(7),
-                .dataTables_wrapper tbody tr td:nth-child(8),
-                table.dataTable tbody tr td:nth-child(6),
-                table.dataTable tbody tr td:nth-child(7), 
-                table.dataTable tbody tr td:nth-child(8),
-                .dataTables_wrapper tbody tr:has(.duplicate-badge) td:nth-child(6),
-                .dataTables_wrapper tbody tr:has(.duplicate-badge) td:nth-child(7),
-                .dataTables_wrapper tbody tr:has(.duplicate-badge) td:nth-child(8),
-                table.dataTable tbody tr:has(.duplicate-badge) td:nth-child(6),
-                table.dataTable tbody tr:has(.duplicate-badge) td:nth-child(7),
-                table.dataTable tbody tr:has(.duplicate-badge) td:nth-child(8) {
-                    text-align: center !important;
-                    vertical-align: middle !important;
-                    padding: 8px !important;
-                }
-
-                /* ULTRA SPECIFIC CSS FOR STATUS DROPDOWNS IN ROWS WITH BADGES */
-                .dataTables_wrapper tbody tr:has(.duplicate-badge) .status-dropdown,
-                table.dataTable tbody tr:has(.duplicate-badge) .status-dropdown,
-                .dataTables_wrapper tbody tr:has(.badge) .status-dropdown,
-                table.dataTable tbody tr:has(.badge) .status-dropdown {
-                    width: 120px !important;
-                    margin: 0 auto !important;
-                    text-align: center !important;
-                    text-align-last: center !important;
-                    display: block !important;
-                    box-sizing: border-box !important;
-                }
-
-                /* HIDE SORTING ICONS ON STATUS HEADERS - ULTRA SPECIFIC */
-                .dataTables_wrapper thead tr th:nth-child(6)::after,
-                .dataTables_wrapper thead tr th:nth-child(7)::after,
-                .dataTables_wrapper thead tr th:nth-child(8)::after,
-                table.dataTable thead tr th:nth-child(6)::after,
-                table.dataTable thead tr th:nth-child(7)::after,
-                table.dataTable thead tr th:nth-child(8)::after,
-                .dataTables_wrapper thead tr th:nth-child(6) .sorting,
-                .dataTables_wrapper thead tr th:nth-child(7) .sorting,
-                .dataTables_wrapper thead tr th:nth-child(8) .sorting,
-                table.dataTable thead tr th:nth-child(6) .sorting,
-                table.dataTable thead tr th:nth-child(7) .sorting,
-                table.dataTable thead tr th:nth-child(8) .sorting {
-                    display: none !important;
-                    visibility: hidden !important;
-                }
-
-                /* FORCE STATUS HEADER CENTERING - ULTRA SPECIFIC */
-                .dataTables_wrapper thead tr th:nth-child(6),
-                .dataTables_wrapper thead tr th:nth-child(7),
-                .dataTables_wrapper thead tr th:nth-child(8),
-                table.dataTable thead tr th:nth-child(6),
-                table.dataTable thead tr th:nth-child(7),
-                table.dataTable thead tr th:nth-child(8) {
-                    text-align: center !important;
-                    vertical-align: middle !important;
-                    cursor: default !important;
-                }
-
-                /* PREVENT ANY PSEUDO-ELEMENTS FROM INTERFERING */
-                .dataTables_wrapper thead tr th:nth-child(6)::before,
-                .dataTables_wrapper thead tr th:nth-child(7)::before,
-                .dataTables_wrapper thead tr th:nth-child(8)::before,
-                table.dataTable thead tr th:nth-child(6)::before,
-                table.dataTable thead tr th:nth-child(7)::before,
-                table.dataTable thead tr th:nth-child(8)::before {
-                    display: none !important;
-                    content: none !important;
-                }
-
-                /* Colored Status Options */
-                .status-dropdown option {
-                    padding: 0.25rem 0.5rem;
-                    font-size: 9.9px;
-                    font-weight: 500;
-                }
-
-                /* Status option colors */
-                .status-dropdown option[value="pending"] {
-                    background-color: #fff3cd;
-                    color: #664d03;
-                }
-
-                .status-dropdown option[value="processing"] {
-                    background-color: #cff4fc;
-                    color: #055160;
-                }
-
-                .status-dropdown option[value="in_progress"] {
-                    background-color: #cfe2ff;
-                    color: #084298;
-                }
-
-                .status-dropdown option[value="completed"] {
-                    background-color: #d1e7dd;
-                    color: #0f5132;
-                }
-
-                .status-dropdown option[value="cancelled"] {
-                    background-color: #f8d7da;
-                    color: #842029;
-                }
-
-                /* Dynamic background color for selected option */
-                .status-dropdown.status-pending {
-                    background-color: #fff3cd;
-                    color: #664d03;
-                    border-color: #ffecb5;
-                    text-align: center !important;
-                }
-
-                .status-dropdown.status-processing {
-                    background-color: #cff4fc;
-                    color: #055160;
-                    border-color: #9eeaf9;
-                    text-align: center !important;
-                }
-
-                .status-dropdown.status-in_progress {
-                    background-color: #cfe2ff;
-                    color: #084298;
-                    border-color: #9ec5fe;
-                    text-align: center !important;
-                }
-
-                .status-dropdown.status-completed {
-                    background-color: #d1e7dd;
-                    color: #0f5132;
-                    border-color: #a3cfbb;
-                    text-align: center !important;
-                }
-
-                .status-dropdown.status-cancelled {
-                    background-color: #f8d7da;
-                    color: #842029;
-                    border-color: #f1aeb5;
-                    text-align: center !important;
-                }
-
-                /* Status row styling updates */
-                .order-row-pending {
-                    background-color: rgba(255, 193, 7, 0.1) !important;
-                }
-
-                .order-row-processing {
-                    background-color: rgba(13, 202, 240, 0.1) !important;
-                }
-
-                .order-row-in-progress {
-                    background-color: rgba(13, 110, 253, 0.1) !important;
-                }
-
-                .order-row-completed {
-                    background-color: rgba(25, 135, 84, 0.1) !important;
-                }
-
-                .order-row-cancelled {
-                    background-color: rgba(220, 53, 69, 0.1) !important;
-                }
-
-                /* NUCLEAR OPTION - MAXIMUM SPECIFICITY FOR STATUS COLUMNS */
-                /* Target any table cell that might contain status dropdowns */
-                div.dataTables_wrapper table.dataTable tbody tr td:has(select.status-dropdown),
-                div.dataTables_wrapper div.dataTables_scrollBody table.dataTable tbody tr td:has(select.status-dropdown),
-                #today-orders-table_wrapper table.dataTable tbody tr td:has(select.status-dropdown),
-                #tomorrow-orders-table_wrapper table.dataTable tbody tr td:has(select.status-dropdown),
-                #pending-orders-table_wrapper table.dataTable tbody tr td:has(select.status-dropdown),
-                #week-orders-table_wrapper table.dataTable tbody tr td:has(select.status-dropdown),
-                #all-orders-table_wrapper table.dataTable tbody tr td:has(select.status-dropdown) {
-                    text-align: center !important;
-                    vertical-align: middle !important;
-                    padding: 8px !important;
-                    box-sizing: border-box !important;
-                }
-
-                /* Target status dropdown specifically in any table */
-                div.dataTables_wrapper table.dataTable tbody tr td select.status-dropdown,
-                div.dataTables_wrapper div.dataTables_scrollBody table.dataTable tbody tr td select.status-dropdown,
-                #today-orders-table_wrapper table.dataTable tbody tr td select.status-dropdown,
-                #tomorrow-orders-table_wrapper table.dataTable tbody tr td select.status-dropdown,
-                #pending-orders-table_wrapper table.dataTable tbody tr td select.status-dropdown,
-                #week-orders-table_wrapper table.dataTable tbody tr td select.status-dropdown,
-                #all-orders-table_wrapper table.dataTable tbody tr td select.status-dropdown {
-                    width: 120px !important;
-                    margin: 0 auto !important;
-                    text-align: center !important;
-                    text-align-last: center !important;
-                    display: block !important;
-                    box-sizing: border-box !important;
-                    border: 1px solid #dee2e6 !important;
-                    background-color: #fff !important;
-                    font-size: 9.9px !important;
-                    padding: 0.25rem 0.5rem !important;
-                    min-height: 28px !important;
-                    line-height: 1.2 !important;
-                }
-
-                /* Target table headers for status columns specifically */
-                div.dataTables_wrapper table.dataTable thead tr th:has(+ * + * + * + * + *),
-                div.dataTables_wrapper table.dataTable thead tr th.sorting:nth-last-child(-n+3),
-                #today-orders-table_wrapper table.dataTable thead tr th.sorting:nth-last-child(-n+3),
-                #tomorrow-orders-table_wrapper table.dataTable thead tr th.sorting:nth-last-child(-n+3),
-                #pending-orders-table_wrapper table.dataTable thead tr th.sorting:nth-last-child(-n+3),
-                #week-orders-table_wrapper table.dataTable thead tr th.sorting:nth-last-child(-n+3),
-                #all-orders-table_wrapper table.dataTable thead tr th.sorting:nth-last-child(-n+3) {
-                    text-align: center !important;
-                    cursor: default !important;
-                }
-
-                /* Remove sorting indicators specifically */
-                div.dataTables_wrapper table.dataTable thead tr th.sorting:nth-last-child(-n+3)::after,
-                #today-orders-table_wrapper table.dataTable thead tr th.sorting:nth-last-child(-n+3)::after,
-                #tomorrow-orders-table_wrapper table.dataTable thead tr th.sorting:nth-last-child(-n+3)::after,
-                #pending-orders-table_wrapper table.dataTable thead tr th.sorting:nth-last-child(-n+3)::after,
-                #week-orders-table_wrapper table.dataTable thead tr th.sorting:nth-last-child(-n+3)::after,
-                #all-orders-table_wrapper table.dataTable thead tr th.sorting:nth-last-child(-n+3)::after {
-                    display: none !important;
-                    content: none !important;
-                    visibility: hidden !important;
-                }
-
-                /* Success validation styles */
-                .form-control.is-valid,
-                .form-select.is-valid {
-                    border-color: #28a745;
-                    padding-right: calc(1.5em + 0.75rem);
-                    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='m2.3 6.73 0.13-.13L2.5 6.5l0.87-0.87 1.5-1.5L5 3.5 3.5 2 2.5 3l-1 1L1.3 4.3 2.3 6.73z'/%3e%3c/svg%3e");
-                    background-repeat: no-repeat;
-                    background-position: right calc(0.375em + 0.1875rem) center;
-                    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
-                }
-
-                @media (max-width: 576px) {
-                    .modal-dialog {
-                        max-width: 95%;
-                        margin: 1rem auto;
-                    }
-                }
-
-                /* NUCLEAR OPTION - FINAL CSS WITH MAXIMUM SPECIFICITY FOR STATUS COLUMNS */
-                /* This CSS should override any conflicts with duplicate badges */
-                
-                /* Force status column alignment regardless of badges */
-                body div.dataTables_wrapper table.dataTable tbody tr td:has(select.status-dropdown),
-                body #today-orders-table_wrapper table tbody tr td:has(select.status-dropdown),
-                body #tomorrow-orders-table_wrapper table tbody tr td:has(select.status-dropdown),
-                body #pending-orders-table_wrapper table tbody tr td:has(select.status-dropdown),
-                body #week-orders-table_wrapper table tbody tr td:has(select.status-dropdown),
-                body #all-orders-table_wrapper table tbody tr td:has(select.status-dropdown) {
-                    text-align: center !important;
-                    vertical-align: middle !important;
-                    padding: 8px !important;
-                }
-
-                /* Force status dropdown styling regardless of row content */
-                body div.dataTables_wrapper table.dataTable tbody tr td select.status-dropdown,
-                body #today-orders-table_wrapper table tbody tr td select.status-dropdown,
-                body #tomorrow-orders-table_wrapper table tbody tr td select.status-dropdown,
-                body #pending-orders-table_wrapper table tbody tr td select.status-dropdown,
-                body #week-orders-table_wrapper table tbody tr td select.status-dropdown,
-                body #all-orders-table_wrapper table tbody tr td select.status-dropdown {
-                    width: 120px !important;
-                    margin: 0 auto !important;
-                    text-align: center !important;
-                    text-align-last: center !important;
-                    display: block !important;
-                    box-sizing: border-box !important;
-                }
-
-                /* Force hide sorting icons on status headers */
-                body div.dataTables_wrapper table.dataTable thead tr th.sorting:nth-child(6)::after,
-                body div.dataTables_wrapper table.dataTable thead tr th.sorting:nth-child(7)::after,
-                body div.dataTables_wrapper table.dataTable thead tr th.sorting:nth-child(8)::after,
-                body #today-orders-table_wrapper table thead tr th.sorting:nth-child(6)::after,
-                body #tomorrow-orders-table_wrapper table thead tr th.sorting:nth-child(7)::after,
-                body #pending-orders-table_wrapper table thead tr th.sorting:nth-child(8)::after,
-                body #week-orders-table_wrapper table thead tr th.sorting:nth-child(6)::after,
-                body #all-orders-table_wrapper table thead tr th.sorting:nth-child(7)::after {
-                    display: none !important;
-                    content: none !important;
-                    visibility: hidden !important;
-                }
-
-                /* Force status header centering */
-                body div.dataTables_wrapper table.dataTable thead tr th.sorting:nth-child(6),
-                body div.dataTables_wrapper table.dataTable thead tr th.sorting:nth-child(7),
-                body div.dataTables_wrapper table.dataTable thead tr th.sorting:nth-child(8),
-                body #today-orders-table_wrapper table thead tr th:nth-child(6),
-                body #tomorrow-orders-table_wrapper table thead tr th:nth-child(7),
-                body #pending-orders-table_wrapper table thead tr th:nth-child(8),
-                body #week-orders-table_wrapper table thead tr th:nth-child(6),
-                body #all-orders-table_wrapper table thead tr th:nth-child(7) {
-                    text-align: center !important;
-                    cursor: default !important;
-                }
-            </style>
-
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalTitle">
-                    <?= lang('App.add_sales_order') ?>
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-
-            <div class="modal-body">
-                <form id="orderForm" action="<?= base_url('sales_orders/store') ?>" method="post">
-                    <input type="hidden" name="id" id="order_id" value="">
-
-                    <!-- Row 1: Client, Salesperson -->
-                    <div class="form-section">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="client_id" class="form-label"><?= lang('App.client') ?> <span class="text-danger">*</span></label>
-                                    <select class="form-select" id="client_id" name="client_id" required>
-                                        <option value=""><?= lang('App.select_client') ?></option>
-                                        <?php if (isset($clients) && !empty($clients)): ?>
-                                            <?php foreach ($clients as $client): ?>
-                                                <option value="<?= $client['id'] ?>">
-                                                    <?= esc($client['name']) ?>
-                                                </option>
-                                            <?php endforeach; ?>
-                                        <?php endif; ?>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="salesperson_id" class="form-label"><?= lang('App.salesperson') ?> <span class="text-danger">*</span></label>
-                                    <select class="form-select" id="salesperson_id" name="salesperson_id" required disabled>
-                                        <option value=""><?= lang('App.select_client_first') ?></option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Row 2: Stock, VIN -->
-                    <div class="form-section">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="stock" class="form-label"><?= lang('App.stock') ?> <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="stock" name="stock" value="" placeholder="Enter stock number" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="vin" class="form-label"><?= lang('App.vin') ?> <span class="text-danger">*</span></label>
-                                    <div class="vin-input-container">
-                                        <input type="text" class="form-control" id="vin" name="vin" value="" placeholder="Enter 17-character VIN" maxlength="17" required>
-                                        <span class="vin-status" id="vin-status"></span>
-                                    </div>
-                                    <small class="text-muted">Enter complete 17-character VIN for automatic vehicle detection</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Row 3: Vehicle, Service -->
-                    <div class="form-section">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="vehicle" class="form-label"><?= lang('App.vehicle') ?> <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="vehicle" name="vehicle" value="" placeholder="Enter vehicle details" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="service_id" class="form-label"><?= lang('App.service') ?> <span class="text-danger">*</span></label>
-                                    <select class="form-select" id="service_id" name="service_id" required disabled>
-                                        <option value=""><?= lang('App.select_client_first') ?></option>
-                                    </select>
-                                    <small class="text-muted">Available services will be loaded based on selected client</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Row 4: Date, Time -->
-                    <div class="form-section">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="date" class="form-label"><?= lang('App.date') ?> <span class="text-danger">*</span></label>
-                                    <input type="date" class="form-control" id="date" name="date" value="" required min="">
-                                    <small class="text-muted">Cannot select dates in the past</small>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="time" class="form-label"><?= lang('App.time') ?> <span class="text-danger">*</span></label>
-                                    <select class="form-select" id="time" name="time" required>
-                                        <option value="">Select time</option>
-                                        <option value="08:00">8:00 AM</option>
-                                        <option value="09:00">9:00 AM</option>
-                                        <option value="10:00">10:00 AM</option>
-                                        <option value="11:00">11:00 AM</option>
-                                        <option value="12:00">12:00 PM</option>
-                                        <option value="13:00">1:00 PM</option>
-                                        <option value="14:00">2:00 PM</option>
-                                        <option value="15:00">3:00 PM</option>
-                                        <option value="16:00">4:00 PM</option>
-                                        <option value="17:00">5:00 PM</option>
-                                        <option value="18:00">6:00 PM</option>
-                                    </select>
-                                    <small class="text-muted">Available times from 8:00 AM to 6:00 PM</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Instructions Section -->
-                    <div class="form-section">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="mb-3">
-                                    <label for="instructions" class="form-label"><?= lang('App.instructions') ?></label>
-                                    <textarea class="form-control" id="instructions" name="instructions" rows="3" placeholder="Enter any special instructions..."></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Notes Section - Only visible for non-client users -->
-                    <?php 
-                    $currentUser = session()->get('user');
-                    $userType = $currentUser['user_type'] ?? 'staff';
-                    if ($userType !== 'client'): 
-                    ?>
-                    <div class="form-section">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="mb-3">
-                                    <label for="notes" class="form-label"><?= lang('App.notes') ?> <small class="text-muted">(Internal use only)</small></label>
-                                    <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Enter internal notes..."></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <?php else: ?>
-                    <!-- Hidden input for client users -->
-                    <input type="hidden" id="notes" name="notes" value="">
-                    <?php endif; ?>
-
-                    <!-- Status field hidden - default to pending -->
-                    <input type="hidden" id="order_status" name="status" value="pending">
-                </form>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal"><?= lang('App.cancel') ?></button>
-                <button type="submit" form="orderForm" class="btn btn-primary"><?= lang('App.save') ?></button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Service Modal -->
-<div class="modal fade" id="serviceModal" tabindex="-1" aria-labelledby="serviceModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <!-- Content will be loaded via AJAX -->
-                            </div>
-                        </div>
-                    </div>
+<!-- MODALES REMOVIDOS - Usar global_sales_order_modal.php desde partials -->
 <?= $this->endSection() ?>
 
 <?= $this->section('scripts') ?>
@@ -1330,7 +592,7 @@ function applyStatusColors() {
     setTimeout(() => {
         document.querySelectorAll('.status-dropdown').forEach(dropdown => {
             // Remove existing status classes
-            dropdown.classList.remove('status-pending', 'status-processing', 'status-in_progress', 'status-completed', 'status-cancelled');
+            dropdown.classList.remove('status-pending', 'status-in_progress', 'status-completed', 'status-cancelled');
             
             // Get current value and apply corresponding class
             const currentValue = dropdown.value;
@@ -1342,20 +604,20 @@ function applyStatusColors() {
 }
 
 // VIN Decoder translations - Global scope for SalesOrderIndex
-const vinTranslations = {
-    loading: '<?= lang('App.vin_loading') ?>',
-    onlyAlphanumeric: '<?= lang('App.vin_only_alphanumeric') ?>',
-    cannotExceed17: '<?= lang('App.vin_cannot_exceed_17') ?>',
-    invalidFormat: '<?= lang('App.vin_invalid_format') ?>',
-    validNoInfo: '<?= lang('App.vin_valid_no_info') ?>',
-    decodedNoData: '<?= lang('App.vin_decoded_no_data') ?>',
-    unableToDecode: '<?= lang('App.vin_unable_to_decode') ?>',
-    decodingFailed: '<?= lang('App.vin_decoding_failed') ?>',
-    partial: '<?= lang('App.vin_partial') ?>',
-    characters: '<?= lang('App.vin_characters') ?>',
-    suspiciousPatterns: '<?= lang('App.vin_suspicious_patterns') ?>',
-    invalidCheckDigit: '<?= lang('App.vin_invalid_check_digit') ?>'
-};
+const vinTranslations = <?= json_encode([
+    'loading' => lang('App.vin_loading'),
+    'onlyAlphanumeric' => lang('App.vin_only_alphanumeric'),
+    'cannotExceed17' => lang('App.vin_cannot_exceed_17'),
+    'invalidFormat' => lang('App.vin_invalid_format'),
+    'validNoInfo' => lang('App.vin_valid_no_info'),
+    'decodedNoData' => lang('App.vin_decoded_no_data'),
+    'unableToDecode' => lang('App.vin_unable_to_decode'),
+    'decodingFailed' => lang('App.vin_decoding_failed'),
+    'partial' => lang('App.vin_partial'),
+    'characters' => lang('App.vin_characters'),
+    'suspiciousPatterns' => lang('App.vin_suspicious_patterns'),
+    'invalidCheckDigit' => lang('App.vin_invalid_check_digit')
+]) ?>;
 
 // Initialize when page loads
 document.addEventListener('DOMContentLoaded', function() {
@@ -1367,8 +629,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize global filter system
     initializeGlobalFilterSystem();
     
-    // Initialize modal functionality
-    initializeOrderModal();
+    // Configure Add Order button to use global modal
+    const addOrderBtn = document.getElementById('addOrderBtn');
+    if (addOrderBtn) {
+        addOrderBtn.addEventListener('click', function() {
+            if (typeof openGlobalSalesOrderModal === 'function') {
+                openGlobalSalesOrderModal();
+            } else {
+                console.error('openGlobalSalesOrderModal function not available');
+            }
+        });
+    }
     
     // Initialize services modal functionality
     initializeServicesModal();
@@ -1500,8 +771,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const newUrl = window.location.pathname;
         window.history.replaceState({}, document.title, newUrl);
         
+        // Use global modal for editing
         setTimeout(() => {
-            loadOrderForEdit(editOrderId);
+            if (typeof editGlobalSalesOrder === 'function') {
+                editGlobalSalesOrder(editOrderId);
+            } else {
+                console.error('editGlobalSalesOrder function not available');
+            }
         }, 500);
     }
 });
@@ -1906,7 +1182,7 @@ window.getGlobalFilterData = function(d) {
     d.date_to_filter = window.globalFilters.dateTo || '';
     
     // Add CSRF token
-    d['<?= csrf_token() ?>'] = '<?= csrf_hash() ?>';
+    d[<?= json_encode(csrf_token()) ?>] = <?= json_encode(csrf_hash()) ?>;
     
     return d;
 };
@@ -2070,7 +1346,7 @@ function initializeServicesModal() {
             console.log('Add Service button clicked');
             
             // Load modal form for new service
-            fetch('<?= base_url('sales_orders_services/modal_form') ?>', {
+            fetch(<?= json_encode(base_url('sales_orders_services/modal_form')) ?>, {
                 method: 'GET',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
@@ -2113,7 +1389,7 @@ function initializeServicesModal() {
             const form = e.target;
             const formData = new FormData(form);
             
-            fetch('<?= base_url('sales_orders_services/store') ?>', {
+            fetch(<?= json_encode(base_url('sales_orders_services/store')) ?>, {
                 method: 'POST',
                 body: formData,
                 headers: {
@@ -2173,7 +1449,7 @@ function initializeServicesModal() {
             
             if (serviceId) {
                 // Load modal form for editing
-                fetch(`<?= base_url('sales_orders_services/modal_form') ?>?id=${serviceId}`, {
+                fetch(<?= json_encode(base_url('sales_orders_services/modal_form')) ?> + '?id=' + serviceId, {
                     method: 'GET',
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest'
@@ -2241,55 +1517,7 @@ function initializeServicesModal() {
     });
 }
 
-function initializeOrderModal() {
-    const addOrderBtn = document.getElementById('addOrderBtn');
-    const orderModal = document.getElementById('orderModal');
-    
-    if (addOrderBtn) {
-        addOrderBtn.addEventListener('click', function() {
-            if (window.globalSalesOrderModal) {
-                window.globalSalesOrderModal.open();
-            } else if (typeof GlobalSalesOrderModal !== 'undefined') {
-                // Fallback: create new instance if global one doesn't exist
-                const modal = new GlobalSalesOrderModal();
-                modal.open();
-            } else {
-                // Final fallback to original modal
-                openModalForNewOrder();
-            }
-        });
-    }
-    
-    if (orderModal) {
-        orderModal.addEventListener('shown.bs.modal', function() {
-            // DISABLED: This function interferes with the dynamic modal system
-            // setupNativeEventListeners();
-            if (!window.salesOrderModal.isEditing) {
-                setDefaultDateTime();
-            }
-            if (typeof feather !== 'undefined') {
-                feather.replace();
-            }
-        });
-        
-        orderModal.addEventListener('hidden.bs.modal', function() {
-            resetModalForm();
-            
-            // Force status column styling after modal closes
-            setTimeout(() => {
-                forceStatusColumnStyling();
-            }, 500);
-        });
-    }
-    
-    const orderForm = document.getElementById('orderForm');
-    if (orderForm) {
-        orderForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            submitOrderForm();
-        });
-    }
-}
+// FUNCIÓN REMOVIDA - La inicialización del modal ahora se maneja en global-sales-order-modal.js
 
 // ========================================
 // SERVICES TABLE FUNCTIONALITY
@@ -2304,7 +1532,7 @@ function initializeServicesTable() {
         "processing": true,
         "serverSide": false,
         "ajax": {
-            "url": "<?= base_url('sales_orders_services/list_data') ?>",
+            "url": <?= json_encode(base_url('sales_orders_services/list_data')) ?>,
             "type": "POST",
             "dataSrc": function(json) {
                 return json.data || [];
@@ -2379,7 +1607,7 @@ function initializeServicesTable() {
                 "render": function(data, type, row) {
                     return `
                         <div class="d-flex justify-content-center gap-2">
-                            <a href="<?= base_url('sales_orders_services/view/') ?>${row.id}" class="link-primary fs-15" data-bs-toggle="tooltip" data-bs-placement="top" title="View Service">
+                            <a href="${<?= json_encode(base_url('sales_orders_services/view/')) ?> + row.id}" class="link-primary fs-15" data-bs-toggle="tooltip" data-bs-placement="top" title="View Service">
                                 <i class="ri-eye-fill"></i>
                             </a>
                             <a href="#" class="link-success fs-15 edit-service" data-id="${row.id}" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Service">
@@ -2442,225 +1670,7 @@ function showToast(type, message) {
 // PLACEHOLDER FUNCTIONS (TO BE IMPLEMENTED)
 // ========================================
 
-function openModalForNewOrder() {
-    
-    // Set modal to non-editing mode
-    window.salesOrderModal = window.salesOrderModal || {};
-    window.salesOrderModal.isEditing = false;
-    window.salesOrderModal.currentOrderData = null;
-    
-    // Show loading content first
-    const orderModal = document.getElementById('orderModal');
-    const modalContent = document.getElementById('orderModalContent');
-    
-    if (!orderModal || !modalContent) {
-        console.error('Modal elements not found');
-        showToast('error', 'Modal not found');
-        return;
-    }
-    
-    // Show loading state
-    modalContent.innerHTML = `
-        <div class="modal-header">
-            <h5 class="modal-title">
-                <div class="d-flex align-items-center">
-                    <div class="spinner-border spinner-border-sm me-2" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                    Loading form...
-                </div>
-            </h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <div class="text-center py-4">
-                <div class="spinner-border" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-                <p class="mt-3 text-muted">Loading order form...</p>
-            </div>
-        </div>
-    `;
-    
-    // Create and show modal
-    const modal = new bootstrap.Modal(orderModal);
-    modal.show();
-    
-    // Load the actual form content
-    fetch('<?= base_url('sales_orders/modal_form') ?>', {
-        method: 'GET',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'Accept': 'text/html'
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-        return response.text();
-    })
-    .then(html => {
-        modalContent.innerHTML = html;
-        
-        // Execute the script from the loaded HTML manually
-        setTimeout(() => {
-            // Find and execute script tags in the loaded content
-            const scripts = modalContent.querySelectorAll('script');
-            scripts.forEach(script => {
-                if (script.textContent) {
-                    try {
-                        // Execute the script content
-                        eval(script.textContent);
-                    } catch (error) {
-                        console.error('❌ Error executing modal script:', error);
-                    }
-                }
-            });
-        
-        // Reinitialize feather icons if available
-        if (typeof feather !== 'undefined') {
-                feather.replace();
-        }
-        }, 200);
-    })
-    .catch(error => {
-        console.error('Error loading modal form:', error);
-        modalContent.innerHTML = `
-            <div class="modal-header">
-                <h5 class="modal-title text-danger">
-                    <i class="mdi mdi-alert-circle me-1"></i>Error Loading Form
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="alert alert-danger">
-                    <strong>Error:</strong> ${error.message}<br>
-                    <small class="text-muted">Please try again or contact support if the problem persists.</small>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="openModalForNewOrder()">Retry</button>
-            </div>
-        `;
-        showToast('error', 'Failed to load order form');
-    });
-}
-
-function loadOrderForEdit(orderId) {
-    
-    if (!orderId) {
-        console.error('No order ID provided');
-        showToast('error', 'No order ID provided');
-        return;
-    }
-    
-    // Set editing mode
-    window.salesOrderModal.isEditing = true;
-    window.salesOrderModal.currentOrderData = { id: orderId };
-    
-    // Show loading state
-    const orderModal = new bootstrap.Modal(document.getElementById('orderModal'));
-    
-    // Update modal title first
-    const modalTitle = document.getElementById('modalTitle');
-    if (modalTitle) {
-        modalTitle.textContent = '<?= lang('App.edit_sales_order') ?>';
-    }
-    
-    // Show modal with loading state
-    document.getElementById('orderModalContent').innerHTML = `
-        <div class="modal-header">
-            <h5 class="modal-title"><?= lang('App.edit_sales_order') ?></h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-            <div class="text-center py-5">
-                <div class="spinner-border text-primary mb-3" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-                <h6 class="text-muted">Loading order data...</h6>
-                <p class="text-muted small">Please wait while we fetch the order information.</p>
-            </div>
-        </div>
-    `;
-    
-    orderModal.show();
-    
-    // Load order data via AJAX
-    fetch(`<?= base_url('sales_orders/modal_form') ?>?id=${orderId}`, {
-        method: 'GET',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'Accept': 'text/html'
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-        return response.text();
-    })
-    .then(html => {
-        // Update modal content with form
-        document.getElementById('orderModalContent').innerHTML = html;
-        
-        // Initialize form components
-        setTimeout(() => {
-            initializeChoicesSelects();
-            setupFormEventListeners();
-            
-            // Apply status column styling after modal operations
-            forceStatusColumnStyling();
-            
-            // Initialize feather icons
-            if (typeof feather !== 'undefined') {
-                feather.replace();
-            }
-            
-            // Force enable fields in edit mode with multiple attempts
-            if (typeof forceEnableFieldsInEditMode === 'function') {
-                forceEnableFieldsInEditMode();
-                setTimeout(() => forceEnableFieldsInEditMode(), 100);
-                setTimeout(() => forceEnableFieldsInEditMode(), 300);
-                setTimeout(() => forceEnableFieldsInEditMode(), 500);
-            }
-            
-            // Check if order status requires readonly fields
-            if (typeof window.checkOrderStatusAndSetReadonly === 'function') {
-                setTimeout(() => {
-                    window.checkOrderStatusAndSetReadonly();
-                }, 600);
-            }
-            
-        }, 100);
-    })
-    .catch(error => {
-        console.error('Error loading order for edit:', error);
-        
-        document.getElementById('orderModalContent').innerHTML = `
-            <div class="modal-header">
-                <h5 class="modal-title text-danger">Error</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="text-center py-4">
-                    <i data-feather="alert-circle" class="icon-lg text-danger mb-3"></i>
-                    <h6 class="text-danger">Error Loading Order</h6>
-                    <p class="text-muted">Unable to load order data. Please try again.</p>
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        `;
-        
-        showToast('error', 'Error loading order for edit');
-        
-        if (typeof feather !== 'undefined') {
-            feather.replace();
-        }
-    });
-}
+// FUNCIONES REMOVIDAS - openModalForNewOrder y loadOrderForEdit ahora manejadas por global-sales-order-modal.js
 
 function setupNativeEventListeners() {
     
@@ -2750,7 +1760,7 @@ function handleClientChange(clientId) {
     }
     
     // Load contacts for selected client
-    fetch(`<?= base_url('sales_orders/getContactsForClient/') ?>${clientId}`, {
+    fetch(<?= json_encode(base_url('sales_orders/getContactsForClient/')) ?> + clientId, {
         method: 'GET',
         headers: {
             'X-Requested-With': 'XMLHttpRequest'
@@ -2771,7 +1781,7 @@ function handleClientChange(clientId) {
     });
     
     // Load services for selected client
-    fetch(`<?= base_url('sales_orders/getServicesForClient/') ?>${clientId}`, {
+    fetch(<?= json_encode(base_url('sales_orders/getServicesForClient/')) ?> + clientId, {
         method: 'GET',
         headers: {
             'X-Requested-With': 'XMLHttpRequest'
@@ -2837,113 +1847,9 @@ function setDefaultDateTime() {
     }
 }
 
-function resetModalForm() {
-    
-    // Reset editing state
-    window.salesOrderModal.isEditing = false;
-    window.salesOrderModal.currentOrderData = null;
-    
-    // Destroy Choices.js instances
-    if (window.choicesInstances) {
-        Object.values(window.choicesInstances).forEach(instance => {
-            if (instance && typeof instance.destroy === 'function') {
-                instance.destroy();
-            }
-        });
-        window.choicesInstances = {};
-    }
-    
-    // Clear modal content
-    const modalContent = document.getElementById('orderModalContent');
-    if (modalContent) {
-        modalContent.innerHTML = '';
-    }
-}
+// FUNCIÓN resetModalForm REMOVIDA - Manejada por global-sales-order-modal.js
 
-function submitOrderForm() {
-    
-    const form = document.getElementById('orderForm');
-    if (!form) {
-        console.error('Order form not found');
-        return;
-    }
-    
-    // Get form data
-    const formData = new FormData(form);
-    
-    // Add CSRF token
-    formData.append('<?= csrf_token() ?>', '<?= csrf_hash() ?>');
-    
-    // Show loading state
-    const submitBtn = form.querySelector('button[type="submit"]');
-    const originalText = submitBtn ? submitBtn.innerHTML : '';
-    if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Saving...';
-    }
-    
-    // Submit form
-    fetch(form.action, {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            showToast('success', data.message || 'Order saved successfully');
-            
-            // Close modal
-            const modal = bootstrap.Modal.getInstance(document.getElementById('orderModal'));
-            if (modal) {
-                modal.hide();
-            }
-            
-            // Refresh all tables
-            refreshAllTables();
-            
-            // Force status column styling after saving
-            setTimeout(() => {
-                forceStatusColumnStyling();
-            }, 1500);
-            
-        } else {
-            showToast('error', data.message || 'Error saving order');
-            
-            // Show validation errors if any
-            if (data.errors) {
-                Object.keys(data.errors).forEach(field => {
-                    const fieldElement = document.getElementById(field);
-                    if (fieldElement) {
-                        fieldElement.classList.add('is-invalid');
-                        // Add error message
-                        let errorDiv = fieldElement.parentNode.querySelector('.invalid-feedback');
-                        if (!errorDiv) {
-                            errorDiv = document.createElement('div');
-                            errorDiv.className = 'invalid-feedback';
-                            fieldElement.parentNode.appendChild(errorDiv);
-                        }
-                        errorDiv.textContent = data.errors[field];
-                    }
-                });
-            }
-        }
-    })
-    .catch(error => {
-        console.error('Error submitting form:', error);
-        showToast('error', 'Error submitting form');
-    })
-    .finally(() => {
-        // Restore submit button
-        if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalText;
-                            }
-                        });
-                    }
-
+// FUNCIÓN submitOrderForm REMOVIDA - Manejada por global-sales-order-modal.js
 function loadDeletedOrdersContent() {
     const deletedTabContent = document.querySelector('#deleted-orders-tab');
     if (!deletedTabContent) return;
@@ -2959,7 +1865,7 @@ function loadDeletedOrdersContent() {
     `;
     
     // Fetch deleted orders content
-    fetch('<?= base_url('sales_orders/deleted_content') ?>', {
+    fetch(<?= json_encode(base_url('sales_orders/deleted_content')) ?>, {
         method: 'GET',
         headers: {
             'X-Requested-With': 'XMLHttpRequest'
@@ -3001,11 +1907,7 @@ function loadDeletedOrdersContent() {
     });
 }
 
-// Global variables for modal management
-window.salesOrderModal = {
-    isEditing: false,
-    currentOrderData: null
-};
+// Global variables REMOVIDAS - Modal management handled by global-sales-order-modal.js
 
 // ========================================
 // NOTIFICACIÓN DE CAMBIOS DE FILTRO AL DASHBOARD
@@ -3232,7 +2134,7 @@ function initializeGlobalEventListeners() {
         
         if (orderId) {
             // Redirect to view page and auto-open edit modal
-            window.location.href = `<?= base_url('sales_orders/view/') ?>${orderId}?edit=1`;
+            window.location.href = <?= json_encode(base_url('sales_orders/view/')) ?> + orderId + '?edit=1';
         } else {
             console.error('No order ID found in edit button');
             showToast('error', 'No order ID found');
@@ -3268,7 +2170,7 @@ function initializeGlobalEventListeners() {
         const currentValue = dropdown.value;
         
         // Remove existing status classes
-        dropdown.classList.remove('status-pending', 'status-processing', 'status-in_progress', 'status-completed', 'status-cancelled');
+        dropdown.classList.remove('status-pending', 'status-in_progress', 'status-completed', 'status-cancelled');
         
         // Apply new status class
         if (currentValue) {
@@ -3282,20 +2184,20 @@ function initializeGlobalEventListeners() {
 
 function deleteOrderGlobal(orderId) {
     Swal.fire({
-        title: '<?= lang('App.are_you_sure') ?>',
-        text: '<?= lang('App.confirm_delete_order') ?>',
+        title: <?= json_encode(lang('App.are_you_sure')) ?>,
+        text: <?= json_encode(lang('App.confirm_delete_order')) ?>,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#f06548',
         cancelButtonColor: '#74788d',
-        confirmButtonText: '<?= lang('App.yes_delete') ?>',
-        cancelButtonText: '<?= lang('App.cancel') ?>',
+        confirmButtonText: <?= json_encode(lang('App.yes_delete')) ?>,
+        cancelButtonText: <?= json_encode(lang('App.cancel')) ?>,
         reverseButtons: true
     }).then((result) => {
         if (result.isConfirmed) {
             Swal.fire({
-                title: '<?= lang('App.deleting') ?>...',
-                text: '<?= lang('App.please_wait') ?>',
+                title: <?= json_encode(lang('App.deleting')) ?> + '...',
+                text: <?= json_encode(lang('App.please_wait')) ?>,
                 allowOutsideClick: false,
                 allowEscapeKey: false,
                 showConfirmButton: false,
@@ -3304,14 +2206,14 @@ function deleteOrderGlobal(orderId) {
                 }
             });
             
-            fetch(`<?= base_url('sales_orders/delete/') ?>${orderId}`, {
+            fetch(<?= json_encode(base_url('sales_orders/delete/')) ?> + orderId, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
                 },
                 body: JSON.stringify({
-                    '<?= csrf_token() ?>': '<?= csrf_hash() ?>'
+                    [<?= json_encode(csrf_token()) ?>]: <?= json_encode(csrf_hash()) ?>
                 })
             })
             .then(response => response.json())
@@ -3341,20 +2243,20 @@ function deleteOrderGlobal(orderId) {
 // Restore single order
 function restoreOrder(orderId) {
     Swal.fire({
-        title: '<?= lang('App.are_you_sure') ?>',
-        text: '<?= lang('App.want_to_restore_order') ?>',
+        title: <?= json_encode(lang('App.are_you_sure')) ?>,
+        text: <?= json_encode(lang('App.want_to_restore_order')) ?>,
         icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#28a745',
         cancelButtonColor: '#6c757d',
-        confirmButtonText: '<?= lang('App.yes_restore') ?>',
-        cancelButtonText: '<?= lang('App.cancel') ?>'
+        confirmButtonText: <?= json_encode(lang('App.yes_restore')) ?>,
+        cancelButtonText: <?= json_encode(lang('App.cancel')) ?>
     }).then((result) => {
         if (result.isConfirmed) {
             // Mostrar loading
             Swal.fire({
-                title: '<?= lang('App.restoring') ?>...',
-                text: '<?= lang('App.please_wait') ?>',
+                title: <?= json_encode(lang('App.restoring')) ?> + '...',
+                text: <?= json_encode(lang('App.please_wait')) ?>,
                 allowOutsideClick: false,
                 allowEscapeKey: false,
                 showConfirmButton: false,
@@ -3363,14 +2265,14 @@ function restoreOrder(orderId) {
                 }
             });
             
-            fetch(`<?= base_url('sales_orders/restore/') ?>${orderId}`, {
+            fetch(<?= json_encode(base_url('sales_orders/restore/')) ?> + orderId, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
                 },
                 body: JSON.stringify({
-                    '<?= csrf_token() ?>': '<?= csrf_hash() ?>'
+                    [<?= json_encode(csrf_token()) ?>]: <?= json_encode(csrf_hash()) ?>
                 })
             })
             .then(response => response.json())
@@ -3383,7 +2285,7 @@ function restoreOrder(orderId) {
                 } else {
                     Swal.fire({
                         title: 'Error',
-                        text: data.message || '<?= lang('App.error_restoring_order') ?>',
+                        text: data.message || <?= json_encode(lang('App.error_restoring_order')) ?>,
                         icon: 'error'
                     });
                 }
@@ -3392,7 +2294,7 @@ function restoreOrder(orderId) {
                 console.error('Error restoring order:', error);
                 Swal.fire({
                     title: 'Error',
-                    text: '<?= lang('App.error_restoring_order') ?>',
+                    text: <?= json_encode(lang('App.error_restoring_order')) ?>,
                     icon: 'error'
                 });
             });
@@ -3403,20 +2305,20 @@ function restoreOrder(orderId) {
 // Permanently delete single order
 function forceDeleteOrder(orderId) {
     Swal.fire({
-        title: '<?= lang('App.are_you_sure') ?>',
-        text: '<?= lang('App.want_to_permanently_delete_order') ?>',
+        title: <?= json_encode(lang('App.are_you_sure')) ?>,
+        text: <?= json_encode(lang('App.want_to_permanently_delete_order')) ?>,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#dc3545',
         cancelButtonColor: '#6c757d',
-        confirmButtonText: '<?= lang('App.yes_permanently_delete') ?>',
-        cancelButtonText: '<?= lang('App.cancel') ?>'
+        confirmButtonText: <?= json_encode(lang('App.yes_permanently_delete')) ?>,
+        cancelButtonText: <?= json_encode(lang('App.cancel')) ?>
     }).then((result) => {
         if (result.isConfirmed) {
             // Mostrar loading
             Swal.fire({
-                title: '<?= lang('App.deleting') ?>...',
-                text: '<?= lang('App.please_wait') ?>',
+                title: <?= json_encode(lang('App.deleting')) ?> + '...',
+                text: <?= json_encode(lang('App.please_wait')) ?>,
                 allowOutsideClick: false,
                 allowEscapeKey: false,
                 showConfirmButton: false,
@@ -3425,14 +2327,14 @@ function forceDeleteOrder(orderId) {
                 }
             });
             
-            fetch(`<?= base_url('sales_orders/forceDelete/') ?>${orderId}`, {
+            fetch(<?= json_encode(base_url('sales_orders/forceDelete/')) ?> + orderId, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
                 },
                 body: JSON.stringify({
-                    '<?= csrf_token() ?>': '<?= csrf_hash() ?>'
+                    [<?= json_encode(csrf_token()) ?>]: <?= json_encode(csrf_hash()) ?>
                 })
             })
             .then(response => response.json())
@@ -3445,7 +2347,7 @@ function forceDeleteOrder(orderId) {
                 } else {
                     Swal.fire({
                         title: 'Error',
-                        text: data.message || '<?= lang('App.error_permanently_deleting_order') ?>',
+                        text: data.message || <?= json_encode(lang('App.error_permanently_deleting_order')) ?>,
                         icon: 'error'
                     });
                 }
@@ -3454,7 +2356,7 @@ function forceDeleteOrder(orderId) {
                 console.error('Error permanently deleting order:', error);
                 Swal.fire({
                     title: 'Error',
-                    text: '<?= lang('App.error_permanently_deleting_order') ?>',
+                    text: <?= json_encode(lang('App.error_permanently_deleting_order')) ?>,
                     icon: 'error'
                 });
             });
@@ -4184,4 +3086,11 @@ function addIndexVINStyles() {
     document.head.appendChild(style);
 }
 </script>
+
+<!-- Enhanced Table Indicators for popovers -->
+<script src="<?= base_url('assets/js/enhanced-table-indicators.js') ?>"></script>
+
+<!-- Quick Actions Modal Functions - CRITICAL FOR TABLE ACTION BUTTONS -->
+<script src="<?= base_url('assets/js/sales-orders-tables.js') ?>?v=<?= time() ?>"></script>
+
 <?= $this->endSection() ?>

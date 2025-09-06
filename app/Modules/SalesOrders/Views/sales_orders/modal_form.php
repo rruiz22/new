@@ -1,4 +1,10 @@
 <!-- UNIFIED MODAL - Works for both Add and Edit -->
+<?php
+// Access restrictions for client and staff users
+$currentUser = auth()->user();
+$userType = $currentUser->user_type ?? 'client';
+$canViewPrices = in_array($userType, ['admin', 'superadmin']); // Only admin/superadmin can see prices
+?>
 <style>
     .modal-dialog {
         max-width: 700px;
@@ -253,33 +259,44 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="mb-3">
-                        <label for="client_id" class="form-label"><?= lang('App.client') ?> <span class="text-danger">*</span></label>
-                        <select class="form-select" id="client_id" name="client_id" required>
+                        <label for="client_id" class="form-label"><?= lang('App.client') ?> (Dealer) <span class="text-danger">*</span></label>
+                        <select class="form-select" id="client_id" name="client_id" required 
+                            <?= (isset($clientReadonly) && $clientReadonly) ? 'disabled' : '' ?>>
                                 <option value=""><?= lang('App.select_client') ?></option>
                                 <?php if (isset($clients) && !empty($clients)): ?>
                                     <?php foreach ($clients as $client): ?>
-                                    <option value="<?= $client['id'] ?>" <?= (isset($order) && $order && $order['client_id'] == $client['id']) ? 'selected' : '' ?>>
+                                    <option value="<?= $client['id'] ?>" 
+                                        <?php if (isset($order) && $order && $order['client_id'] == $client['id']): ?>
+                                            selected
+                                        <?php elseif (!isset($order) && isset($defaultClientId) && $defaultClientId == $client['id']): ?>
+                                            selected
+                                        <?php endif; ?>>
                                             <?= esc($client['name']) ?>
                                         </option>
                                     <?php endforeach; ?>
                                 <?php endif; ?>
                             </select>
+                            <?php if (isset($clientReadonly) && $clientReadonly): ?>
+                                <input type="hidden" name="client_id" id="client_id_hidden" value="<?= $defaultClientId ?>">
+                                <small class="text-muted">Solo puedes crear órdenes para tu dealer asignado</small>
+                            <?php endif; ?>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="mb-3">
-                    <label for="contact_id" class="form-label"><?= lang('App.contact') ?> <span class="text-danger">*</span></label>
-                        <select class="form-select" id="contact_id" name="contact_id" required disabled>
-                        <option value=""><?= lang('App.select_contact') ?></option>
+                    <label for="contact_id" class="form-label">Assigned Contact <span class="text-danger">*</span></label>
+                        <select class="form-select" id="contact_id" name="contact_id" required>
+                        <option value="">Select contact...</option>
                             <?php if (isset($order) && $order && isset($contacts) && !empty($contacts)): ?>
                             <?php foreach ($contacts as $contact): ?>
                                     <option value="<?= $contact['id'] ?>" data-client-id="<?= $contact['client_id'] ?>" 
-                                    <?= (isset($order['contact_id']) && $order['contact_id'] == $contact['id']) ? 'selected' : '' ?>>
+                                    <?= (isset($order['assigned_to']) && $order['assigned_to'] == $contact['id']) ? 'selected' : '' ?>>
                                     <?= esc($contact['name']) ?>
                                 </option>
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </select>
+                    <small class="text-muted">Usuario del dealer responsable de esta orden</small>
                     </div>
                 </div>
             </div>
@@ -330,7 +347,7 @@
                                 <option value="<?= $service['id'] ?>"
                                         data-client-id="<?= $service['client_id'] ?? '' ?>"
                                             <?= (isset($order) && $order && $order['service_id'] == $service['id']) ? 'selected' : '' ?>>
-                                    <?= esc($service['service_name']) ?> - $<?= number_format($service['service_price'], 2) ?>
+                                    <?= esc($service['service_name']) ?><?= $canViewPrices ? ' - $' . number_format($service['service_price'], 2) : '' ?>
                                 </option>
                             <?php endforeach; ?>
                         <?php endif; ?>
@@ -608,7 +625,9 @@ window.OrderModalHandler = (function() {
                 data.services.forEach(service => {
                     const option = document.createElement('option');
                     option.value = service.id;
-                    option.textContent = `${service.service_name} - $${parseFloat(service.service_price).toFixed(2)}`;
+                    const canViewPrices = <?= $canViewPrices ? 'true' : 'false' ?>;
+                    const priceText = canViewPrices ? ` - $${parseFloat(service.service_price).toFixed(2)}` : '';
+                    option.textContent = `${service.service_name}${priceText}`;
                     serviceSelect.appendChild(option);
                 });
                 
@@ -3610,9 +3629,137 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('OrderModal: Modal shown, checking status after delay');
             setTimeout(() => {
                 window.checkOrderStatusAndSetReadonly();
+                initializeFormAutoPopulate(); // Initialize auto-populate
             }, 500);
         });
     }
 });
+
+// AUTO-POPULATE FUNCTIONALITY
+function initializeFormAutoPopulate() {
+    console.log('OrderModal: Initializing auto-populate functionality');
+    
+    // Auto-populate contact if user is client type
+    <?php if (isset($autoPopulateContact) && $autoPopulateContact && isset($defaultAssignedTo) && $defaultAssignedTo): ?>
+    console.log('OrderModal: Auto-populating contact for client user');
+    const contactSelect = document.getElementById('contact_id');
+    if (contactSelect) {
+        // First, load contacts for the selected dealer
+        const clientSelect = document.getElementById('client_id');
+        if (clientSelect && clientSelect.value) {
+            loadContactsForDealer(clientSelect.value, function() {
+                // After contacts are loaded, select the default one
+                contactSelect.value = '<?= $defaultAssignedTo ?>';
+                console.log('OrderModal: Auto-selected contact:', '<?= $defaultAssignedTo ?>');
+            });
+        }
+    }
+    <?php endif; ?>
+    
+    // Setup client change handler
+    const clientSelect = document.getElementById('client_id');
+    if (clientSelect) {
+        clientSelect.addEventListener('change', function() {
+            console.log('OrderModal: Client changed to:', this.value);
+            if (this.value) {
+                loadContactsForDealer(this.value);
+            } else {
+                clearContactOptions();
+            }
+        });
+        
+        // Load contacts on initial load if client is already selected
+        if (clientSelect.value) {
+            console.log('OrderModal: Loading contacts for initially selected client:', clientSelect.value);
+            loadContactsForDealer(clientSelect.value);
+        }
+    }
+}
+
+function loadContactsForDealer(dealerId, callback) {
+    console.log('OrderModal: Loading contacts for dealer:', dealerId);
+    
+    const contactSelect = document.getElementById('contact_id');
+    if (!contactSelect) {
+        console.error('OrderModal: Contact select not found');
+        return;
+    }
+    
+    // Show loading state
+    contactSelect.innerHTML = '<option value="">Loading contacts...</option>';
+    contactSelect.disabled = true;
+    
+    // Make AJAX call to get contacts
+    fetch(`<?= base_url('sales_orders/getContactsByDealer') ?>?dealer_id=${dealerId}`, {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('OrderModal: Contacts loaded:', data);
+        
+        if (data.success && data.data && Array.isArray(data.data)) {
+            // Clear and rebuild options
+            contactSelect.innerHTML = '<option value="">Select contact...</option>';
+            
+            data.data.forEach(contact => {
+                const option = document.createElement('option');
+                option.value = contact.id;
+                option.textContent = contact.name;
+                option.dataset.username = contact.username || '';
+                contactSelect.appendChild(option);
+            });
+            
+            console.log(`OrderModal: Added ${data.data.length} contacts`);
+            
+            // Enable the select
+            contactSelect.disabled = false;
+            
+            // Execute callback if provided
+            if (callback && typeof callback === 'function') {
+                callback();
+            }
+            
+        } else {
+            console.warn('OrderModal: No contacts found for dealer');
+            contactSelect.innerHTML = '<option value="">No contacts available</option>';
+            contactSelect.disabled = true;
+        }
+    })
+    .catch(error => {
+        console.error('OrderModal: Error loading contacts:', error);
+        contactSelect.innerHTML = '<option value="">Error loading contacts</option>';
+        contactSelect.disabled = true;
+    });
+}
+
+function clearContactOptions() {
+    const contactSelect = document.getElementById('contact_id');
+    if (contactSelect) {
+        contactSelect.innerHTML = '<option value="">Select contact...</option>';
+        contactSelect.disabled = true;
+    }
+}
+
+// User context info for debugging and modal access
+<?php if (isset($currentUser)): ?>
+// Make user info globally available for modal
+window.currentUserInfo = {
+    id: <?= $currentUser->id ?>,
+    type: '<?= $currentUser->user_type ?>',
+    client_id: <?= $currentUser->client_id ?? 'null' ?>,
+    isSuperAdmin: <?= isset($isSuperAdmin) && $isSuperAdmin ? 'true' : 'false' ?>
+};
+
+console.log('OrderModal: Current user info:', window.currentUserInfo);
+<?php endif; ?>
     
 </script>

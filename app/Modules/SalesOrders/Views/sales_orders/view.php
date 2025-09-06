@@ -1774,18 +1774,336 @@
 #activityList::-webkit-scrollbar-thumb:hover {
     background: #a0aec0;
 }
+
+/* ================================================ */
+/* NOTION-STYLE BUTTONS FOR ORDER DETAILS */
+/* ================================================ */
+
+:root {
+    --notion-text: #37352f;
+    --notion-text-light: #787774;
+    --notion-border: #e9e9e7;
+    --notion-bg: #ffffff;
+    --notion-bg-light: #f7f7f5;
+    --notion-success: #0f7b0f;
+    --notion-danger: #e03e3e;
+    --notion-focus: #2383e2;
+    --notion-warning: #ff6b35;
+    --notion-purple: #8b5cf6;
+}
+
+/* Edit Button - Notion Focus Blue */
+.notion-btn-edit {
+    background: var(--notion-focus) !important;
+    border-color: var(--notion-focus) !important;
+    color: white !important;
+    font-weight: 500;
+    transition: all 0.15s ease;
+    border-radius: 6px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.notion-btn-edit:hover,
+.notion-btn-edit:focus {
+    background: #1e6bb8 !important;
+    border-color: #1e6bb8 !important;
+    color: white !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Download PDF Button - Notion Warning Orange */
+.notion-btn-download {
+    background: var(--notion-warning) !important;
+    border-color: var(--notion-warning) !important;
+    color: white !important;
+    font-weight: 500;
+    transition: all 0.15s ease;
+    border-radius: 6px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.notion-btn-download:hover,
+.notion-btn-download:focus {
+    background: #e55a2b !important;
+    border-color: #e55a2b !important;
+    color: white !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Print Button - Notion Purple */
+.notion-btn-print {
+    background: var(--notion-purple) !important;
+    border-color: var(--notion-purple) !important;
+    color: white !important;
+    font-weight: 500;
+    transition: all 0.15s ease;
+    border-radius: 6px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    text-decoration: none !important;
+}
+
+.notion-btn-print:hover,
+.notion-btn-print:focus {
+    background: #7c3aed !important;
+    border-color: #7c3aed !important;
+    color: white !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-decoration: none !important;
+}
+
+/* Icon styling for consistency */
+.notion-btn-edit i,
+.notion-btn-download i,
+.notion-btn-print i {
+    font-size: 14px;
+    margin-right: 6px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .notion-btn-edit,
+    .notion-btn-download,
+    .notion-btn-print {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+    
+    .notion-btn-edit i,
+    .notion-btn-download i,
+    .notion-btn-print i {
+        font-size: 13px;
+        margin-right: 4px;
+    }
+}
+
+/* ================================================ */
+/* NOTION-STYLE STATUS DROPDOWN IMPROVEMENTS */
+/* ================================================ */
+
+/* Status Select in Quick Actions */
+#statusSelect,
+#statusSelectMobile,
+.quick-action-select {
+    background: var(--notion-bg) !important;
+    border: 1px solid var(--notion-border) !important;
+    border-radius: 6px !important;
+    color: var(--notion-text) !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+    padding: 10px 12px !important;
+    text-align: center !important;
+    transition: all 0.15s ease !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+    cursor: pointer !important;
+    appearance: none !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23787774' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") !important;
+    background-position: right 8px center !important;
+    background-repeat: no-repeat !important;
+    background-size: 16px !important;
+    padding-right: 32px !important;
+}
+
+#statusSelect:hover,
+#statusSelectMobile:hover,
+.quick-action-select:hover {
+    border-color: var(--notion-focus) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    transform: translateY(-1px) !important;
+}
+
+#statusSelect:focus,
+#statusSelectMobile:focus,
+.quick-action-select:focus {
+    border-color: var(--notion-focus) !important;
+    box-shadow: 0 0 0 3px rgba(35, 131, 226, 0.1) !important;
+    outline: none !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Status Options - Center text and style */
+#statusSelect option,
+#statusSelectMobile option,
+.quick-action-select option {
+    padding: 8px 12px !important;
+    text-align: center !important;
+    font-weight: 500 !important;
+    color: var(--notion-text) !important;
+    background: var(--notion-bg) !important;
+}
+
+/* Loading state for status select */
+#statusSelect:disabled,
+#statusSelectMobile:disabled,
+.quick-action-select:disabled {
+    background: var(--notion-bg-light) !important;
+    color: var(--notion-text-light) !important;
+    border-color: var(--notion-border) !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+}
+
+/* Status Select Label */
+.form-label.fw-medium,
+.quick-action-label {
+    color: var(--notion-text) !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    margin-bottom: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.quick-action-label-icon {
+    margin-right: 8px !important;
+    width: 16px !important;
+    height: 16px !important;
+    color: var(--notion-text-light) !important;
+}
+
+/* Mobile Status Select Specific */
+#statusSelectMobile {
+    min-height: 44px !important; /* Touch-friendly */
+    text-align: center !important;
+}
+
+/* Dark mode support for dropdowns */
+@media (prefers-color-scheme: dark) {
+    #statusSelect,
+    #statusSelectMobile,
+    .quick-action-select {
+        background: #374151 !important;
+        border-color: #4b5563 !important;
+        color: #f9fafb !important;
+    }
+    
+    #statusSelect option,
+    #statusSelectMobile option,
+    .quick-action-select option {
+        background: #374151 !important;
+        color: #f9fafb !important;
+    }
+}
+
+/* ================================================ */
+/* ADD FOLLOWER MODAL SPECIFIC FIX */
+/* ================================================ */
+
+/* Ensure Add Follower Modal appears correctly */
+#addFollowerModal {
+    z-index: 1055 !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    outline: 0;
+}
+
+#addFollowerModal.show {
+    display: block !important;
+}
+
+#addFollowerModal .modal-dialog {
+    z-index: 1065 !important;
+    position: relative !important;
+    width: auto;
+    margin: 1.75rem auto;
+    max-width: 500px;
+    pointer-events: none;
+}
+
+#addFollowerModal .modal-content {
+    z-index: 1075 !important;
+    position: relative !important;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    pointer-events: auto;
+    background-color: #fff !important;
+    background-clip: padding-box;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 0.5rem;
+    outline: 0;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5) !important;
+}
+
+#addFollowerModal .modal-header {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1rem;
+    border-bottom: 1px solid #dee2e6;
+    border-top-left-radius: calc(0.5rem - 1px);
+    border-top-right-radius: calc(0.5rem - 1px);
+}
+
+#addFollowerModal .modal-body {
+    position: relative;
+    flex: 1 1 auto;
+    padding: 1rem;
+}
+
+#addFollowerModal .modal-footer {
+    display: flex;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0.75rem;
+    border-top: 1px solid #dee2e6;
+    border-bottom-right-radius: calc(0.5rem - 1px);
+    border-bottom-left-radius: calc(0.5rem - 1px);
+}
+
+/* Mobile specific fixes */
+@media (max-width: 576px) {
+    #addFollowerModal .modal-dialog {
+        margin: 0.5rem !important;
+        max-width: calc(100% - 1rem) !important;
+    }
+}
 </style>
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
+<?php
+// Access restrictions for client and staff users
+$currentUser = auth()->user();
+$userType = $currentUser->user_type ?? 'client';
+$canViewPrices = in_array($userType, ['admin', 'superadmin']); // Only admin/superadmin can see prices
+?>
 <div class="sales-order-view-container">
 <?php if (isset($order) && $order): ?>
+
+<?php 
+// Define contact information for use throughout the view
+$contactPhone = $order['contact_phone'] ?: ($order['salesperson_phone'] ?: '');
+$contactEmail = $order['contact_email'] ?: ($order['salesperson_email'] ?: '');
+$contactName = $order['contact_name'] ?: ($order['salesperson_name'] ?: 'Contact');
+
+// DEBUG: Log contact information to console (remove this in production)
+echo "<script>console.log('🔍 Contact Debug Info:', " . json_encode([
+    'contact_phone' => $order['contact_phone'] ?? 'null',
+    'contact_email' => $order['contact_email'] ?? 'null', 
+    'contact_name' => $order['contact_name'] ?? 'null',
+    'salesperson_phone' => $order['salesperson_phone'] ?? 'null',
+    'salesperson_email' => $order['salesperson_email'] ?? 'null',
+    'salesperson_name' => $order['salesperson_name'] ?? 'null',
+    'final_contactPhone' => $contactPhone,
+    'final_contactEmail' => $contactEmail,
+    'final_contactName' => $contactName
+]) . ");</script>";
+?>
 
 <!-- FULL WIDTH TOP INFORMATION BAR -->
 <div class="order-top-bar mb-4">
     <div class="row g-0">
         <!-- 1. Schedule Information -->
-        <div class="col-xxl-2 col-lg-4 col-md-6 col-sm-6 col-6">
+        <div class="col-xxl col-lg-4 col-md-6 col-sm-6 col-6">
             <div class="top-bar-item">
                 <div class="top-bar-icon">
                     <i data-feather="calendar" class="text-warning"></i>
@@ -1811,26 +2129,64 @@
         </div>
 
         <!-- 2. Contact Information -->
-        <div class="col-xxl-2 col-lg-4 col-md-6 col-sm-6 col-6">
+        <div class="col-xxl col-lg-4 col-md-6 col-sm-6 col-6">
             <div class="top-bar-item">
                 <div class="top-bar-icon">
                     <i data-feather="user" class="text-success"></i>
                 </div>
                 <div class="top-bar-content">
                     <div class="top-bar-label">Contact</div>
-                    <div class="top-bar-value"><?= $order['salesperson_name'] ?? 'Not assigned' ?></div>
+                    <div class="top-bar-value">
+                        <?php 
+                        $contactName = '';
+                        if (!empty(trim($order['contact_name'] ?? ''))) {
+                            $contactName = trim($order['contact_name']);
+                        } elseif (!empty(trim($order['salesperson_name'] ?? ''))) {
+                            $contactName = trim($order['salesperson_name']);
+                        } else {
+                            $contactName = 'Not assigned';
+                        }
+                        echo $contactName;
+                        ?>
+                    </div>
                     <div class="top-bar-sub">
-                        <?php if (isset($order['salesperson_phone']) && $order['salesperson_phone']): ?>
-                            <a href="tel:<?= $order['salesperson_phone'] ?>" class="text-decoration-none">
-                                <i data-feather="phone" class="icon-xs me-1"></i>
-                                <?= $order['salesperson_phone'] ?>
-                            </a>
+                        <!-- Phone line -->
+                        <?php if (isset($order['contact_phone']) && $order['contact_phone']): ?>
+                            <div class="contact-detail-line mb-1">
+                                <a href="tel:<?= $order['contact_phone'] ?>" class="text-decoration-none">
+                                    <i data-feather="phone" class="icon-xs me-1"></i>
+                                    <?= $order['contact_phone'] ?>
+                                </a>
+                            </div>
+                        <?php elseif (isset($order['salesperson_phone']) && $order['salesperson_phone']): ?>
+                            <div class="contact-detail-line mb-1">
+                                <a href="tel:<?= $order['salesperson_phone'] ?>" class="text-decoration-none">
+                                    <i data-feather="phone" class="icon-xs me-1"></i>
+                                    <?= $order['salesperson_phone'] ?>
+                                </a>
+                            </div>
+                        <?php endif; ?>
+                        <!-- Email line -->
+                        <?php if (isset($order['contact_email']) && $order['contact_email']): ?>
+                            <div class="contact-detail-line">
+                                <a href="mailto:<?= $order['contact_email'] ?>" class="text-decoration-none">
+                                    <i data-feather="mail" class="icon-xs me-1"></i>
+                                    <?= $order['contact_email'] ?>
+                                </a>
+                            </div>
                         <?php elseif (isset($order['salesperson_email']) && $order['salesperson_email']): ?>
-                            <a href="mailto:<?= $order['salesperson_email'] ?>" class="text-decoration-none">
-                                <i data-feather="mail" class="icon-xs me-1"></i>
-                                <?= $order['salesperson_email'] ?>
-                            </a>
-                        <?php else: ?>
+                            <div class="contact-detail-line">
+                                <a href="mailto:<?= $order['salesperson_email'] ?>" class="text-decoration-none">
+                                    <i data-feather="mail" class="icon-xs me-1"></i>
+                                    <?= $order['salesperson_email'] ?>
+                                </a>
+                            </div>
+                        <?php endif; ?>
+                        <!-- Show fallback only if no contact info at all -->
+                        <?php if ((!isset($order['contact_phone']) || !$order['contact_phone']) && 
+                                 (!isset($order['salesperson_phone']) || !$order['salesperson_phone']) &&
+                                 (!isset($order['contact_email']) || !$order['contact_email']) && 
+                                 (!isset($order['salesperson_email']) || !$order['salesperson_email'])): ?>
                             No contact info
                         <?php endif; ?>
                     </div>
@@ -1838,8 +2194,28 @@
             </div>
         </div>
 
+        <!-- 2.5. User Who Sent - Desktop Only -->
+        <div class="col-xxl col-xl d-none d-xl-block">
+            <div class="top-bar-item">
+                <div class="top-bar-icon">
+                    <i data-feather="user-plus" class="text-indigo"></i>
+                </div>
+                <div class="top-bar-content">
+                    <div class="top-bar-label">Sent by</div>
+                    <div class="top-bar-value"><?= $order['created_by_name'] ?? 'Unknown User' ?></div>
+                    <div class="top-bar-sub">
+                        <?php if (isset($order['created_at']) && $order['created_at']): ?>
+                            <?= date('M j, g:i A', strtotime($order['created_at'])) ?>
+                        <?php else: ?>
+                            <span class="text-muted">No date</span>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- 3. Vehicle Information -->
-        <div class="col-xxl-2 col-lg-4 col-md-6 col-sm-6 col-6">
+        <div class="col-xxl col-lg-4 col-md-6 col-sm-6 col-6">
             <div class="top-bar-item">
                 <div class="top-bar-icon">
                     <i data-feather="truck" class="text-primary"></i>
@@ -1853,7 +2229,7 @@
         </div>
 
         <!-- 4. Service Information -->
-        <div class="col-xxl-2 col-lg-4 col-md-6 col-sm-6 col-6">
+        <div class="col-xxl col-lg-4 col-md-6 col-sm-6 col-6">
             <div class="top-bar-item">
                 <div class="top-bar-icon">
                     <i data-feather="settings" class="text-info"></i>
@@ -1862,10 +2238,14 @@
                     <div class="top-bar-label">Service</div>
                     <div class="top-bar-value"><?= $order['service_name'] ?? 'Not specified' ?></div>
                     <div class="top-bar-sub">
-                        <?php if (isset($order['service_price']) && $order['service_price']): ?>
-                            $<?= number_format($order['service_price'], 2) ?>
+                        <?php if ($canViewPrices): ?>
+                            <?php if (isset($order['service_price']) && $order['service_price']): ?>
+                                $<?= number_format($order['service_price'], 2) ?>
+                            <?php else: ?>
+                                Price not set
+                            <?php endif; ?>
                         <?php else: ?>
-                            Price not set
+                            <span class="text-muted">Price restricted</span>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -1873,7 +2253,7 @@
         </div>
 
         <!-- 5. Status -->
-        <div class="col-xxl-2 col-lg-4 col-md-6 col-sm-6 col-6">
+        <div class="col-xxl col-lg-4 col-md-6 col-sm-6 col-6">
             <div class="top-bar-item">
                 <div class="top-bar-icon">
                     <i data-feather="activity" class="text-info"></i>
@@ -1920,8 +2300,9 @@
             </div>
         </div>
 
+
         <!-- 6. Time Remaining Status -->
-        <div class="col-xxl-2 col-lg-4 col-md-6 col-sm-6 col-6">
+        <div class="col-xxl col-lg-4 col-md-6 col-sm-6 col-6">
             <div class="top-bar-item">
                 <div class="top-bar-icon">
                     <i data-feather="clock" class="text-secondary"></i>
@@ -1957,59 +2338,56 @@
                         <span id="timeStatusBadge" class="<?= $timeStatusClass ?>"><?= $timeStatusText ?></span>
                     </div>
                     <div class="top-bar-sub">
-                        <!-- Dynamic Time Remaining -->
-                        <div id="timeRemainingDisplay" class="time-remaining-display">
-                            <?php
-                            if ($order['date'] && $order['time']) {
-                                if ($hoursRemaining < 0) {
-                                    $hoursOverdue = abs($hoursRemaining);
-                                    if ($hoursOverdue < 1) {
-                                        $minutesOverdue = $hoursOverdue * 60;
-                                        echo sprintf('%.0f minutes overdue', $minutesOverdue);
-                                    } elseif ($hoursOverdue < 24) {
-                                        if ($hoursOverdue == floor($hoursOverdue)) {
-                                            echo sprintf('%.0f hours overdue', $hoursOverdue);
+                        <!-- Time Status Container - Improved Layout -->
+                        <div class="time-status-container">
+                            <!-- Time Remaining -->
+                            <div id="timeRemainingDisplay" class="time-remaining-display mb-1">
+                                <?php
+                                if ($order['date'] && $order['time']) {
+                                    if ($hoursRemaining < 0) {
+                                        $hoursOverdue = abs($hoursRemaining);
+                                        if ($hoursOverdue < 1) {
+                                            $minutesOverdue = $hoursOverdue * 60;
+                                            echo sprintf('%.0f minutes overdue', $minutesOverdue);
+                                        } elseif ($hoursOverdue < 24) {
+                                            if ($hoursOverdue == floor($hoursOverdue)) {
+                                                echo sprintf('%.0f hours overdue', $hoursOverdue);
+                                            } else {
+                                                echo sprintf('%.1f hours overdue', $hoursOverdue);
+                                            }
                                         } else {
-                                            echo sprintf('%.1f hours overdue', $hoursOverdue);
+                                            $daysOverdue = floor($hoursOverdue / 24);
+                                            $remainingHours = $hoursOverdue - ($daysOverdue * 24);
+                                            if ($remainingHours < 1) {
+                                                echo sprintf('%d day%s overdue', $daysOverdue, $daysOverdue > 1 ? 's' : '');
+                                            } else {
+                                                echo sprintf('%d day%s %.1f hours overdue', $daysOverdue, $daysOverdue > 1 ? 's' : '', $remainingHours);
+                                            }
+                                        }
+                                    } elseif ($hoursRemaining < 1) {
+                                        $minutesRemaining = ($hoursRemaining * 60);
+                                        echo sprintf('%.0f minutes left', $minutesRemaining);
+                                    } elseif ($hoursRemaining < 24) {
+                                        if ($hoursRemaining == floor($hoursRemaining)) {
+                                            echo sprintf('%.0f hours remaining', $hoursRemaining);
+                                        } else {
+                                            echo sprintf('%.1f hours remaining', $hoursRemaining);
                                         }
                                     } else {
-                                        $daysOverdue = floor($hoursOverdue / 24);
-                                        $remainingHours = $hoursOverdue - ($daysOverdue * 24);
+                                        $daysRemaining = floor($hoursRemaining / 24);
+                                        $remainingHours = $hoursRemaining - ($daysRemaining * 24);
                                         if ($remainingHours < 1) {
-                                            echo sprintf('%d day%s overdue', $daysOverdue, $daysOverdue > 1 ? 's' : '');
+                                            echo sprintf('%d day%s remaining', $daysRemaining, $daysRemaining > 1 ? 's' : '');
                                         } else {
-                                            echo sprintf('%d day%s %.1f hours overdue', $daysOverdue, $daysOverdue > 1 ? 's' : '', $remainingHours);
+                                            echo sprintf('%d day%s %.1f hours remaining', $daysRemaining, $daysRemaining > 1 ? 's' : '', $remainingHours);
                                         }
                                     }
-                                } elseif ($hoursRemaining < 1) {
-                                    $minutesRemaining = ($hoursRemaining * 60);
-                                    echo sprintf('%.0f minutes left', $minutesRemaining);
-                            } elseif ($hoursRemaining < 24) {
-                                if ($hoursRemaining == floor($hoursRemaining)) {
-                                    echo sprintf('%.0f hours remaining', $hoursRemaining);
                                 } else {
-                                    echo sprintf('%.1f hours remaining', $hoursRemaining);
+                                    echo 'No time set';
                                 }
-                            } else {
-                                $daysRemaining = floor($hoursRemaining / 24);
-                                $remainingHours = $hoursRemaining - ($daysRemaining * 24);
-                                if ($remainingHours < 1) {
-                                    echo sprintf('%d day%s remaining', $daysRemaining, $daysRemaining > 1 ? 's' : '');
-                                } else {
-                                    echo sprintf('%d day%s %.1f hours remaining', $daysRemaining, $daysRemaining > 1 ? 's' : '', $remainingHours);
-                                }
-                            }
-                        } else {
-                            echo 'No time set';
-                        }
-                        ?>
-                        </div>
-                        
-                        <!-- Live Current Time -->
-                        <div class="live-time-indicator">
-                            <span class="live-time-pulse"></span>
-                            <span class="live-label">Now:</span>
-                            <span id="liveCurrentTime" class="live-time"></span>
+                                ?>
+                            </div>
+                            
                         </div>
                     </div>
                 </div>
@@ -2045,15 +2423,15 @@
                     </div>
                     <div class="flex-shrink-0">
                         <div class="d-flex gap-2">
-                            <button class="btn btn-primary btn-sm" onclick="editOrder(<?= $order['id'] ?>)">
+                            <button class="btn notion-btn-edit btn-sm" onclick="editOrder(<?= $order['id'] ?>)">
                                 <i data-feather="edit-3" class="icon-sm me-1"></i>
                                 <?= lang('App.edit_order') ?>
                             </button>
-                            <button class="btn btn-danger btn-sm" onclick="downloadPdfAndRefresh(<?= $order['id'] ?>)">
+                            <button class="btn notion-btn-download btn-sm" onclick="downloadPdfAndRefresh(<?= $order['id'] ?>)">
                                 <i data-feather="download" class="icon-sm me-1"></i>
                                 Download PDF
                             </button>
-                            <a href="<?= base_url('sales_orders/print/' . $order['id']) ?>" target="_blank" class="btn btn-secondary btn-sm">
+                            <a href="<?= base_url('sales_orders/print/' . $order['id']) ?>" target="_blank" class="btn notion-btn-print btn-sm">
                                 <i data-feather="printer" class="icon-sm me-1"></i>
                                 <?= lang('App.print') ?>
                             </a>
@@ -2380,7 +2758,7 @@
                     <img src="<?= $qr_data['qr_url'] ?>" 
                          alt="QR Code for Order SAL-<?= str_pad($order['id'], 5, '0', STR_PAD_LEFT) ?>" 
                          class="qr-sidebar-image" 
-                         style="width: 200px; height: 200px; border-radius: 12px; cursor: pointer; border: 1px solid #ddd;"
+                         style="width: 170px; height: 170px; border-radius: 12px; cursor: pointer; border: 1px solid #ddd;"
                          onclick="showQRModal()"
                          title="Click to view larger"
                          onerror="handleQRError(this, '<?= $qr_data['short_url'] ?>');">
@@ -2427,7 +2805,7 @@
                     <i data-feather="alert-triangle" class="icon-lg text-warning mb-3"></i>
                     <h6 class="text-warning"><?= lang('App.qr_code_unavailable') ?></h6>
                     <p class="text-muted small mb-3"><?= lang('App.lima_links_not_configured') ?></p>
-                    <button class="btn btn-outline-primary btn-sm" onclick="generateQRCode(<?= $order['id'] ?>)" data-bs-toggle="modal" data-bs-target="#qrModal">
+                    <button class="btn btn-outline-primary btn-sm" onclick="generateQRCode(<?= $order['id'] ?>)">
                         <i data-feather="settings" class="icon-xs me-1"></i>
                         Generate QR
                     </button>
@@ -2443,7 +2821,7 @@
                     <i data-feather="zap" class="icon-sm me-2"></i>
                     <?= lang('App.quick_actions') ?>
                 </h5>
-                <small class="text-muted">Actions for assigned contact: <?= $order['salesperson_name'] ?? 'Not assigned' ?></small>
+                <small class="text-muted">Actions for assigned contact: <?= $order['contact_name'] ?? ($order['salesperson_name'] ?? 'Not assigned') ?></small>
             </div>
             <div class="card-body">
                 <div class="d-grid gap-3">
@@ -2453,7 +2831,6 @@
                         <label class="form-label fw-medium"><?= lang('App.update_status') ?></label>
                         <select class="form-select" id="statusSelect" onchange="updateStatus()">
                             <option value="pending" <?= $order['status'] == 'pending' ? 'selected' : '' ?>>⏳ <?= lang('App.pending') ?></option>
-                            <option value="processing" <?= $order['status'] == 'processing' ? 'selected' : '' ?>>⚙️ <?= lang('App.processing') ?></option>
                             <option value="in_progress" <?= $order['status'] == 'in_progress' ? 'selected' : '' ?>>🔄 <?= lang('App.in_progress') ?></option>
                             <option value="completed" <?= $order['status'] == 'completed' ? 'selected' : '' ?>>✅ <?= lang('App.completed') ?></option>
                             <option value="cancelled" <?= $order['status'] == 'cancelled' ? 'selected' : '' ?>>❌ <?= lang('App.cancelled') ?></option>
@@ -2480,32 +2857,36 @@
                     <?php endif; ?>
 
                     <!-- Contact Actions -->
-                    <?php if ($order['salesperson_phone']): ?>
-                    <a href="tel:<?= $order['salesperson_phone'] ?>" class="btn btn-outline-info">
+                    <?php if ($contactPhone): ?>
+                    <a href="tel:<?= $contactPhone ?>" class="btn btn-outline-info">
                         <i data-feather="phone" class="icon-sm me-2"></i>
                         <?= lang('App.call_contact') ?>
                     </a>
                     <?php endif; ?>
 
                     <!-- Enhanced SMS Action -->
-                    <?php if ($order['salesperson_phone']): ?>
+                    <?php if ($contactPhone): ?>
                     <button class="btn btn-outline-success" onclick="openEnhancedSMSModal({
                         order_id: <?= $order['id'] ?>,
                         module: 'sales_orders',
-                        phone: '<?= $order['salesperson_phone'] ?>',
-                        contact_name: '<?= addslashes($order['salesperson_name'] ?? 'Contact') ?>'
+                        phone: '<?= $contactPhone ?>',
+                        contact_name: '<?= addslashes($contactName) ?>'
                     }); closeQuickActionsModal()">
                         <i data-feather="message-circle" class="icon-sm me-2"></i>
                         Send SMS
                     </button>
+                    <?php else: ?>
+                    <script>console.log('🚫 SMS Button Hidden - No contact phone available');</script>
                     <?php endif; ?>
 
                     <!-- Email Action -->
-                    <?php if ($order['salesperson_email']): ?>
-                    <button class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#emailModal" onclick="closeQuickActionsModal()">
+                    <?php if ($contactEmail): ?>
+                    <button class="btn btn-outline-warning" onclick="openEmailModal(); closeQuickActionsModal()">
                         <i data-feather="mail" class="icon-sm me-2"></i>
                         Send Email
                     </button>
+                    <?php else: ?>
+                    <script>console.log('🚫 Email Button Hidden - No contact email available');</script>
                     <?php endif; ?>
 
                     <!-- Notification Action -->
@@ -2606,7 +2987,7 @@
 
 <!-- Universal Order Edit Modal -->
 <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content" id="orderModalContent">
             <!-- Modal content will be loaded via AJAX -->
         </div>
@@ -3286,9 +3667,17 @@ function getActivityColor(type) {
     return colors[type] || 'secondary';
 }
 
-// Edit Order Function - Now opens modal instead of redirecting
+// Edit Order Function - Uses global modal
 function editOrder(orderId) {
-    loadOrderForEdit(orderId);
+    console.log('🔄 Edit order clicked for ID:', orderId);
+    
+    // Use the global sales order modal
+    if (window.globalSalesOrderModal) {
+        window.globalSalesOrderModal.open(orderId);
+    } else {
+        console.error('❌ Global modal not available, falling back to old method');
+        loadOrderForEdit(orderId);
+    }
 }
 
 // Download PDF Function
@@ -3437,8 +3826,7 @@ function loadOrderForEdit(orderId) {
     window.salesOrderModal.isEditing = true;
     window.salesOrderModal.currentOrderData = { id: orderId };
     
-    // Show loading state
-    const orderModal = new bootstrap.Modal(document.getElementById('orderModal'));
+    // Show loading state with modal
     
     // Show modal with loading state
     document.getElementById('orderModalContent').innerHTML = `
@@ -3457,7 +3845,7 @@ function loadOrderForEdit(orderId) {
         </div>
     `;
     
-    orderModal.show();
+    showModal('orderModal');
     
     // Load order data via AJAX
     fetch(`<?= base_url('sales_orders/modal_form') ?>?id=${orderId}`, {
@@ -5956,8 +6344,7 @@ function generateQRCode(orderId) {
     // Check if QR data already exists
     <?php if (isset($qr_data) && $qr_data): ?>
     console.log('📱 Opening existing QR Modal...');
-    const qrModal = new bootstrap.Modal(document.getElementById('qrModal'));
-    qrModal.show();
+    showModal('qrModal');
     showToast('success', 'QR Code ready!');
     return;
     <?php endif; ?>
@@ -6140,9 +6527,23 @@ function regenerateQRCode(orderId) {
 // Show QR Modal from sidebar
 function showQRModal() {
     console.log('📱 Opening QR Modal from sidebar...');
-    const qrModal = new bootstrap.Modal(document.getElementById('qrModal'));
-    qrModal.show();
+    showModal('qrModal');
     showToast('success', 'QR Code ready!');
+}
+
+/**
+ * Utility function to safely show modals with proper initialization
+ * @param {string} modalId - The ID of the modal to show
+ * @param {object} options - Bootstrap modal options (optional)
+ */
+function showModal(modalId) {
+    const modalElement = document.getElementById(modalId);
+    if (modalElement) {
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();
+        return modal;
+    }
+    return null;
 }
 
 // Regenerate QR with new settings
@@ -6613,8 +7014,7 @@ function copyToClipboard(elementId) {
 function showQRModal() {
     <?php if (isset($qr_data) && $qr_data): ?>
     console.log('📱 Opening QR Modal...');
-    const qrModal = new bootstrap.Modal(document.getElementById('qrModal'));
-    qrModal.show();
+    showModal('qrModal');
     <?php else: ?>
     showToast('QR Code not available', 'warning');
     <?php endif; ?>
@@ -6811,9 +7211,20 @@ function initializeMobileQuickActions() {
 
 // Open Quick Actions Modal
 function openQuickActionsModal() {
-    const quickActionsModal = new bootstrap.Modal(document.getElementById('quickActionsModal'));
-    quickActionsModal.show();
+    showModal('quickActionsModal');
     console.log('📱 Quick Actions modal opened');
+}
+
+// Open SMS Modal
+function openSmsModal() {
+    showModal('smsModal');
+    console.log('📱 SMS modal opened');
+}
+
+// Open Email Modal
+function openEmailModal() {
+    showModal('emailModal');
+    console.log('📧 Email modal opened');
 }
 
 // Close Quick Actions Modal
@@ -9216,6 +9627,28 @@ function insertCommentMention(username) {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 Initializing Sales Order View - Single DOMContentLoaded listener');
     
+    // Make user info globally available for modal (same as in modal_form.php)
+    <?php 
+    $currentUser = auth()->user();
+    if ($currentUser) {
+        // Check if user is superadmin
+        $db = \Config\Database::connect();
+        $isSuperAdmin = $db->table('auth_groups_users')
+                          ->where('user_id', $currentUser->id)
+                          ->where('group', 'superadmin')
+                          ->countAllResults() > 0;
+    }
+    ?>
+    <?php if ($currentUser): ?>
+    window.currentUserInfo = {
+        id: <?= $currentUser->id ?>,
+        type: '<?= $currentUser->user_type ?>',
+        client_id: <?= $currentUser->client_id ?? 'null' ?>,
+        isSuperAdmin: <?= isset($isSuperAdmin) && $isSuperAdmin ? 'true' : 'false' ?>
+    };
+    console.log('🔧 User info loaded for modal:', window.currentUserInfo);
+    <?php endif; ?>
+    
     // Initialize Feather icons
     if (typeof feather !== 'undefined') {
         feather.replace();
@@ -9253,8 +9686,7 @@ document.addEventListener('DOMContentLoaded', function() {
             generateQRCode(orderId);
             
             // Show modal
-            const qrModal = new bootstrap.Modal(document.getElementById('qrModal'));
-            qrModal.show();
+            showModal('qrModal');
         });
         
         // Add tooltip to indicate it's clickable
@@ -9320,7 +9752,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <!-- SMS Modal -->
 <div class="modal fade" id="smsModal" tabindex="-1" aria-labelledby="smsModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="smsModalLabel">
@@ -9340,7 +9772,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     <div class="mb-3">
                         <label for="smsPhone" class="form-label">Phone Number</label>
-                        <input type="text" class="form-control" id="smsPhone" value="<?= $order['salesperson_phone'] ?? '' ?>" readonly>
+                        <input type="text" class="form-control" id="smsPhone" value="<?= $contactPhone ?? '' ?>" readonly>
                     </div>
                     <div class="mb-3">
                         <label for="smsMessage" class="form-label">Message</label>
@@ -9470,7 +9902,7 @@ echo view('sms/enhanced_modal');
 
 <!-- Email Modal -->
 <div class="modal fade" id="emailModal" tabindex="-1" aria-labelledby="emailModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="emailModalLabel">
@@ -9492,7 +9924,7 @@ echo view('sms/enhanced_modal');
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="emailTo" class="form-label">To</label>
-                                <input type="email" class="form-control" id="emailTo" value="<?= $order['salesperson_email'] ?? '' ?>" required>
+                                <input type="email" class="form-control" id="emailTo" value="<?= $contactEmail ?? '' ?>" required>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -9567,7 +9999,7 @@ echo view('sms/enhanced_modal');
                             <i data-feather="user" class="contact-icon"></i>
                         </div>
                         <div class="contact-info">
-                            <h6 class="contact-name mb-1"><?= $order['salesperson_name'] ?? 'Not assigned' ?></h6>
+                            <h6 class="contact-name mb-1"><?= $order['contact_name'] ?? ($order['salesperson_name'] ?? 'Not assigned') ?></h6>
                             <small class="contact-role text-muted">Assigned Contact</small>
                         </div>
                     </div>
@@ -9583,7 +10015,6 @@ echo view('sms/enhanced_modal');
                         </label>
                         <select class="form-select quick-action-select" id="statusSelectMobile" onchange="updateStatusFromModal()">
                             <option value="pending" <?= $order['status'] == 'pending' ? 'selected' : '' ?>>⏳ Pending</option>
-                            <option value="processing" <?= $order['status'] == 'processing' ? 'selected' : '' ?>>⚙️ Processing</option>
                             <option value="in_progress" <?= $order['status'] == 'in_progress' ? 'selected' : '' ?>>🔄 In Progress</option>
                             <option value="completed" <?= $order['status'] == 'completed' ? 'selected' : '' ?>>✅ Completed</option>
                             <option value="cancelled" <?= $order['status'] == 'cancelled' ? 'selected' : '' ?>>❌ Cancelled</option>
@@ -9615,8 +10046,8 @@ echo view('sms/enhanced_modal');
                     <!-- Action Buttons Grid -->
                     <div class="quick-actions-buttons">
                         <!-- Call Contact -->
-                        <?php if ($order['salesperson_phone']): ?>
-                        <a href="tel:<?= $order['salesperson_phone'] ?>" class="quick-action-btn quick-action-call">
+                        <?php if ($contactPhone): ?>
+                        <a href="tel:<?= $contactPhone ?>" class="quick-action-btn quick-action-call">
                             <div class="quick-action-icon">
                                 <i data-feather="phone" class="icon-md"></i>
                             </div>
@@ -9628,12 +10059,12 @@ echo view('sms/enhanced_modal');
                         <?php endif; ?>
 
                         <!-- Enhanced Send SMS -->
-                        <?php if ($order['salesperson_phone']): ?>
+                        <?php if ($contactPhone): ?>
                         <button class="quick-action-btn quick-action-sms" onclick="openEnhancedSMSModal({
                             order_id: <?= $order['id'] ?>,
                             module: 'sales_orders',
-                            phone: '<?= $order['salesperson_phone'] ?>',
-                            contact_name: '<?= addslashes($order['salesperson_name'] ?? 'Contact') ?>'
+                            phone: '<?= $contactPhone ?>',
+                            contact_name: '<?= addslashes($contactName) ?>'
                         }); closeQuickActionsModal()">
                             <div class="quick-action-icon">
                                 <i data-feather="message-circle" class="icon-md"></i>
@@ -9643,11 +10074,13 @@ echo view('sms/enhanced_modal');
                                 <small class="quick-action-desc">Two-way messaging</small>
                             </div>
                         </button>
+                        <?php else: ?>
+                        <script>console.log('🚫 Quick Actions SMS Button Hidden - No contact phone available');</script>
                         <?php endif; ?>
 
                         <!-- Send Email -->
-                        <?php if ($order['salesperson_email']): ?>
-                        <button class="quick-action-btn quick-action-email" data-bs-toggle="modal" data-bs-target="#emailModal" onclick="closeQuickActionsModal()">
+                        <?php if ($contactEmail): ?>
+                        <button class="quick-action-btn quick-action-email" onclick="openEmailModal(); closeQuickActionsModal()">
                             <div class="quick-action-icon">
                                 <i data-feather="mail" class="icon-md"></i>
                             </div>
@@ -10015,23 +10448,173 @@ function updateFollowersCount(count) {
  * Show add follower modal
  */
 function showAddFollowerModal() {
+    console.log('🎯 Opening Add Follower Modal...');
+    
+    // DEBUG: Check if there are multiple modals with same ID
+    const allModals = document.querySelectorAll('#addFollowerModal');
+    console.log('🔍 Found modals with ID addFollowerModal:', allModals.length);
+    allModals.forEach((modal, index) => {
+        console.log(`Modal ${index}:`, modal.outerHTML.substring(0, 200) + '...');
+    });
+    
     // Load available users
     loadAvailableUsers();
     
-    // Show modal
-    const modal = new bootstrap.Modal(document.getElementById('addFollowerModal'));
+    // Get modal element
+    const modalElement = document.getElementById('addFollowerModal');
+    if (!modalElement) {
+        console.error('❌ Add Follower Modal element not found!');
+        return;
+    }
+    
+    console.log('🔍 Modal element parent:', modalElement.parentElement?.tagName);
+    console.log('🔍 Modal element position in DOM:', Array.from(document.querySelectorAll('*')).indexOf(modalElement));
+    
+    // CRITICAL FIX: Move modal to body if it's not already there
+    if (modalElement.parentElement !== document.body) {
+        console.log('🚨 Modal is NOT in body, moving it...');
+        console.log('🔍 Current parent:', modalElement.parentElement);
+        
+        // Remove from current parent and append to body
+        modalElement.remove();
+        document.body.appendChild(modalElement);
+        
+        console.log('✅ Modal moved to body');
+        console.log('🔍 New parent:', modalElement.parentElement?.tagName);
+    } else {
+        console.log('✅ Modal is already in body');
+    }
+    
+    // Reset any conflicting styles
+    modalElement.style.display = '';
+    modalElement.style.zIndex = '';
+    modalElement.style.opacity = '';
+    modalElement.style.visibility = '';
+    modalElement.classList.remove('show');
+    
+    // Clean modal dialog positioning
+    const modalDialog = modalElement.querySelector('.modal-dialog');
+    if (modalDialog) {
+        modalDialog.style.display = '';
+        modalDialog.style.opacity = '';
+        modalDialog.style.visibility = '';
+        modalDialog.style.position = '';
+        modalDialog.style.top = '';
+        modalDialog.style.left = '';
+        modalDialog.style.transform = '';
+        modalDialog.style.width = '';
+        modalDialog.style.height = '';
+        modalDialog.style.zIndex = '';
+        modalDialog.style.backgroundColor = '';
+        console.log('🔧 Modal dialog styles reset');
+    }
+    
+    // Clean modal content styles
+    const modalContent = modalElement.querySelector('.modal-content');
+    if (modalContent) {
+        modalContent.style.display = '';
+        modalContent.style.opacity = '';
+        modalContent.style.visibility = '';
+        modalContent.style.backgroundColor = '';
+        modalContent.style.minHeight = '';
+        modalContent.style.width = '';
+        modalContent.style.position = '';
+        modalContent.style.top = '';
+        modalContent.style.left = '';
+        modalContent.style.border = '';
+        modalContent.style.zIndex = '';
+        
+        console.log('🔧 Modal content styles reset');
+        console.log('🔧 Modal content children:', modalContent.children.length);
+        console.log('🔧 Modal content computed styles:', {
+            display: getComputedStyle(modalContent).display,
+            opacity: getComputedStyle(modalContent).opacity,
+            visibility: getComputedStyle(modalContent).visibility,
+            transform: getComputedStyle(modalContent).transform,
+            zIndex: getComputedStyle(modalContent).zIndex,
+            position: getComputedStyle(modalContent).position
+        });
+    }
+    
+    // Add backdrop if not present
+    let backdrop = document.querySelector('.modal-backdrop');
+    if (!backdrop) {
+        backdrop = document.createElement('div');
+        backdrop.className = 'modal-backdrop fade show';
+        backdrop.style.zIndex = '1040';
+        document.body.appendChild(backdrop);
+    }
+    
+    // Prevent body scrolling
+    document.body.classList.add('modal-open');
+    document.body.style.paddingRight = '0px';
+    
+    // DEBUG: Check Bootstrap availability
+    console.log('🔍 Bootstrap available:', typeof bootstrap !== 'undefined');
+    console.log('🔍 Bootstrap Modal available:', typeof bootstrap?.Modal !== 'undefined');
+    
+    // Initialize Bootstrap modal
+    let modal = bootstrap.Modal.getInstance(modalElement);
+    console.log('🔍 Existing Bootstrap modal instance:', modal);
+    
+    if (!modal) {
+        try {
+            modal = new bootstrap.Modal(modalElement, {
+                backdrop: true,
+                keyboard: true,
+                focus: true
+            });
+            console.log('✅ Created new Bootstrap modal instance:', modal);
+        } catch (error) {
+            console.error('❌ Failed to create Bootstrap modal:', error);
+            return;
+        }
+    }
     
     // Add event listener to handle focus properly  
-    const modalElement = document.getElementById('addFollowerModal');
     modalElement.addEventListener('shown.bs.modal', function () {
+        console.log('✅ Add Follower Modal shown successfully');
         // Focus on the first focusable element
         const firstFocusable = modalElement.querySelector('select, input, button:not([disabled])');
         if (firstFocusable) {
             firstFocusable.focus();
         }
-    });
+    }, { once: true }); // Use once to avoid duplicate listeners
     
+    // Handle modal hide event
+    modalElement.addEventListener('hidden.bs.modal', function () {
+        console.log('🔄 Add Follower Modal hidden');
+        // Clean up
+        const backdrop = document.querySelector('.modal-backdrop');
+        if (backdrop) {
+            backdrop.remove();
+        }
+        document.body.classList.remove('modal-open');
+        document.body.style.paddingRight = '';
+    }, { once: true });
+    
+    // Show the modal
     modal.show();
+    
+    // Wait for Bootstrap to fully initialize the modal
+    setTimeout(() => {
+        const finalCheck = document.getElementById('addFollowerModal');
+        if (finalCheck && finalCheck.classList.contains('show')) {
+            console.log('✅ Modal has .show class and is visible');
+        } else {
+            console.log('⏳ Modal still initializing, checking again...');
+            // Try again after a bit more time
+            setTimeout(() => {
+                if (finalCheck && finalCheck.classList.contains('show')) {
+                    console.log('✅ Modal now has .show class and is visible');
+                } else {
+                    console.warn('⚠️ Modal may have display issues - check CSS and DOM structure');
+                }
+            }, 200);
+        }
+    }, 300);
+    
+    console.log('✨ Add Follower Modal initialization complete');
 }
 
 /**
@@ -10072,7 +10655,7 @@ function loadAvailableUsers() {
         console.log('Parsed data:', data);
         
         if (data.success) {
-            populateUserSelect(data.available_users);
+            populateUserSelect(data.followers);
         } else {
             console.error('Failed to load available users:', data.message);
             userSelect.innerHTML = '<option value="">Error loading users</option>';
@@ -10260,8 +10843,7 @@ function editFollowerPreferences(userId, userName, preferencesJson) {
     document.getElementById('prefPushNotifications').checked = preferences.push_notifications ?? true;
     
     // Show modal
-    const modal = new bootstrap.Modal(document.getElementById('followerPreferencesModal'));
-    modal.show();
+    showModal('followerPreferencesModal');
 }
 
 /**
@@ -10413,6 +10995,51 @@ function generateIdenticonAvatar(name) {
 }
 
 // Followers initialization is now handled in the main DOMContentLoaded listener
+</script>
+
+<!-- Include Global Sales Order Modal -->
+<?= $this->include('partials/global_sales_order_modal') ?>
+
+<!-- global-sales-order-modal.js ya está cargado en default.php -->
+<script>
+// Initialize Global Sales Order Modal for view.php
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🔄 Initializing global modal for view.php...');
+    
+    // Initialize the global sales order modal
+    if (typeof GlobalSalesOrderModal !== 'undefined') {
+        window.globalSalesOrderModal = new GlobalSalesOrderModal({
+            baseUrl: '<?= base_url() ?>',
+            apiEndpoints: {
+                create: '/sales_orders/save',
+                update: '/sales_orders/save',
+                get: '/sales_orders/get/',
+                clients: '/clients/get_clients_json',
+                contacts: '/sales_orders/getContactsForClient/',
+                services: '/sales_orders/getServicesForClient/'
+            }
+        });
+        
+        // Override refreshTablesAndData for view.php to reload the current order
+        const originalRefresh = window.globalSalesOrderModal.refreshTablesAndData;
+        window.globalSalesOrderModal.refreshTablesAndData = function() {
+            console.log('🔄 Refreshing order view after edit...');
+            
+            // Try original refresh first
+            originalRefresh.call(this);
+            
+            // For view.php, reload the current page to show updated data
+            setTimeout(() => {
+                console.log('🔄 Reloading page to show updated order data...');
+                window.location.reload();
+            }, 500);
+        };
+        
+        console.log('✅ Global sales order modal initialized for view.php');
+    } else {
+        console.error('❌ GlobalSalesOrderModal class not available');
+    }
+});
 </script>
 
 <style>

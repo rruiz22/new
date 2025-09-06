@@ -198,8 +198,6 @@
     width: 100% !important;
     height: 100% !important;
     background: rgba(255, 255, 255, 0.1) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
     border: 1px solid rgba(255, 255, 255, 0.2) !important;
     border-radius: 12px !important;
     z-index: 100 !important;
@@ -233,14 +231,14 @@
 @keyframes elegantFadeIn {
     from {
         opacity: 0;
-        backdrop-filter: blur(0px);
-        -webkit-backdrop-filter: blur(0px);
+        
+        -webkit-
         transform: scale(0.95);
     }
     to {
         opacity: 1;
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
+        
+        -webkit-
         transform: scale(1);
     }
 }
@@ -298,7 +296,7 @@
     color: #664d03 !important;
 }
 
-.status-processing {
+. {
     background-color: #cff4fc !important;
     border-color: #b8daff !important;
     color: #055160 !important;
@@ -606,7 +604,7 @@ waitForDataTablesOnTomorrow(function() {
             const tomorrowDate = getTomorrowDate();
 
             tomorrowOrdersTable = $('#tomorrow-orders-table').DataTable({
-                processing: true,
+                processing: false,
                 serverSide: true,
                 responsive: false,
                 scrollX: false,
@@ -843,13 +841,13 @@ waitForDataTablesOnTomorrow(function() {
                                 
                                 // Date with subtle color coding
                                 if (isPast) {
-                                    html += `<div class="text-danger-emphasis fw-medium small">${formattedDate}</div>`;
+                                    html += `<div class="text-danger-emphasis fw-medium" style="font-size: 0.9rem;">${formattedDate}</div>`;
                                 } else if (isToday) {
-                                    html += `<div class="text-warning-emphasis fw-medium small">${formattedDate}</div>`;
+                                    html += `<div class="text-warning-emphasis fw-medium" style="font-size: 0.9rem;">${formattedDate}</div>`;
                                 } else if (isTomorrow) {
-                                    html += `<div class="text-info-emphasis fw-medium small">${formattedDate}</div>`;
+                                    html += `<div class="text-info-emphasis fw-medium" style="font-size: 0.9rem;">${formattedDate}</div>`;
                                 } else {
-                                    html += `<div class="text-body-emphasis fw-medium small">${formattedDate}</div>`;
+                                    html += `<div class="text-body-emphasis fw-medium" style="font-size: 0.9rem;">${formattedDate}</div>`;
                                 }
                                 
                                 // Time with icon
@@ -858,20 +856,20 @@ waitForDataTablesOnTomorrow(function() {
                                     if (isPast) timeColor = 'text-danger-emphasis';
                                     else if (isUrgent) timeColor = 'text-warning-emphasis';
                                     
-                                    html += `<div class="${timeColor} small" style="font-size: 0.75rem;">
-                                        <i class="ri-time-line" style="font-size: 0.7rem;"></i> ${formattedTime}
+                                    html += `<div class="${timeColor}" style="font-size: 1rem; font-weight: 500; line-height: 1.2;">
+                                        <i class="ri-time-line" style="font-size: 0.9rem;"></i> ${formattedTime}
                                     </div>`;
                                 }
                                 
                                 // Status indicator with subtle text
                                 if (isPast) {
-                                    html += '<div class="text-danger small" style="font-size: 0.65rem; font-weight: 500;">Overdue</div>';
+                                    html += '<div class="text-danger" style="font-size: 0.85rem; font-weight: 600;">Overdue</div>';
                                 } else if (isUrgent) {
-                                    html += '<div class="text-warning small" style="font-size: 0.65rem; font-weight: 500;">Urgent</div>';
+                                    html += '<div class="text-warning" style="font-size: 0.85rem; font-weight: 600;">Urgent</div>';
                                 } else if (isToday) {
-                                    html += '<div class="text-warning small" style="font-size: 0.65rem; font-weight: 500;">Today</div>';
+                                    html += '<div class="text-warning" style="font-size: 0.85rem; font-weight: 600;">Today</div>';
                                 } else if (isTomorrow) {
-                                    html += '<div class="text-info small" style="font-size: 0.65rem; font-weight: 500;">Tomorrow</div>';
+                                    html += '<div class="text-info" style="font-size: 0.85rem; font-weight: 600;">Tomorrow</div>';
                                 }
                                 
                                 html += '</div>';
@@ -893,7 +891,6 @@ waitForDataTablesOnTomorrow(function() {
                             if (type === 'display') {
                                 const statusOptions = [
                                     {value: 'pending', label: 'Pending', class: 'warning'},
-                                    {value: 'processing', label: 'Processing', class: 'info'},
                                     {value: 'in_progress', label: 'In Progress', class: 'primary'},
                                     {value: 'completed', label: 'Completed', class: 'success'},
                                     {value: 'cancelled', label: 'Cancelled', class: 'danger'}
@@ -1011,6 +1008,20 @@ waitForDataTablesOnTomorrow(function() {
                         if (typeof feather !== 'undefined') {
                             feather.replace();
                         }
+                        
+                        // Apply row status classes
+                        $('#tomorrow-orders-table tbody tr').each(function() {
+                            const $row = $(this);
+                            const $statusDropdown = $row.find('.status-dropdown');
+                            
+                            if ($statusDropdown.length > 0) {
+                                const status = $statusDropdown.val();
+                                $row.removeClass('order-row-pending order-row-in-progress order-row-completed order-row-cancelled');
+                                if (status) {
+                                    $row.addClass(`order-row-${status.replace('_', '-')}`);
+                                }
+                            }
+                        });
                         
                         if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
                             const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -1253,6 +1264,14 @@ function showToast(type, message) {
             feather.replace();
         }
     }, 1200);
+
+    // Initialize enhanced table indicators after DataTable is ready
+    setTimeout(() => {
+        if (typeof EnhancedTableIndicators !== 'undefined') {
+            EnhancedTableIndicators.initializeForContainer(document);
+            console.log('✨ Enhanced table indicators initialized for tomorrow orders');
+        }
+    }, 1000);
 
 });
 </script>

@@ -196,15 +196,77 @@ class SalesOrderService
     }
 
     /**
-     * Get form data for creating/editing orders
+     * Get form data for creating/editing orders with auto-populate logic
      */
     public function getFormData(): array
     {
+        $user = auth()->user();
+        $isSuperAdmin = $this->isUserSuperAdmin($user);
+        
+        // Prepare default values
+        $defaultClientId = $user->client_id ?? null;
+        $defaultAssignedTo = ($user->user_type == 'client') ? $user->id : null;
+        
+        // Get available dealers based on user permissions
+        $availableClients = $this->getAvailableClientsForUser($user, $isSuperAdmin);
+        
+        // Get all contacts for dynamic loading
+        $allContacts = $this->getActiveContacts();
+        
         return [
-            'clients' => $this->clientModel->getActiveClients(),
-            'contacts' => $this->getActiveContacts(),
-            'services' => $this->getActiveServices()
+            'clients' => $availableClients,
+            'contacts' => $allContacts,
+            'services' => $this->getActiveServices(),
+            
+            // User context and defaults
+            'currentUser' => $user,
+            'isSuperAdmin' => $isSuperAdmin,
+            'defaultClientId' => $defaultClientId,
+            'defaultAssignedTo' => $defaultAssignedTo,
+            
+            // Form behavior flags
+            'clientReadonly' => !$isSuperAdmin, // Only SuperAdmin can change client
+            'autoPopulateContact' => ($user->user_type == 'client')
         ];
+    }
+    
+    /**
+     * Check if user is SuperAdmin
+     */
+    private function isUserSuperAdmin($user): bool
+    {
+        if (!$user) return false;
+        
+        // Check in auth_groups_users table
+        $db = \Config\Database::connect();
+        $isSuperAdmin = $db->table('auth_groups_users')
+            ->where('user_id', $user->id)
+            ->where('group', 'superadmin')
+            ->countAllResults() > 0;
+            
+        return $isSuperAdmin;
+    }
+    
+    /**
+     * Get available clients based on user permissions
+     */
+    private function getAvailableClientsForUser($user, bool $isSuperAdmin): array
+    {
+        if ($isSuperAdmin) {
+            // SuperAdmin sees all clients
+            return $this->clientModel->getActiveClients();
+        }
+        
+        // For now, all users see only their assigned client
+        // TODO: In future, implement user_client_assignments for multi-dealer staff
+        if ($user && $user->client_id) {
+            return $this->clientModel->where('id', $user->client_id)
+                                   ->where('status', 'active')
+                                   ->where('deleted', 0)
+                                   ->findAll();
+        }
+        
+        return [];
     }
 
     /**

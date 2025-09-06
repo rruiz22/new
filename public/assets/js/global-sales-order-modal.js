@@ -9,6 +9,7 @@ class GlobalSalesOrderModal {
     constructor() {
         this.modal = null;
         this.form = null;
+        this.modalInstance = null;
         this.isEditMode = false;
         this.dateTimeController = null;
         
@@ -39,6 +40,19 @@ class GlobalSalesOrderModal {
     }
 
     init() {
+        // Wait for DOM to be fully loaded before initializing
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => this.init());
+            return;
+        }
+        
+        // Check if Bootstrap is available
+        if (typeof bootstrap === 'undefined') {
+            console.error('❌ Bootstrap not loaded - waiting...');
+            setTimeout(() => this.init(), 500);
+            return;
+        }
+        
         this.modal = document.getElementById('global-sales-order-modal');
         this.form = document.getElementById('globalSalesOrderForm');
         
@@ -47,9 +61,9 @@ class GlobalSalesOrderModal {
         console.log('Form element:', this.form);
         
         if (!this.modal || !this.form) {
-            console.error('❌ GlobalSalesOrderModal: Required elements not found');
-            console.error('Missing modal:', !this.modal);
-            console.error('Missing form:', !this.form);
+            console.warn('⚠️ GlobalSalesOrderModal: Elements not found - will initialize on first use');
+            console.log('Missing modal:', !this.modal);
+            console.log('Missing form:', !this.form);
             return;
         }
 
@@ -59,12 +73,21 @@ class GlobalSalesOrderModal {
 
         this.bindEvents();
         this.initializeFeatherIcons();
-        this.dateTimeController = new DateTimeController(this);
+        
+        // Initialize date time controller if available
+        if (typeof DateTimeController !== 'undefined') {
+            this.dateTimeController = new DateTimeController(this);
+        }
         
         console.log('✅ GlobalSalesOrderModal: Initialized successfully');
     }
 
     bindEvents() {
+        if (!this.modal || !this.form) {
+            console.warn('Cannot bind events - modal or form not found');
+            return;
+        }
+
         // Modal events
         this.modal.addEventListener('shown.bs.modal', () => this.onModalShown());
         this.modal.addEventListener('hidden.bs.modal', () => this.onModalHidden());
@@ -82,22 +105,30 @@ class GlobalSalesOrderModal {
             });
         }
 
-        // Client change
+        // Client change - with null check
         const clientSelect = document.getElementById('global_client_id');
-        clientSelect.addEventListener('change', (e) => this.onClientChange(e.target.value));
+        if (clientSelect) {
+            clientSelect.addEventListener('change', (e) => this.onClientChange(e.target.value));
+        }
 
-        // VIN input
+        // VIN input - with null check
         const vinInput = document.getElementById('global_vin');
-        vinInput.addEventListener('input', (e) => this.onVinInput(e.target.value));
-        vinInput.addEventListener('blur', (e) => this.onVinBlur(e.target.value));
+        if (vinInput) {
+            vinInput.addEventListener('input', (e) => this.onVinInput(e.target.value));
+            vinInput.addEventListener('blur', (e) => this.onVinBlur(e.target.value));
+        }
 
-        // VIN scanner button
+        // VIN scanner button - with null check
         const scanBtn = document.getElementById('global_scan_vin_btn');
-        scanBtn.addEventListener('click', () => this.openVinScanner());
+        if (scanBtn) {
+            scanBtn.addEventListener('click', () => this.openVinScanner());
+        }
 
-        // Service selection
+        // Service selection - with null check
         const serviceSelect = document.getElementById('global_service_id');
-        serviceSelect.addEventListener('change', (e) => this.onServiceChange(e.target.value));
+        if (serviceSelect) {
+            serviceSelect.addEventListener('change', (e) => this.onServiceChange(e.target.value));
+        }
     }
 
     initializeFeatherIcons() {
@@ -111,23 +142,109 @@ class GlobalSalesOrderModal {
     // ========================================
 
     open(orderId = null) {
+        // Reinitialize if elements weren't found during initial load
+        if (!this.modal || !this.form) {
+            console.log('🔄 Reinitializing modal elements...');
+            this.modal = document.getElementById('global-sales-order-modal');
+            this.form = document.getElementById('globalSalesOrderForm');
+            
+            if (!this.modal || !this.form) {
+                console.error('❌ Modal elements still not found');
+                if (typeof showError === 'function') {
+                    showError('Modal Error', 'Could not find modal elements');
+                } else {
+                    console.error('Modal Error: Could not find modal elements');
+                }
+                return;
+            }
+            
+            // Rebind events for newly found elements
+            this.bindEvents();
+        }
+
         this.isEditMode = !!orderId;
         
+        // Pre-load data before showing modal
         if (this.isEditMode) {
+            console.log('📊 Loading order data for edit mode...');
             this.loadOrderData(orderId);
         } else {
+            console.log('📊 Resetting form for create mode...');
             this.resetForm();
             this.loadClients();
         }
         
-        const modalInstance = new bootstrap.Modal(this.modal);
-        modalInstance.show();
+        try {
+            // Check for existing modal instance and dispose it
+            let modalInstance = bootstrap.Modal.getInstance(this.modal);
+            if (modalInstance) {
+                console.log('🔄 Disposing existing modal instance');
+                modalInstance.dispose();
+            }
+            
+            // Create fresh modal instance with explicit options
+            modalInstance = new bootstrap.Modal(this.modal, {
+                backdrop: 'static',
+                keyboard: false,
+                focus: true
+            });
+            
+            console.log('✅ Modal instance created, attempting to show...');
+            
+            // Add one-time event listeners for debugging
+            this.modal.addEventListener('show.bs.modal', function() {
+                console.log('🎭 Modal show event fired');
+            }, { once: true });
+            
+            this.modal.addEventListener('shown.bs.modal', function() {
+                console.log('🎭 Modal shown event fired - modal is now visible');
+            }, { once: true });
+            
+            this.modal.addEventListener('hidden.bs.modal', function() {
+                console.log('🎭 Modal hidden event fired');
+            }, { once: true });
+            
+            // Show the modal
+            modalInstance.show();
+            
+            // Store instance for later use
+            this.modalInstance = modalInstance;
+            
+        } catch (error) {
+            console.error('❌ Error opening modal:', error);
+            console.error('Error details:', error.stack);
+            
+            if (typeof showError === 'function') {
+                showError('Modal Error', 'Could not open modal: ' + error.message);
+            } else {
+                console.error('Modal Error: Could not open modal: ' + error.message);
+            }
+        }
     }
 
     close() {
-        const modalInstance = bootstrap.Modal.getInstance(this.modal);
+        console.log('🚪 Closing modal...');
+        
+        // Use stored instance if available, otherwise get instance from element
+        let modalInstance = this.modalInstance || bootstrap.Modal.getInstance(this.modal);
+        
         if (modalInstance) {
+            console.log('✅ Modal instance found, hiding...');
             modalInstance.hide();
+        } else {
+            console.warn('⚠️ No modal instance found to close');
+            // Force hide by removing classes as fallback
+            if (this.modal) {
+                this.modal.classList.remove('show');
+                this.modal.style.display = 'none';
+                document.body.classList.remove('modal-open');
+                
+                // Remove backdrop
+                const backdrop = document.querySelector('.modal-backdrop');
+                if (backdrop) {
+                    backdrop.remove();
+                }
+            }
         }
     }
 
@@ -142,7 +259,7 @@ class GlobalSalesOrderModal {
             this.setLoading(clientSelect, true);
             
             const url = `${this.config.baseUrl}${this.config.apiEndpoints.clients}`;
-            console.log('Loading clients from URL:', url);
+            console.log('📊 Loading clients from URL:', url);
             
             const response = await fetch(url, {
                 headers: { 'X-Requested-With': 'XMLHttpRequest' }
@@ -155,8 +272,12 @@ class GlobalSalesOrderModal {
             const data = await response.json();
             const clients = data.data || [];
             
+            console.log('📊 DEBUG - Clients response:', data);
+            console.log('📊 DEBUG - Clients count:', clients.length);
+            
             clientSelect.innerHTML = '<option value="">Select client</option>';
             clients.forEach(client => {
+                console.log('📊 DEBUG - Processing client:', client);
                 const option = document.createElement('option');
                 option.value = client.id;
                 option.textContent = client.name;
@@ -194,11 +315,15 @@ class GlobalSalesOrderModal {
             const data = await response.json();
             const contacts = data.data || [];
             
+            console.log('📊 DEBUG - Contacts response:', data);
+            console.log('📊 DEBUG - Contacts count:', contacts.length);
+            
             contactSelect.innerHTML = '<option value="">Select contact</option>';
             contacts.forEach(contact => {
+                console.log('📊 DEBUG - Processing contact:', contact);
                 const option = document.createElement('option');
                 option.value = contact.id;
-                option.textContent = `${contact.name || contact.first_name + ' ' + contact.last_name}`;
+                option.textContent = `${contact.name || (contact.first_name + ' ' + contact.last_name)}`;
                 if (contact.email) {
                     option.textContent += ` (${contact.email})`;
                 }
@@ -208,7 +333,8 @@ class GlobalSalesOrderModal {
             contactSelect.disabled = false;
 
         } catch (error) {
-            console.error('Error loading contacts:', error);
+            console.error('❌ Error loading contacts:', error);
+            console.error('URL used:', `${this.config.baseUrl}${this.config.apiEndpoints.contacts}${clientId}`);
             this.showToast('Error loading contacts', 'error');
         } finally {
             this.setLoading(contactSelect, false);
@@ -238,12 +364,21 @@ class GlobalSalesOrderModal {
             const data = await response.json();
             const services = data.data || [];
             
+            console.log('📊 DEBUG - Services response:', data);
+            console.log('📊 DEBUG - Services count:', services.length);
+            
             serviceSelect.innerHTML = '<option value="">Select service</option>';
             services.forEach(service => {
+                console.log('📊 DEBUG - Processing service:', service);
                 const option = document.createElement('option');
                 option.value = service.id;
                 option.textContent = `${service.service_name || service.name}`;
-                if (service.service_price || service.price) {
+                
+                // Only show prices for admin and superadmin users
+                const userType = window.currentUserInfo?.type || 'client';
+                const canViewPrices = ['admin', 'superadmin'].includes(userType);
+                
+                if (canViewPrices && (service.service_price || service.price)) {
                     option.textContent += ` - $${service.service_price || service.price}`;
                 }
                 serviceSelect.appendChild(option);
@@ -252,7 +387,8 @@ class GlobalSalesOrderModal {
             serviceSelect.disabled = false;
 
         } catch (error) {
-            console.error('Error loading services:', error);
+            console.error('❌ Error loading services:', error);
+            console.error('URL used:', `${this.config.baseUrl}${this.config.apiEndpoints.services}${clientId}`);
             this.showToast('Error loading services', 'error');
         } finally {
             this.setLoading(serviceSelect, false);
@@ -556,6 +692,18 @@ class GlobalSalesOrderModal {
     populateForm(data) {
         console.log('🔄 Populating form with data:', data);
         
+        // DEBUG: Show all data received
+        console.log('📊 DEBUG - Full data object:');
+        console.table(data);
+        console.log('📊 Client name:', data.client_name);
+        console.log('📊 Contact name:', data.contact_name);  
+        console.log('📊 Service name:', data.service_name);
+        console.log('📊 Stock field:', data.stock);
+        if (data.stock === null || data.stock === '') {
+            console.log('📊 ℹ️ Stock Number is empty in database for this order');
+        }
+        console.log('📊 All data keys:', Object.keys(data));
+        
         // Map database fields to form fields
         const fieldMap = {
             'id': 'global_order_id',
@@ -590,23 +738,99 @@ class GlobalSalesOrderModal {
         
         // Load client first, then contacts and services
         if (data.client_id) {
-            clientSelect.value = data.client_id;
-            
-            // Trigger client change to load dependent data
-            setTimeout(async () => {
-                await this.onClientChange(data.client_id);
+            // First, load all clients to populate the select
+            this.loadClients().then(() => {
+                clientSelect.value = data.client_id;
+                console.log('🔄 Client selected:', data.client_id);
                 
-                // After contacts and services load, set their values
-                setTimeout(() => {
-                    if (data.contact_id) {
-                        contactSelect.value = data.contact_id;
-                    }
-                    if (data.service_id) {
-                        serviceSelect.value = data.service_id;
-                    }
-                }, 500);
-            }, 100);
+                // Verify client selection worked
+                const selectedClientOption = clientSelect.querySelector(`option[value="${data.client_id}"]`);
+                if (selectedClientOption) {
+                    console.log('✅ Client option found and selected:', selectedClientOption.textContent);
+                } else {
+                    console.warn('⚠️ Client option not found, current client options:');
+                    const options = Array.from(clientSelect.options).map(opt => ({value: opt.value, text: opt.textContent}));
+                    console.table(options);
+                }
+                
+                // Then load dependent data and wait for completion
+                this.loadDependentDataForEdit(data);
+            });
         }
+    }
+
+    async loadDependentDataForEdit(data) {
+        try {
+            console.log('🔄 Loading dependent data for edit mode...');
+            
+            // Load contacts and services simultaneously
+            await Promise.all([
+                this.loadContacts(data.client_id),
+                this.loadServices(data.client_id)
+            ]);
+            
+            console.log('✅ Dependent data loaded, setting selected values...');
+            
+            // Set the selected values after data is loaded
+            const contactSelect = document.getElementById('global_contact_id');
+            const serviceSelect = document.getElementById('global_service_id');
+            
+            // Use a small delay to ensure DOM updates are complete
+            setTimeout(() => {
+                if (data.contact_id) {
+                    contactSelect.value = data.contact_id;
+                    console.log('✅ Contact selected:', data.contact_id);
+                    
+                    // Verify the option exists
+                    const contactOption = contactSelect.querySelector(`option[value="${data.contact_id}"]`);
+                    if (!contactOption) {
+                        console.warn('⚠️ Contact option not found, adding manually');
+                        let contactName = '';
+                        if (data.contact_name && data.contact_name !== 'undefined') {
+                            contactName = data.contact_name;
+                        } else if (data.contact_first_name && data.contact_last_name) {
+                            contactName = `${data.contact_first_name} ${data.contact_last_name}`;
+                        } else {
+                            contactName = `Contact ${data.contact_id}`;
+                        }
+                        this.addMissingOption(contactSelect, data.contact_id, contactName);
+                    }
+                }
+                
+                if (data.service_id) {
+                    serviceSelect.value = data.service_id;
+                    console.log('✅ Service selected:', data.service_id);
+                    
+                    // Verify the option exists
+                    const serviceOption = serviceSelect.querySelector(`option[value="${data.service_id}"]`);
+                    if (!serviceOption) {
+                        console.warn('⚠️ Service option not found, adding manually');
+                        let serviceName = '';
+                        if (data.service_name && data.service_name !== 'undefined') {
+                            serviceName = data.service_name;
+                        } else if (data.service_title && data.service_title !== 'undefined') {
+                            serviceName = data.service_title;
+                        } else {
+                            serviceName = `Service ${data.service_id}`;
+                        }
+                        this.addMissingOption(serviceSelect, data.service_id, serviceName);
+                    }
+                }
+            }, 100);
+            
+        } catch (error) {
+            console.error('❌ Error loading dependent data for edit:', error);
+            this.showToast('Error loading contact and service data', 'error');
+        }
+    }
+
+    addMissingOption(selectElement, value, text) {
+        const option = document.createElement('option');
+        option.value = value;
+        option.textContent = text;
+        option.selected = true;
+        selectElement.appendChild(option);
+        selectElement.disabled = false;
     }
 
     resetForm() {
@@ -939,21 +1163,43 @@ class DateTimeController {
     }
 
     setDefaults() {
+        const userType = window.currentUserInfo?.type || 'client';
+        const isSuperAdmin = window.currentUserInfo?.isSuperAdmin === true;
+        const today = new Date().toISOString().split('T')[0];
+        
         if (!this.modal.isEditMode) {
-            // Set default date to today
-            const today = new Date().toISOString().split('T')[0];
+            // Create mode: Set default date to today
             this.dateInput.value = today;
-            this.dateInput.min = today;
             
-            // Set default time
+            // Set minimum date restriction based on user type
+            if (isSuperAdmin) {
+                // SuperAdmin: no restrictions
+                this.dateInput.removeAttribute('min');
+            } else {
+                // All other users: can only create future orders
+                this.dateInput.min = today;
+            }
+        } else {
+            // Edit mode: set restrictions based on user type
+            if (isSuperAdmin) {
+                // SuperAdmin: no restrictions
+                this.dateInput.removeAttribute('min');
+            } else if (userType === 'staff' || userType === 'admin') {
+                // Staff/Admin: can edit to past dates
+                this.dateInput.removeAttribute('min');
+            } else {
+                // Contact users: can only edit to future dates
+                this.dateInput.min = today;
+            }
+        }
+        
+        if (!this.modal.isEditMode) {
+            // Set default time for create mode
             const defaultTime = this.calculateNextAvailableTime();
             this.timeSelect.value = defaultTime;
-            
-            this.populateTimeOptions();
-        } else {
-            // Edit mode: remove date restrictions
-            this.dateInput.removeAttribute('min');
         }
+        
+        this.populateTimeOptions();
     }
 
     calculateNextAvailableTime() {
@@ -982,6 +1228,8 @@ class DateTimeController {
     populateTimeOptions() {
         const selectedDate = this.dateInput.value;
         const isToday = this.isToday(selectedDate);
+        const userType = window.currentUserInfo?.type || 'client';
+        const isSuperAdmin = window.currentUserInfo?.isSuperAdmin === true;
         const minHour = isToday ? this.getMinimumHour() : this.modal.config.businessHours.start;
         
         // Clear existing options
@@ -989,7 +1237,23 @@ class DateTimeController {
         
         const { start, end, interval } = this.modal.config.businessHours;
         
-        for (let hour = start; hour <= end; hour += interval) {
+        // Determine hour range based on user type
+        let hourStart, hourEnd;
+        if (isSuperAdmin) {
+            // SuperAdmin: all hours available
+            hourStart = 0;
+            hourEnd = 23;
+        } else if ((userType === 'staff' || userType === 'admin') && this.modal.isEditMode) {
+            // Staff/Admin in edit mode: all business hours available (can edit past dates)
+            hourStart = start;
+            hourEnd = end;
+        } else {
+            // Contact users or create mode: business hours with restrictions
+            hourStart = start;
+            hourEnd = end;
+        }
+        
+        for (let hour = hourStart; hour <= hourEnd; hour += interval) {
             const option = document.createElement('option');
             const timeValue = `${String(hour).padStart(2, '0')}:00`;
             const timeLabel = this.format12Hour(hour);
@@ -997,8 +1261,20 @@ class DateTimeController {
             option.value = timeValue;
             option.textContent = timeLabel;
             
-            // Disable past hours for today
-            if (isToday && hour < minHour) {
+            // Apply restrictions based on user type
+            let shouldDisable = false;
+            if (isSuperAdmin) {
+                // SuperAdmin: never disable
+                shouldDisable = false;
+            } else if ((userType === 'staff' || userType === 'admin') && this.modal.isEditMode) {
+                // Staff/Admin editing: never disable (can edit past times)
+                shouldDisable = false;
+            } else {
+                // Contact users or create mode: disable past hours for today
+                shouldDisable = isToday && hour < minHour;
+            }
+            
+            if (shouldDisable) {
                 option.disabled = true;
                 option.textContent += ' (Not available)';
                 option.className = 'text-muted';
@@ -1042,6 +1318,25 @@ class DateTimeController {
         
         if (!selectedDate || !selectedTime) {
             return true; // No validation needed if fields are empty
+        }
+        
+        // Apply validation based on user type and mode
+        const userType = window.currentUserInfo?.type || 'client';
+        const isSuperAdmin = window.currentUserInfo?.isSuperAdmin === true;
+        
+        if (isSuperAdmin) {
+            console.log('⏰ Skipping date/time validation for superadmin (allow all)');
+            return true;
+        }
+        
+        if (this.modal.isEditMode) {
+            if (userType === 'staff' || userType === 'admin') {
+                console.log('⏰ Skipping date/time validation for edit mode (staff/admin can edit past dates)');
+                return true;
+            } else {
+                console.log('⏰ Edit mode detected but user is contact - applying future-only validation');
+                // Contact users can only edit to future dates, continue with validation
+            }
         }
         
         const selectedDateTime = new Date(`${selectedDate}T${selectedTime}`);
@@ -1090,19 +1385,47 @@ class DateTimeController {
 // GLOBAL FUNCTIONS FOR BACKWARD COMPATIBILITY
 // ============================================================================
 
-// Initialize the modal when DOM is ready
+// Initialize the modal when DOM is ready with resilient loading
 document.addEventListener('DOMContentLoaded', function() {
-    if (document.getElementById('global-sales-order-modal')) {
-        window.globalSalesOrderModal = new GlobalSalesOrderModal();
-    }
+    // Try to initialize immediately
+    initGlobalSalesOrderModal();
+    
+    // Also try again after a delay in case elements load later
+    setTimeout(initGlobalSalesOrderModal, 1000);
 });
 
-// Global functions
+function initGlobalSalesOrderModal() {
+    if (window.globalSalesOrderModal) {
+        console.log('✅ Global Sales Order Modal already initialized');
+        return;
+    }
+    
+    if (document.getElementById('global-sales-order-modal')) {
+        try {
+            window.globalSalesOrderModal = new GlobalSalesOrderModal();
+            console.log('✅ Global Sales Order Modal initialized successfully');
+        } catch (error) {
+            console.error('❌ Error initializing Global Sales Order Modal:', error);
+        }
+    } else {
+        console.log('⏳ Modal element not found, waiting...');
+    }
+}
+
+// Global functions with fallback initialization
 function openGlobalSalesOrderModal() {
     if (window.globalSalesOrderModal) {
         window.globalSalesOrderModal.open();
     } else {
-        console.error('Global Sales Order Modal not initialized');
+        console.log('🔄 Modal not initialized, trying to initialize...');
+        initGlobalSalesOrderModal();
+        
+        if (window.globalSalesOrderModal) {
+            window.globalSalesOrderModal.open();
+        } else {
+            console.error('❌ Could not initialize Global Sales Order Modal');
+            showError('Modal Error', 'Could not open sales order modal');
+        }
     }
 }
 
@@ -1110,7 +1433,15 @@ function editGlobalSalesOrder(orderId) {
     if (window.globalSalesOrderModal) {
         window.globalSalesOrderModal.open(orderId);
     } else {
-        console.error('Global Sales Order Modal not initialized');
+        console.log('🔄 Modal not initialized, trying to initialize...');
+        initGlobalSalesOrderModal();
+        
+        if (window.globalSalesOrderModal) {
+            window.globalSalesOrderModal.open(orderId);
+        } else {
+            console.error('❌ Could not initialize Global Sales Order Modal');
+            showError('Modal Error', 'Could not open edit modal');
+        }
     }
 }
 

@@ -16,7 +16,6 @@ class SalesOrderModel extends Model
         'order_number',
         'client_id',
         'contact_id',
-        'salesperson_id',
         'stock',
         'vin',
         'vehicle',
@@ -167,7 +166,7 @@ class SalesOrderModel extends Model
                             sales_orders_services.service_name,
                             sales_orders_services.service_price')
                     ->join('clients', 'clients.id = sales_orders.client_id', 'left')
-                    ->join('users', 'users.id = sales_orders.salesperson_id', 'left')
+                    ->join('users', 'users.id = sales_orders.contact_id', 'left')
                     ->join('sales_orders_services', 'sales_orders_services.id = sales_orders.service_id', 'left')
                     ->where('sales_orders.deleted', 0)
                     ->orderBy('sales_orders.created_at', 'DESC')
@@ -183,7 +182,7 @@ class SalesOrderModel extends Model
                             sales_orders_services.service_name,
                             sales_orders_services.service_price')
                     ->join('clients', 'clients.id = sales_orders.client_id', 'left')
-                    ->join('users', 'users.id = sales_orders.salesperson_id', 'left')
+                    ->join('users', 'users.id = sales_orders.contact_id', 'left')
                     ->join('sales_orders_services', 'sales_orders_services.id = sales_orders.service_id', 'left')
                     ->where('sales_orders.deleted', 0)
                     ->where('sales_orders.date', date('Y-m-d'))
@@ -200,7 +199,7 @@ class SalesOrderModel extends Model
                             sales_orders_services.service_name,
                             sales_orders_services.service_price')
                     ->join('clients', 'clients.id = sales_orders.client_id', 'left')
-                    ->join('users', 'users.id = sales_orders.salesperson_id', 'left')
+                    ->join('users', 'users.id = sales_orders.contact_id', 'left')
                     ->join('sales_orders_services', 'sales_orders_services.id = sales_orders.service_id', 'left')
                     ->where('sales_orders.deleted', 0)
                     ->where('sales_orders.date', date('Y-m-d', strtotime('+1 day')))
@@ -217,7 +216,7 @@ class SalesOrderModel extends Model
                             sales_orders_services.service_name,
                             sales_orders_services.service_price')
                     ->join('clients', 'clients.id = sales_orders.client_id', 'left')
-                    ->join('users', 'users.id = sales_orders.salesperson_id', 'left')
+                    ->join('users', 'users.id = sales_orders.contact_id', 'left')
                     ->join('sales_orders_services', 'sales_orders_services.id = sales_orders.service_id', 'left')
                     ->where('sales_orders.deleted', 0)
                     ->where('sales_orders.status', 'pending')
@@ -238,7 +237,7 @@ class SalesOrderModel extends Model
                             sales_orders_services.service_name,
                             sales_orders_services.service_price')
                     ->join('clients', 'clients.id = sales_orders.client_id', 'left')
-                    ->join('users', 'users.id = sales_orders.salesperson_id', 'left')
+                    ->join('users', 'users.id = sales_orders.contact_id', 'left')
                     ->join('sales_orders_services', 'sales_orders_services.id = sales_orders.service_id', 'left')
                     ->where('sales_orders.deleted', 0)
                     ->where('sales_orders.date >=', $startOfWeek)
@@ -389,23 +388,134 @@ class SalesOrderModel extends Model
      */
     public function getOrderWithDetails($id)
     {
-        return $this->select('sales_orders.*, 
-                             clients.name as client_name,
-                             clients.email as client_email,
-                             clients.phone as client_phone,
-                             clients.address as client_address,
-                             CONCAT(users.first_name, " ", users.last_name) as salesperson_name,
-                             auth_identities.secret as salesperson_email,
-                             users.phone as salesperson_phone,
-                             sales_orders_services.service_name,
-                             sales_orders_services.service_price')
-                   ->join('clients', 'clients.id = sales_orders.client_id', 'left')
-                   ->join('users', 'users.id = sales_orders.contact_id', 'left')
-                   ->join('auth_identities', 'auth_identities.user_id = users.id AND auth_identities.type = "email_password"', 'left')
-                   ->join('sales_orders_services', 'sales_orders_services.id = sales_orders.service_id', 'left')
-                   ->where('sales_orders.deleted', 0)
-                   ->where('sales_orders.id', $id)
-                   ->first();
+        try {
+            // Start with basic order data
+            $order = $this->select('sales_orders.*')
+                          ->where('sales_orders.deleted', 0)
+                          ->where('sales_orders.id', $id)
+                          ->first();
+            
+            if (!$order) {
+                return null;
+            }
+            
+            // Manually add related data to avoid complex JOIN issues
+            $order = (array) $order;
+            
+            // Get client data
+            if ($order['client_id']) {
+                $clientModel = model('App\Models\ClientModel');
+                $client = $clientModel->find($order['client_id']);
+                if ($client) {
+                    $order['client_name'] = $client['name'];
+                    $order['client_email'] = $client['email'] ?? '';
+                    $order['client_phone'] = $client['phone'] ?? '';
+                    $order['client_address'] = $client['address'] ?? '';
+                }
+            }
+            
+            // Get assigned user data from contact_id field (the user assigned to this order)
+            if ($order['contact_id']) {
+                $userModel = model('App\Models\UserModel');
+                $assignedUser = $userModel->find($order['contact_id']);
+                if ($assignedUser) {
+                    $order['contact_name'] = ($assignedUser['first_name'] ?? '') . ' ' . ($assignedUser['last_name'] ?? '');
+                    $order['contact_name'] = trim($order['contact_name']); 
+                    $order['contact_phone'] = $assignedUser['phone'] ?? '';
+                    $order['contact_first_name'] = $assignedUser['first_name'] ?? '';
+                    $order['contact_last_name'] = $assignedUser['last_name'] ?? '';
+                    
+                    // Also set as salesperson for backward compatibility
+                    $order['salesperson_name'] = $order['contact_name'];
+                    $order['salesperson_phone'] = $order['contact_phone'];
+                    
+                    // Get email from auth_identities table (CI4 Shield)
+                    $db = \Config\Database::connect();
+                    $authIdentity = $db->table('auth_identities')
+                                      ->where('user_id', $order['contact_id'])
+                                      ->where('type', 'email_password')
+                                      ->get()
+                                      ->getRowArray();
+                    $order['contact_email'] = $authIdentity['secret'] ?? '';
+                    $order['salesperson_email'] = $order['contact_email'];
+                }
+            }
+            
+            // Get service data
+            if ($order['service_id']) {
+                $serviceModel = model('Modules\SalesOrders\Models\SalesOrderServiceModel');
+                $service = $serviceModel->find($order['service_id']);
+                if ($service) {
+                    $order['service_name'] = $service['service_name'];
+                    $order['service_price'] = $service['service_price'] ?? 0;
+                }
+            }
+            
+            // Get creator data (user who created the order)
+            if ($order['created_by']) {
+                $creator = $userModel->find($order['created_by']);
+                if ($creator) {
+                    $order['created_by_name'] = trim(($creator['first_name'] ?? '') . ' ' . ($creator['last_name'] ?? ''));
+                    $order['created_by_username'] = $creator['username'] ?? '';
+                    $order['created_by_first_name'] = $creator['first_name'] ?? '';
+                    $order['created_by_last_name'] = $creator['last_name'] ?? '';
+                    $order['created_by_user_type'] = $creator['user_type'] ?? '';
+                    
+                    // Get email from auth_identities table (CI4 Shield) for creator
+                    $creatorAuthIdentity = $this->db->table('auth_identities')
+                                             ->where('user_id', $order['created_by'])
+                                             ->where('type', 'email_password')
+                                             ->get()
+                                             ->getRowArray();
+                    $order['created_by_email'] = $creatorAuthIdentity['secret'] ?? '';
+                }
+            }
+            
+            // Get contact data (contact_id field) - buscar en tabla users
+            if (isset($order['contact_id']) && $order['contact_id']) {
+                $userModel = model('App\Models\UserModel');
+                $contact = $userModel->find($order['contact_id']);
+                if ($contact) {
+                    $order['contact_name'] = trim(($contact['first_name'] ?? '') . ' ' . ($contact['last_name'] ?? ''));
+                    $order['contact_phone'] = $contact['phone'] ?? '';
+                    
+                    // Get email from auth_identities table (CI4 Shield) for contact
+                    $db = \Config\Database::connect();
+                    $contactAuthIdentity = $db->table('auth_identities')
+                                             ->where('user_id', $order['contact_id'])
+                                             ->where('type', 'email_password')
+                                             ->get()
+                                             ->getRowArray();
+                    $order['contact_email'] = $contactAuthIdentity['secret'] ?? '';
+                }
+            }
+            
+            // Ensure contact and salesperson fields are always set to avoid undefined key errors
+            if (!isset($order['contact_name']) || empty(trim($order['contact_name']))) {
+                $order['contact_name'] = '';
+            }
+            if (!isset($order['contact_phone'])) {
+                $order['contact_phone'] = '';
+            }
+            if (!isset($order['contact_email'])) {
+                $order['contact_email'] = '';
+            }
+            if (!isset($order['salesperson_name']) || empty(trim($order['salesperson_name']))) {
+                $order['salesperson_name'] = '';
+            }
+            if (!isset($order['salesperson_phone'])) {
+                $order['salesperson_phone'] = '';
+            }
+            if (!isset($order['salesperson_email'])) {
+                $order['salesperson_email'] = '';
+            }
+            
+            return $order;
+            
+        } catch (Exception $e) {
+            log_message('error', 'Error in getOrderWithDetails: ' . $e->getMessage());
+            return null;
+        }
     }
 
     public function getOrderById($id)

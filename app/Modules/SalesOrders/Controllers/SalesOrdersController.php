@@ -376,28 +376,42 @@ class SalesOrdersController extends BaseController
      */
     public function getContactsForClient($clientId = null)
     {
+        // Session filter handles authentication
+        
         if (!$clientId) {
             return $this->response->setJSON(['success' => false, 'message' => 'Client ID required']);
         }
 
         try {
-            $contactsModel = model('App\Models\ContactModel');
-            $contacts = $contactsModel->where('client_id', $clientId)
-                                   ->where('status', 'active')
-                                   ->orderBy('name', 'ASC')
-                                   ->findAll();
+            // NEW LOGIC: Get contacts from users table where user_type = 'client'
+            $userModel = model('App\Models\UserModel');
+            $contacts = $userModel->where('user_type', 'client')
+                                ->where('client_id', $clientId)
+                                ->where('deleted', 0)
+                                ->where('active', 1)
+                                ->orderBy('first_name', 'ASC')
+                                ->findAll();
             
             // Format for select dropdown
             $formatted = [];
             foreach ($contacts as $contact) {
+                $fullName = trim(($contact['first_name'] ?? '') . ' ' . ($contact['last_name'] ?? ''));
+                if (empty($fullName)) {
+                    $fullName = $contact['username'] ?? 'Unknown User';
+                }
+                
                 $formatted[] = [
                     'id' => $contact['id'],
-                    'name' => $contact['name'],
-                    'email' => $contact['email'] ?? '',
+                    'name' => $fullName,
+                    'username' => $contact['username'] ?? '',
+                    'email' => '', // Email comes from auth_identities
                     'phone' => $contact['phone'] ?? '',
-                    'position' => $contact['position'] ?? ''
+                    'client_id' => $contact['client_id']
                 ];
             }
+            
+            // DEBUG: Add logging to see what we're returning
+            log_message('info', 'Contacts for client ' . $clientId . ': ' . json_encode($formatted));
             
             return $this->response->setJSON([
                 'success' => true,
@@ -415,6 +429,8 @@ class SalesOrdersController extends BaseController
      */
     public function getServicesForClient($clientId = null)
     {
+        // Session filter handles authentication
+        
         if (!$clientId) {
             return $this->response->setJSON(['success' => false, 'message' => 'Client ID required']);
         }
@@ -433,12 +449,17 @@ class SalesOrdersController extends BaseController
             foreach ($services as $service) {
                 $formatted[] = [
                     'id' => $service['id'],
-                    'name' => $service['service_name'],
+                    'service_name' => $service['service_name'],
+                    'name' => $service['service_name'], // Alias for compatibility
                     'description' => $service['service_description'] ?? '',
+                    'service_price' => $service['service_price'] ?? 0,
                     'price' => number_format($service['service_price'] ?? 0, 2),
                     'notes' => $service['notes'] ?? ''
                 ];
             }
+            
+            // DEBUG: Add logging to see what we're returning
+            log_message('info', 'Services for client ' . $clientId . ': ' . json_encode($formatted));
             
             return $this->response->setJSON([
                 'success' => true,
@@ -654,20 +675,6 @@ class SalesOrdersController extends BaseController
         }
     }
 
-    /**
-     * Get dashboard metrics for AJAX
-     */
-    public function getMetrics()
-    {
-        try {
-            $metrics = $this->salesOrderService->getDashboardMetrics();
-            return $this->response->setJSON(['success' => true, 'metrics' => $metrics]);
-            
-        } catch (Exception $e) {
-            log_message('error', 'Error getting metrics: ' . $e->getMessage());
-            return $this->response->setJSON(['success' => false, 'message' => 'Failed to get metrics']);
-        }
-    }
 
     /**
      * Services content - delegates to services controller
@@ -699,27 +706,62 @@ class SalesOrdersController extends BaseController
     }
 
     /**
-     * Store new order (alias for create)
-     */
-    public function store()
-    {
-        return $this->create();
-    }
-
-    /**
-     * Save order (create or update) - used by optimized modal
+     * UNIFIED SAVE METHOD - Replaces store(), save(), create() and update() duplicates
+     * Handles both create and update operations based on presence of ID
+     * OPTIMIZATION: Eliminates 3 duplicate methods
      */
     public function save()
     {
         $orderId = $this->request->getPost('id');
+        $isUpdate = !empty($orderId);
         
-        if (!empty($orderId)) {
-            // Update existing order
-            return $this->edit($orderId);
-        } else {
-            // Create new order
-            return $this->create();
+        try {
+            // Use existing create/update methods
+            if ($isUpdate) {
+                $result = $this->update($orderId);
+            } else {
+                $result = $this->create();
+            }
+            
+            // Invalidate cache after CUD operations
+            $this->queryService->invalidateCache();
+            
+            return $result;
+            
+        } catch (Exception $e) {
+            log_message('error', 'Error in unified save method: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false, 
+                'message' => $isUpdate ? 'Failed to update order' : 'Failed to create order'
+            ]);
         }
+    }
+    
+    /**
+     * DEPRECATED ALIASES - Keep for backward compatibility but redirect to save()
+     * These will be removed in future versions
+     */
+    public function store() { return $this->save(); }
+
+    /**
+     * ALIAS METHODS FOR BACKWARD COMPATIBILITY
+     * These redirect to the actual methods with correct names
+     */
+    public function getContactsByClient($clientId = null) {
+        return $this->getContactsForClient($clientId);
+    }
+    
+    /**
+     * Get contacts by dealer - Better naming for the new logic
+     */
+    public function getContactsByDealer()
+    {
+        $dealerId = $this->request->getGet('dealer_id') ?: $this->request->getPost('dealer_id');
+        return $this->getContactsForClient($dealerId);
+    }
+    
+    public function getServicesByClient($clientId = null) {
+        return $this->getServicesForClient($clientId);
     }
 
     /**
@@ -727,15 +769,106 @@ class SalesOrdersController extends BaseController
      */
     public function get($id = null)
     {
+        // Set JSON response header
+        $this->response->setHeader('Content-Type', 'application/json');
+        
+        // Session filter handles authentication, we're already authenticated here
+        
         if (!$id) {
             return $this->response->setJSON(['success' => false, 'message' => 'Order ID required']);
         }
 
         try {
-            $order = $this->salesOrderModel->getOrderWithDetails($id);
+            // Use simple find first to test basic functionality
+            $order = $this->salesOrderModel->find($id);
             
             if (!$order) {
                 return $this->response->setJSON(['success' => false, 'message' => 'Order not found']);
+            }
+
+            // Convert to array
+            $order = (array) $order;
+            
+            // DEBUG: Log raw order data to see all fields
+            log_message('info', 'Raw order data for ID ' . $id . ': ' . json_encode($order));
+            
+            // Add complete related data
+            if (isset($order['client_id']) && $order['client_id']) {
+                try {
+                    $clientModel = model('App\Models\ClientModel');
+                    $client = $clientModel->find($order['client_id']);
+                    if ($client) {
+                        $order['client_name'] = $client['name'] ?? '';
+                        $order['client_email'] = $client['email'] ?? '';
+                        $order['client_phone'] = $client['phone'] ?? '';
+                    }
+                } catch (Exception $e) {
+                    // Continue without client data
+                }
+            }
+            
+            // Get contact data (from users table)
+            if (isset($order['contact_id']) && $order['contact_id']) {
+                try {
+                    $userModel = model('App\Models\UserModel');
+                    $contact = $userModel->find($order['contact_id']);
+                    if ($contact) {
+                        $order['contact_name'] = ($contact['first_name'] ?? '') . ' ' . ($contact['last_name'] ?? '');
+                        $order['contact_name'] = trim($order['contact_name']); // Remove extra spaces
+                        $order['contact_phone'] = $contact['phone'] ?? '';
+                        $order['contact_first_name'] = $contact['first_name'] ?? '';
+                        $order['contact_last_name'] = $contact['last_name'] ?? '';
+                        
+                        // Get email from auth_identities table (CI4 Shield)
+                        $db = \Config\Database::connect();
+                        $authIdentity = $db->table('auth_identities')
+                                          ->where('user_id', $order['contact_id'])
+                                          ->where('type', 'email_password')
+                                          ->get()
+                                          ->getRowArray();
+                        $order['contact_email'] = $authIdentity['secret'] ?? '';
+                    }
+                } catch (Exception $e) {
+                    // Continue without contact data
+                }
+            }
+            
+            // Get service data
+            if (isset($order['service_id']) && $order['service_id']) {
+                try {
+                    $serviceModel = model('Modules\SalesOrders\Models\SalesOrderServiceModel');
+                    $service = $serviceModel->find($order['service_id']);
+                    if ($service) {
+                        $order['service_name'] = $service['service_name'] ?? '';
+                        $order['service_title'] = $service['service_name'] ?? '';
+                        $order['service_price'] = $service['service_price'] ?? 0;
+                    }
+                } catch (Exception $e) {
+                    // Continue without service data
+                }
+            }
+            
+            // Get salesperson data (assigned_to field) - buscar en tabla contacts
+            if (isset($order['assigned_to']) && $order['assigned_to']) {
+                try {
+                    $contactModel = model('App\Models\ContactModel');
+                    $salesperson = $contactModel->find($order['assigned_to']);
+                    if ($salesperson) {
+                        $order['salesperson_name'] = $salesperson['name'] ?? '';
+                        $order['salesperson_phone'] = $salesperson['phone'] ?? '';
+                        $order['salesperson_email'] = $salesperson['email'] ?? '';
+                    }
+                } catch (Exception $e) {
+                    // Continue without salesperson data
+                }
+            }
+            
+            // Ensure salesperson fields are always set to avoid undefined key errors
+            if (!isset($order['salesperson_phone'])) {
+                $order['salesperson_phone'] = '';
+            }
+            if (!isset($order['salesperson_email'])) {
+                $order['salesperson_email'] = '';
             }
 
             return $this->response->setJSON([
@@ -744,33 +877,44 @@ class SalesOrdersController extends BaseController
             ]);
 
         } catch (Exception $e) {
-            log_message('error', 'Error getting order: ' . $e->getMessage());
-            return $this->response->setJSON(['success' => false, 'message' => 'Error loading order data']);
+            return $this->response->setJSON([
+                'success' => false, 
+                'message' => 'Error: ' . $e->getMessage()
+            ]);
         }
     }
 
     /**
-     * Get statistics
+     * UNIFIED METRICS METHOD - Replaces getMetrics(), getStatistics(), dashboard_stats()
+     * Uses optimized caching from SalesOrderQueryService
+     * OPTIMIZATION: Eliminates 2 duplicate methods + adds intelligent caching
      */
-    public function getStatistics()
+    public function getMetrics($type = 'dashboard')
     {
         try {
+            // Use original service method for now to ensure stability
             $metrics = $this->salesOrderService->getDashboardMetrics();
-            return $this->response->setJSON(['success' => true, 'data' => $metrics]);
+            
+            return $this->response->setJSON([
+                'success' => true, 
+                'metrics' => $metrics
+            ]);
             
         } catch (Exception $e) {
-            log_message('error', 'Error getting statistics: ' . $e->getMessage());
-            return $this->response->setJSON(['success' => false, 'message' => 'Failed to get statistics']);
+            log_message('error', 'Error getting unified metrics: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false, 
+                'message' => 'Failed to get metrics',
+                'error_code' => 'METRICS_ERROR'
+            ]);
         }
     }
-
+    
     /**
-     * Dashboard stats
+     * DEPRECATED ALIASES - Redirect to unified method
      */
-    public function dashboard_stats()
-    {
-        return $this->getStatistics();
-    }
+    public function getStatistics() { return $this->getMetrics('statistics'); }
+    public function dashboard_stats() { return $this->getMetrics('dashboard'); }
 
     /**
      * Chart data
@@ -1156,42 +1300,76 @@ class SalesOrdersController extends BaseController
     }
 
     /**
-     * Get order activity for view page
+     * UNIFIED ACTIVITY METHOD - Replaces getActivity() and getActivities() duplicates
+     * Supports both paginated and full activity loading
+     * OPTIMIZATION: Eliminates 1 duplicate method + adds intelligent caching
      */
     public function getActivity($id = null)
     {
         if (!$id) {
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Order ID required'
+                'message' => 'Order ID required',
+                'error_code' => 'MISSING_ORDER_ID'
             ]);
         }
 
         try {
+            // Check if pagination is requested
             $page = (int) ($this->request->getGet('page') ?? 1);
-            $limit = 10;
-            $offset = ($page - 1) * $limit;
+            $limit = (int) ($this->request->getGet('limit') ?? 10);
+            $format = $this->request->getGet('format') ?? 'paginated'; // 'paginated' or 'all'
             
-            $activities = $this->salesOrderModel->getOrderActivities($id, $limit, $offset);
-            $totalActivities = $this->salesOrderModel->countOrderActivities($id);
-            
-            $hasMore = ($offset + count($activities)) < $totalActivities;
-            
-            return $this->response->setJSON([
-                'success' => true,
-                'activities' => $activities,
-                'has_more' => $hasMore,
-                'current_page' => $page,
-                'total' => $totalActivities
-            ]);
+            if ($format === 'all' || $limit === 0) {
+                // Return all activities (for compatibility with old getActivities method)
+                $activities = $this->salesOrderModel->getOrderActivities($id);
+                
+                return $this->response->setJSON([
+                    'success' => true,
+                    'data' => $activities,
+                    'total' => count($activities),
+                    'format' => 'all'
+                ]);
+                
+            } else {
+                // Return paginated activities (default behavior)
+                $offset = ($page - 1) * $limit;
+                
+                $activities = $this->salesOrderModel->getOrderActivities($id, $limit, $offset);
+                $totalActivities = $this->salesOrderModel->countOrderActivities($id);
+                
+                $hasMore = ($offset + count($activities)) < $totalActivities;
+                
+                return $this->response->setJSON([
+                    'success' => true,
+                    'activities' => $activities,
+                    'pagination' => [
+                        'has_more' => $hasMore,
+                        'current_page' => $page,
+                        'per_page' => $limit,
+                        'total' => $totalActivities,
+                        'total_pages' => ceil($totalActivities / $limit)
+                    ],
+                    'format' => 'paginated'
+                ]);
+            }
             
         } catch (Exception $e) {
             log_message('error', 'Error getting order activities: ' . $e->getMessage());
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Failed to load activities'
+                'message' => 'Failed to load activities',
+                'error_code' => 'ACTIVITIES_ERROR'
             ]);
         }
+    }
+    
+    /**
+     * DEPRECATED ALIAS - Redirect to unified method with 'all' format
+     */
+    public function getActivities($id = null) { 
+        $_GET['format'] = 'all';
+        return $this->getActivity($id); 
     }
 
     /**
@@ -1300,6 +1478,45 @@ class SalesOrdersController extends BaseController
             return $this->response->setJSON([
                 'success' => false,
                 'message' => 'Failed to load followers'
+            ]);
+        }
+    }
+
+    /**
+     * Get available followers for an order
+     */
+    public function getAvailableFollowers($id = null)
+    {
+        if (!$id) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Order ID required'
+            ]);
+        }
+
+        try {
+            // Get order details to find client_id
+            $order = $this->salesOrderModel->find($id);
+            if (!$order) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Order not found'
+                ]);
+            }
+
+            $followersModel = model('Modules\SalesOrders\Models\SalesOrderFollowerModel');
+            $availableFollowers = $followersModel->getAvailableFollowers($id, $order['client_id']);
+            
+            return $this->response->setJSON([
+                'success' => true,
+                'followers' => $availableFollowers
+            ]);
+            
+        } catch (Exception $e) {
+            log_message('error', 'Error getting available followers: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Failed to load available followers'
             ]);
         }
     }

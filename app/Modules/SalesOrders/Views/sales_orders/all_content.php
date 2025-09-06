@@ -278,8 +278,6 @@
     width: 100% !important;
     height: 100% !important;
     background: rgba(255, 255, 255, 0.1) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
     border: 1px solid rgba(255, 255, 255, 0.2) !important;
     border-radius: 12px !important;
     z-index: 100 !important;
@@ -313,14 +311,10 @@
 @keyframes elegantFadeIn {
     from {
         opacity: 0;
-        backdrop-filter: blur(0px);
-        -webkit-backdrop-filter: blur(0px);
         transform: scale(0.95);
     }
     to {
         opacity: 1;
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
         transform: scale(1);
     }
 }
@@ -871,7 +865,7 @@ waitForDataTables(function() {
                         </small>
                     </td>
                     <td class="text-center">
-                        <a href="<?= base_url('sales_orders/view/') ?>${order.id}" 
+                        <a href="#" onclick="openViewModal(${order.id})" 
                            class="btn btn-sm btn-outline-primary" 
                            title="<?= lang('App.view_order') ?>">
                             <i class="ri-eye-line"></i>
@@ -931,7 +925,7 @@ waitForDataTables(function() {
             $('.table-container').css({'width': '100%', 'max-width': '100%', 'overflow': 'hidden'});
 
             ordersTable = $('#all-orders-table').DataTable({
-                processing: true,
+                processing: false,
                 serverSide: true,
                 responsive: false,
                 scrollX: false,
@@ -944,6 +938,27 @@ waitForDataTables(function() {
                     url: '<?= base_url('sales_orders/all_content') ?>',
                     type: 'POST',
                     data: function(d) {
+                        // Validate and sanitize search value
+                        if (d.search && d.search.value) {
+                            let searchValue = d.search.value.trim();
+                            
+                            // Limit search length to prevent performance issues
+                            if (searchValue.length > 50) {
+                                searchValue = searchValue.substring(0, 50);
+                            }
+                            
+                            // Remove potentially problematic characters
+                            searchValue = searchValue.replace(/[<>'"&\\]/g, '');
+                            
+                            // Update the search value
+                            d.search.value = searchValue;
+                            
+                            // Skip search if too short or contains only special chars
+                            if (searchValue.length === 0) {
+                                d.search.value = '';
+                            }
+                        }
+                        
                         // Use global filter system
                         if (typeof window.getGlobalFilterData === 'function') {
                             return window.getGlobalFilterData(d);
@@ -978,7 +993,7 @@ waitForDataTables(function() {
                         data: 'order_id',
                         render: function(data, type, row) {
                             let html = `<div>`;
-                            html += `<a href="<?= base_url('sales_orders/view/') ?>${row.id}" class="fw-medium text-primary text-decoration-none">${data}</a>`;
+                            html += `<a href="#" onclick="event.preventDefault(); event.stopPropagation(); openViewModal(${row.id}); return false;" class="fw-medium text-primary text-decoration-none">${data}</a>`;
                             
                             // Add comments badge if order has comments
                             if (row.comments_count && parseInt(row.comments_count) > 0) {
@@ -1005,7 +1020,7 @@ waitForDataTables(function() {
                                         commentText.replace('{0}', commentCount).split('|')[1];
                                 }
                                 
-                                html += `<a href="<?= base_url('sales_orders/view/') ?>${row.id}#comments" class="${badgeClass}" 
+                                html += `<a href="#" onclick="event.preventDefault(); event.stopPropagation(); openViewModal(${row.id}, 'comments'); return false;" class="${badgeClass}" 
                                     data-bs-toggle="tooltip" data-bs-placement="top" title="${tooltip}">
                                     <i class="ri-message-2-line"></i>${commentCount}
                                 </a>`;
@@ -1034,7 +1049,7 @@ waitForDataTables(function() {
                                     notesTooltip = `${notesCount} ${notesCount === 1 ? 'nota interna' : 'notas internas'}`;
                                 }
                                 
-                                html += `<a href="<?= base_url('sales_orders/view/') ?>${row.id}#notes-pane" class="${notesBadgeClass}" 
+                                html += `<a href="#" onclick="event.preventDefault(); event.stopPropagation(); openViewModal(${row.id}, 'notes'); return false;" class="${notesBadgeClass}" 
                                     data-bs-toggle="tooltip" data-bs-placement="top" title="${notesTooltip}">
                                     <i class="ri-file-lock-line"></i>${notesCount}
                                 </a>`;
@@ -1156,13 +1171,13 @@ waitForDataTables(function() {
                                 
                                 // Date with subtle color coding
                                 if (isPast) {
-                                    html += `<div class="text-danger-emphasis fw-medium small">${formattedDate}</div>`;
+                                    html += `<div class="text-danger-emphasis fw-medium" style="font-size: 0.9rem;">${formattedDate}</div>`;
                                 } else if (isToday) {
-                                    html += `<div class="text-warning-emphasis fw-medium small">${formattedDate}</div>`;
+                                    html += `<div class="text-warning-emphasis fw-medium" style="font-size: 0.9rem;">${formattedDate}</div>`;
                                 } else if (isTomorrow) {
-                                    html += `<div class="text-info-emphasis fw-medium small">${formattedDate}</div>`;
+                                    html += `<div class="text-info-emphasis fw-medium" style="font-size: 0.9rem;">${formattedDate}</div>`;
                                 } else {
-                                    html += `<div class="text-body-emphasis fw-medium small">${formattedDate}</div>`;
+                                    html += `<div class="text-body-emphasis fw-medium" style="font-size: 0.9rem;">${formattedDate}</div>`;
                                 }
                                 
                                 // Time with icon
@@ -1171,20 +1186,20 @@ waitForDataTables(function() {
                                     if (isPast) timeColor = 'text-danger-emphasis';
                                     else if (isUrgent) timeColor = 'text-warning-emphasis';
                                     
-                                    html += `<div class="${timeColor} small" style="font-size: 0.75rem;">
-                                        <i class="ri-time-line" style="font-size: 0.7rem;"></i> ${formattedTime}
+                                    html += `<div class="${timeColor}" style="font-size: 1rem; font-weight: 500; line-height: 1.2;">
+                                        <i class="ri-time-line" style="font-size: 0.9rem;"></i> ${formattedTime}
                                     </div>`;
                                 }
                                 
                                 // Status indicator with subtle text
                                 if (isPast) {
-                                    html += '<div class="text-danger small" style="font-size: 0.65rem; font-weight: 500;">Overdue</div>';
+                                    html += '<div class="text-danger" style="font-size: 0.85rem; font-weight: 600;">Overdue</div>';
                                 } else if (isUrgent) {
-                                    html += '<div class="text-warning small" style="font-size: 0.65rem; font-weight: 500;">Urgent</div>';
+                                    html += '<div class="text-warning" style="font-size: 0.85rem; font-weight: 600;">Urgent</div>';
                                 } else if (isToday) {
-                                    html += '<div class="text-warning small" style="font-size: 0.65rem; font-weight: 500;">Today</div>';
+                                    html += '<div class="text-warning" style="font-size: 0.85rem; font-weight: 600;">Today</div>';
                                 } else if (isTomorrow) {
-                                    html += '<div class="text-info small" style="font-size: 0.65rem; font-weight: 500;">Tomorrow</div>';
+                                    html += '<div class="text-info" style="font-size: 0.85rem; font-weight: 600;">Tomorrow</div>';
                                 }
                                 
                                 html += '</div>';
@@ -1201,7 +1216,6 @@ waitForDataTables(function() {
                             if (type === 'display') {
                                 const statusOptions = [
                                     {value: 'pending', label: 'Pending', class: 'warning'},
-                                    {value: 'processing', label: 'Processing', class: 'info'},
                                     {value: 'in_progress', label: 'In Progress', class: 'primary'},
                                     {value: 'completed', label: 'Completed', class: 'success'},
                                     {value: 'cancelled', label: 'Cancelled', class: 'danger'}
@@ -1230,7 +1244,7 @@ waitForDataTables(function() {
                         render: function(data, type, row) {
                             return `
                                 <div class="d-flex justify-content-center gap-2 action-buttons">
-                                    <a href="#" class="link-primary fs-15 btn-view" data-id="${data}" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= lang('App.view_sales_order') ?>">
+                                    <a href="#" class="link-primary fs-15 btn-view" onclick="event.preventDefault(); event.stopPropagation(); openViewModal(${data}); return false;" data-id="${data}" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= lang('App.view_sales_order') ?>">
                                         <i class="ri-eye-fill"></i>
                                     </a>
                                     <a href="#" class="link-success fs-15 btn-edit" data-id="${data}" data-bs-toggle="tooltip" data-bs-placement="top" title="<?= lang('App.edit_sales_order') ?>">
@@ -1366,12 +1380,12 @@ waitForDataTables(function() {
                                 $(selectElement).prop('disabled', false);
                                 
                                 // Update dropdown color class
-                                $(selectElement).removeClass('status-pending status-processing status-in_progress status-completed status-cancelled');
+                                $(selectElement).removeClass('status-pending status-in_progress status-completed status-cancelled');
                                 $(selectElement).addClass(`status-${newStatus}`);
                                 
                                 // Update the row styling if needed
                                 const $row = $(selectElement).closest('tr');
-                                $row.removeClass('order-row-pending order-row-processing order-row-completed order-row-cancelled');
+                                $row.removeClass('order-row-pending order-row-in-progress order-row-completed order-row-cancelled');
                                 $row.addClass(`order-row-${newStatus.replace('_', '-')}`);
                                 
                             } else {
@@ -1391,25 +1405,10 @@ waitForDataTables(function() {
                     });
                     */
 
-                    // Add row click event listeners
-                    $('#all-orders-table tbody tr').off('click').on('click', function(e) {
-                        // Don't trigger row click if clicking on action buttons, links, or dropdowns
-                        if ($(e.target).closest('.action-buttons').length > 0 || 
-                            $(e.target).closest('a').length > 0 || 
-                            $(e.target).hasClass('badge') ||
-                            $(e.target).closest('.duplicate-indicator').length > 0 ||
-                            $(e.target).hasClass('status-dropdown') ||
-                            $(e.target).closest('select').length > 0) {
-                            return;
-                        }
-                        
-                        // Get the order ID from the row data
-                        const table = $('#all-orders-table').DataTable();
-                        const rowData = table.row(this).data();
-                        if (rowData && rowData.id) {
-                            window.location.href = `<?= base_url('sales_orders/view/') ?>${rowData.id}`;
-                        }
-                    });
+                    // Row click handlers are managed by document delegation below
+
+                    // Apply row status classes
+                    applyRowStatusClasses();
 
                     // Ensure table uses full width on every draw
                     $('#all-orders-table').css({'width': '100%', 'max-width': '100%'});
@@ -1423,6 +1422,28 @@ waitForDataTables(function() {
         }
     }
 
+    // Function to apply row status classes based on dropdown values
+    function applyRowStatusClasses() {
+        setTimeout(() => {
+            $('#all-orders-table tbody tr').each(function() {
+                const $row = $(this);
+                const $statusDropdown = $row.find('.status-dropdown');
+                
+                if ($statusDropdown.length > 0) {
+                    const status = $statusDropdown.val();
+                    
+                    // Remove existing status classes
+                    $row.removeClass('order-row-pending order-row-in-progress order-row-completed order-row-cancelled');
+                    
+                    // Apply status class to row
+                    if (status) {
+                        $row.addClass(`order-row-${status.replace('_', '-')}`);
+                    }
+                }
+            });
+        }, 200);
+    }
+
     // Setup action button event handlers using document delegation (for Service class buttons)
     $(document).off('click.allTable', '#all-orders-table .btn-view').on('click.allTable', '#all-orders-table .btn-view', function(e) {
         e.preventDefault();
@@ -1431,7 +1452,7 @@ waitForDataTables(function() {
         if (typeof window.openViewModal === 'function') {
             window.openViewModal(orderId);
         } else {
-            window.location.href = `<?= base_url('sales_orders/view/') ?>${orderId}`;
+            openViewModal(orderId);
         }
     });
     
@@ -1476,7 +1497,7 @@ waitForDataTables(function() {
             if (typeof window.openViewModal === 'function') {
                 window.openViewModal(rowData.id);
             } else {
-                window.location.href = `<?= base_url('sales_orders/view/') ?>${rowData.id}`;
+                openViewModal(rowData.id);
             }
         }
     });
@@ -1510,7 +1531,7 @@ waitForDataTables(function() {
 
     // Action Functions
     window.viewOrder = function(orderId) {
-        window.location.href = `<?= base_url('sales_orders/view/') ?>${orderId}`;
+        openViewModal(orderId);
     };
 
     // Individual functions are still available but event listeners are global
@@ -1632,6 +1653,14 @@ function showToast(type, message) {
     setTimeout(() => {
         if (typeof feather !== 'undefined') {
             feather.replace();
+        }
+    }, 1000);
+
+    // Initialize enhanced table indicators after DataTable is ready
+    setTimeout(() => {
+        if (typeof EnhancedTableIndicators !== 'undefined') {
+            EnhancedTableIndicators.initializeForContainer(document);
+            console.log('✨ Enhanced table indicators initialized for all orders');
         }
     }, 1000);
 

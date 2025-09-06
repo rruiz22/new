@@ -26,7 +26,21 @@
       "Bash(curl:*)",
       "Read(/C:\\Users\\rudyr\\Pictures\\Screenshots/**)",
       "Bash(mysql:*)",
-      "Read(/C:\\Users\\rudyr\\Pictures\\Screenshots/**)"
+      "Read(/C:\\Users\\rudyr\\Pictures\\Screenshots/**)",
+      "Read(/C:\\Users\\rudyr\\Pictures\\Screenshots/**)",
+      "Read(/C:\\Users\\rudyr\\Pictures\\Screenshots/**)",
+      "Read(/C:\\Users\\rudyr\\Pictures\\Screenshots/**)",
+      "Bash(echo \"Status: $?\")",
+      "Bash(cat:*)",
+      "Read(/C:\\Users\\rudyr\\Pictures\\Screenshots/**)",
+      "Bash(dir:*)",
+      "Read(/C:\\Users\\rudyr\\Pictures\\Screenshots/**)",
+      "Read(/C:\\Users\\rudyr\\Pictures\\Screenshots/**)",
+      "Read(/C:\\Users\\rudyr\\Pictures\\Screenshots/**)",
+      "Read(/C:\\Users\\rudyr\\Pictures\\Screenshots/**)",
+      "Read(/C:\\Users\\rudyr\\Pictures\\Screenshots/**)",
+      "Read(/C:\\Users\\rudyr\\Pictures\\Screenshots/**)",
+      "Bash(rg:*)"
     ],
     "deny": [],
     "ask": []

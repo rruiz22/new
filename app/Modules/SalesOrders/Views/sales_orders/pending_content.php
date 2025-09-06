@@ -228,8 +228,6 @@
     width: 100% !important;
     height: 100% !important;
     background: rgba(255, 255, 255, 0.1) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
     border: 1px solid rgba(255, 255, 255, 0.2) !important;
     border-radius: 12px !important;
     z-index: 100 !important;
@@ -263,14 +261,14 @@
 @keyframes elegantFadeIn {
     from {
         opacity: 0;
-        backdrop-filter: blur(0px);
-        -webkit-backdrop-filter: blur(0px);
+        
+        -webkit-
         transform: scale(0.95);
     }
     to {
         opacity: 1;
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
+        
+        -webkit-
         transform: scale(1);
     }
 }
@@ -560,7 +558,7 @@
     color: #664d03;
 }
 
-.status-processing {
+. {
     background: #cff4fc;
     color: #055160;
 }
@@ -852,8 +850,8 @@ waitForDataTablesOnPending(function() {
             const statusClass = {
                 'completed': 'status-completed',
                 'pending': 'status-pending',
-                'processing': 'status-processing',
-                'in_progress': 'status-processing',
+                'processing': '',
+                'in_progress': '',
                 'cancelled': 'status-cancelled'
             };
             
@@ -976,7 +974,7 @@ waitForDataTablesOnPending(function() {
 
 
             pendingOrdersTable = $('#pending-orders-table').DataTable({
-                processing: true,
+                processing: false,
                 serverSide: true,
                 responsive: false,
                 scrollX: false,
@@ -1028,30 +1026,9 @@ waitForDataTablesOnPending(function() {
                             // Add comments badge if order has comments
                             if (row.comments_count && parseInt(row.comments_count) > 0) {
                                 const commentCount = parseInt(row.comments_count);
-                                const badgeClass = commentCount > 0 ? 'comments-badge has-comments' : 'comments-badge';
+                                const badgeClass = commentCount > 0 ? 'comments-indicator indicator-badge has-comments' : 'comments-indicator indicator-badge';
                                 
-                                // Create simple tooltip text
-                                let tooltip = '';
-                                if (row.comments && row.comments.length > 0) {
-                                    // Create a simple text tooltip with comments
-                                    const commentsPreview = row.comments.slice(0, 2).map(comment => 
-                                        `${comment.author_name}: ${comment.comment.substring(0, 50)}${comment.comment.length > 50 ? '...' : ''}`
-                                    ).join(' | ');
-                                    
-                                    tooltip = `${commentCount} ${commentCount === 1 ? 'comentario' : 'comentarios'} - ${commentsPreview}`;
-                                    if (commentCount > 2) {
-                                        tooltip += ` | +${commentCount - 2} más...`;
-                                    }
-                                } else {
-                                    // Fallback to simple count
-                                    const commentText = `<?= lang('App.comment_count') ?>`;
-                                    tooltip = commentCount === 1 ? 
-                                        commentText.replace('{0}', commentCount).split('|')[0] :
-                                        commentText.replace('{0}', commentCount).split('|')[1];
-                                }
-                                
-                                html += `<a href="<?= base_url('sales_orders/view/') ?>${row.id}#comments" class="${badgeClass}" 
-                                    data-bs-toggle="tooltip" data-bs-placement="top" title="${tooltip}">
+                                html += `<a href="<?= base_url('sales_orders/view/') ?>${row.id}#comments" class="${badgeClass}">
                                     <i class="ri-message-2-line"></i>${commentCount}
                                 </a>`;
                             }
@@ -1060,27 +1037,9 @@ waitForDataTablesOnPending(function() {
                             <?php if (auth()->user() && auth()->user()->user_type === 'staff'): ?>
                             if (row.internal_notes_count && parseInt(row.internal_notes_count) > 0) {
                                 const notesCount = parseInt(row.internal_notes_count);
-                                const notesBadgeClass = notesCount > 0 ? 'internal-notes-badge has-notes' : 'internal-notes-badge';
+                                const notesBadgeClass = notesCount > 0 ? 'notes-indicator indicator-badge has-notes' : 'notes-indicator indicator-badge';
                                 
-                                // Create simple tooltip text for internal notes
-                                let notesTooltip = '';
-                                if (row.internal_notes && row.internal_notes.length > 0) {
-                                    // Create a simple text tooltip with notes
-                                    const notesPreview = row.internal_notes.slice(0, 2).map(note => 
-                                        `${note.author_name}: ${note.content.substring(0, 50)}${note.content.length > 50 ? '...' : ''}`
-                                    ).join(' | ');
-                                    
-                                    notesTooltip = `${notesCount} ${notesCount === 1 ? 'nota interna' : 'notas internas'} - ${notesPreview}`;
-                                    if (notesCount > 2) {
-                                        notesTooltip += ` | +${notesCount - 2} más...`;
-                                    }
-                                } else {
-                                    // Fallback to simple count
-                                    notesTooltip = `${notesCount} ${notesCount === 1 ? 'nota interna' : 'notas internas'}`;
-                                }
-                                
-                                html += `<a href="<?= base_url('sales_orders/view/') ?>${row.id}#notes-pane" class="${notesBadgeClass}" 
-                                    data-bs-toggle="tooltip" data-bs-placement="top" title="${notesTooltip}">
+                                html += `<a href="<?= base_url('sales_orders/view/') ?>${row.id}#notes-pane" class="${notesBadgeClass}">
                                     <i class="ri-file-lock-line"></i>${notesCount}
                                 </a>`;
                             }
@@ -1105,11 +1064,10 @@ waitForDataTablesOnPending(function() {
                             // Add duplicate indicator if order has stock duplicates
                             if (row.duplicates && row.duplicates.stock && row.duplicates.stock > 0) {
                                 const count = row.duplicates.stock;
-                                const tooltip = `Total of ${count} orders with same stock`;
                                 
                                 html += `<span class="duplicate-indicator stock-duplicate ms-1" 
-                                    data-bs-toggle="tooltip" data-bs-placement="top" title="${tooltip}"
-                                    onclick="showDuplicateOrdersModal('stock', '${row.duplicates.stock_value || data}', '${row.id}'); event.stopPropagation();">
+                                    data-field="stock" data-value="${row.duplicates.stock_value || data}" 
+                                    data-order-id="${row.id}" data-count="${count}">
                                     <i class="ri-file-copy-line"></i><small>${count}</small>
                                 </span>`;
                             }
@@ -1131,11 +1089,10 @@ waitForDataTablesOnPending(function() {
                                 // Add VIN duplicate indicator
                                 if (row.duplicates && row.duplicates.vin && row.duplicates.vin > 0) {
                                     const count = row.duplicates.vin;
-                                    const tooltip = `Total of ${count} orders with same VIN`;
                                     
                                     html += `<span class="duplicate-indicator vin-duplicate ms-1" 
-                                        data-bs-toggle="tooltip" data-bs-placement="top" title="${tooltip}"
-                                        onclick="showDuplicateOrdersModal('vin', '${row.duplicates.vin_value || row.vin}', '${row.id}'); event.stopPropagation();">
+                                        data-field="vin" data-value="${row.duplicates.vin_value || row.vin}" 
+                                        data-order-id="${row.id}" data-count="${count}">
                                         <i class="ri-file-copy-line"></i><small>${count}</small>
                                     </span>`;
                                 }
@@ -1201,13 +1158,13 @@ waitForDataTablesOnPending(function() {
                                 
                                 // Date with subtle color coding
                                 if (isPast) {
-                                    html += `<div class="text-danger-emphasis fw-medium small">${formattedDate}</div>`;
+                                    html += `<div class="text-danger-emphasis fw-medium" style="font-size: 0.9rem;">${formattedDate}</div>`;
                                 } else if (isToday) {
-                                    html += `<div class="text-warning-emphasis fw-medium small">${formattedDate}</div>`;
+                                    html += `<div class="text-warning-emphasis fw-medium" style="font-size: 0.9rem;">${formattedDate}</div>`;
                                 } else if (isTomorrow) {
-                                    html += `<div class="text-info-emphasis fw-medium small">${formattedDate}</div>`;
+                                    html += `<div class="text-info-emphasis fw-medium" style="font-size: 0.9rem;">${formattedDate}</div>`;
                                 } else {
-                                    html += `<div class="text-body-emphasis fw-medium small">${formattedDate}</div>`;
+                                    html += `<div class="text-body-emphasis fw-medium" style="font-size: 0.9rem;">${formattedDate}</div>`;
                                 }
                                 
                                 // Time with icon
@@ -1216,20 +1173,20 @@ waitForDataTablesOnPending(function() {
                                     if (isPast) timeColor = 'text-danger-emphasis';
                                     else if (isUrgent) timeColor = 'text-warning-emphasis';
                                     
-                                    html += `<div class="${timeColor} small" style="font-size: 0.75rem;">
-                                        <i class="ri-time-line" style="font-size: 0.7rem;"></i> ${formattedTime}
+                                    html += `<div class="${timeColor}" style="font-size: 1rem; font-weight: 500; line-height: 1.2;">
+                                        <i class="ri-time-line" style="font-size: 0.9rem;"></i> ${formattedTime}
                                     </div>`;
                                 }
                                 
                                 // Status indicator with subtle text
                                 if (isPast) {
-                                    html += '<div class="text-danger small" style="font-size: 0.65rem; font-weight: 500;">Overdue</div>';
+                                    html += '<div class="text-danger" style="font-size: 0.85rem; font-weight: 600;">Overdue</div>';
                                 } else if (isUrgent) {
-                                    html += '<div class="text-warning small" style="font-size: 0.65rem; font-weight: 500;">Urgent</div>';
+                                    html += '<div class="text-warning" style="font-size: 0.85rem; font-weight: 600;">Urgent</div>';
                                 } else if (isToday) {
-                                    html += '<div class="text-warning small" style="font-size: 0.65rem; font-weight: 500;">Today</div>';
+                                    html += '<div class="text-warning" style="font-size: 0.85rem; font-weight: 600;">Today</div>';
                                 } else if (isTomorrow) {
-                                    html += '<div class="text-info small" style="font-size: 0.65rem; font-weight: 500;">Tomorrow</div>';
+                                    html += '<div class="text-info" style="font-size: 0.85rem; font-weight: 600;">Tomorrow</div>';
                                 }
                                 
                                 html += '</div>';
@@ -1251,7 +1208,6 @@ waitForDataTablesOnPending(function() {
                             if (type === 'display') {
                                 const statusOptions = [
                                     {value: 'pending', label: 'Pending', class: 'warning'},
-                                    {value: 'processing', label: 'Processing', class: 'info'},
                                     {value: 'in_progress', label: 'In Progress', class: 'primary'},
                                     {value: 'completed', label: 'Completed', class: 'success'},
                                     {value: 'cancelled', label: 'Cancelled', class: 'danger'}
@@ -1355,6 +1311,9 @@ waitForDataTablesOnPending(function() {
                     // Single column adjustment without redraw
                     setTimeout(() => {
                         this.api().columns.adjust();
+                        
+                        // Apply row status classes
+                        applyRowStatusClassesPending();
                     }, 100);
                 },
                 drawCallback: function(settings) {
@@ -1471,12 +1430,12 @@ waitForDataTablesOnPending(function() {
                                 $(selectElement).prop('disabled', false);
                                 
                                 // Update dropdown color class
-                                $(selectElement).removeClass('status-pending status-processing status-in_progress status-completed status-cancelled');
+                                $(selectElement).removeClass('status-pending  status-in_progress status-completed status-cancelled');
                                 $(selectElement).addClass(`status-${newStatus}`);
                                 
                                 // Update the row styling if needed
                                 const $row = $(selectElement).closest('tr');
-                                $row.removeClass('order-row-pending order-row-processing order-row-completed order-row-cancelled');
+                                $row.removeClass('order-row-pending order-row-in-progress order-row-completed order-row-cancelled');
                                 $row.addClass(`order-row-${newStatus.replace('_', '-')}`);
                                 
                             } else {
@@ -1555,8 +1514,41 @@ waitForDataTablesOnPending(function() {
         }
     }, 1200);
 
+    // Function to apply row status classes
+    function applyRowStatusClassesPending() {
+        setTimeout(() => {
+            $('#pending-orders-table tbody tr').each(function() {
+                const $row = $(this);
+                const $statusDropdown = $row.find('.status-dropdown');
+                
+                if ($statusDropdown.length > 0) {
+                    const status = $statusDropdown.val();
+                    
+                    // Remove existing status classes
+                    $row.removeClass('order-row-pending order-row-in-progress order-row-completed order-row-cancelled');
+                    
+                    // Apply status class to row
+                    if (status) {
+                        $row.addClass(`order-row-${status.replace('_', '-')}`);
+                    }
+                }
+            });
+        }, 200);
+    }
+
     // Expose showDuplicateOrdersModal globally for reuse in other views
     window.showDuplicateOrdersModal = showDuplicateOrdersModal;
 
+    // Initialize enhanced table indicators after DataTable is ready
+    setTimeout(() => {
+        if (typeof EnhancedTableIndicators !== 'undefined') {
+            EnhancedTableIndicators.initializeForContainer(document);
+            console.log('✨ Enhanced table indicators initialized for pending orders');
+        }
+    }, 1000);
 });
 </script>
+
+<!-- Enhanced Table Indicators -->
+<link rel="stylesheet" href="<?= base_url('assets/css/enhanced-indicators.css') ?>">
+<script src="<?= base_url('assets/js/enhanced-table-indicators.js') ?>"></script>

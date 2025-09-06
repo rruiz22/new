@@ -290,8 +290,6 @@
     width: 100% !important;
     height: 100% !important;
     background: rgba(255, 255, 255, 0.1) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
     border: 1px solid rgba(255, 255, 255, 0.2) !important;
     border-radius: 12px !important;
     z-index: 100 !important;
@@ -325,14 +323,14 @@
 @keyframes elegantFadeIn {
     from {
         opacity: 0;
-        backdrop-filter: blur(0px);
-        -webkit-backdrop-filter: blur(0px);
+        
+        -webkit-
         transform: scale(0.95);
     }
     to {
         opacity: 1;
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
+        
+        -webkit-
         transform: scale(1);
     }
 }

@@ -8,7 +8,7 @@ use CodeIgniter\Router\RouteCollection;
  * Sales Orders Module Routes
  */
 return function (RouteCollection $routes) {
-    // Sales Orders Module Routes
+    // Sales Orders Module Routes with session filter
     $routes->group('sales_orders', ['namespace' => 'Modules\SalesOrders\Controllers', 'filter' => 'session'], function($routes) {
         // Main routes
         $routes->get('/', 'SalesOrdersController::index');
@@ -27,6 +27,9 @@ return function (RouteCollection $routes) {
         $routes->post('store', 'SalesOrdersController::store');
         $routes->post('save', 'SalesOrdersController::save');
         $routes->get('get/(:num)', 'SalesOrdersController::get/$1');
+        $routes->get('getContactsForClient/(:num)', 'SalesOrdersController::getContactsForClient/$1');
+        $routes->get('getServicesByClient/(:num)', 'SalesOrdersController::getServicesByClient/$1');
+        $routes->get('getContactsByClient/(:num)', 'SalesOrdersController::getContactsByClient/$1'); // Alias
         $routes->get('view/(:num)', 'SalesOrdersController::view/$1');
         $routes->get('print/(:num)', 'SalesOrdersController::print/$1');
         $routes->get('downloadPdf/(:num)', 'SalesOrdersController::downloadPdf/$1');

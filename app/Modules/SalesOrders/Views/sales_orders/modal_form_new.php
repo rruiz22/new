@@ -247,7 +247,6 @@
                                             </label>
                                             <select class="form-select" id="status" name="status" required>
                                                 <option value="pending" selected><?= lang('App.pending') ?></option>
-                                                <option value="processing"><?= lang('App.processing') ?></option>
                                                 <option value="in_progress"><?= lang('App.in_progress') ?></option>
                                                 <option value="completed"><?= lang('App.completed') ?></option>
                                                 <option value="cancelled"><?= lang('App.cancelled') ?></option>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Modal Debug Test</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Modal Debug Test</h2>
+        <button class="btn btn-primary" id="testModal">Open Test Modal</button>
+        <button class="btn btn-secondary" id="testGlobalModal">Open Global Modal</button>
+        
+        <div class="mt-3">
+            <h4>Console Output:</h4>
+            <div id="console" style="background: #f8f9fa; padding: 10px; border: 1px solid #ddd; height: 200px; overflow-y: scroll;"></div>
+        </div>
+    </div>
+
+    <!-- Simple Test Modal -->
+    <div class="modal fade" id="testModalElement" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Test Modal</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    This is a simple test modal to verify Bootstrap Modal functionality.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include the actual global modal from your app -->
+    <?php 
+    $modalPath = __DIR__ . '/app/Views/partials/global_sales_order_modal.php';
+    if (file_exists($modalPath)) {
+        include $modalPath;
+    } else {
+        echo '<!-- Global modal not found at: ' . $modalPath . ' -->';
+    }
+    ?>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Console logger
+        const consoleDiv = document.getElementById('console');
+        const originalLog = console.log;
+        const originalError = console.error;
+        
+        function logToDiv(message, type = 'log') {
+            const timestamp = new Date().toLocaleTimeString();
+            const p = document.createElement('p');
+            p.innerHTML = `<strong>[${timestamp}] ${type.toUpperCase()}:</strong> ${message}`;
+            p.style.color = type === 'error' ? 'red' : 'black';
+            p.style.margin = '2px 0';
+            consoleDiv.appendChild(p);
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        }
+        
+        console.log = function(message) {
+            originalLog.apply(console, arguments);
+            logToDiv(message, 'log');
+        };
+        
+        console.error = function(message) {
+            originalError.apply(console, arguments);
+            logToDiv(message, 'error');
+        };
+
+        // Test simple modal
+        document.getElementById('testModal').addEventListener('click', function() {
+            console.log('Opening test modal...');
+            try {
+                const modal = new bootstrap.Modal(document.getElementById('testModalElement'));
+                modal.show();
+                console.log('Test modal opened successfully');
+            } catch (error) {
+                console.error('Test modal failed: ' + error.message);
+            }
+        });
+
+        // Test global modal
+        document.getElementById('testGlobalModal').addEventListener('click', function() {
+            console.log('Testing global modal...');
+            
+            const globalModal = document.getElementById('global-sales-order-modal');
+            if (!globalModal) {
+                console.error('Global modal element not found');
+                return;
+            }
+            
+            console.log('Global modal element found');
+            console.log('Modal display style:', window.getComputedStyle(globalModal).display);
+            console.log('Modal visibility:', window.getComputedStyle(globalModal).visibility);
+            console.log('Modal z-index:', window.getComputedStyle(globalModal).zIndex);
+            
+            try {
+                const modalInstance = new bootstrap.Modal(globalModal, {
+                    backdrop: 'static',
+                    keyboard: false
+                });
+                
+                console.log('Modal instance created:', modalInstance);
+                
+                // Add event listeners for debugging
+                globalModal.addEventListener('show.bs.modal', function() {
+                    console.log('Modal show event fired');
+                });
+                
+                globalModal.addEventListener('shown.bs.modal', function() {
+                    console.log('Modal shown event fired');
+                    
+                    const modalDialog = globalModal.querySelector('.modal-dialog');
+                    const modalContent = globalModal.querySelector('.modal-content');
+                    
+                    console.log('Modal dialog display:', window.getComputedStyle(modalDialog).display);
+                    console.log('Modal content display:', window.getComputedStyle(modalContent).display);
+                    console.log('Modal backdrop elements:', document.querySelectorAll('.modal-backdrop').length);
+                });
+                
+                globalModal.addEventListener('hide.bs.modal', function() {
+                    console.log('Modal hide event fired');
+                });
+                
+                modalInstance.show();
+                
+            } catch (error) {
+                console.error('Global modal failed: ' + error.message);
+                console.error('Error stack:', error.stack);
+            }
+        });
+
+        // Test CSS z-index issues
+        setTimeout(() => {
+            console.log('=== CSS Analysis ===');
+            const globalModal = document.getElementById('global-sales-order-modal');
+            if (globalModal) {
+                const computedStyle = window.getComputedStyle(globalModal);
+                console.log('Global modal z-index:', computedStyle.zIndex);
+                console.log('Global modal position:', computedStyle.position);
+                console.log('Global modal display:', computedStyle.display);
+                
+                // Check for potential conflicts
+                const allModals = document.querySelectorAll('.modal');
+                console.log('Total modals found:', allModals.length);
+                
+                allModals.forEach((modal, index) => {
+                    const style = window.getComputedStyle(modal);
+                    console.log(`Modal ${index + 1} (${modal.id || 'no-id'}) z-index:`, style.zIndex);
+                });
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

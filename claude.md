@@ -128,17 +128,18 @@ External Services:
   ```
 
 ### **📊 Resumen General de la Base de Datos**
-- **Total de Tablas**: 74 tablas activas
-- **Total de Registros**: 1,171 registros
+- **Total de Tablas**: 78 tablas activas
+- **Total de Registros**: 1,453 registros
 - **Engine**: InnoDB (MySQL/MariaDB)
 - **Charset**: utf8mb3
 - **Autenticación**: CodeIgniter Shield (tablas auth_*)
 - **Ubicación**: Servidor remoto (35.212.30.157:3306)
-- **Categorías Principales**: 10 módulos organizados
+- **Categorías Principales**: 11 módulos organizados
+- **Última actualización**: 2025-09-05
 
 ### **Arquitectura de Usuarios y Permisos**
 
-#### **Tabla `users` (4 registros activos)**
+#### **Tabla `users` (5 registros activos)**
 ```sql
 CREATE TABLE users (
   id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
@@ -361,40 +362,31 @@ users (staff) ←→ clients (dealerships) ←→ contacts (client users)
 ```
 
 ### **🗄️ ESTRUCTURA DETALLADA COMPLETA DE LA BASE DE DATOS**
+#### **✅ ANÁLISIS ACTUALIZADO - 2025-09-05**
 
-#### **👥 USUARIOS Y AUTENTICACIÓN (14 tablas)**
-
+#### **👥 USUARIOS Y AUTENTICACIÓN (9 tablas, 216 registros)**
 **🔐 Sistema de Autenticación (CodeIgniter Shield)**
 - `auth_groups` (5 registros) - Grupos de usuarios
 - `auth_groups_permissions` (32 registros) - Permisos por grupo  
-- `auth_groups_users` (5 registros) - Asignación usuarios-grupos
+- `auth_groups_users` (4 registros) - Asignación usuarios-grupos
 - `auth_identities` (4 registros) - Identidades de autenticación
-- `auth_logins` (141 registros) - Historial de inicios de sesión
+- `auth_logins` (163 registros) - Historial de inicios de sesión
 - `auth_permissions` (8 registros) - Permisos del sistema
 - `auth_permissions_users` (0 registros) - Permisos individuales
 - `auth_remember_tokens` (0 registros) - Tokens de recordar sesión
 - `auth_token_logins` (0 registros) - Logins por token
 
-**👤 Gestión de Usuarios**
-- `users` (5 registros) - Tabla principal de usuarios
-  - **Usuario Admin Creado**: `rruiz` (ID: 3) con permisos completos
-  - **Grupos**: admin, superadmin
-  - **Rol**: Admin Role (ID: 1)
-- `custom_roles` (4 registros) - Roles personalizados del sistema
-- `contact_groups` (2 registros) - Grupos de contactos
-- `contact_group_permissions` (4 registros) - Permisos de grupos
-- `contact_permissions` (13 registros) - Permisos disponibles
-
-#### **🛒 SALES ORDERS (7 tablas)**
-- `sales_orders` (1 registro) - Órdenes de venta principales
-- `sales_orders_activities` (93 registros) - Actividades y cambios
-- `sales_orders_comments` (4 registros) - Comentarios con attachments
+#### **🛒 SALES ORDERS (8 tablas, 141 registros)**
+- `sales_orders` (2 registros) - Órdenes de venta principales
+- `sales_orders_activities` (101 registros) - Actividades y cambios
+- `sales_orders_comments` (7 registros) - Comentarios con attachments
 - `sales_orders_services` (3 registros) - Servicios disponibles
 - `sales_orders_services_history` (23 registros) - Historial de servicios
 - `sales_order_followers` (2 registros) - Seguidores de órdenes
 - `sales_order_follower_activity` (3 registros) - Actividad de seguidores
+- `sales_order_comments` (0 registros) - ⚠️ **Tabla duplicada/vacía**
 
-#### **🔧 SERVICE ORDERS (9 tablas)**
+#### **🔧 SERVICE ORDERS (11 tablas, 53 registros)**
 - `service_orders` (1 registro) - Órdenes de servicio principales
 - `service_orders_activity` (31 registros) - Actividades del servicio
 - `service_orders_comments` (5 registros) - Comentarios del servicio
@@ -402,60 +394,80 @@ users (staff) ←→ clients (dealerships) ←→ contacts (client users)
 - `service_orders_services_history` (0 registros) - Historial de servicios
 - `service_order_followers` (1 registro) - Seguidores del servicio
 - `service_order_follower_activity` (3 registros) - Actividad de seguidores
+- `service_order_follower_notifications` (0 registros) - Notificaciones
 - `service_order_notes` (6 registros) - Notas internas con menciones
 - `service_order_note_mentions` (1 registro) - Menciones en notas
+- `service_orders_notes` (0 registros) - ⚠️ **Tabla duplicada/vacía**
 
-#### **🚗 CAR WASH (6 tablas)**
+#### **🚗 CAR WASH (7 tablas, 89 registros)**
 - `car_wash_orders` (11 registros) - Órdenes de lavado principales
 - `car_wash_activity` (49 registros) - Actividades de lavado
 - `car_wash_comments` (14 registros) - Comentarios de lavado
 - `car_wash_services` (6 registros) - Servicios de lavado disponibles
 - `car_wash_notes` (9 registros) - Notas internas de lavado
 - `car_wash_note_mentions` (0 registros) - Menciones en notas
+- `car_wash_order_services` (0 registros) - Servicios por orden
 
-#### **🔍 RECON ORDERS (7 tablas)**
-- `recon_orders` (96 registros) - Órdenes de reconocimiento
-- `recon_activity` (309 registros) - Actividades de reconocimiento
+#### **🔍 RECON ORDERS (8 tablas, 725 registros)**
+- `recon_orders` (144 registros) - Órdenes de reconocimiento
+- `recon_activity` (501 registros) - Actividades de reconocimiento
 - `recon_comments` (21 registros) - Comentarios de recon
 - `recon_services` (39 registros) - Servicios de reconocimiento
 - `recon_notes` (17 registros) - Notas de reconocimiento
 - `recon_followers` (1 registro) - Seguidores de recon
 - `recon_vehicles` (2 registros) - Vehículos en reconocimiento
+- `recon_order_services` (0 registros) - Servicios por orden
 
-#### **🚙 VEHÍCULOS Y UBICACIÓN NFC (4 tablas)**
-- `vehicle_locations` (61 registros) - Ubicaciones de vehículos
-- `vehicle_location_tokens` (11 registros) - Tokens NFC para ubicación
+#### **🚀 GET READY (4 tablas, 4 registros)**
+- `get_ready_orders` (0 registros) - Órdenes de preparación
+- `get_ready_activities` (0 registros) - Actividades de preparación
+- `get_ready_steps` (4 registros) - Pasos de preparación
+- `get_ready_time_tracking` (0 registros) - Seguimiento de tiempo
+
+#### **🚙 VEHÍCULOS Y UBICACIÓN NFC (4 tablas, 91 registros)**
+- `vehicle_locations` (63 registros) - Ubicaciones de vehículos
+- `vehicle_location_tokens` (13 registros) - Tokens NFC para ubicación
 - `parking_spots` (12 registros) - Espacios de estacionamiento
 - `vehicle_shortlinks` (3 registros) - Enlaces cortos para vehículos
 
-#### **🌐 PÁGINAS PÚBLICAS (5 tablas)**
+#### **🌐 PÁGINAS PÚBLICAS (5 tablas, 31 registros)**
 - `public_pages` (7 registros) - Páginas públicas del sistema
 - `public_page_views` (18 registros) - Visualizaciones de páginas
 - `public_page_versions` (6 registros) - Versiones de páginas
 - `public_page_files` (0 registros) - Archivos de páginas
 - `public_page_likes` (0 registros) - Likes de páginas
 
-#### **💬 COMUNICACIÓN (7 tablas)**
-- `sms_conversations` (5 registros) - Conversaciones SMS bidireccionales
+#### **💬 COMUNICACIÓN (6 tablas, 6 registros)**
+- `sms_conversations` (6 registros) - Conversaciones SMS bidireccionales
 - `internal_notes` (16 registros) - Notas internas del sistema
 - `note_mentions` (0 registros) - Menciones en notas
-- `chat_channels` (0 registros) - Canales de chat
+- `chat_channels` (0 registros) - Canales de chat (WebSocket)
 - `chat_conversations` (0 registros) - Conversaciones de chat
 - `chat_messages` (0 registros) - Mensajes de chat
 - `chat_attachments` (0 registros) - Archivos adjuntos
 
-#### **⚙️ CONFIGURACIÓN Y SISTEMA (6 tablas)**
+#### **⚙️ CONFIGURACIÓN Y SISTEMA (16 tablas, 103 registros)**
+- `users` (5 registros) - Usuarios del sistema
+- `clients` (3 registros) - Clientes/Dealerships principales  
+- `contacts` (2 registros) - Contactos de clientes
 - `settings` (35 registros) - Configuraciones globales
+- `custom_roles` (4 registros) - Roles personalizados del sistema
+- `contact_groups` (2 registros) - Grupos de contactos
+- `contact_group_permissions` (4 registros) - Permisos de grupos
+- `contact_permissions` (13 registros) - Permisos disponibles
+- `user_contact_groups` (0 registros) - Grupos de contactos de usuario
 - `todos` (0 registros) - Sistema de tareas
 - `todo_notifications` (4 registros) - Notificaciones de tareas
 - `audit_trail` (0 registros) - Registro de auditoría
 - `integration_settings` (0 registros) - Configuraciones de APIs
 - `migrations` (9 registros) - Migraciones de CodeIgniter
 
-#### **🏢 CLIENTES Y CONTACTOS (3 tablas)**
-- `clients` (3 registros) - Clientes/Dealerships principales
-- `contacts` (2 registros) - Contactos de clientes
-- `user_contact_groups` (0 registros) - Grupos de contactos de usuario
+#### **⚠️ PROBLEMAS IDENTIFICADOS EN LA ESTRUCTURA**
+- **Tablas duplicadas/similares**:
+  - `sales_orders_comments` (7 registros) vs `sales_order_comments` (0 registros)
+  - `service_orders_notes` (0 registros) vs `service_order_notes` (6 registros)
+- **25 tablas vacías** que podrían requerir limpieza
+- **51 migraciones pendientes** sin ejecutar
 
 ### **🔗 Campos Clave Comunes en Todas las Tablas**
 
@@ -550,11 +562,82 @@ users (staff) ←→ clients (dealerships) ←→ contacts (client users)
 
 ---
 
+## 🔧 **MANTENIMIENTO DE BASE DE DATOS**
+
+### **📋 VERIFICACIÓN REGULAR DE ESTRUCTURA**
+
+#### **Comandos de Análisis Disponibles:**
+```bash
+# Análisis completo de la estructura actual
+php analyze_db_detailed.php
+
+# Verificar estado de migraciones
+php spark migrate:status
+
+# Conectar directamente a la BD remota (requiere credenciales)
+php -r "
+\$db = new mysqli('35.212.30.157', 'u9jvaasruh9vc', 'lalinha01?', 'dbuc0youbm7qp9', 3306);
+echo 'Conexión: ' . (\$db->connect_error ? 'FALLO' : 'EXITOSA') . PHP_EOL;
+\$result = \$db->query('SELECT COUNT(*) as total FROM information_schema.tables WHERE table_schema = \"dbuc0youbm7qp9\"');
+echo 'Tablas actuales: ' . \$result->fetch_assoc()['total'] . PHP_EOL;
+"
+```
+
+#### **⚠️ PROBLEMAS CRÍTICOS A RESOLVER:**
+
+1. **MIGRACIONES PENDIENTES (51)**
+   ```bash
+   # Revisar migraciones antes de ejecutar
+   php spark migrate:status | grep "---"
+   
+   # PRECAUCIÓN: NO ejecutar migrate sin revisar cada migración
+   # php spark migrate  # ⚠️ Solo después de revisión manual
+   ```
+
+2. **TABLAS DUPLICADAS**
+   - `sales_orders_comments` vs `sales_order_comments`
+   - `service_orders_notes` vs `service_order_notes`
+   
+3. **TABLAS VACÍAS (25 tablas)**
+   - Revisar si son necesarias o pueden eliminarse
+   - Verificar que no afecten la funcionalidad
+
+#### **📊 PROCESO DE ACTUALIZACIÓN DE DOCUMENTACIÓN:**
+
+1. **Ejecutar análisis mensual:**
+   ```bash
+   php analyze_db_detailed.php > database_report_$(date +%Y-%m-%d).txt
+   ```
+
+2. **Actualizar CLAUDE.md:**
+   - Verificar conteo de tablas y registros
+   - Actualizar fecha de "Última actualización"
+   - Documentar nuevas tablas o cambios
+
+3. **Monitorear crecimiento:**
+   - Registros por módulo
+   - Tablas más activas
+   - Performance de consultas
+
+#### **🚨 ALERTAS IMPORTANTES:**
+- ❌ **NUNCA ejecutar `DROP TABLE`** sin backup completo
+- ❌ **NUNCA ejecutar migraciones en producción** sin pruebas previas
+- ✅ **SIEMPRE hacer backup** antes de cambios estructurales
+- ✅ **VERIFICAR conexiones activas** antes de cambios mayores
+
+#### **📞 CONTACTO PARA ISSUES DE BD:**
+- **Issues críticos**: Contactar administrador inmediatamente
+- **Migraciones**: Revisar cada archivo antes de ejecutar
+- **Backups**: Verificar que estén funcionando regularmente
+
+---
+
 **Este documento sirve como punto de entrada a toda la documentación del sistema. Para información detallada de cada módulo, consulta los enlaces específicos en la sección "Documentación Detallada por Módulo".**
 
 ---
 
-*Documento generado automáticamente el 2025-01-19*  
-*Versión del sistema: CodeIgniter 4 + Módulos MDA v2.0*  
+*Documento actualizado el 2025-09-05*  
+*Versión del sistema: CodeIgniter 4 + Módulos MDA v2.1*  
+*Estructura de BD verificada: 78 tablas, 1,453 registros*  
 *Para documentación completa: [docs/README.md](./docs/README.md)*
 

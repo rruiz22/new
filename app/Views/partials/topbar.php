@@ -449,6 +449,7 @@
                     </button>
                 </div>
 
+
                 <div class="dropdown topbar-head-dropdown ms-1 header-item" id="notificationDropdown">
                     <button type="button" class="btn btn-icon btn-topbar material-shadow-none btn-ghost-secondary rounded-circle" id="page-header-notifications-dropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
                         <i class='bx bx-bell fs-22'></i>
@@ -536,42 +537,79 @@
                     </div>
                 </div>
 
-                <div class="dropdown ms-sm-3 header-item topbar-user">
-                    <button type="button" class="btn material-shadow-none" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="d-flex align-items-center">
-                            <?php 
-                            // Load avatar helper
-                            helper('avatar');
+                <div class="dropdown ms-sm-3 header-item">
+                    <button type="button" class="btn p-0 material-shadow-none" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <?php 
+                        // Load avatar helper
+                        helper('avatar');
+                        
+                        $user = auth()->user();
+                        
+                        // Si no hay usuario autenticado, redirigir al login
+                        if (!$user) {
+                            header('Location: ' . base_url('login'));
+                            exit();
+                        }
+                        
+                        // Get full name (first name + last name)
+                        $firstName = $user->first_name ?? '';
+                        $lastName = $user->last_name ?? '';
+                        $userName = trim($firstName . ' ' . $lastName) ?: ($user->username ?? 'User');
+                        $userEmail = $user->email;
+                        
+                        // Get user group/role from auth_groups_users table
+                        $userRole = 'User';
+                        if ($user) {
+                            $db = \Config\Database::connect();
+                            $userGroups = $db->table('auth_groups_users')
+                                            ->select('auth_groups_users.group as name')
+                                            ->where('auth_groups_users.user_id', $user->id)
+                                            ->get()
+                                            ->getResultArray();
                             
-                            $user = auth()->user();
-                            
-                            // Si no hay usuario autenticado, redirigir al login
-                            if (!$user) {
-                                header('Location: ' . base_url('login'));
-                                exit();
-                            }
-                            
-                            $userName = $user->username ?? 'User';
-                            $userEmail = $user->email;
-                            
-                            // Get user role
-                            $userRole = 'User';
-                            if ($user) {
-                                $groups = $user->getGroups();
-                                if (!empty($groups)) {
-                                    $userRole = ucfirst($groups[0]);
+                            if (!empty($userGroups)) {
+                                // Use the first group found and make it human readable
+                                $groupName = $userGroups[0]['name'] ?? '';
+                                switch(strtolower($groupName)) {
+                                    case 'salesperson':
+                                        $userRole = 'Salesperson';
+                                        break;
+                                    case 'superadmin':
+                                        $userRole = 'Super Administrator';
+                                        break;
+                                    case 'admin':
+                                        $userRole = 'Administrator';
+                                        break;
+                                    case 'manager':
+                                        $userRole = 'Manager';
+                                        break;
+                                    case 'staff':
+                                        $userRole = 'Staff Member';
+                                        break;
+                                    case 'client':
+                                        $userRole = 'Client';
+                                        break;
+                                    default:
+                                        $userRole = ucfirst($groupName);
+                                        break;
                                 }
                             }
-                            
-                            // Get user avatar using the new system with user's preferred style
-                            $avatarUrl = getAvatarUrl($user, 40, $user->avatar_style ?? 'initials'); // 40px for header
-                            ?>
-                            <img class="rounded-circle header-profile-user" src="<?= $avatarUrl ?>" alt="Header Avatar">
-                            <span class="text-start ms-xl-2">
-                                <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text"><?= esc($userName) ?></span>
-                                <span class="d-none d-xl-block ms-1 fs-12 user-name-sub-text"><?= esc($userRole) ?></span>
-                            </span>
-                        </span>
+                        }
+                        
+                        // Get user avatar using the new system with user's preferred style
+                        $avatarUrl = getAvatarUrl($user, 32, $user->avatar_style ?? 'initials'); // 32px for smaller container
+                        ?>
+                        
+                        <!-- User Info Container (Exact Same Style as Digital Clock) -->
+                        <div class="digital-clock-box bg-light border rounded px-3 py-2 shadow-sm">
+                            <div class="d-flex align-items-center">
+                                <img class="rounded-circle me-2" src="<?= $avatarUrl ?>" alt="Header Avatar" width="28" height="28">
+                                <div class="d-flex flex-column text-start d-none d-xl-block">
+                                    <div class="user-name fw-medium text-dark small"><?= esc($userName) ?></div>
+                                    <small class="user-role text-muted" style="font-size: 0.75rem;"><?= esc($userRole) ?></small>
+                                </div>
+                            </div>
+                        </div>
                     </button>
                     <div class="dropdown-menu dropdown-menu-end">
                         <!-- item-->
@@ -585,6 +623,16 @@
                         <a class="dropdown-item" href="<?= base_url('settings') ?>"><span class="badge bg-success-subtle text-success mt-1 float-end">New</span><i class="mdi mdi-cog-outline text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Settings</span></a>
                         <a class="dropdown-item" href="<?= base_url('auth/logout') ?>"><i class="mdi mdi-lock text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Lock screen</span></a>
                         <a class="dropdown-item" href="<?= base_url('logout') ?>"><i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i> <span class="align-middle"><?= lang('App.logout') ?></span></a>
+                    </div>
+                </div>
+
+                <!-- Digital Clock - Desktop Only (Right Corner) -->
+                <div class="ms-3 header-item d-none d-lg-flex" id="digital-clock-container">
+                    <div class="digital-clock-box bg-light border rounded px-3 py-2 shadow-sm">
+                        <div class="d-flex flex-column text-center">
+                            <div id="current-date" class="digital-date text-muted small fw-medium mb-1"></div>
+                            <div id="current-time" class="digital-time fw-bold text-primary" style="font-size: 1.15em;"></div>
+                        </div>
                     </div>
                 </div>
             </div>
