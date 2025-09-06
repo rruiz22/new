@@ -5,6 +5,78 @@
  * Version: 2.0 - Fully Optimized
  */
 
+// ============================================================================
+// INITIALIZE QUICK ACTION FUNCTIONS IMMEDIATELY
+// ============================================================================
+
+// Fixed openViewModal function - redirects to view page (no modal exists for view)
+window.openViewModal = function(orderId, section = null) {
+    console.log('🔍 Opening view for order ID:', orderId);
+    
+    if (!orderId) {
+        console.error('❌ No order ID provided to openViewModal');
+        return;
+    }
+    
+    // Construct URL
+    let viewUrl = `${window.base_url || '/'}sales_orders/view/${orderId}`;
+    
+    // Add section parameter if provided (for direct navigation to comments/notes)
+    if (section) {
+        viewUrl += `#${section}`;
+    }
+    
+    // Redirect to view page in same window
+    window.location.href = viewUrl;
+};
+
+// Fixed openEditModal function - uses the global sales order modal
+window.openEditModal = function(orderId) {
+    if (!orderId) {
+        console.error('❌ No order ID provided to openEditModal');
+        return;
+    }
+    
+    // Try multiple approaches to open the modal
+    if (typeof editGlobalSalesOrder === 'function') {
+        editGlobalSalesOrder(orderId);
+    } else if (typeof window.globalSalesOrderModal === 'object' && window.globalSalesOrderModal.open) {
+        window.globalSalesOrderModal.open(orderId);
+    } else if (document.getElementById('global-sales-order-modal') && typeof bootstrap !== 'undefined') {
+        // Direct Bootstrap approach as fallback
+        try {
+            const modalElement = document.getElementById('global-sales-order-modal');
+            
+            // Dispose any existing instance
+            let existingInstance = bootstrap.Modal.getInstance(modalElement);
+            if (existingInstance) {
+                existingInstance.dispose();
+            }
+            
+            // Create and show new instance
+            const modalInstance = new bootstrap.Modal(modalElement, {
+                backdrop: 'static',
+                keyboard: false
+            });
+            
+            modalInstance.show();
+            
+            console.warn('⚠️ Using direct modal approach - edit data loading may not work properly');
+            
+        } catch (error) {
+            console.error('❌ Direct Bootstrap modal approach failed:', error);
+            // Fallback: redirect to view page
+            window.location.href = `${window.base_url || '/'}sales_orders/view/${orderId}?edit=1`;
+        }
+    } else {
+        console.error('❌ Global sales order modal not available');
+        // Fallback: redirect to view page
+        window.location.href = `${window.base_url || '/'}sales_orders/view/${orderId}?edit=1`;
+    }
+};
+
+console.log('✅ Quick Action Modal Functions initialized at top level');
+
 /**
  * Enhanced Sales Order DataTable Class with Performance Optimizations
  * Features:
@@ -840,120 +912,104 @@ window.addEventListener('beforeunload', () => {
     window.destroyAllSalesOrderTables();
 });
 
-// ============================================================================
-// QUICK ACTION MODAL FUNCTIONS - FIXED IMPLEMENTATION
-// ============================================================================
-
-// Fixed openViewModal function - redirects to view page (no modal exists for view)
-window.openViewModal = function(orderId, section = null) {
-    console.log('🔍 Opening view for order ID:', orderId);
-    
-    if (!orderId) {
-        console.error('❌ No order ID provided to openViewModal');
-        return;
-    }
-    
-    // Construct URL
-    let viewUrl = `${window.base_url || '/'}sales_orders/view/${orderId}`;
-    
-    // Add section parameter if provided (for direct navigation to comments/notes)
-    if (section) {
-        viewUrl += `#${section}`;
-    }
-    
-    // Redirect to view page in same window
-    window.location.href = viewUrl;
-};
-
-// Fixed openEditModal function - uses the global sales order modal
-window.openEditModal = function(orderId) {
-    if (!orderId) {
-        console.error('❌ No order ID provided to openEditModal');
-        return;
-    }
-    
-    // Try multiple approaches to open the modal
-    if (typeof editGlobalSalesOrder === 'function') {
-        editGlobalSalesOrder(orderId);
-    } else if (typeof window.globalSalesOrderModal === 'object' && window.globalSalesOrderModal.open) {
-        window.globalSalesOrderModal.open(orderId);
-    } else if (document.getElementById('global-sales-order-modal') && typeof bootstrap !== 'undefined') {
-        // Direct Bootstrap approach as fallback
-        try {
-            const modalElement = document.getElementById('global-sales-order-modal');
-            
-            // Dispose any existing instance
-            let existingInstance = bootstrap.Modal.getInstance(modalElement);
-            if (existingInstance) {
-                existingInstance.dispose();
-            }
-            
-            // Create and show new instance
-            const modalInstance = new bootstrap.Modal(modalElement, {
-                backdrop: 'static',
-                keyboard: false
-            });
-            
-            modalInstance.show();
-            
-            console.warn('⚠️ Using direct modal approach - edit data loading may not work properly');
-            
-        } catch (error) {
-            console.error('❌ Direct Bootstrap modal approach failed:', error);
-            // Fallback: redirect to view page
-            window.location.href = `${window.base_url || '/'}sales_orders/view/${orderId}?edit=1`;
-        }
-    } else {
-        console.error('❌ Global sales order modal not available');
-        // Fallback: redirect to view page
-        window.location.href = `${window.base_url || '/'}sales_orders/view/${orderId}?edit=1`;
-    }
-};
-
-console.log('✅ Quick Action Modal Functions initialized successfully');
+// Quick Action functions moved to top of file for immediate availability
 
 // ============================================================================
 // GLOBAL EVENT HANDLERS FOR ACTION BUTTONS - PREVENT MODAL CONFLICTS
 // ============================================================================
 
-// Global event delegation for .btn-view buttons (prevents modal conflicts)
+// Enhanced global event delegation for action buttons
 document.addEventListener('click', function(e) {
-    // Check for view button (supports both <a> and <button> elements)
-    const viewBtn = e.target.closest('.btn-view, a[class*="btn-view"]');
-    if (viewBtn) {
+    // Prevent the event from being handled multiple times
+    if (e.defaultPrevented) {
+        return;
+    }
+    
+    // Check for any action button by looking for specific classes
+    const actionBtn = e.target.closest('[class*="btn-view"], [class*="btn-edit"], .btn-view, .btn-edit');
+    
+    if (actionBtn) {
+        // Get the order ID from data-id attribute
+        const orderId = actionBtn.getAttribute('data-id') || actionBtn.dataset.id;
+        
+        if (!orderId) {
+            console.error('❌ No order ID found on action button:', actionBtn);
+            return;
+        }
+        
+        // Prevent default behavior and stop propagation
         e.preventDefault();
         e.stopPropagation();
         
-        const orderId = viewBtn.getAttribute('data-id');
-        if (orderId) {
-            console.log('🔍 Global view button clicked for order:', orderId);
+        // Determine the action type based on the button classes
+        if (actionBtn.classList.contains('btn-view') || actionBtn.className.includes('btn-view')) {
+            console.log('🔍 View button clicked for order:', orderId);
+            
+            // Clear any inline onclick handlers that might interfere
+            if (actionBtn.onclick) {
+                actionBtn.onclick = null;
+            }
+            
             window.openViewModal(orderId);
-        } else {
-            console.error('❌ No data-id found on view button:', viewBtn);
-        }
-        return false;
-    }
-});
-
-// Global event delegation for .btn-edit buttons (prevents modal conflicts)
-document.addEventListener('click', function(e) {
-    // Check for edit button (supports both <a> and <button> elements)
-    const editBtn = e.target.closest('.btn-edit, a[class*="btn-edit"]');
-    if (editBtn) {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        const orderId = editBtn.getAttribute('data-id');
-        if (orderId) {
-            console.log('✏️ Global edit button clicked for order:', orderId);
+            
+        } else if (actionBtn.classList.contains('btn-edit') || actionBtn.className.includes('btn-edit')) {
+            console.log('✏️ Edit button clicked for order:', orderId);
+            
+            // Clear any inline onclick handlers that might interfere
+            if (actionBtn.onclick) {
+                actionBtn.onclick = null;
+            }
+            
             window.openEditModal(orderId);
-        } else {
-            console.error('❌ No data-id found on edit button:', editBtn);
         }
+        
         return false;
     }
-});
+}, true); // Use capture phase to handle events before other handlers
 
 console.log('✅ Global Action Button Handlers initialized successfully');
+
+// ============================================================================
+// IMMEDIATE INITIALIZATION - ENSURE FUNCTIONS ARE READY
+// ============================================================================
+
+// Double-check that our functions are in the global scope
+if (typeof window.openViewModal !== 'function') {
+    console.error('❌ openViewModal not found in global scope!');
+}
+
+if (typeof window.openEditModal !== 'function') {
+    console.error('❌ openEditModal not found in global scope!');
+}
+
+// Add a backup initialization in case the functions get overwritten
+window.addEventListener('DOMContentLoaded', function() {
+    // Ensure functions are available
+    if (typeof window.openViewModal !== 'function') {
+        console.warn('⚠️ openViewModal missing, re-initializing...');
+        window.openViewModal = function(orderId) {
+            console.log('🔍 Backup openViewModal called for:', orderId);
+            if (orderId) {
+                window.location.href = `${window.base_url || '/'}sales_orders/view/${orderId}`;
+            }
+        };
+    }
+    
+    if (typeof window.openEditModal !== 'function') {
+        console.warn('⚠️ openEditModal missing, re-initializing...');
+        window.openEditModal = function(orderId) {
+            console.log('✏️ Backup openEditModal called for:', orderId);
+            if (orderId) {
+                if (window.globalSalesOrderModal && window.globalSalesOrderModal.open) {
+                    window.globalSalesOrderModal.open(orderId);
+                } else {
+                    window.location.href = `${window.base_url || '/'}sales_orders/view/${orderId}?edit=1`;
+                }
+            }
+        };
+    }
+    
+    console.log('✅ DOMContentLoaded - Modal functions verified');
+});
 
 console.log('🚀 Sales Order DataTables module loaded successfully');
