@@ -166,10 +166,8 @@ class GlobalSalesOrderModal {
         
         // Pre-load data before showing modal
         if (this.isEditMode) {
-            console.log('📊 Loading order data for edit mode...');
             this.loadOrderData(orderId);
         } else {
-            console.log('📊 Resetting form for create mode...');
             this.resetForm();
             this.loadClients();
         }
@@ -178,7 +176,6 @@ class GlobalSalesOrderModal {
             // Check for existing modal instance and dispose it
             let modalInstance = bootstrap.Modal.getInstance(this.modal);
             if (modalInstance) {
-                console.log('🔄 Disposing existing modal instance');
                 modalInstance.dispose();
             }
             
@@ -188,21 +185,6 @@ class GlobalSalesOrderModal {
                 keyboard: false,
                 focus: true
             });
-            
-            console.log('✅ Modal instance created, attempting to show...');
-            
-            // Add one-time event listeners for debugging
-            this.modal.addEventListener('show.bs.modal', function() {
-                console.log('🎭 Modal show event fired');
-            }, { once: true });
-            
-            this.modal.addEventListener('shown.bs.modal', function() {
-                console.log('🎭 Modal shown event fired - modal is now visible');
-            }, { once: true });
-            
-            this.modal.addEventListener('hidden.bs.modal', function() {
-                console.log('🎭 Modal hidden event fired');
-            }, { once: true });
             
             // Show the modal
             modalInstance.show();
@@ -223,16 +205,12 @@ class GlobalSalesOrderModal {
     }
 
     close() {
-        console.log('🚪 Closing modal...');
-        
         // Use stored instance if available, otherwise get instance from element
         let modalInstance = this.modalInstance || bootstrap.Modal.getInstance(this.modal);
         
         if (modalInstance) {
-            console.log('✅ Modal instance found, hiding...');
             modalInstance.hide();
         } else {
-            console.warn('⚠️ No modal instance found to close');
             // Force hide by removing classes as fallback
             if (this.modal) {
                 this.modal.classList.remove('show');
@@ -1396,19 +1374,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function initGlobalSalesOrderModal() {
     if (window.globalSalesOrderModal) {
-        console.log('✅ Global Sales Order Modal already initialized');
         return;
     }
     
-    if (document.getElementById('global-sales-order-modal')) {
+    const modalElement = document.getElementById('global-sales-order-modal');
+    
+    if (modalElement) {
         try {
             window.globalSalesOrderModal = new GlobalSalesOrderModal();
             console.log('✅ Global Sales Order Modal initialized successfully');
+            
         } catch (error) {
             console.error('❌ Error initializing Global Sales Order Modal:', error);
         }
-    } else {
-        console.log('⏳ Modal element not found, waiting...');
     }
 }
 
